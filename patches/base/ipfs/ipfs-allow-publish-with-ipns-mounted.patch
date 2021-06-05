@@ -1,0 +1,14 @@
+diff --git a/core/coreapi/coreapi.go b/core/coreapi/coreapi.go
+index 5b638826b..32747fe53 100644
+--- a/core/coreapi/coreapi.go
++++ b/core/coreapi/coreapi.go
+@@ -191,9 +191,6 @@ func (api *CoreAPI) WithOptions(opts ...options.ApiOption) (coreiface.CoreAPI, e
+ 	}
+ 
+ 	subApi.checkPublishAllowed = func() error {
+-		if n.Mounts.Ipns != nil && n.Mounts.Ipns.IsActive() {
+-			return errors.New("cannot manually publish while IPNS is mounted")
+-		}
+ 		return nil
+ 	}
+ 

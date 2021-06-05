@@ -1,0 +1,25 @@
+diff --git a/fuse/readonly/readonly_unix.go b/fuse/readonly/readonly_unix.go
+index 3a2269393..8bff88f28 100644
+--- a/fuse/readonly/readonly_unix.go
++++ b/fuse/readonly/readonly_unix.go
+@@ -228,12 +228,6 @@ func (s *Node) ReadDirAll(ctx context.Context) ([]fuse.Dirent, error) {
+ 	return nil, fuse.ENOENT
+ }
+ 
+-func (s *Node) Getxattr(ctx context.Context, req *fuse.GetxattrRequest, resp *fuse.GetxattrResponse) error {
+-	// TODO: is nil the right response for 'bug off, we ain't got none' ?
+-	resp.Xattr = nil
+-	return nil
+-}
+-
+ func (s *Node) Readlink(ctx context.Context, req *fuse.ReadlinkRequest) (string, error) {
+ 	if s.cached == nil || s.cached.Type() != ft.TSymlink {
+ 		return "", fuse.Errno(syscall.EINVAL)
+@@ -278,7 +272,6 @@ type roNode interface {
+ 	fs.Node
+ 	fs.NodeStringLookuper
+ 	fs.NodeReadlinker
+-	fs.NodeGetxattrer
+ }
+ 
+ var _ roNode = (*Node)(nil)
