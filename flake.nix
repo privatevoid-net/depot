@@ -49,7 +49,7 @@
     in {
       nixosModules = aspect.modules;
       nixosConfigurations = 
-      (lib.genAttrs [ "styx" ] mkNixOS);
+      (lib.genAttrs [ "styx" "meet" ] mkNixOS);
 
       deploy.nodes = with deploy-rs-lib; {
         styx = {
@@ -57,6 +57,13 @@
           profiles.system = {
             user = "root";
             path = activate.nixos self.nixosConfigurations.styx;
+          };
+        };
+        meet = {
+          hostname = "meet.services.privatevoid.net";
+          profiles.system = {
+            user = "root";
+            path = activate.nixos self.nixosConfigurations.meet;
           };
         };
       };

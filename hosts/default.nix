@@ -4,6 +4,7 @@ in with tools.dns; {
 
   # NixOS machines
   styx = import ./styx tools;
+  meet = import ./meet tools;
 
   # Non-NixOS machine metadata
   VEGAS = {
