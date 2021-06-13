@@ -22,6 +22,11 @@
     jicofo.enable = true;
     videobridge.enable = true;
     prosody.enable = true;
+    config.p2p.enabled = false;
+  };
+  services.jitsi-videobridge = {
+    nat.publicAddress = "95.216.8.12";
+    nat.localAddress = "10.10.1.204";
   };
   services.nginx.virtualHosts."meet.privatevoid.net" = {
     enableACME = false;
