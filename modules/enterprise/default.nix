@@ -1,4 +1,4 @@
-{ pkgs, config, inputs, ... }:
+{ pkgs, lib, config, inputs, ... }:
 let
   orgDomain = "privatevoid.net";
   orgRealm = "PRIVATEVOID.NET";
@@ -27,4 +27,6 @@ in {
     };
   };
   services.pcscd.enable = true;
+  networking.domain = lib.mkDefault "services.privatevoid.net";
+  networking.search = [ config.networking.domain "search.privatevoid.net" ];
 }
