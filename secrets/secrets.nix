@@ -6,4 +6,5 @@ in with hosts;
 {
   "hydra-s3.age".publicKeys = max ++ map systemKeys [ styx ];
   "hydra-db-credentials.age".publicKeys = max ++ map systemKeys [ styx ];
+  "gitea-db-credentials.age".publicKeys = max ++ map systemKeys [ git ];
 }
