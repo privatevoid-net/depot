@@ -1,7 +1,7 @@
 let tools = import ./lib/tools.nix;
 in with tools;
 { inputs, pkgs, ... }: rec {
-  deploy-rs = patch inputs.deploy-rs.packages.x86_64-linux.deploy-rs "patches/custom/deploy-rs";
+  deploy-rs = inputs.deploy-rs.packages.x86_64-linux.deploy-rs;
 
   nix-super-unstable = let
     system = "x86_64-linux";
