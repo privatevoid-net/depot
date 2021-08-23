@@ -120,7 +120,27 @@
         "type": "github"
       }
     },
-    "nix-super-unstable": {
+    "nix-super": {
+      "inputs": {
+        "nix": [
+          "nix-super-unstable-repin"
+        ]
+      },
+      "locked": {
+        "lastModified": 1629553905,
+        "narHash": "sha256-HPv17qWWZjq19Ig7RRcJIZXP3AswOKNA6DmIzQBd2tU=",
+        "ref": "master",
+        "rev": "065bf6ab82cb63ee1c3f530110a1c7f9616f947c",
+        "revCount": 9,
+        "type": "git",
+        "url": "https://git.privatevoid.net/max/nix-super"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.privatevoid.net/max/nix-super"
+      }
+    },
+    "nix-super-unstable-repin": {
       "inputs": {
         "lowdown-src": "lowdown-src",
         "nixpkgs": [
@@ -128,11 +148,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1629453556,
-        "narHash": "sha256-nlTEYae1JWor8cfazqLy39dzmtSgAttfjZXl3EajnTE=",
+        "lastModified": 1629716742,
+        "narHash": "sha256-H+ISQ6m7YJFNbS1RnW14WAuKNRReEqL6y95UIJPAxAM=",
         "owner": "NixOS",
         "repo": "nix",
-        "rev": "7a54b10a8a29dadea2bb2c639a15cfec25a4d38c",
+        "rev": "af94b54db3a2be100731a215cb5e95f306471731",
         "type": "github"
       },
       "original": {
@@ -163,7 +183,8 @@
         "deploy-rs": "deploy-rs",
         "home-manager": "home-manager",
         "naersk": "naersk",
-        "nix-super-unstable": "nix-super-unstable",
+        "nix-super": "nix-super",
+        "nix-super-unstable-repin": "nix-super-unstable-repin",
         "nixpkgs": "nixpkgs"
       }
     },

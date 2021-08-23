@@ -1,11 +1,11 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, inputs, ... }:
 let
   fixPriority = x: if config.services.hydra.enable
   then lib.mkForce x
   else x;
 in {
   nix = {
-    package = pkgs.nixUnstable;
+    package = inputs.nix-super.defaultPackage.${pkgs.system};
 
     extraOptions = fixPriority ''
       experimental-features = nix-command flakes ca-references
