@@ -1,6 +1,7 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, inputs, ... }:
 {
   nixpkgs.overlays = [
+    (self: super: { flakePackages = inputs.self.packages.${pkgs.system}; })
     (self: super:
       (let
         patched = import ../../packages/patched-derivations.nix super;
