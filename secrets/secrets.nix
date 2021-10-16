@@ -22,4 +22,5 @@ in with hosts;
   "synapse-ldap.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "synapse-turn.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "wireguard-key-wgautobahn.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "vpn-host-key-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
 }

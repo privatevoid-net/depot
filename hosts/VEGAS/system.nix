@@ -32,6 +32,7 @@
       ./services/nix/binary-cache.nix
       ./services/nix/nar-serve.nix
       ./services/object-storage
+      ./services/openvpn
       ./services/warehouse
       ./services/websites
     ]
