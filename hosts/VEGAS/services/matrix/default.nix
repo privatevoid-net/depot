@@ -107,4 +107,10 @@ in {
       locations."= /.well-known/matrix/client".alias = clientConfigJSON;
     };
   };
+  systemd.services = lib.genAttrs [ "coturn" "matrix-appservice-discord" "matrix-synapse" ] (_: {
+    serviceConfig = {
+      LogNamespace = "matrix";
+      Slice = "communications.slice";
+    };
+  });
 }
