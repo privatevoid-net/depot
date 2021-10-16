@@ -10,6 +10,7 @@
       ./modules/database
       ./modules/nginx
       ./modules/oauth2-proxy
+      ./modules/virtualisation
       inputs.agenix.nixosModules.age
     ]
     # TODO: fix users
