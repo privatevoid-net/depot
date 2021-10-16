@@ -15,6 +15,7 @@
 
       # Services
       ./services/backbone-routing
+      ./services/dns
     ]
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin
