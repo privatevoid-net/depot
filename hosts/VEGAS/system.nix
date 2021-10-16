@@ -9,6 +9,7 @@
       # Plumbing
       ./modules/database
       ./modules/nginx
+      ./modules/oauth2-proxy
       inputs.agenix.nixosModules.age
     ]
     # TODO: fix users
