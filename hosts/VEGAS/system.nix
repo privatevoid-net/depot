@@ -21,6 +21,7 @@
       ./services/bitwarden
       # TODO: fix this one
       ./services/forum
+      ./services/git
     ]
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin
