@@ -18,6 +18,9 @@
       ./services/bitwarden
       ./services/dns
       ./services/fbi
+      ./services/bitwarden
+      # TODO: fix this one
+      ./services/forum
     ]
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin
