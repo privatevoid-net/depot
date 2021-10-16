@@ -26,6 +26,7 @@
       ./services/jokes
       ./services/nfs
       ./services/mail
+      ./services/matrix
       ./services/warehouse
       ./services/websites
     ]
