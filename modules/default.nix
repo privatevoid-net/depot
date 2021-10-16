@@ -14,6 +14,7 @@ let
     shell-config = import ./shell-config;
     ssh = import ./ssh;
     sss = import ./sss;
+    system-recovery = import ./system-recovery;
   };
 in rec {
   modules = aspects;
@@ -28,6 +29,7 @@ in rec {
     server = [
       deploy-rs-receiver
       nix-config-server
+      system-recovery
     ] ++ base ++ networking;
   };
 }
