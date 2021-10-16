@@ -15,6 +15,7 @@
 
       # Services
       ./services/backbone-routing
+      ./services/bitwarden
       ./services/dns
       ./services/fbi
     ]
