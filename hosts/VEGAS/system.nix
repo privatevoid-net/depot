@@ -29,6 +29,7 @@
       ./services/nfs
       ./services/mail
       ./services/matrix
+      ./services/nix/binary-cache.nix
       ./services/object-storage
       ./services/warehouse
       ./services/websites
