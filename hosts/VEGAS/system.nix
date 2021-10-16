@@ -8,6 +8,7 @@
 
       # Plumbing
       ./modules/database
+      ./modules/nginx
     ]
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin
