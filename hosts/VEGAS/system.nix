@@ -27,6 +27,7 @@
       ./services/nfs
       ./services/mail
       ./services/warehouse
+      ./services/websites
     ]
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin
