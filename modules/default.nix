@@ -3,6 +3,7 @@ with builtins;
 let
   aspects = {
     autopatch = import ./autopatch;
+    deploy-rs-receiver = import ./deploy-rs-receiver;
     enterprise = import ./enterprise;
     hydra = import ./hydra;
     ipfs-lain = import ./ipfs-lain;
@@ -25,6 +26,7 @@ in rec {
     networking = [ ssh ];
 
     server = [
+      deploy-rs-receiver
       nix-config-server
     ] ++ base ++ networking;
   };
