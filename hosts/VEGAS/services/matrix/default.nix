@@ -46,6 +46,7 @@ let
   cfg = config.services.matrix-synapse;
 in {
   imports = [
+    ./bridges/discord.nix
     ./federation.nix
     ./web-client.nix
   ];
