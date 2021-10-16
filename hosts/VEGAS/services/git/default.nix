@@ -37,6 +37,12 @@ in
       user = "gitea";
       passwordFile = config.age.secrets.giteaDBPassword.path;
     };
+
+    # TODO: integrate branding content (css, images) into system closure
+    settings.ui = { 
+      DEFAULT_THEME = "void";
+      THEMES = "void";
+    };
   };
 
   users.users.git = {
