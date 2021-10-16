@@ -17,6 +17,7 @@
       # Services
       ./services/backbone-routing
       ./services/bitwarden
+      ./services/cdn-shield
       ./services/dns
       ./services/fbi
       ./services/bitwarden

@@ -43,6 +43,16 @@ let
         '';
       };
 
+      proxyGhost = scheme: target: basic // {
+        locations."/".extraConfig = ''
+          proxy_pass ${scheme}://${target};
+          proxy_set_header Host ${target};
+          proxy_set_header Referer ${scheme}://${target};
+          proxy_cookie_domain ${target} domain.invalid;
+          proxy_set_header Cookie "";
+        '';
+      };
+
     };
   }) tools;
 in tools
