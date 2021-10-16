@@ -5,6 +5,9 @@
     [
       # Hardware
       ./hardware-configuration.nix
+
+      # Plumbing
+      ./modules/database
     ]
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin
