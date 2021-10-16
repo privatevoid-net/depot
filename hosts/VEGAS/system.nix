@@ -29,6 +29,7 @@
       ./services/nfs
       ./services/mail
       ./services/matrix
+      ./services/object-storage
       ./services/warehouse
       ./services/websites
     ]
