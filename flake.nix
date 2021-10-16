@@ -14,12 +14,6 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     deploy-rs.url = "github:serokell/deploy-rs";
-    deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
-    deploy-rs.inputs.naersk.follows = "naersk";
-
-    # re-pin naersk to fix deprecation warning in deploy-rs
-    naersk.url = "github:nmattia/naersk/master";
-    naersk.inputs.nixpkgs.follows = "nixpkgs";
 
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
