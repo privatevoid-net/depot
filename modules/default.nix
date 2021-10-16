@@ -12,6 +12,7 @@ let
     nix-register-flakes = import ./nix-register-flakes;
     shell-config = import ./shell-config;
     ssh = import ./ssh;
+    sss = import ./sss;
   };
 in rec {
   modules = aspects;
