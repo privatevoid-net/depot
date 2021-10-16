@@ -94,4 +94,29 @@ in
     };
   };
   services.oauth2_proxy.nginx.virtualHosts = [ "ipfs.admin.${domain}" ];
+
+  inherit (tools.acme.dns01) age;
+
+  security.acme.certs."ipfs.${domain}" = {
+    domain = "*.ipfs.${domain}";
+    extraDomainNames = [ "*.ipns.${domain}" ];
+    dnsProvider = "rfc2136";
+    group = "nginx";
+    inherit (tools.acme.dns01) credentialsFile;
+  };
+
+  services.nginx.virtualHosts."ipfs.${domain}" = vhosts.basic // {
+    serverName = "~^(.+)\.(ip[fn]s)\.${domain}$";
+    enableACME = false;
+    useACMEHost = "ipfs.${domain}";
+    locations = {
+      "/" = {
+        proxyPass = "http://127.0.0.1:48280";
+        extraConfig = ''
+          add_header X-Content-Type-Options "";
+          add_header Access-Control-Allow-Origin *;
+        '';
+      };
+    };
+  };
 }
