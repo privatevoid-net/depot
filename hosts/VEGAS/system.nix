@@ -25,6 +25,7 @@
       ./services/ipfs
       ./services/jokes
       ./services/nfs
+      ./services/mail
     ]
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin

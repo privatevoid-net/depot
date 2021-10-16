@@ -1,0 +1,7 @@
+/\.ru$/ DISCARD
+/\.cf$/ DISCARD
+/\.gq$/ DISCARD
+/\.tk$/ DISCARD
+/\.ga$/ DISCARD
+/pixelsurplus.com$/ DISCARD
+/mega.nz$/ DISCARD
