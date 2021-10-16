@@ -9,6 +9,7 @@
       # Plumbing
       ./modules/database
       ./modules/nginx
+      inputs.agenix.nixosModules.age
     ]
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin
