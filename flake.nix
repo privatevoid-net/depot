@@ -1,11 +1,6 @@
 {
   description = "Private Void system configurations";
 
-  nixConfig = {
-    substituters = [ "https://cache.privatevoid.net" ]; 
-    trusted-public-keys = ["cache.privatevoid.net:SErQ8bvNWANeAvtsOESUwVYr2VJynfuc9JRwlzTTkVg="];
-  };
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.05";
 
