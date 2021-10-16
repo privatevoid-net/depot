@@ -42,11 +42,14 @@
 
       aspect = import ./modules inputs;
       hosts = import ./hosts;
-      specialArgs = { inherit inputs hosts aspect; };
+      specialArgs = {
+        inherit inputs hosts aspect;
+        toolsets = import ./tools;
+      };
       mkNixOS' = lib: name: lib.nixosSystem {
         inherit system;
         inherit specialArgs;
-        modules = [ hosts."${name}".nixos ];
+        modules = [ hosts."${name}".nixos ./tools/inject.nix ];
       };
       mkNixOS = mkNixOS' lib;  
     in {
