@@ -25,6 +25,7 @@
       ./services/git
       ./services/ipfs
       ./services/jokes
+      ./services/nextcloud
       ./services/nfs
       ./services/mail
       ./services/matrix

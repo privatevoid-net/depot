@@ -11,6 +11,8 @@ in with hosts;
   "hydra-db-credentials.age".publicKeys = max ++ map systemKeys [ styx ];
   "hydra-s3.age".publicKeys = max ++ map systemKeys [ styx ];
   "matrix-appservice-discord-token.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "nextcloud-adminpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "nextcloud-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "oauth2_proxy-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "postfix-ldap-mailboxes.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "synapse-db.age".publicKeys = max ++ map systemKeys [ VEGAS ];
