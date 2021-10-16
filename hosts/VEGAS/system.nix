@@ -30,6 +30,7 @@
       ./services/mail
       ./services/matrix
       ./services/nix/binary-cache.nix
+      ./services/nix/nar-serve.nix
       ./services/object-storage
       ./services/warehouse
       ./services/websites

@@ -23,6 +23,9 @@
 
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
+
+    nar-serve.url = "github:numtide/nar-serve";
+    nar-serve.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let

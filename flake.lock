@@ -58,6 +58,21 @@
         "type": "github"
       }
     },
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1623875721,
+        "narHash": "sha256-A8BU7bjS5GirpAUv4QA+QnJ4CceLHkcXdRp4xITDB0s=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "f7e004a55b120c02ecb6219596820fcd32ca8772",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -113,6 +128,27 @@
         "owner": "nmattia",
         "ref": "master",
         "repo": "naersk",
+        "type": "github"
+      }
+    },
+    "nar-serve": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1626443268,
+        "narHash": "sha256-LAsxgaWKTxOVZVpNrUG9ZrHMnzNMKKxKciVitxdgylE=",
+        "owner": "numtide",
+        "repo": "nar-serve",
+        "rev": "84a77d8ab3ddec9d8090d2f0bc6718484e2d94ea",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "nar-serve",
         "type": "github"
       }
     },
@@ -179,6 +215,7 @@
         "deploy-rs": "deploy-rs",
         "home-manager": "home-manager",
         "naersk": "naersk",
+        "nar-serve": "nar-serve",
         "nix-super": "nix-super",
         "nix-super-unstable-repin": "nix-super-unstable-repin",
         "nixpkgs": "nixpkgs"
