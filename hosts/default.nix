@@ -6,14 +6,9 @@ in with tools.dns; {
   styx = import ./styx tools;
   meet = import ./meet tools;
   git = import ./git tools;
+  VEGAS = import ./VEGAS tools;
 
   # Non-NixOS machine metadata
-  VEGAS = {
-    ssh.id = {
-      publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICz2nGA+Y4OxhMKsV6vKIns3hOoBkK557712h7FfWXcE";
-      hostNames = subResolve "vegas" "backbone";
-    };
-  };
   AnimusAlpha = let hostNames = [ "alpha.animus.com" "animus.com" ]; in {
     ssh.id = {
       publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGpFR47Ev+W+bdng6IrDVpl8rlKBBHSr1v5lwJmZcEFH";
