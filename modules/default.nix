@@ -32,5 +32,10 @@ in rec {
       nix-config-server
       system-recovery
     ] ++ base ++ networking;
+
+    backbone = server ++ [
+      fail2ban
+      sss
+    ];
   };
 }
