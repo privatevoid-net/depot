@@ -4,6 +4,7 @@ let
   systemKeys = x: x.ssh.id.publicKey or null;
 in with hosts;
 {
+  "coturn-static-auth.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "discourse-adminpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "discourse-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "gitea-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
