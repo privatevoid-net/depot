@@ -1,7 +1,8 @@
-{ pkgs, lib, config, inputs, ... }:
+{ config, pkgs, hosts, inputs, lib, tools, ... }:
 let
-  orgDomain = "privatevoid.net";
-  orgRealm = "PRIVATEVOID.NET";
+  orgDomain = tools.meta.domain;
+  orgRealm = lib.toUpper orgDomain;
+  host = hosts.${config.networking.hostName} or null;
 in {
   krb5 = {
     enable = true;
@@ -19,7 +20,7 @@ in {
     };
     realms = {
       "${orgRealm}" = rec {
-        kdc = "authsys.virtual-machines.privatevoid.net";
+        inherit (tools.identity.kerberos) kdc;
         admin_server = kdc;
         kpasswd_server = kdc;
         default_domain = orgDomain;
@@ -27,6 +28,6 @@ in {
     };
   };
   services.pcscd.enable = true;
-  networking.domain = lib.mkDefault "services.privatevoid.net";
-  networking.search = [ config.networking.domain "search.privatevoid.net" ];
+  networking.domain = lib.mkDefault "${host.enterprise.subdomain or "services"}.${orgDomain}";
+  networking.search = [ config.networking.domain "search.${orgDomain}" ];
 }
