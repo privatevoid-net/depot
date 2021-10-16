@@ -5,6 +5,7 @@ let
     autopatch = import ./autopatch;
     deploy-rs-receiver = import ./deploy-rs-receiver;
     enterprise = import ./enterprise;
+    fail2ban = import ./fail2ban;
     hydra = import ./hydra;
     ipfs-lain = import ./ipfs-lain;
     nix-builder = import ./nix-builder;
