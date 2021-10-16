@@ -23,6 +23,7 @@
       ./services/forum
       ./services/git
       ./services/ipfs
+      ./services/jokes
     ]
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin
