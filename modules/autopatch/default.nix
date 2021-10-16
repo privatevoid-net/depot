@@ -11,6 +11,8 @@
 
         hydra-unstable = patched.hydra;
 
+        sssd = patched.sssd;
+
       } // lib.optionalAttrs config.krb5.enable {
         bind = patched.kerberized-bind;
         dnsutils = patched.kerberized-dnsutils;

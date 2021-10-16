@@ -11,4 +11,5 @@ super: rec {
   hydra = (patch super.hydra-unstable "patches/base/hydra").override { nix = super.flakePackages.nix-super; };
 
   lain-ipfs = patch-rename super.ipfs "lain-ipfs" "patches/base/ipfs";
+  sssd = super.sssd.override { withSudo = true; };
 }
