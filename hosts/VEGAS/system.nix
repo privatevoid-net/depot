@@ -12,6 +12,9 @@
       ./modules/oauth2-proxy
       ./modules/virtualisation
       inputs.agenix.nixosModules.age
+
+      # Services
+      ./services/backbone-routing
     ]
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin

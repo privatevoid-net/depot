@@ -8,4 +8,5 @@ in with hosts;
   "hydra-db-credentials.age".publicKeys = max ++ map systemKeys [ styx ];
   "gitea-db-credentials.age".publicKeys = max ++ map systemKeys [ git ];
   "oauth2_proxy-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "wireguard-key-wgautobahn.age".publicKeys = max ++ map systemKeys [ VEGAS ];
 }
