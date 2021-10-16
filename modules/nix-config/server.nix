@@ -7,6 +7,8 @@ in {
   nix = {
     package = inputs.nix-super.defaultPackage.${pkgs.system};
 
+    trustedUsers = [ "root" "@wheel" "@admins" ];
+
     extraOptions = fixPriority ''
       experimental-features = nix-command flakes ca-references
       builders-use-substitutes = true
