@@ -52,6 +52,11 @@ in
     };
   };
 
+  systemd.sockets = {
+    ipfs-api.enable = false;
+    ipfs-gateway.enable = false;
+  };
+
   systemd.services.ipfs = {
     environment.LIBP2P_FORCE_PNET = "1";
     serviceConfig.Slice = "remotefshost.slice";

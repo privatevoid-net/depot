@@ -16,4 +16,16 @@ in with tools.dns; {
     };
     ssh.extraConfig = tools.ssh.extraConfig hostNames [ "Port 69" ];
   };
+
+  # peering
+
+  # max
+  TITAN.hypr = {
+    id = "QmfJ5Tv2z9jFv9Aocevyn6QqRcfm9eYQZhvYvmAVfACfuM";
+    addr = "10.100.3.7";
+  };
+  jericho.hypr = {
+    id = "QmccBLgGP3HR36tTkwSYZX3KDv2EXb1MvYwGVs6PbpbHv9";
+    addr = "10.100.3.13";
+  };
 }

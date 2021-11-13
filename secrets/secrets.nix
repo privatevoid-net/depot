@@ -11,6 +11,7 @@ in with hosts;
   "gitea-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "hydra-db-credentials.age".publicKeys = max ++ map systemKeys [ styx ];
   "hydra-s3.age".publicKeys = max ++ map systemKeys [ styx ];
+  "hyprspace-key-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "keycloak-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "matrix-appservice-discord-token.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "minio-console-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];

@@ -24,6 +24,7 @@
       # TODO: fix this one
       ./services/forum
       ./services/git
+      ./services/hyprspace
       ./services/ipfs
       ./services/jokes
       ./services/meet
