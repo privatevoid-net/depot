@@ -10,7 +10,7 @@ in {
     trustedUsers = [ "root" "@wheel" "@admins" ];
 
     extraOptions = fixPriority ''
-      experimental-features = nix-command flakes ca-references
+      experimental-features = nix-command flakes
       builders-use-substitutes = true
       flake-registry = ${
         pkgs.writeText "null-registry.json" ''{"flakes":[],"version":2}''
