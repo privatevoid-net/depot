@@ -20,8 +20,6 @@ in {
     binaryCaches = [ "https://cache.privatevoid.net" ];
     binaryCachePublicKeys = [ "cache.privatevoid.net:SErQ8bvNWANeAvtsOESUwVYr2VJynfuc9JRwlzTTkVg=" ];
 
-    autoOptimiseStore = true;
-
     gc = {
       automatic = true;
       dates = "weekly";
