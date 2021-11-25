@@ -27,17 +27,17 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1632822684,
-        "narHash": "sha256-lt7eayYmgsD5OQwpb1XYfHpxttn43bWo7G7hIJs+zJw=",
-        "owner": "serokell",
-        "repo": "deploy-rs",
-        "rev": "9a02de4373e0ec272d08a417b269a28ac8b961b4",
-        "type": "github"
+        "lastModified": 1637876519,
+        "narHash": "sha256-5rUyGK65QVrZuxLaoYP3aPMKCJGwvvH+xuJMjr1pgxM=",
+        "ref": "master",
+        "rev": "e17af591fc018746e73776401c6ff2bbf3b806f0",
+        "revCount": 243,
+        "type": "git",
+        "url": "https://git.privatevoid.net/max/deploy-rs"
       },
       "original": {
-        "owner": "serokell",
-        "repo": "deploy-rs",
-        "type": "github"
+        "type": "git",
+        "url": "https://git.privatevoid.net/max/deploy-rs"
       }
     },
     "flake-compat": {
