@@ -1,4 +1,7 @@
 { config, lib, pkgs, tools, ... }:
+let
+  cfg = config.services.nextcloud.config;
+in
 {
   age.secrets = {
     nextcloud-adminpass = {
@@ -44,6 +47,7 @@
       adminpassFile = config.age.secrets.nextcloud-dbpass.path;
     };
   };
+  services.postgresql.authentication = "local ${cfg.dbname} ${cfg.dbuser} md5";
   services.nginx.virtualHosts."${config.services.nextcloud.hostName}" = {
     addSSL = true;
     enableACME = true;
