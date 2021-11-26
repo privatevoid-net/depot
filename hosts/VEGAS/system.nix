@@ -37,6 +37,7 @@
       ./services/object-storage
       ./services/openvpn
       ./services/sso
+      ./services/vault
       ./services/warehouse
       ./services/websites
     ]
