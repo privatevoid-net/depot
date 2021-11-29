@@ -12,6 +12,7 @@ let
     nix-config = import ./nix-config;
     nix-config-server = import ./nix-config/server.nix;
     nix-register-flakes = import ./nix-register-flakes;
+    port-magic = import ./port-magic;
     shell-config = import ./shell-config;
     ssh = import ./ssh;
     sss = import ./sss;
@@ -25,7 +26,10 @@ in rec {
       enterprise
     ];
 
-    networking = [ ssh ];
+    networking = [
+      port-magic
+      ssh
+    ];
 
     server = [
       deploy-rs-receiver
