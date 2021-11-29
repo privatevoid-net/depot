@@ -4,6 +4,8 @@ let
   inherit (tools.meta) domain;
 in
 {
+  reservePortsFor = [ "gitea" ];
+
   age.secrets = {
     giteaDBPassword = {
       file = ../../../../secrets/gitea-db-credentials.age;
@@ -14,12 +16,13 @@ in
   };
 
   services.nginx.virtualHosts = mappers.mapSubdomains {
-    git = vhosts.proxy "http://127.0.0.1:3000";
+    git = vhosts.proxy "http://127.0.0.1:${config.portsStr.gitea}";
   };
 
   services.gitea = {
     enable = true;
     appName = "Private Void Gitea";
+    httpPort = config.ports.gitea;
     domain = "git";
     rootUrl = "https://git.${domain}";
     disableRegistration = true;

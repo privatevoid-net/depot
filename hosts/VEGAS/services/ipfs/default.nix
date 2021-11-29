@@ -4,8 +4,11 @@ let
   inherit (tools.meta) domain;
   cfg = config.services.ipfs;
   ipfsApi = pkgs.writeTextDir "api" "/ip4/127.0.0.1/tcp/5001";
+  gwPort = config.portsStr.ipfsGateway;
 in
 {
+  reservePortsFor = [ "ipfsGateway" ];
+
   networking.firewall = {
     allowedTCPPorts = [ 4001 ];
     allowedUDPPorts = [ 4001 ];
@@ -16,7 +19,7 @@ in
     startWhenNeeded = false;
     autoMount = true;
 
-    gatewayAddress = "/ip4/127.0.0.1/tcp/48280";
+    gatewayAddress = "/ip4/127.0.0.1/tcp/${gwPort}";
     dataDir = "/srv/storage/ipfs/repo";
     localDiscovery = false;
 
@@ -71,7 +74,7 @@ in
   services.nginx.virtualHosts = {
     "top-level.${domain}".locations = {
       "~ ^/ip[fn]s" = {
-        proxyPass = "http://127.0.0.1:48280";
+        proxyPass = "http://127.0.0.1:${gwPort}";
         extraConfig = ''
           add_header X-Content-Type-Options "";
           add_header Access-Control-Allow-Origin *;
@@ -83,7 +86,7 @@ in
       locations = {
         "= /".return = "404";
         "~ ^/ip[fn]s" = {
-          proxyPass = "http://127.0.0.1:48280";
+          proxyPass = "http://127.0.0.1:${gwPort}";
           extraConfig = ''
             add_header X-Content-Type-Options "";
             add_header Access-Control-Allow-Origin *;
@@ -94,7 +97,7 @@ in
     };
     "ipfs.admin.${domain}" = vhosts.basic // {
       locations."/api".proxyPass = "http://127.0.0.1:5001";
-      locations."/ipns/webui.ipfs.${domain}".proxyPass = "http://127.0.0.1:48280/ipns/webui.ipfs.${domain}";
+      locations."/ipns/webui.ipfs.${domain}".proxyPass = "http://127.0.0.1:${gwPort}/ipns/webui.ipfs.${domain}";
       locations."= /".return = "302 /ipns/webui.ipfs.${domain}";
     };
   };
@@ -116,7 +119,7 @@ in
     useACMEHost = "ipfs.${domain}";
     locations = {
       "/" = {
-        proxyPass = "http://127.0.0.1:48280";
+        proxyPass = "http://127.0.0.1:${gwPort}";
         extraConfig = ''
           add_header X-Content-Type-Options "";
           add_header Access-Control-Allow-Origin *;

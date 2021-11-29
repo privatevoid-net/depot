@@ -10,6 +10,8 @@ let
   minioConsole = pkgs.callPackage ./console.nix {};
 in
 {
+  reservePortsFor = [ "minioConsole" ];
+
   age.secrets.minio-root-credentials = {
     file = ../../../../secrets/minio-root-credentials.age;
     owner = "root";
@@ -43,7 +45,7 @@ in
     };
     "console.object-storage" = vhosts.basic // {
       locations = {
-        "/".proxyPass = "http://127.0.0.1:39090";
+        "/".proxyPass = "http://127.0.0.1:${config.portsStr.minioConsole}";
       };
     };
     "cdn" = lib.recursiveUpdate (vhosts.proxy "http://${host}:${port}/content-delivery$request_uri") {
@@ -55,7 +57,7 @@ in
     enable = true;
     wantedBy = [ "default.target" ];
     serviceConfig = {
-      ExecStart = "${minioConsole}/bin/console server --port 39090";
+      ExecStart = "${minioConsole}/bin/console server --port ${config.portsStr.minioConsole}";
       EnvironmentFile = config.age.secrets.minio-console-secrets.path;
       DynamicUser = true;
       User = "minio-console";

@@ -5,6 +5,8 @@ let
   cfg = config.services.keycloak;
 in
 {
+  reservePortsFor = [ "keycloak" ];
+
   imports = [
     ./identity-management.nix
   ];
@@ -15,7 +17,7 @@ in
     mode = "0400";
   };
   services.nginx.virtualHosts = { 
-    "${login}" = lib.recursiveUpdate (vhosts.proxy "http://${cfg.bindAddress}:${cfg.httpPort}") {
+    "${login}" = lib.recursiveUpdate (vhosts.proxy "http://${cfg.bindAddress}:${config.portsStr.keycloak}") {
       locations."= /".return = "302 /auth/realms/master/account/";
     };
     "account.${domain}" = vhosts.redirect "https://${login}/auth/realms/master/account/";
@@ -24,7 +26,7 @@ in
     enable = true;
     frontendUrl = "https://${login}/auth";
     bindAddress = "127.0.0.1";
-    httpPort = "38080";
+    httpPort = config.portsStr.keycloak;
     package = pkgs.keycloak.override { jre = pkgs.jdk11_headless; };
     database = {
       createLocally = true;

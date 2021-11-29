@@ -1,6 +1,8 @@
 { config, lib, tools, ... }:
 with tools.nginx;
 {
+  reservePortsFor = [ "ombi" ];
+
   services = {
     radarr = {
       enable = true;
@@ -10,13 +12,13 @@ with tools.nginx;
     };
     ombi = {
       enable = true;
-      port = 35000;
+      port = config.ports.ombi;
     };
 
     nginx.virtualHosts = mappers.mapSubdomains {
       radarr = vhosts.proxy "http://127.0.0.1:7878";
       sonarr = vhosts.proxy "http://127.0.0.1:8989";
-      fbi-requests = vhosts.proxy "http://127.0.0.1:${builtins.toString config.services.ombi.port}";
+      fbi-requests = vhosts.proxy "http://127.0.0.1:${config.portsStr.ombi}";
     };
   };
   systemd.services.radarr.serviceConfig.Slice = "mediamanagement.slice";
