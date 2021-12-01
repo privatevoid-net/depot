@@ -42,6 +42,7 @@ in
         "/".proxyPass = "http://${host}:${port}";
         "= /dashboard".proxyPass = "http://${host}:${port}";
       };
+      extraConfig = "client_max_body_size 4G;";
     };
     "console.object-storage" = vhosts.basic // {
       locations = {
