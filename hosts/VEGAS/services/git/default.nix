@@ -48,6 +48,8 @@ in
     };
   };
 
+  systemd.services.gitea.after = [ "keycloak.service" ];
+
   users.users.git = {
     description = "Git Service";
     home = config.services.gitea.stateDir;
