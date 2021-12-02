@@ -2,7 +2,7 @@
   description = "Private Void system configurations";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
 
     nix-super.url = "git+https://git.privatevoid.net/max/nix-super";
     nix-super.inputs.nix.follows = "nix-super-unstable-repin";
