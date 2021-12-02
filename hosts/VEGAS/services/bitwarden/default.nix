@@ -18,5 +18,10 @@ with tools.nginx;
   systemd.services.vaultwarden.serviceConfig = {
     ReadWriteDirectories = "/srv/storage/private/bitwarden";
   };
-  systemd.services.backup-vaultwarden.environment.DATA_FOLDER = lib.mkForce config.services.vaultwarden.config.dataFolder;
+  systemd.services.backup-vaultwarden = {
+    environment.DATA_FOLDER = lib.mkForce config.services.vaultwarden.config.dataFolder;
+    serviceConfig = {
+      ReadWriteDirectories = "/srv/storage/private/bitwarden";
+    };
+  };
 }
