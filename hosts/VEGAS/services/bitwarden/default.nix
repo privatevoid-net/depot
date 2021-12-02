@@ -6,7 +6,7 @@ with tools.nginx;
   services.nginx.virtualHosts = mappers.mapSubdomains {
     keychain = vhosts.proxy "http://127.0.0.1:${config.portsStr.bitwarden}";
   };
-  services.bitwarden_rs = {
+  services.vaultwarden = {
     enable = true;
     backupDir = "/srv/storage/private/bitwarden/backups";
     config = {
@@ -15,8 +15,8 @@ with tools.nginx;
     };
     #environmentFile = ""; # TODO: agenix
   };
-  systemd.services.bitwarden_rs.serviceConfig = {
+  systemd.services.vaultwarden.serviceConfig = {
     ReadWriteDirectories = "/srv/storage/private/bitwarden";
   };
-  systemd.services.backup-bitwarden_rs.environment.DATA_FOLDER = lib.mkForce config.services.bitwarden_rs.config.dataFolder;
+  systemd.services.backup-vaultwarden.environment.DATA_FOLDER = lib.mkForce config.services.vaultwarden.config.dataFolder;
 }
