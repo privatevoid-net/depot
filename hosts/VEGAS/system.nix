@@ -69,12 +69,6 @@
   system.stateVersion = "21.05";
   services.openssh.passwordAuthentication = false;
 
-  systemd.additionalUpstreamSystemUnits = [
-    "systemd-journald@.service"
-    "systemd-journald@.socket"
-    "systemd-journald-varlink@.socket"
-  ];
-
   nixpkgs.config.allowUnfree = true;
   services.minecraft-server = let
     modpack = fetchTarball {
