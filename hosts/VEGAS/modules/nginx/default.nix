@@ -33,4 +33,5 @@ in
     };
   };
   networking.firewall.allowedTCPPorts = [ 80 443 ];
+  systemd.services.nginx.after = [ "network-online.target" ];
 }
