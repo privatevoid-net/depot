@@ -26,13 +26,11 @@ in
   };
   services.minio = {
     enable = true;
-    # requires https://github.com/NixOS/nixpkgs/pull/123834
-    # rootCredentialsFile = "/dev/null";
+    rootCredentialsFile = config.age.secrets.minio-root-credentials.path;
     dataDir = [ "/srv/storage/objects" ];
     browser = true;
   };
   systemd.services.minio.serviceConfig = {
-    EnvironmentFile = config.age.secrets.minio-root-credentials.path;
     Slice = "remotefshost.slice";
   };
   services.nginx.virtualHosts = mappers.mapSubdomains {
