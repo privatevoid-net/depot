@@ -39,7 +39,6 @@ in
 
   services.hydra = {
     enable = true;
-    dbi = "dbi:Pg:dbname=hydra;host=127.0.0.1;user=hydra;";
     hydraURL = "https://hydra.${domain}";
     port = config.ports.hydra;
     notificationSender = "hydra@${domain}";
