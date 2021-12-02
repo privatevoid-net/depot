@@ -95,7 +95,7 @@
     ExecStart = lib.mkForce "/var/lib/minecraft/start.sh";
   };
 
-  users.users.minecraft.group = "minecraft-sftp";
+  users.users.minecraft.group = lib.mkForce "minecraft-sftp";
   users.groups.minecraft-sftp = {};
   services.openssh.extraConfig = ''
     Match Group minecraft-sftp
