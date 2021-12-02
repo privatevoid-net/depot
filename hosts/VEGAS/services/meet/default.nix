@@ -22,4 +22,5 @@
       Slice = "communications.slice";
     };
   });
+  boot.kernel.sysctl."net.core.rmem_max" = lib.mkForce 10485760;
 }
