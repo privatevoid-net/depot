@@ -11,6 +11,10 @@ in
     group = "root";
     mode = "0400";
   };
+
+  users.users.oauth2_proxy.group = "oauth2_proxy";
+  users.groups.oauth2_proxy = {};
+
   services.oauth2_proxy = {
     enable = true;
     approvalPrompt = "auto";
