@@ -1,8 +1,5 @@
 { config, tools, ... }:
 {
-  imports = [
-    ../../../../modules/backports/coturn-static-auth-secret-file.nix
-  ];
   age.secrets = {
     coturn-static-auth = {
       file = ../../../../secrets/coturn-static-auth.age;
