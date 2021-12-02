@@ -87,6 +87,9 @@ in
       ];
     };
   };
+
+  systemd.services.postfix.after = [ "network-online.target" ];
+
   services.fail2ban.jails.postfix = ''
     enabled = true
   '';
