@@ -52,5 +52,8 @@ in
     addSSL = true;
     enableACME = true;
   };
-  systemd.services.phpfpm-nextcloud.aliases = [ "nextcloud.service" ];
+  systemd.services = {
+    phpfpm-nextcloud.aliases = [ "nextcloud.service" ];
+    nextcloud-setup.after = [ "postgresql.service" ];
+  };
 }
