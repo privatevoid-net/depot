@@ -33,7 +33,21 @@ in
 
   reservePortsFor = [ "hydra" ];
 
-  services.nginx.virtualHosts."hydra.${domain}" = tools.nginx.vhosts.proxy "http://127.0.0.1:${config.portsStr.hydra}";
+  services.nginx.appendHttpConfig = ''
+    limit_req_zone $binary_remote_addr zone=hydra_api_push_limiter:10m rate=1r/m;
+  '';
+  
+  services.nginx.virtualHosts."hydra.${domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy "http://127.0.0.1:${config.portsStr.hydra}") {
+    locations."/api/push" = {
+      proxyPass = "http://127.0.0.1:${config.portsStr.hydra}";
+      extraConfig = ''
+        auth_request off;
+        proxy_method PUT;
+        limit_req zone=hydra_api_push_limiter burst=3 nodelay;
+        limit_req_status 429;
+      '';
+    };
+  };
 
   services.oauth2_proxy.nginx.virtualHosts = [ "hydra.${domain}" ];
 
