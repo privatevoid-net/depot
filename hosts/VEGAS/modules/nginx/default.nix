@@ -21,6 +21,8 @@ in
     };
     appendHttpConfig = ''
       server_names_hash_bucket_size 128;
+      proxy_headers_hash_max_size 4096;
+      proxy_headers_hash_bucket_size 128;
     '';
   };
   services.phpfpm.pools.www = {
