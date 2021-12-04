@@ -3,7 +3,8 @@ with tools.nginx;
 let
   inherit (tools.meta) domain;
   cfg = config.services.ipfs;
-  ipfsApi = pkgs.writeTextDir "api" "/ip4/127.0.0.1/tcp/5001";
+  apiAddress = "/unix/run/ipfs/ipfs-api.sock";
+  ipfsApi = pkgs.writeTextDir "api" apiAddress;
   gwPort = config.portsStr.ipfsGateway;
 in
 {
@@ -19,6 +20,7 @@ in
     startWhenNeeded = false;
     autoMount = true;
 
+    inherit apiAddress;
     gatewayAddress = "/ip4/127.0.0.1/tcp/${gwPort}";
     dataDir = "/srv/storage/ipfs/repo";
     localDiscovery = false;
@@ -60,9 +62,13 @@ in
     ipfs-gateway.enable = false;
   };
 
+  systemd.tmpfiles.rules = [ "d '/run/ipfs' 0750 ${cfg.user} ${cfg.group} - -" ];
+
+
   systemd.services.ipfs = {
     environment.LIBP2P_FORCE_PNET = "1";
     serviceConfig.Slice = "remotefshost.slice";
+    postStart = "chmod 660 /run/ipfs/ipfs-api.sock";
   };
 
   environment.variables.IPFS_PATH = lib.mkForce "${ipfsApi}";
@@ -70,6 +76,8 @@ in
   environment.shellAliases = {
     ipfs-admin = "sudo -u ${cfg.user} env IPFS_PATH=${cfg.dataDir} ipfs";
   };
+
+  users.users.nginx.extraGroups = [ cfg.group ];
 
   services.nginx.virtualHosts = {
     "top-level.${domain}".locations = {
@@ -96,7 +104,7 @@ in
       };
     };
     "ipfs.admin.${domain}" = vhosts.basic // {
-      locations."/api".proxyPass = "http://127.0.0.1:5001";
+      locations."/api".proxyPass = "http://unix:/run/ipfs/ipfs-api.sock:";
       locations."/ipns/webui.ipfs.${domain}".proxyPass = "http://127.0.0.1:${gwPort}/ipns/webui.ipfs.${domain}";
       locations."= /".return = "302 /ipns/webui.ipfs.${domain}";
     };
