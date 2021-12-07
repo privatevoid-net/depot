@@ -15,6 +15,7 @@
       inputs.agenix.nixosModules.age
 
       # Services
+      ./services/api
       ./services/backbone-routing
       ./services/bitwarden
       ./services/cdn-shield
