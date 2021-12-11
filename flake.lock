@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1638319138,
-        "narHash": "sha256-ve33f4nTKQluyvm5URQwL019x0Fnrg8urqzvymNeD+s=",
+        "lastModified": 1638837456,
+        "narHash": "sha256-WHLOxthAGx/wXw3QUa/lFE3mr6cQtnXfFYZ0DNyYwt4=",
         "owner": "ryantm",
         "repo": "agenix",
-        "rev": "52ea2f8c3231cc2b5302fa28c63588aacb77ea29",
+        "rev": "57806bf7e340f4cae705c91748d4fdf8519293a9",
         "type": "github"
       },
       "original": {
@@ -27,11 +27,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1637876519,
-        "narHash": "sha256-5rUyGK65QVrZuxLaoYP3aPMKCJGwvvH+xuJMjr1pgxM=",
+        "lastModified": 1638903228,
+        "narHash": "sha256-mEbLD0A9gp159pFtdK4n1Yp2uFSE1T2nOr8BkfwgrC8=",
         "ref": "master",
-        "rev": "e17af591fc018746e73776401c6ff2bbf3b806f0",
-        "revCount": 243,
+        "rev": "0d11e93f47be21051683e1b38f6b0dcb3f0a71cf",
+        "revCount": 244,
         "type": "git",
         "url": "https://git.privatevoid.net/max/deploy-rs"
       },
@@ -78,11 +78,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1638415301,
-        "narHash": "sha256-iqszstbHaO5PYeBXQf1ukgYj/aq9wznBbZMrtYMZzgI=",
+        "lastModified": 1639223729,
+        "narHash": "sha256-C+OYsFVCNZwzQ4ShMBTJaFS489auGr42cDrceckKpXc=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "de54d513c74bf8f4f3a58954b80b5f690639fe72",
+        "rev": "6fe3b539e057feadbf94e845412f4b438260690b",
         "type": "github"
       },
       "original": {
@@ -125,6 +125,7 @@
       },
       "original": {
         "owner": "numtide",
+        "ref": "v0.5.0",
         "repo": "nar-serve",
         "type": "github"
       }
@@ -136,11 +137,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1637783605,
-        "narHash": "sha256-Gs+mEo8nUky6aHoDktk4D6nR0GGHmJK7pVAgkjRWd7M=",
+        "lastModified": 1638574209,
+        "narHash": "sha256-Dsn7Cljx6dBVsIwd91mvw2Db4uvau79Ga79y7OOf/WI=",
         "ref": "master",
-        "rev": "4f85646457b7c763f7e3c23741231acb60422e06",
-        "revCount": 21,
+        "rev": "bf8be2cfe4ab5dd457ed916958b1255c75584f71",
+        "revCount": 25,
         "type": "git",
         "url": "https://git.privatevoid.net/max/nix-super"
       },
@@ -157,11 +158,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1638447470,
-        "narHash": "sha256-DREkiGilBlNzBqonvVrIBNSsYWv1PZuvfXFhaSGeXsM=",
+        "lastModified": 1639153684,
+        "narHash": "sha256-JMXJBqdxFUSpYsb1GEPoXuc61ie4FO/JzqzQYoBvZjo=",
         "owner": "NixOS",
         "repo": "nix",
-        "rev": "2ff71b021379a2c9bbdcb789a93cdc585b3520ca",
+        "rev": "f24ac3115f154edf72b995cffae6da3793862294",
         "type": "github"
       },
       "original": {
@@ -188,11 +189,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1638371214,
-        "narHash": "sha256-0kE6KhgH7n0vyuX4aUoGsGIQOqjIx2fJavpCWtn73rc=",
+        "lastModified": 1638887115,
+        "narHash": "sha256-emjtIeqyJ84Eb3X7APJruTrwcfnHQKs55XGljj62prs=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "a640d8394f34714578f3e6335fc767d0755d78f9",
+        "rev": "1bd4bbd49bef217a3d1adea43498270d6e779d65",
         "type": "github"
       },
       "original": {
