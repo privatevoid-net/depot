@@ -8,11 +8,31 @@ let
   port = builtins.head (builtins.tail addrSplit);
 in
 {
+  services.nginx.upstreams.nar-serve.extraConfig = ''
+    random;
+    server 127.0.0.1:${config.portsStr.nar-serve-self} fail_timeout=0;
+    server 127.0.0.1:${config.portsStr.nar-serve-nixos-org} fail_timeout=0;
+  '';
+  services.nginx.appendHttpConfig = ''
+    proxy_cache_path /var/cache/nginx/nixstore levels=1:2 keys_zone=nixstore:10m max_size=10g inactive=24h use_temp_path=off;
+  '';
   services.nginx.virtualHosts."cache.${tools.meta.domain}" = vhosts.basic // {
     locations = {
       "= /".return = "302 /404";
       "/".proxyPass = "http://${host}:${port}/nix-store$request_uri";
-      "/nix/store".proxyPass = "http://127.0.0.1:${builtins.toString config.services.nar-serve.port}";
+      "/nix/store" = {
+        proxyPass = "http://nar-serve";
+        extraConfig = ''
+          proxy_next_upstream error http_500 http_404;
+        '';
+      };
     };
+    extraConfig = ''
+      proxy_cache nixstore;
+      proxy_cache_use_stale error timeout http_500 http_502;
+      proxy_cache_lock on;
+      proxy_cache_key $request_uri;
+      proxy_cache_valid 200 24h;
+    '';
   };
 }
