@@ -72,18 +72,10 @@
 
   nixpkgs.config.allowUnfree = true;
   services.minecraft-server = let
-    modpack = fetchTarball {
-      url = "https://bafybeiar4mnqvbwkb4glerj6yibccgscbff7nzeojf6px3oapxn7f7hymq.ipfs.privatevoid.net/modpack.tar.gz";
-      sha256 = "sha256:1iqd6mlknbq4r3iqpfsibp8h2kknaaqkqarnw03z2s61ivsqq7lc";
-    };
   in {
     enable = true;
     eula = true;
     openFirewall = true;
-    package = pkgs.minecraft-server.overrideAttrs (_: {
-      version = "forge-1.12.2";
-      src = "${modpack}/forge-1.12.2-14.23.5.2796-universal.jar"; # HACK
-    });
   };
   systemd.services.minecraft-server.path = [ pkgs.jre8 ];
   systemd.services.minecraft-server.serviceConfig = {
