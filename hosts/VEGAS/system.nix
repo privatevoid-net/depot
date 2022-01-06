@@ -22,8 +22,6 @@
       ./services/dns
       ./services/fbi
       ./services/bitwarden
-      # TODO: fix this one
-      ./services/forum
       ./services/git
       ./services/hydra
       ./services/hyprspace
