@@ -47,34 +47,10 @@
     in {
       nixosModules = aspect.modules;
       nixosConfigurations = lib.genAttrs [
-        "styx"
-        "meet" 
-        "git"
         "VEGAS"
       ] mkNixOS;
 
       deploy.nodes = with deploy-rs-lib; {
-        styx = {
-          hostname = "styx.services.privatevoid.net";
-          profiles.system = {
-            user = "root";
-            path = activate.nixos self.nixosConfigurations.styx;
-          };
-        };
-        meet = {
-          hostname = "meet.services.privatevoid.net";
-          profiles.system = {
-            user = "root";
-            path = activate.nixos self.nixosConfigurations.meet;
-          };
-        };
-        git = {
-          hostname = "git.services.privatevoid.net";
-          profiles.system = {
-            user = "root";
-            path = activate.nixos self.nixosConfigurations.git;
-          };
-        };
         VEGAS = {
           hostname = "vegas.backbone.privatevoid.net";
           profiles.system = {

@@ -3,9 +3,6 @@ let
 in with tools.dns; {
 
   # NixOS machines
-  styx = import ./styx tools;
-  meet = import ./meet tools;
-  git = import ./git tools;
   VEGAS = import ./VEGAS tools;
 
   # Non-NixOS machine metadata
