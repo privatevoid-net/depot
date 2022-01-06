@@ -9,6 +9,7 @@
     prosody.enable = true;
     config.p2p.enabled = false;
   };
+  services.jitsi-videobridge.openFirewall = true;
   services.nginx.virtualHosts."meet.${tools.meta.domain}" = {
     enableACME = true;
     forceSSL = true;
