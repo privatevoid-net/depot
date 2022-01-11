@@ -20,6 +20,9 @@
 
     nar-serve.url = "github:numtide/nar-serve/v0.5.0";
     nar-serve.inputs.nixpkgs.follows = "nixpkgs";
+
+    dream2nix.url = "github:nix-community/dream2nix";
+    dream2nix.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
@@ -63,6 +66,10 @@
 
       packages.${system} = import ./packages {
         inherit pkgs inputs;
+      };
+
+      apps.${system} = {
+        dream2nix = inputs.dream2nix.defaultApp.${system};
       };
 
       defaultApp.${system} = {
