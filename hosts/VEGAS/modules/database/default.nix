@@ -7,4 +7,11 @@
     package = pkgs.postgresql_12;
     dataDir = "/srv/storage/database/postgres-12/data";
   };
+
+  services.mysql = {
+    enable = true;
+    bind = "127.0.0.1";
+    package = pkgs.mariadb;
+    dataDir = "/srv/storage/database/mariadb/data";
+  };
 }
