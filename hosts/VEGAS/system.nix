@@ -18,10 +18,10 @@
       ./services/api
       ./services/backbone-routing
       ./services/bitwarden
+      ./services/blog
       ./services/cdn-shield
       ./services/dns
       ./services/fbi
-      ./services/bitwarden
       ./services/git
       ./services/hydra
       ./services/hyprspace

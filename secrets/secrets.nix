@@ -6,6 +6,7 @@ in with hosts;
 {
   "acme-dns-key.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "coturn-static-auth.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "ghost-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "gitea-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "hydra-bincache.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "hydra-builder-key.age".publicKeys = max ++ map systemKeys [ VEGAS ];
