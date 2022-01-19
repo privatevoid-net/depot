@@ -1,4 +1,4 @@
-{ config, lib, pkgs, tools, ... }:
+{ config, inputs, lib, pkgs, tools, ... }:
 with tools.nginx;
 let
   addrSplit' = builtins.split ":" config.services.minio.listenAddress;
@@ -7,7 +7,7 @@ let
   host = if host' == "" then "127.0.0.1" else host';
   port = builtins.head (builtins.tail addrSplit);
 
-  minioConsole = pkgs.callPackage ./console.nix {};
+  minioConsole = inputs.self.packages.${pkgs.system}.minio-console;
 in
 {
   reservePortsFor = [ "minioConsole" ];
