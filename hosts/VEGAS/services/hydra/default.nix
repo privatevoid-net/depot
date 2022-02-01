@@ -91,6 +91,6 @@ in
 
   programs.ssh.knownHosts.git = {
     hostNames = [ "git.${domain}" ];
-    publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC0rChVEO9Qt7hr7vyiyOP7N45CjaxssFCZNOPCszEQi";
+    publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICz2nGA+Y4OxhMKsV6vKIns3hOoBkK557712h7FfWXcE";
   };
 }

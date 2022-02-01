@@ -9,6 +9,7 @@ in with hosts;
   "ghost-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "gitlab-initial-root-password.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "gitlab-openid-secret.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "gitlab-runner-registration.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "gitlab-secret-db.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "gitlab-secret-jws.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "gitlab-secret-otp.age".publicKeys = max ++ map systemKeys [ VEGAS ];
