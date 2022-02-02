@@ -7,6 +7,8 @@ let
 
     inherit domain;
 
+    autoDomain = name: "${builtins.hashString "md5" name}.dev.${domain}";
+
     ldap = {
       server = with self.ldap.server; {
         # TODO: unhardcode everything here
