@@ -36,6 +36,7 @@
       ./services/nix/nar-serve.nix
       ./services/object-storage
       ./services/openvpn
+      ./services/sips
       ./services/sso
       ./services/vault
       ./services/warehouse
