@@ -71,6 +71,22 @@ in
     postStart = "chmod 660 /run/ipfs/ipfs-api.sock";
   };
 
+  systemd.slices.remotefshost.sliceConfig = {
+    IOWeight = 5;
+    IOReadIOPSMax = [ 
+      "/dev/sda 100"
+      "/dev/sdb 100"
+    ];
+    IOWriteIOPSMax = [ 
+      "/dev/sda 100"
+      "/dev/sdb 100"
+    ];
+    IODviceLatencyTargetSec = [ 
+      "/dev/sda 500ms"
+      "/dev/sdb 500ms"
+    ];
+  };
+
   environment.variables.IPFS_PATH = lib.mkForce "${ipfsApi}";
 
   environment.shellAliases = {
