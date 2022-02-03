@@ -16,7 +16,7 @@ in {
       rdns = false;
       forwardable = true;
       default_ccache_name = "KEYRING:persistent:%{uid}";
-      pkinit_anchors = "FILE:${inputs.self.packages.x86_64-linux.privatevoid-smart-card-ca-bundle}";
+      pkinit_anchors = "FILE:${inputs.self.packages.${pkgs.system}.privatevoid-smart-card-ca-bundle}";
     };
     realms = {
       "${orgRealm}" = rec {

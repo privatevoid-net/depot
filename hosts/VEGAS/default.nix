@@ -25,5 +25,6 @@ tools: {
     subdomain = "backbone";
   };
 
+  arch = "x86_64";
   nixos = import ./system.nix;
 }
