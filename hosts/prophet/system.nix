@@ -6,9 +6,12 @@
       # Hardware
       ./hardware-configuration.nix
 
+      ./modules/nginx
       inputs.agenix.nixosModules.age
 
+      ./services/meet
       aspect.modules.ipfs
+
 
     ]
     ++ aspect.sets.server;
