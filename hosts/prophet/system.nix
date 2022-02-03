@@ -8,6 +8,8 @@
 
       inputs.agenix.nixosModules.age
 
+      aspect.modules.ipfs
+
     ]
     ++ aspect.sets.server;
 
