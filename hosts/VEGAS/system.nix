@@ -22,7 +22,7 @@
       ./services/cdn-shield
       ./services/dns
       ./services/fbi
-      ./services/git
+      ./services/gitlab
       ./services/hydra
       ./services/hyprspace
       ./services/ipfs
