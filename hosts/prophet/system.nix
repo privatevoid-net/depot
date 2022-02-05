@@ -9,6 +9,7 @@
       ./modules/nginx
       inputs.agenix.nixosModules.age
 
+      ./services/cdn-shield
       ./services/meet
       aspect.modules.hyprspace
       aspect.modules.ipfs

@@ -44,6 +44,7 @@ in
 {
   services.bind.extraConfig = builtins.concatStringsSep "\n" ([
     (externalSlave { name = domain; notify = "explicit"; alsoNotify = [ "116.202.226.86" ]; })
+    (externalSlave { name = "imagine-using-oca.ml"; notify = "explicit"; alsoNotify = [ "116.202.226.86" ]; })
     (externalSlave { name = "animus.com"; masters = [ "116.202.226.86" ]; })
   ] ++ map internalSlave [
     "virtual-machines"
