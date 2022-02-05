@@ -12,10 +12,10 @@ tools: {
     };
   };
 
-#  hypr = {
-#    id = "";
-#    addr = "10.100.3.9";
-#  };
+  hypr = {
+    id = "QmbrAHuh4RYcyN9fWePCZMVmQjbaNXtyvrDCWz4VrchbXh";
+    addr = "10.100.3.9";
+  };
 
   enterprise = {
     subdomain = "node";

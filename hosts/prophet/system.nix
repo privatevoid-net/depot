@@ -10,6 +10,7 @@
       inputs.agenix.nixosModules.age
 
       ./services/meet
+      aspect.modules.hyprspace
       aspect.modules.ipfs
 
 
