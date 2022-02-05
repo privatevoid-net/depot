@@ -2,18 +2,24 @@
 
 buildGoModule rec {
   pname = "hyprspace";
-  version = "0.1.7";
+  version = "0.2.2";
 
   propagatedBuildInputs = lib.optional stdenv.isDarwin iproute2mac;
+
+  patches = [
+    ./0001-Lain-ipfs-bootstrap-nodes.patch
+    ./0002-Remove-quic-transport-for-Lain-ipfs.patch
+    ./0003-Remove-dep-from-go.mod.patch
+  ];
 
   src = fetchFromGitHub {
     owner = pname;
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-Ecdxs6see4uexY6DatZ/VSGgWR81zRjo3AeAsXSjJ4A=";
+    sha256 = "sha256-UlIQCy4moW58tQ1dqxrPsU5LN1Bs/Jy5X+2CEmXdYIk=";
   };
 
-  vendorSha256 = "sha256-nFiBHhtvTu9Ya6n1KUF+pOXrksHMOph7ABVtGSWVWlo=";
+  vendorSha256 = "sha256-8j9M8LrcqiPShCCNOmmJoY6wclHRiX2xOJH/wvlwvwY=";
 
   meta = with lib; {
     description = "A Lightweight VPN Built on top of Libp2p for Truly Distributed Networks.";
