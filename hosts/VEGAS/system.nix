@@ -27,7 +27,6 @@
       ./services/hyprspace
       ./services/ipfs
       ./services/jokes
-      ./services/meet
       ./services/nextcloud
       ./services/nfs
       ./services/mail

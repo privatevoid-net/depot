@@ -7,7 +7,7 @@ let
     enterprise = import ./enterprise;
     fail2ban = import ./fail2ban;
     hydra = import ./hydra;
-    ipfs-lain = import ./ipfs-lain;
+    ipfs = import ./ipfs;
     nix-builder = import ./nix-builder;
     nix-config = import ./nix-config;
     nix-config-server = import ./nix-config/server.nix;

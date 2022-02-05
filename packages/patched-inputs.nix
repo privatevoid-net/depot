@@ -1,9 +1,9 @@
 let tools = import ./lib/tools.nix;
 in with tools;
 { inputs, pkgs, ... }: rec {
-  deploy-rs = inputs.deploy-rs.packages.x86_64-linux.deploy-rs;
+  deploy-rs = inputs.deploy-rs.packages.${pkgs.system}.deploy-rs;
 
-  nix-super = inputs.nix-super.defaultPackage.x86_64-linux;
+  nix-super = inputs.nix-super.defaultPackage.${pkgs.system};
 
-  agenix = inputs.agenix.packages.x86_64-linux.agenix.override { nix = nix-super; };
+  agenix = inputs.agenix.packages.${pkgs.system}.agenix.override { nix = nix-super; };
 }

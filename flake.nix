@@ -26,59 +26,70 @@
   };
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
-      inherit (nixpkgs) lib;
-      system = "x86_64-linux";
-      pkgs = import nixpkgs {
+      systems = [ "x86_64-linux" "aarch64-linux" ];
+
+      forSystems = nixpkgs.lib.genAttrs systems;
+
+      nixpkgsFor = system: import nixpkgs {
         inherit system;
       };
 
-      deploy-rs-lib = inputs.deploy-rs.lib.${system};
-      agenixModule = inputs.agenix.nixosModules.age;
+      inherit (nixpkgs) lib;
 
       aspect = import ./modules inputs;
       hosts = import ./hosts;
+
+      nixosHosts' = lib.filterAttrs (_: host: host ? nixos) hosts;
+
+      nixosHosts = lib.attrNames nixosHosts';
+
+      meta = import ./tools/meta.nix;
+
       specialArgs = {
         inherit inputs hosts aspect;
         toolsets = import ./tools;
       };
-      mkNixOS' = lib: name: lib.nixosSystem {
-        inherit system;
+      mkNixOS' = lib: name: let host = hosts.${name}; in lib.nixosSystem {
         inherit specialArgs;
-        modules = [ hosts."${name}".nixos ./tools/inject.nix ];
+        system = "${host.arch}-linux";
+        modules = [ host.nixos ./tools/inject.nix ];
       };
       mkNixOS = mkNixOS' lib;  
-    in {
-      nixosModules = aspect.modules;
-      nixosConfigurations = lib.genAttrs [
-        "VEGAS"
-      ] mkNixOS;
 
-      deploy.nodes = with deploy-rs-lib; {
-        VEGAS = {
-          hostname = "vegas.backbone.privatevoid.net";
-          profiles.system = {
-            user = "root";
-            sshUser = "deploy";
-            path = activate.nixos self.nixosConfigurations.VEGAS;
-          };
+      mkDeploy = name: let
+        host = hosts.${name};
+        subdomain = host.enterprise.subdomain or "services";
+        deploy-rs = inputs.deploy-rs.lib."${host.arch}-linux";
+      in {
+        hostname = "${lib.toLower name}.${subdomain}.${meta.domain}";
+        profiles.system = {
+          user = "root";
+          sshUser = "deploy";
+          path = deploy-rs.activate.nixos self.nixosConfigurations.${name};
         };
       };
 
-      packages.${system} = import ./packages {
-        inherit pkgs inputs;
-      };
+      mkDeployments = hosts: overrides: lib.genAttrs hosts
+        (host: mkDeploy host // (overrides.${host} or {}) );
 
-      apps.${system} = {
+    in {
+      nixosModules = aspect.modules;
+
+      nixosConfigurations = lib.genAttrs nixosHosts mkNixOS;
+
+      deploy.nodes = mkDeployments nixosHosts {};
+
+      packages = forSystems (system: import ./packages {
+        inherit inputs;
+        pkgs = nixpkgsFor system;
+      });
+
+      apps = forSystems (system: {
         dream2nix = inputs.dream2nix.defaultApp.${system};
-      };
-
-      defaultApp.${system} = {
-        type = "app";
-        program = self.packages.${system}.flake-installer.outPath;
-      };
+      });
 
       hydraJobs = {
-        systems.${system} = lib.mapAttrs (_: x: x.config.system.build.toplevel) self.nixosConfigurations;
+        systems = lib.mapAttrs (_: x: x.config.system.build.toplevel) self.nixosConfigurations;
         packages = self.packages;
       };
     };

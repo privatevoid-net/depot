@@ -19,6 +19,7 @@ in with hosts;
   "hydra-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "hydra-s3.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "hyprspace-key-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "ipfs-swarm-key.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "keycloak-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "matrix-appservice-discord-token.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "minio-console-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
@@ -32,6 +33,6 @@ in with hosts;
   "synapse-keys.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "synapse-ldap.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "synapse-turn.age".publicKeys = max ++ map systemKeys [ VEGAS ];
-  "wireguard-key-wgautobahn.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "vpn-host-key-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "wireguard-key-wgautobahn.age".publicKeys = max ++ map systemKeys [ VEGAS ];
 }
