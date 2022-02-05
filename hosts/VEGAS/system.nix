@@ -19,7 +19,6 @@
       ./services/backbone-routing
       ./services/bitwarden
       ./services/blog
-      ./services/cdn-shield
       ./services/dns
       ./services/fbi
       ./services/gitlab
