@@ -34,12 +34,12 @@ in rec {
 
     server = [
       deploy-rs-receiver
+      fail2ban
       nix-config-server
       system-recovery
     ] ++ base ++ networking;
 
     backbone = server ++ [
-      fail2ban
       sss
     ];
   };
