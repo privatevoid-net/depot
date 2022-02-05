@@ -1,7 +1,7 @@
 { pkgs, inputs, lib, hosts, config, ... }:
 let
   inherit (config.networking) hostName;
-  inherit (inputs.self.packages.x86_64-linux) hyprspace;
+  inherit (inputs.self.packages.${pkgs.system}) hyprspace;
   hyprspaceCapableNodes = lib.filterAttrs (_: host: host ? hypr) hosts;
   peersFormatted = builtins.mapAttrs (_: x: { "${x.hypr.addr}".id = x.hypr.id; }) hyprspaceCapableNodes;
   peersFiltered = lib.filterAttrs (name: _: name != hostName) peersFormatted;
@@ -25,7 +25,7 @@ let
 in {
   networking.hosts = lib.mapAttrs' (k: v: lib.nameValuePair (v.hypr.addr) ([k "${k}.hypr"])) hyprspaceCapableNodes;
   age.secrets.hyprspace-key = {
-    file = ../../../../secrets/hyprspace-key- + "${hostName}.age";
+    file = ../../secrets/hyprspace-key- + "${hostName}.age";
     mode = "0400";
   };
   systemd.services.hyprspace = {
@@ -44,7 +44,7 @@ in {
 
       chmod 0400 ${runConfig}
     '';
-    path = [ pkgs.iproute2 ];
+    environment.HYPRSPACE_SWARM_KEY = config.age.secrets.ipfs-swarm-key.path;
     serviceConfig = {
       ExecStart = "${hyprspace}/bin/hyprspace up hyprspace -f -c ${runConfig}";
       ExecStop = "${hyprspace}/bin/hyprspace down hyprspace";

@@ -24,7 +24,6 @@
       ./services/fbi
       ./services/gitlab
       ./services/hydra
-      ./services/hyprspace
       ./services/ipfs
       ./services/jokes
       ./services/nextcloud
@@ -41,6 +40,7 @@
       ./services/vault
       ./services/warehouse
       ./services/websites
+      aspect.modules.hyprspace
     ]
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin
