@@ -13,7 +13,7 @@ in {
   systemd.services.nix-ipfs-cache = {
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
-      ExecStart = "${py3}/bin/python3 -u ${./nix-ipfs-cache.py} ${port}";
+      ExecStart = "${py3}/bin/python3 -u ${./reflex.py} ${port}";
       DynamicUser = true;
       SupplementaryGroups = [ "ipfs" ];
       CacheDirectory = "nix-ipfs-cache";

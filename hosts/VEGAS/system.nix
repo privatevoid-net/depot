@@ -30,7 +30,6 @@
       ./services/mail
       ./services/matrix
       ./services/nix/binary-cache.nix
-      ./services/nix/ipfs-cache.nix
       ./services/nix/nar-serve.nix
       ./services/object-storage
       ./services/openvpn
