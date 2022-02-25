@@ -30,6 +30,11 @@ in
   minio-console = pkgs.callPackage ./servers/minio-console { };
 
   privatevoid-smart-card-ca-bundle = pkgs.callPackage ./data/privatevoid-smart-card-certificate-authority-bundle.nix { };
+  
+  reflex-cache = poetry2nix.mkPoetryApplication {
+    projectDir = ./servers/reflex-cache;
+    meta.mainProgram = "reflex";
+  };
 
   sips = pkgs.callPackage ./servers/sips { };
 }

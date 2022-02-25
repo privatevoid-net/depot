@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "reflex-cache"
+version = "0.1.0"
+description = "Controller for Nix binary caches on IPFS"
+authors = ["Max <max@privatevoid.net>"]
+license = "AGPL-3.0"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "^2.27.1"
+requests-unixsocket = "^0.3.0"
+multiaddr = "^0.0.9"
+py-multibase = "^1.0.3"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+reflex = "reflex_cache.main:main"
