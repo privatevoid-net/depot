@@ -5,6 +5,9 @@ let
     systems = [ system ];
     config.overridesDirs = [ ./dream2nix-overrides ];
   };
+  poetry2nix = pkgs.poetry2nix.overrideScope' (final: prev: {
+    defaultPoetryOverrides = prev.defaultPoetryOverrides.extend (import ./poetry2nix-overrides);
+  });
 in
 {
   ghost = (dream2nix.riseAndShine {
