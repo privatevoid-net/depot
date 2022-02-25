@@ -1,11 +1,6 @@
-{ config, pkgs, tools, ... }:
+{ config, inputs, pkgs, tools, ... }:
 
 let
-  py3 = pkgs.python3.withPackages (ps: with ps; [
-    requests
-    requests-unixsocket
-  ]);
-
   port = config.portsStr.nixIpfs;
 in {
   reservePortsFor = [ "nixIpfs" ];
@@ -13,10 +8,14 @@ in {
   systemd.services.nix-ipfs-cache = {
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
-      ExecStart = "${py3}/bin/python3 -u ${./reflex.py} ${port}";
+      ExecStart = "${inputs.self.packages.${pkgs.system}.reflex-cache}/bin/reflex";
       DynamicUser = true;
       SupplementaryGroups = [ "ipfs" ];
       CacheDirectory = "nix-ipfs-cache";
+    };
+    environment = {
+      REFLEX_PORT = port;
+      IPFS_API = config.services.ipfs.apiAddress;
     };
   };
 
