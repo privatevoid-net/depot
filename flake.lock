@@ -136,11 +136,11 @@
     "lowdown-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1633514407,
-        "narHash": "sha256-Dw32tiMjdK9t3ETl5fzGrutQTzh2rufgZV4A/BbxuD4=",
+        "lastModified": 1645605786,
+        "narHash": "sha256-c/9f25MypimMIjfcOXmn2pEpAAzP/Wzzjs3LodlvfAA=",
         "owner": "kristapsdz",
         "repo": "lowdown",
-        "rev": "d2c2b44ff6c27b936ec27358a2653caaef8f73b8",
+        "rev": "7a43098eb429a5f9ce8a996f75d12860035f2690",
         "type": "github"
       },
       "original": {
@@ -204,43 +204,24 @@
     },
     "nix-super": {
       "inputs": {
-        "nix": [
-          "nix-super-unstable-repin"
-        ]
-      },
-      "locked": {
-        "lastModified": 1642636805,
-        "narHash": "sha256-6tPugqYR7PBs2qh0mq+V9dj4+P6o0whcgSdGsk73/4A=",
-        "ref": "master",
-        "rev": "8774de430bfb2e9ede30c9756695970210ec34e9",
-        "revCount": 39,
-        "type": "git",
-        "url": "https://git.privatevoid.net/max/nix-super"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://git.privatevoid.net/max/nix-super"
-      }
-    },
-    "nix-super-unstable-repin": {
-      "inputs": {
         "lowdown-src": "lowdown-src",
         "nixpkgs": [
           "nixpkgs"
-        ]
+        ],
+        "nixpkgs-regression": "nixpkgs-regression"
       },
       "locked": {
-        "lastModified": 1642583127,
-        "narHash": "sha256-WyCL2SDApuIjQngO0UozOBI/iDUUoDW1QEQ/MUUu/Ec=",
-        "owner": "NixOS",
-        "repo": "nix",
-        "rev": "bc443511eb65420b51d10708e25427fe50de37a8",
-        "type": "github"
+        "lastModified": 1645553076,
+        "narHash": "sha256-eiTGU7gI41iU9rjsecPF2VyPmF7FOuu5LgtD9gGT740=",
+        "ref": "master",
+        "rev": "ee2038b6286c90caa441ab11322168703c01e3b5",
+        "revCount": 11559,
+        "type": "git",
+        "url": "https://git.privatevoid.net/max/nix-super-fork"
       },
       "original": {
-        "owner": "NixOS",
-        "repo": "nix",
-        "type": "github"
+        "type": "git",
+        "url": "https://git.privatevoid.net/max/nix-super-fork"
       }
     },
     "nixpkgs": {
@@ -257,6 +238,21 @@
         "ref": "nixpkgs-unstable",
         "repo": "nixpkgs",
         "type": "github"
+      }
+    },
+    "nixpkgs-regression": {
+      "locked": {
+        "lastModified": 1643052045,
+        "narHash": "sha256-uGJ0VXIhWKGXxkeNnq4TvV3CIOkUJ3PAoLZ3HMzNVMw=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "215d4d0fd80ca5163643b03a33fde804a29cc1e2",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "rev": "215d4d0fd80ca5163643b03a33fde804a29cc1e2",
+        "type": "indirect"
       }
     },
     "nixpkgs_2": {
@@ -316,7 +312,6 @@
         "home-manager": "home-manager",
         "nar-serve": "nar-serve",
         "nix-super": "nix-super",
-        "nix-super-unstable-repin": "nix-super-unstable-repin",
         "nixpkgs": "nixpkgs_2"
       }
     },
