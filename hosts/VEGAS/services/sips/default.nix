@@ -27,7 +27,7 @@ in
 
   systemd.services.sips = {
     wantedBy = [ "multi-user.target" ];
-    after = [ "network.target" ];
+    after = [ "network.target" "postgresql.service" ];
     requires = [ "sips-ipfs-api-proxy.service" ]; 
     serviceConfig = {
       ExecStart = "${sips}/bin/sips --dbdriver postgres --db \"${connString}\" --addr 127.0.0.1:${config.portsStr.sipsInternal} --api http://127.0.0.1:${config.portsStr.sipsIpfsApiProxy} --apitimeout 604800s";
