@@ -30,7 +30,7 @@ in {
   };
   systemd.services.hyprspace = {
     enable = true;
-    after = [ "network-online.target" ];
+    after = [ "network-online.target" "ipfs.service" ];
     wantedBy = [ "multi-user.target" ];
     preStart = ''
       test -e ${runConfig} && rm ${runConfig}
