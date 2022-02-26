@@ -8,7 +8,7 @@ super: rec {
   kerberized-dnsutils = kerberized-bind.dnsutils;
   kerberized-dig = kerberized-bind.dnsutils;
 
-  hydra = (patch super.hydra-unstable "patches/base/hydra").override { nix = super.flakePackages.nix-super; };
+  hydra = (patch super.hydra-unstable "patches/base/hydra").override { nix = super.nix_2_4; };
 
   lain-ipfs = patch-rename (super.ipfs_latest or super.ipfs) "lain-ipfs" "patches/base/ipfs";
 
