@@ -66,26 +66,4 @@
 
   system.stateVersion = "21.05";
   services.openssh.passwordAuthentication = false;
-
-  nixpkgs.config.allowUnfree = true;
-  services.minecraft-server = let
-  in {
-    enable = true;
-    eula = true;
-    openFirewall = true;
-  };
-  systemd.services.minecraft-server.path = [ pkgs.jre8 ];
-  systemd.services.minecraft-server.serviceConfig = {
-    ExecStart = lib.mkForce "/var/lib/minecraft/start.sh";
-  };
-
-  users.users.minecraft.group = lib.mkForce "minecraft-sftp";
-  users.groups.minecraft-sftp = {};
-  services.openssh.extraConfig = ''
-    Match Group minecraft-sftp
-      ChrootDirectory /srv/minecraft-cc-sftp
-      ForceCommand internal-sftp -u 0002
-      AllowTcpForwarding no
-      X11Forwarding no
-  '';
 }
