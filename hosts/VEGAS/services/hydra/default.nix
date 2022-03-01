@@ -84,7 +84,7 @@ in
   );
 
   nix.extraOptions = lib.mkForce ''
-    allowed-uris = https://git.${domain}
+    allowed-uris = https://git.${domain} https://github.com
     keep-outputs = true
     keep-derivations = true
   '';
