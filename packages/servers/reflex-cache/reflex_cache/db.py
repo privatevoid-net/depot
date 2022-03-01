@@ -10,12 +10,13 @@ class ReflexDB:
     def __init__(self, cacheDir):
         self.__cacheDir = cacheDir
         self.__lock = Lock()
-        
+
         # initialize DB schema
         with self.getcon() as (con, cur):
-            cur.execute("CREATE TABLE IF NOT EXISTS NarToIpfs (nar text primary key, ipfs text)")
+            cur.execute(
+                "CREATE TABLE IF NOT EXISTS NarToIpfs (nar text primary key, ipfs text)"
+            )
             con.commit()
-
 
     @contextlib.contextmanager
     def getcon(self):
@@ -30,7 +31,9 @@ class ReflexDB:
     @lru_cache(maxsize=65536)
     def __get_path_cached(self, narPath):
         with self.getcon() as (con, cur):
-            for (nar, ipfs) in cur.execute("SELECT nar, ipfs FROM NarToIpfs WHERE nar=:nar", {"nar": narPath}):
+            for (nar, ipfs) in cur.execute(
+                "SELECT nar, ipfs FROM NarToIpfs WHERE nar=:nar", {"nar": narPath}
+            ):
                 return ipfs
             # HACK: lru_cache does not cache results if an exception occurs
             # since we don't want to cache empty query results, we make use of this behavior
@@ -44,5 +47,8 @@ class ReflexDB:
 
     def set_path(self, narPath, ipfsPath):
         with self.getcon() as (con, cur):
-            cur.execute("INSERT INTO NarToIpfs VALUES (:nar, :ipfs)", {"nar": narPath, "ipfs": ipfsPath})
+            cur.execute(
+                "INSERT INTO NarToIpfs VALUES (:nar, :ipfs)",
+                {"nar": narPath, "ipfs": ipfsPath},
+            )
             con.commit()

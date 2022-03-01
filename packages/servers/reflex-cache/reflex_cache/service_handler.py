@@ -1,3 +1,4 @@
+import base64
 import re
 from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler
@@ -13,18 +14,20 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
     _workSet = set()
     _workSetLock = Lock()
     _executor_nar = ThreadPoolExecutor(8)
-    #_executor_narinfo = ThreadPoolExecutor(16) # for narinfo uploads - TODO
-    
+    # _executor_narinfo = ThreadPoolExecutor(16) # for narinfo uploads - TODO
+
     _db = db.ReflexDB(util.envOr("CACHE_DIRECTORY", "/var/tmp"))
 
-    _nix = nix_cache.NixCacheFetcher(util.envOr("NIX_CACHES","https://cache.nixos.org").split(" "))
+    _nix = nix_cache.NixCacheFetcher(
+        util.envOr("NIX_CACHES", "https://cache.nixos.org").split(" ")
+    )
 
     _ipfs = ipfs.IPFSController(Multiaddr(util.envOrRaise("IPFS_API")), _nix, _db)
-    
+
     def do_HEAD(self):
         if self.path.endswith(".narinfo"):
             print(f"NAR info request: {self.path}")
-            code, content = self._nix.try_all("head",self.path)
+            code, content = self._nix.try_all("head", self.path)
             self.send_response(code)
             self.end_headers()
         else:
@@ -47,13 +50,17 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
                     for (itemNar, itemFuture) in self._workSet:
                         if itemNar == self.path:
                             f = itemFuture
-                            print(f"IPFS fetch task for {self.path} already being processed")
+                            print(
+                                f"IPFS fetch task for {self.path} already being processed"
+                            )
                             found = True
                             break
 
                     if not found:
                         print(f"Creating new IPFS fetch task for {self.path}")
-                        f = self._executor_nar.submit(self._ipfs.ipfs_fetch_task, self.path)
+                        f = self._executor_nar.submit(
+                            self._ipfs.ipfs_fetch_task, self.path
+                        )
                         self._workSet.add((self.path, f))
 
                 resultNar, code, resultHash = f.result()
@@ -75,10 +82,12 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
             self.send_response(302)
 
             # not used for auth, but for defining a redirect target
-            auth = self.headers.get('Authorization')
-            if auth != None:
+            auth = self.headers.get("Authorization")
+            if auth:
                 try:
-                    decoded1 = base64.b64decode(auth.removeprefix("Basic ")).removesuffix(b":")
+                    decoded1 = base64.b64decode(
+                        auth.removeprefix("Basic ")
+                    ).removesuffix(b":")
                     if decoded1.isdigit():
                         redirect = f"http://127.0.0.1:{decoded1.decode('utf-8')}"
                     else:
@@ -88,21 +97,23 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
             else:
                 redirect = "http://127.0.0.1:8080"
 
-            self.send_header('Location', f'{redirect}/ipfs/{resultHash}')
-            self.send_header('X-Ipfs-Path', f'/ipfs/{resultHash}')
+            self.send_header("Location", f"{redirect}/ipfs/{resultHash}")
+            self.send_header("X-Ipfs-Path", f"/ipfs/{resultHash}")
             self.end_headers()
             return
 
         elif self.path.endswith(".narinfo"):
             print(f"NAR info request: {self.path}")
-            code, content = self._nix.try_all("get",self.path)
+            code, content = self._nix.try_all("get", self.path)
             self.send_response(code)
             self.end_headers()
             if code == 200:
                 self.wfile.write(content)
-                if match := re.search('URL: (nar/[a-z0-9]*\.nar.*)', content.decode("utf-8")):
+                if match := re.search(
+                    "URL: (nar/[a-z0-9]*\\.nar.*)", content.decode("utf-8")
+                ):
                     nar = f"/{match.group(1)}"
-                    if self._db.get_path(nar) == None:
+                    if not self._db.get_path(nar):
                         with self._workSetLock:
                             found = False
                             for (itemNar, itemFuture) in self._workSet:
@@ -112,7 +123,9 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
 
                             if not found and len(self._workSet) < 8:
                                 print(f"Pre-flight: creating IPFS fetch task for {nar}")
-                                f = self._executor_nar.submit(self._ipfs.ipfs_fetch_task, nar)
+                                f = self._executor_nar.submit(
+                                    self._ipfs.ipfs_fetch_task, nar
+                                )
                                 self._workSet.add((nar, f))
             return
 
