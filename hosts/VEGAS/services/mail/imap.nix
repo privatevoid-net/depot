@@ -62,4 +62,7 @@ in {
       auth_mechanisms = plain login
     '';
   };
+  services.fail2ban.jails.dovecot = ''
+    enabled = true
+  '';
 }
