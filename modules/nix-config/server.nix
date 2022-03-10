@@ -15,7 +15,7 @@ in {
       flake-registry = https://git.${tools.meta.domain}/private-void/registry/-/raw/master/registry.json
     '';
 
-    binaryCaches = [ "https://cache.privatevoid.net" ];
+    binaryCaches = [ "https://cache.${tools.meta.domain}" ];
     binaryCachePublicKeys = [ "cache.privatevoid.net:SErQ8bvNWANeAvtsOESUwVYr2VJynfuc9JRwlzTTkVg=" ];
 
     gc = {
