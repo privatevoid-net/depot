@@ -1,4 +1,4 @@
-{ pkgs, lib, config, inputs, ... }:
+{ pkgs, lib, config, inputs, tools, ... }:
 let
   fixPriority = x: if config.services.hydra.enable
   then lib.mkForce x
@@ -12,9 +12,7 @@ in {
     extraOptions = fixPriority ''
       experimental-features = nix-command flakes
       builders-use-substitutes = true
-      flake-registry = ${
-        pkgs.writeText "null-registry.json" ''{"flakes":[],"version":2}''
-      }
+      flake-registry = https://git.${tools.meta.domain}/private-void/registry/-/raw/master/registry.json
     '';
 
     binaryCaches = [ "https://cache.privatevoid.net" ];
