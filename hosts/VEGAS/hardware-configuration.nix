@@ -28,10 +28,5 @@
       fsType = "xfs";
     };
 
-  fileSystems."/srv/storage/machines/storage" =
-    { device = "/dev/disk/by-uuid/a8b21373-2702-4dec-8009-02f74391cf58";
-      fsType = "xfs";
-    };
-
   swapDevices = [ ];
 }
