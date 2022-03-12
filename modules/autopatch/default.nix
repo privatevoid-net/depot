@@ -11,7 +11,7 @@
 
         hydra-unstable = patched.hydra;
 
-        sssd = patched.sssd;
+        inherit (patched) sssd;
 
       } // lib.optionalAttrs config.krb5.enable {
         bind = patched.kerberized-bind;

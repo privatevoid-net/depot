@@ -10,7 +10,7 @@ let
   # apply some extra transformations for INI generation
   # 2 layers deep because the attrset for the INI generator does it
   iniFilter = builtins.mapAttrs iniFilter';
-  iniFilter' = k: v: builtins.mapAttrs iniFilter'' v;
+  iniFilter' = k: builtins.mapAttrs iniFilter'';
   iniFilter'' = k: v:
     if builtins.isList v then builtins.concatStringsSep ", " v
     else if builtins.isBool v then (if v then "True" else "False")

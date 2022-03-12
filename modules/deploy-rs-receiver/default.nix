@@ -1,13 +1,13 @@
 {
   security.sudo.extraRules = [
-    ({
+    {
       users = [ "deploy" ];
       commands = [
         "NOPASSWD: /nix/store/*-activate-rs/activate-rs"
         "NOPASSWD: /run/current-system/sw/bin/rm /tmp/deploy-rs-canary-*"
       ];
       runAs = "root";
-    })
+    }
   ];
   nix.trustedUsers = [ "deploy" ];
   users.users.deploy = {

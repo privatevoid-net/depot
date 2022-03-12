@@ -9,7 +9,7 @@ let
 
     mappers = {
 
-      mapSubdomains = with lib; mapAttrs' (k: v: nameValuePair "${k}.${domain}" v);
+      mapSubdomains = with lib; mapAttrs' (k: nameValuePair "${k}.${domain}");
 
     };
 

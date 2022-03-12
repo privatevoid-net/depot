@@ -6,8 +6,7 @@ let
   back = tools.identity.ldap.server.hostname;
 in
 {
-  services.nginx.virtualHosts."${front}" = let
-  in basic // {
+  services.nginx.virtualHosts."${front}" = basic // {
     locations."= /".return = "302 /ipa/ui/";
     locations."/" = {
       # HACK: not using proxy_pass here to prevent inclusion of recommended headers

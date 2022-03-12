@@ -87,7 +87,7 @@
 
       hydraJobs = {
         systems = lib.mapAttrs (_: x: x.config.system.build.toplevel) self.nixosConfigurations;
-        packages = self.packages;
+        inherit (self) packages;
       };
     };
 }

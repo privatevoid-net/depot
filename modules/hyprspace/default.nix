@@ -23,7 +23,7 @@ let
   discoverKey = config.age.secrets.hyprspace-discover-key.path;
   runConfig = "/run/hyprspace.yml";
 in {
-  networking.hosts = lib.mapAttrs' (k: v: lib.nameValuePair (v.hypr.addr) ([k "${k}.hypr"])) hyprspaceCapableNodes;
+  networking.hosts = lib.mapAttrs' (k: v: lib.nameValuePair v.hypr.addr [k "${k}.hypr"]) hyprspaceCapableNodes;
   age.secrets.hyprspace-key = {
     file = ../../secrets/hyprspace-key- + "${hostName}.age";
     mode = "0400";

@@ -6,7 +6,7 @@
       group = "hydra";
       mode = "0440";
     };
-  } // lib.mapAttrs' (k: v: lib.nameValuePair "hydra-database-credentials-for-${k}" v)
+  } // lib.mapAttrs' (k: lib.nameValuePair "hydra-database-credentials-for-${k}")
   (lib.genAttrs [ "hydra-queue-runner" "hydra-www" "hydra" ]
     (x:
       {
