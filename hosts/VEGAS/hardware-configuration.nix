@@ -24,7 +24,7 @@
     };
 
   fileSystems."/srv/storage" =
-    { device = "/dev/disk/by-uuid/344d2a7a-d219-45f9-b382-1ef934c2c1be";
+    { device = "/dev/disk/by-uuid/4fc53695-3fc3-4053-a0d8-72255863fdc8";
       fsType = "xfs";
     };
 
