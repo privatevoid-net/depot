@@ -37,6 +37,15 @@ in
   };
 
   devShells = {
+    reflex-cache = let
+      inherit (inputs.self.packages.${system}) reflex-cache;
+    in pkgs.mkShell {
+      buildInputs = with pkgs; [
+        poetry
+        reflex-cache.dependencyEnv
+      ];
 
+      PYTHON = reflex-cache.dependencyEnv.interpreter;
+    };
   };
 }
