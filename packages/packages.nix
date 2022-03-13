@@ -13,10 +13,10 @@ let
   });
 in
 {
-  ghost = (let version = "4.32.3"; in dream2nix.makeFlakeOutputs {
+  ghost = (let version = "4.39.0"; in dream2nix.makeFlakeOutputs {
     source = pkgs.fetchzip {
       url = "https://github.com/TryGhost/Ghost/releases/download/v${version}/Ghost-${version}.zip";
-      sha256 = "sha256-XneO6es3eeJz4v1JnWtUfm27zwUW2Wy3hTIHUF7UrFc=";
+      sha256 = "sha256-9XZCe1nd+jeinJHEAbZfLWAiEZK4QqdRxgE2byBkuAc=";
       stripRoot = false;
     };
   }).packages.${system}.ghost;
