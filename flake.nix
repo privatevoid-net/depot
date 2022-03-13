@@ -69,6 +69,11 @@
       mkDeployments = hosts: overrides: lib.genAttrs hosts
         (host: mkDeploy host // (overrides.${host} or {}) );
 
+      depot = forSystems (system: import ./packages {
+        inherit inputs;
+        pkgs = nixpkgsFor system;
+      });
+
     in {
       nixosModules = aspect.modules;
 
@@ -76,14 +81,13 @@
 
       deploy.nodes = mkDeployments nixosHosts {};
 
-      packages = forSystems (system: import ./packages {
-        inherit inputs;
-        pkgs = nixpkgsFor system;
-      });
-
       apps = forSystems (system: {
         dream2nix = inputs.dream2nix.defaultApp.${system};
       });
+
+      packages = forSystems (system: depot.${system}.packages);
+
+      devShells = forSystems (system: depot.${system}.devShells);
 
       hydraJobs = {
         systems = lib.mapAttrs (_: x: x.config.system.build.toplevel) self.nixosConfigurations;
