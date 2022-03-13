@@ -16,6 +16,11 @@ in {
     environment = {
       REFLEX_PORT = port;
       IPFS_API = config.services.ipfs.apiAddress;
+      NIX_CACHES = toString [
+        "https://cache.nixos.org"
+        "https://cache.${tools.meta.domain}"
+        "https://max.cachix.org"
+      ];
     };
   };
 
