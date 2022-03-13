@@ -1,0 +1,2 @@
+TOP="$(git rev-parse --show-toplevel)"
+use flake "${TOP}#$(basename $PWD)"
