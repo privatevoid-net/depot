@@ -17,6 +17,9 @@ in
   };
   services.jitsi-videobridge = {
     openFirewall = true;
+    config.videobridge.ice = {
+      tcp.port = 8080;
+    };
     nat = lib.optionalAttrs isNAT {
       localAddress = interfaces.primary.addr;
       publicAddress = interfaces.primary.addrPublic;
