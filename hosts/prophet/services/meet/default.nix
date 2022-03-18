@@ -15,7 +15,13 @@ in
     prosody.enable = true;
     config.p2p.enabled = false;
   };
-  services.jitsi-videobridge.openFirewall = true;
+  services.jitsi-videobridge = {
+    openFirewall = true;
+    nat = lib.optionalAttrs isNAT {
+      localAddress = interfaces.primary.addr;
+      publicAddress = interfaces.primary.addrPublic;
+    };
+  };
   services.nginx.virtualHosts."meet.${tools.meta.domain}" = {
     enableACME = true;
     forceSSL = true;
@@ -30,11 +36,4 @@ in
     };
   });
   boot.kernel.sysctl."net.core.rmem_max" = lib.mkForce 10485760;
-
-  environment.etc."jitsi/videobridge/sip-communicator.properties" = lib.optionalAttrs isNAT {
-    text = ''
-      org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS=${interfaces.primary.addr}
-      org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS=${interfaces.primary.addrPublic}
-    '';
-  };
 }
