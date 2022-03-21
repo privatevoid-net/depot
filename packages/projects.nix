@@ -46,7 +46,9 @@ in
         reflex-cache.dependencyEnv
       ];
       
-      commands.poetry.package = pkgs.poetry;
+      tools = [
+        pkgs.poetry
+      ];
 
       env.PYTHON = reflex-cache.dependencyEnv.interpreter;
     };
