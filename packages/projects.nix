@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, inputs, ... }@args:
 let
   inherit (pkgs) system;
   dream2nix = inputs.dream2nix.lib2.init {
@@ -11,6 +11,8 @@ let
   poetry2nix = pkgs.poetry2nix.overrideScope' (final: prev: {
     defaultPoetryOverrides = prev.defaultPoetryOverrides.extend (import ./poetry2nix-overrides);
   });
+  
+  mkShell = import lib/devshell.nix args;
 in
 {
   packages = {
