@@ -4,7 +4,9 @@ let
   
   inherit (inputs.devshell.legacyPackages.${system}) mkShell;
   
-  injectAttrName = name: value: value // { inherit name; };
+  wrapInAttrs = value: if builtins.isAttrs value then value else { inherit value; };
+  
+  injectAttrName = name: value: { inherit name; } // wrapInAttrs value;
   
   mkNamedAttrs = builtins.mapAttrs injectAttrName;
   
