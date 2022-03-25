@@ -13,6 +13,7 @@
       ./modules/redis
       ./modules/virtualisation
       inputs.agenix.nixosModules.age
+      inputs.mms.module
 
       # Services
       ./services/api
@@ -29,6 +30,7 @@
       ./services/nfs
       ./services/mail
       ./services/matrix
+      ./services/minecraft
       ./services/nix/binary-cache.nix
       ./services/nix/nar-serve.nix
       ./services/object-storage
