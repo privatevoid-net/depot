@@ -23,6 +23,9 @@
     
     devshell.url = "github:numtide/devshell";
     devshell.inputs.nixpkgs.follows = "nixpkgs";
+    
+    mms.url = "github:mkaito/nixos-modded-minecraft-servers";
+    mms.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
