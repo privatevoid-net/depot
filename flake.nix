@@ -26,6 +26,8 @@
     
     mms.url = "github:mkaito/nixos-modded-minecraft-servers";
     mms.inputs.nixpkgs.follows = "nixpkgs";
+    
+    hercules-ci-agent.url = "github:hercules-ci/hercules-ci-agent";
   };
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
