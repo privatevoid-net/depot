@@ -12,6 +12,7 @@
       ./services/cdn-shield
       ./services/meet
       ./services/reflex
+      aspect.modules.hercules-ci-agent
       aspect.modules.hyprspace
       aspect.modules.ipfs
 
