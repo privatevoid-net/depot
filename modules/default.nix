@@ -6,6 +6,7 @@ let
     deploy-rs-receiver = import ./deploy-rs-receiver;
     enterprise = import ./enterprise;
     fail2ban = import ./fail2ban;
+    hercules-ci-agent = import ./hercules-ci-agent;
     hydra = import ./hydra;
     hyprspace = import ./hyprspace;
     ipfs = import ./ipfs;
