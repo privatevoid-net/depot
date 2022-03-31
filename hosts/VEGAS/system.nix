@@ -40,6 +40,7 @@
       ./services/vault
       ./services/warehouse
       ./services/websites
+      aspect.modules.hercules-ci-agent
       aspect.modules.hyprspace
     ]
     # TODO: fix users
