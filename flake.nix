@@ -90,7 +90,6 @@
       deploy.nodes = mkDeployments nixosHosts {};
 
       apps = forSystems (system: {
-        dream2nix = inputs.dream2nix.defaultApp.${system};
       });
 
       packages = forSystems (system: depot.${system}.packages);
