@@ -7,7 +7,7 @@ let
   // patched-inputs
   // projects.packages;
 in {
-  packages = all;
+  packages = pkgs.lib.filterAttrs (_: pkg: pkg ? meta.platforms -> builtins.elem pkgs.system pkg.meta.platforms) all;
 
   inherit (projects) devShells;
 }
