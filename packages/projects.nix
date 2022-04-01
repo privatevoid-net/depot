@@ -1,6 +1,6 @@
 { pkgs, inputs, ... }@args:
 let
-  inherit (pkgs) system;
+  inherit (pkgs) lib system;
   dream2nix = inputs.dream2nix.lib2.init {
     systems = [ system ];
     config = {
@@ -16,13 +16,18 @@ let
 in
 {
   packages = {
-    ghost = (let version = "4.39.0"; in dream2nix.makeFlakeOutputs {
-      source = pkgs.fetchzip {
-        url = "https://github.com/TryGhost/Ghost/releases/download/v${version}/Ghost-${version}.zip";
-        sha256 = "sha256-9XZCe1nd+jeinJHEAbZfLWAiEZK4QqdRxgE2byBkuAc=";
-        stripRoot = false;
+    ghost = let
+      version = "4.39.0";
+      dream = dream2nix.makeFlakeOutputs {
+        source = pkgs.fetchzip {
+          url = "https://github.com/TryGhost/Ghost/releases/download/v${version}/Ghost-${version}.zip";
+          sha256 = "sha256-9XZCe1nd+jeinJHEAbZfLWAiEZK4QqdRxgE2byBkuAc=";
+          stripRoot = false;
+        };
       };
-    }).packages.${system}.ghost;
+      inherit (dream.packages.${system}) ghost;
+    in
+      lib.recursiveUpdate ghost { meta.platforms = [ "x86_64-linux" ]; };
 
     hyprspace = pkgs.callPackage ./networking/hyprspace { iproute2mac = null; };
 
