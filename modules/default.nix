@@ -10,6 +10,7 @@ let
     hydra = import ./hydra;
     hyprspace = import ./hyprspace;
     ipfs = import ./ipfs;
+    maintenance = import ./maintenance;
     nix-builder = import ./nix-builder;
     nix-config = import ./nix-config;
     nix-config-server = import ./nix-config/server.nix;
@@ -26,6 +27,7 @@ in rec {
     base = [ 
       autopatch
       enterprise
+      maintenance
     ];
 
     networking = [
