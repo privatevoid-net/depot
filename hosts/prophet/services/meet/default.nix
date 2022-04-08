@@ -18,7 +18,7 @@ in
   services.jitsi-videobridge = {
     openFirewall = true;
     config.videobridge.ice = {
-      tcp.port = 8080;
+      tcp.port = 7777;
     };
     nat = lib.optionalAttrs isNAT {
       localAddress = interfaces.primary.addr;
