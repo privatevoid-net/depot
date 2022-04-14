@@ -7,7 +7,7 @@ tools: {
   interfaces = {
     primary = {
       addr = "10.0.0.92";
-      addrPublic = "152.67.76.138";
+      addrPublic = "152.67.79.222";
       link = "enp0s3";
     };
   };
