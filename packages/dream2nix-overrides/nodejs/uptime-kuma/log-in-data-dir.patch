@@ -1,0 +1,13 @@
+diff --git a/server/util-server.js b/server/util-server.js
+index 39a2d90..ecb404a 100644
+--- a/server/util-server.js
++++ b/server/util-server.js
+@@ -528,7 +528,7 @@ exports.convertToUTF8 = (body) => {
+ let logFile;
+ 
+ try {
+-    logFile = fs.createWriteStream("./data/error.log", {
++    logFile = fs.createWriteStream((process.env.DATA_DIR || ".") + "/error.log", {
+         flags: "a"
+     });
+ } catch (_) { }

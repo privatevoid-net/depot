@@ -1,0 +1,30 @@
+diff --git a/server/database.js b/server/database.js
+index b17e7f4..7b77f84 100644
+--- a/server/database.js
++++ b/server/database.js
+@@ -74,13 +74,13 @@ class Database {
+      */
+     static init(args) {
+         // Data Directory (must be end with "/")
+-        Database.dataDir = process.env.DATA_DIR || args["data-dir"] || "./data/";
+-        Database.path = Database.dataDir + "kuma.db";
++        Database.dataDir = process.env.DATA_DIR || args["data-dir"] || "./data";
++        Database.path = Database.dataDir + "/kuma.db";
+         if (! fs.existsSync(Database.dataDir)) {
+             fs.mkdirSync(Database.dataDir, { recursive: true });
+         }
+ 
+-        Database.uploadDir = Database.dataDir + "upload/";
++        Database.uploadDir = Database.dataDir + "/upload/";
+ 
+         if (! fs.existsSync(Database.uploadDir)) {
+             fs.mkdirSync(Database.uploadDir, { recursive: true });
+@@ -429,7 +429,7 @@ class Database {
+     static backup(version) {
+         if (! this.backupPath) {
+             log.info("db", "Backing up the database");
+-            this.backupPath = this.dataDir + "kuma.db.bak" + version;
++            this.backupPath = this.dataDir + "/kuma.db.bak" + version;
+             fs.copyFileSync(Database.path, this.backupPath);
+ 
+             const shmPath = Database.path + "-shm";
