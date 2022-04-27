@@ -37,6 +37,7 @@
       ./services/openvpn
       ./services/sips
       ./services/sso
+      ./services/uptime-kuma
       ./services/vault
       ./services/warehouse
       ./services/websites
