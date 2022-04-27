@@ -29,6 +29,19 @@ in
     in
       lib.recursiveUpdate ghost { meta.platforms = [ "x86_64-linux" ]; };
 
+    uptime-kuma = let
+      dream = dream2nix.makeFlakeOutputs {
+        source = builtins.fetchTree {
+          type = "github";
+          owner = "louislam";
+          repo = "uptime-kuma";
+          rev = "751924b3355ca44d24ceede1cfdd983383426f5f"; # 1.15.0
+        };
+      };
+      inherit (dream.packages.${system}) uptime-kuma;
+    in
+      lib.recursiveUpdate uptime-kuma { meta.platforms = [ "x86_64-linux" ]; };
+
     hyprspace = pkgs.callPackage ./networking/hyprspace { iproute2mac = null; };
 
     minio-console = pkgs.callPackage ./servers/minio-console { };
