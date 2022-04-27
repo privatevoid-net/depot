@@ -54,4 +54,43 @@ in
         --set NODE_PATH "$out/lib/node_modules/ghost/node_modules"
     '';
   };
+
+  puppeteer.dummy-build = {
+    # HACK: doesn't build, but we don't need it anywhere
+    configurePhase = "exit 0";
+  };
+
+  uptime-kuma.runtime-bugfixes = {
+    patches = [
+      ./uptime-kuma/log-in-data-dir.patch
+      ./uptime-kuma/chmod-database.patch
+      ./uptime-kuma/data-dir-concat-with-slash.patch
+    ];
+  };
+
+  uptime-kuma.build = {
+    # HACK: rollup.js is garbage and expects the contents of node_modules to not be symlinks
+    # obey its wishes by copying dependencies into place
+    preBuild = ''
+      cp -r node_modules $NIX_BUILD_TOP/node_modules_saved
+      find node_modules node_modules/@* -maxdepth 1 -type l -exec \
+        bash -c 'LOC=$(readlink -f {}); echo unsymlinking: {}; rm {}; cp -r $LOC {}' \;
+
+      chmod +w -R node_modules
+      find node_modules -mindepth 2 -name node_modules | xargs rm -rf
+    '';
+
+    preInstall = ''
+      echo restoring original node_modules directory
+      rm -rf node_modules
+      mv $NIX_BUILD_TOP/node_modules_saved node_modules
+    '';
+
+    postInstall = ''
+      makeWrapper $(command -v node) $out/bin/uptime-kuma \
+        --add-flags "server/server.js" \
+        --run "cd $out/lib/node_modules/uptime-kuma" \
+        --set NODE_PATH "$out/lib/node_modules/uptime-kuma/node_modules"
+    '';
+  };
 }
