@@ -34,13 +34,13 @@
       ./services/nix/binary-cache.nix
       ./services/nix/nar-serve.nix
       ./services/object-storage
-      ./services/openvpn
       ./services/sips
       ./services/sso
       ./services/uptime-kuma
       ./services/vault
       ./services/warehouse
       ./services/websites
+      ./services/wireguard-server
       aspect.modules.hercules-ci-agent
       aspect.modules.hyprspace
     ]
