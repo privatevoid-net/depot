@@ -12,7 +12,7 @@ in
 
   networking = {
     firewall = {
-      allowedUDPPorts = [ 51194 ];
+      allowedUDPPorts = [ 43 ];
     };
 
     nat.internalIPs = [
@@ -23,7 +23,7 @@ in
       enable = true;
       interfaces.wgstorm = {
         ips = [ "10.100.0.1/24" ];
-        listenPort = 51194;
+        listenPort = 43;
         privateKeyFile = config.age.secrets.wireguard-key-storm.path;
         peers = [
           {
