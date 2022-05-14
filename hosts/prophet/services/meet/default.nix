@@ -17,8 +17,15 @@ in
   };
   services.jitsi-videobridge = {
     openFirewall = true;
-    config.videobridge.ice = {
-      tcp.port = 7777;
+    apis = [ "colibri" "rest" ];
+    config.videobridge = {
+      ice = {
+        tcp.port = 7777;
+      };
+      stats.transports = [
+        { type = "muc"; }
+        { type = "colibri"; }
+      ];
     };
     nat = lib.optionalAttrs isNAT {
       localAddress = interfaces.primary.addr;
