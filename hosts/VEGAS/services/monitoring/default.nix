@@ -4,6 +4,8 @@ let
 
   inherit (config) ports portsStr;
 
+  cfg = { inherit (config.services) loki; };
+
   toString' = v:
     if v == true then "true" else
     if v == false then "false" else
@@ -24,13 +26,15 @@ let
   login = x: "https://login.${domain}/auth/realms/master/protocol/openid-connect/${x}";
 
   filteredHosts = lib.filterAttrs (_: host: host ? hypr && host ? nixos) hosts;
+
+  myNode = hosts.${config.networking.hostName};
 in
 {
   age.secrets.grafana-secrets = {
     file = ../../../../secrets/grafana-secrets.age;
   };
 
-  reservePortsFor = [ "grafana" "prometheus" ];
+  reservePortsFor = [ "grafana" "prometheus" "loki" "loki-grpc" ];
   services.grafana = {
     enable = true;
     port = ports.grafana;
@@ -62,6 +66,11 @@ in
           url = "http://127.0.0.1:${portsStr.prometheus}";
           type = "prometheus";
           isDefault = true;
+        }
+        {
+          name = "Loki";
+          url = "http://${myNode.hypr.addr}:${portsStr.loki}";
+          type = "loki";
         }
       ];
     };
@@ -98,5 +107,52 @@ in
         ];
       }
     ];
+  };
+
+  services.loki = {
+    enable = true;
+    dataDir = "/srv/storage/private/loki";
+    configuration = {
+      auth_enabled = false;
+      server = {
+        http_listen_address = myNode.hypr.addr;
+        http_listen_port = ports.loki;
+        grpc_listen_address = "127.0.0.1";
+        grpc_listen_port = ports.loki-grpc;
+      };
+      ingester = {
+        lifecycler = {
+          address = "127.0.0.1";
+          ring = {
+            kvstore.store = "inmemory";
+            replication_factor = 1;
+          };
+          final_sleep = "0s";
+        };
+        chunk_idle_period = "5m";
+        chunk_retain_period = "30s";
+      };
+      schema_config.configs = [
+        {
+          from = "2022-05-14";
+          store = "boltdb";
+          object_store = "filesystem";
+          schema = "v11";
+          index = {
+            prefix = "index_";
+            period = "168h";
+          };
+        }
+      ];
+      storage_config = {
+        boltdb.directory = "${cfg.loki.dataDir}/boltdb-index";
+        filesystem.directory = "${cfg.loki.dataDir}/storage-chunks";
+      };
+      limits_config = {
+        enforce_metric_name = false;
+        reject_old_samples = true;
+        reject_old_samples_max_age = "168h";
+      };
+    };
   };
 }
