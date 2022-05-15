@@ -80,7 +80,9 @@ in
     EnvironmentFile = config.age.secrets.grafana-secrets.path;
   };
 
-  services.nginx.virtualHosts."monitoring.${domain}" = tools.nginx.vhosts.proxy "http://127.0.0.1:${portsStr.grafana}";
+  services.nginx.virtualHosts."monitoring.${domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy "http://127.0.0.1:${portsStr.grafana}") {
+    locations."/".proxyWebsockets = true;
+  };
 
   services.prometheus = {
     enable = true;
