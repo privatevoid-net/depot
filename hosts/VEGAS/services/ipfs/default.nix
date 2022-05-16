@@ -1,4 +1,4 @@
-{ aspect, config, lib, pkgs, tools, ... }:
+{ aspect, config, hosts, lib, pkgs, tools, ... }:
 with tools.nginx;
 let
   inherit (tools.meta) domain;
@@ -56,6 +56,15 @@ in
       locations."/api".proxyPass = "http://unix:/run/ipfs/ipfs-api.sock:";
       locations."/ipns/webui.ipfs.${domain}".proxyPass = "http://127.0.0.1:${gwPort}/ipns/webui.ipfs.${domain}";
       locations."= /".return = "302 /ipns/webui.ipfs.${domain}";
+      locations."/debug/metrics/prometheus" = {
+        proxyPass = "http://unix:/run/ipfs/ipfs-api.sock:";
+        extraConfig = ''
+          access_log off;
+          auth_request off;
+          allow ${hosts.VEGAS.interfaces.primary.addr};
+          deny all;
+        '';
+      };
     };
   };
   services.oauth2_proxy.nginx.virtualHosts = [ "ipfs.admin.${domain}" ];

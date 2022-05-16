@@ -11,6 +11,7 @@ let
     hyprspace = import ./hyprspace;
     ipfs = import ./ipfs;
     maintenance = import ./maintenance;
+    monitoring = import ./monitoring;
     nix-builder = import ./nix-builder;
     nix-config = import ./nix-config;
     nix-config-server = import ./nix-config/server.nix;
@@ -38,6 +39,7 @@ in rec {
     server = [
       deploy-rs-receiver
       fail2ban
+      monitoring
       nix-config-server
       system-recovery
     ] ++ base ++ networking;

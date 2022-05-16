@@ -14,6 +14,7 @@ in with hosts;
   "gitlab-secret-jws.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "gitlab-secret-otp.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "gitlab-secret-secret.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "grafana-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "hci-cache-config.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "hci-cache-credentials-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "hci-cache-credentials-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
