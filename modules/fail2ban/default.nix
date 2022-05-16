@@ -2,6 +2,7 @@
 {
   services.fail2ban = {
     enable = true;
+    banaction = "iptables-multiport[blocktype=DROP]";
     jails.sshd = ''
       enabled = true
       port = 22
