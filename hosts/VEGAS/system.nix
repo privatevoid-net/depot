@@ -44,6 +44,7 @@
       ./services/wireguard-server
       aspect.modules.hercules-ci-agent
       aspect.modules.hyprspace
+      aspect.modules.nix-builder
     ]
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin
