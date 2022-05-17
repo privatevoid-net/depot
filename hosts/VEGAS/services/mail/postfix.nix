@@ -93,6 +93,5 @@ in
   services.fail2ban.jails.postfix = ''
     enabled = true
     mode = aggressive
-    bantime.increment = true
   '';
 }

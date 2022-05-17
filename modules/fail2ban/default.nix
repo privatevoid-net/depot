@@ -12,5 +12,8 @@
       "10.0.0.0/8"
       hosts.${config.networking.hostName}.interfaces.primary.addr
     ];
+    bantime-increment = {
+      enable = true;
+    };
   };
 }
