@@ -14,6 +14,7 @@
     ];
     bantime-increment = {
       enable = true;
+      maxtime = "48h";
     };
   };
 }
