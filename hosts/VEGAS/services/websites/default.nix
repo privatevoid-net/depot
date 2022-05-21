@@ -1,5 +1,11 @@
 { config, lib, tools, ... }:
 
-{
-  services.nginx.virtualHosts = tools.nginx.mappers.mapSubdomains (import ./websites.nix { tools = tools.nginx; });
+let
+  importWebsites = expr: import expr { tools = tools.nginx; };
+
+  websites = tools.nginx.mappers.mapSubdomains (importWebsites ./websites.nix);
+
+  extraWebsites = importWebsites ./extra-sites.nix;
+in {
+  services.nginx.virtualHosts = websites // extraWebsites;
 }
