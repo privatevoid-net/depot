@@ -78,7 +78,7 @@
         (host: mkDeploy host // (overrides.${host} or {}) );
 
       depot = forSystems (system: import ./packages {
-        inherit inputs;
+        inherit inputs system;
         pkgs = nixpkgsFor system;
       });
 

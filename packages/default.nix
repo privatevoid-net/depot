@@ -1,4 +1,4 @@
-{ pkgs, inputs }@args:
+{ pkgs, inputs, system }@args:
 let
   patched-derivations = import ./patched-derivations.nix (pkgs // { flakePackages = all; });
   patched-inputs = import ./patched-inputs.nix args;
@@ -6,8 +6,11 @@ let
   all = patched-derivations
   // patched-inputs
   // projects.packages;
+  filters = import ./system-filter.nix;
 in {
-  packages = pkgs.lib.filterAttrs (_: pkg: pkg ? meta.platforms -> builtins.elem pkgs.system pkg.meta.platforms) all;
+  packages = pkgs.lib.filterAttrs (name: _:
+    filters ? "${name}" -> builtins.elem system filters."${name}"
+  ) all;
 
   inherit (projects) devShells;
 }

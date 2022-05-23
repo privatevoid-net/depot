@@ -1,9 +1,9 @@
 let tools = import ./lib/tools.nix;
 in with tools;
-{ inputs, pkgs, ... }: rec {
-  inherit (inputs.deploy-rs.packages.${pkgs.system}) deploy-rs;
+{ inputs, pkgs, system, ... }: rec {
+  inherit (inputs.deploy-rs.packages.${system}) deploy-rs;
 
-  nix-super = inputs.nix-super.defaultPackage.${pkgs.system};
+  nix-super = inputs.nix-super.defaultPackage.${system};
 
-  agenix = inputs.agenix.packages.${pkgs.system}.agenix.override { nix = nix-super; };
+  agenix = inputs.agenix.packages.${system}.agenix.override { nix = nix-super; };
 }

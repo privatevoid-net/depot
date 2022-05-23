@@ -1,6 +1,6 @@
-{ pkgs, inputs, ... }@args:
+{ pkgs, inputs, system, ... }@args:
 let
-  inherit (pkgs) lib system;
+  inherit (pkgs) lib;
   dream2nix = inputs.dream2nix.lib2.init {
     systems = [ system ];
     config = {
@@ -27,7 +27,7 @@ in
       };
       inherit (dream.packages.${system}) ghost;
     in
-      lib.recursiveUpdate ghost { meta.platforms = [ "x86_64-linux" ]; };
+      ghost;
 
     uptime-kuma = let
       dream = dream2nix.makeFlakeOutputs {
@@ -40,7 +40,7 @@ in
       };
       inherit (dream.packages.${system}) uptime-kuma;
     in
-      lib.recursiveUpdate uptime-kuma { meta.platforms = [ "x86_64-linux" ]; };
+      uptime-kuma;
 
     hyprspace = pkgs.callPackage ./networking/hyprspace { iproute2mac = null; };
 
