@@ -83,6 +83,7 @@
         pkgs = nixpkgsFor system;
       });
 
+      effects = inputs.hercules-ci-effects.lib.withPkgs (nixpkgsFor "x86_64-linux");
     in {
       nixosModules = aspect.modules;
 
@@ -100,6 +101,21 @@
       hydraJobs = {
         systems = lib.mapAttrs (_: x: x.config.system.build.toplevel) self.nixosConfigurations;
         inherit (self) packages;
+      };
+
+      effects = { branch, ... }: {
+        deploy-prophet = effects.runIf (branch == "hci-improvements") (effects.runNixOS {
+          config = self.nixosConfigurations.prophet.config // { outPath = "wtfwtfwtfwtfwtfwtf"; };
+          secretsMap.ssh = "deploy-ssh";
+
+          userSetupScript = ''
+            writeSSHKey ssh
+            cat >>~/.ssh/known_hosts <<EOF
+            prophet.node.privatevoid.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJZ4FyGi69MksEn+UJZ87vw1APqiZmPNlEYIr0CbEoGv
+            EOF
+          '';
+          ssh.destination = "root@prophet.node.privatevoid.net";
+        });
       };
     };
 }
