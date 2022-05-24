@@ -117,6 +117,19 @@
           '';
           ssh.destination = "root@prophet.node.privatevoid.net";
         });
+        deploy-VEGAS = effects.runIf (branch == "hci-improvements") (effects.runNixOS {
+          requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
+          config = self.nixosConfigurations.VEGAS.config // { outPath = "wtfwtfwtfwtfwtfwtf"; };
+          secretsMap.ssh = "deploy-ssh";
+
+          userSetupScript = ''
+            writeSSHKey ssh
+            cat >>~/.ssh/known_hosts <<EOF
+            vegas.backbone.privatevoid.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICz2nGA+Y4OxhMKsV6vKIns3hOoBkK557712h7FfWXcE
+            EOF
+          '';
+          ssh.destination = "root@vegas.backbone.privatevoid.net";
+        });
       };
     };
 }
