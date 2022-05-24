@@ -28,6 +28,7 @@
     mms.inputs.nixpkgs.follows = "nixpkgs";
     
     hercules-ci-agent.url = "github:hercules-ci/hercules-ci-agent";
+    hercules-ci-effects.url = "github:hercules-ci/hercules-ci-effects";
   };
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
