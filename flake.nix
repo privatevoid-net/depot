@@ -105,6 +105,7 @@
 
       effects = { branch, ... }: {
         deploy-prophet = effects.runIf (branch == "hci-improvements") (effects.runNixOS {
+          requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
           config = self.nixosConfigurations.prophet.config // { outPath = "wtfwtfwtfwtfwtfwtf"; };
           secretsMap.ssh = "deploy-ssh";
 
