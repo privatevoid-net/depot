@@ -9,4 +9,8 @@ rec {
   nix-super = packages.nix-super.nix;
 
   agenix = packages.agenix.agenix.override { nix = nix-super; };
+
+  hercules-ci-agent = packages.hercules-ci-agent.hercules-ci-agent.override { nix = nix-super; };
+
+  hci = packages.hercules-ci-agent.hercules-ci-cli.override { nix = nix-super; };
 }
