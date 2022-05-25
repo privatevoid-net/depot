@@ -67,7 +67,7 @@
         hostname = "${lib.toLower name}.${subdomain}.${meta.domain}";
       in effects.runIf (branch == "master") (effects.runNixOS {
         requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
-        config = self.nixosConfigurations.${name}.config // { outPath = "wtfwtfwtfwtfwtfwtf"; };
+        inherit (self.nixosConfigurations.${name}) config;
         secretsMap.ssh = "deploy-ssh";
 
         userSetupScript = ''
