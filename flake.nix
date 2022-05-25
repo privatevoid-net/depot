@@ -62,6 +62,26 @@
       };
       mkNixOS = mkNixOS' lib;  
 
+      mkDeployEffect = branch: name: host: let
+        subdomain = hosts.enterprise.subdomain or "services";
+        hostname = "${lib.toLower name}.${subdomain}.${meta.domain}";
+      in effects.runIf (branch == "master") (effects.runNixOS {
+        requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
+        config = self.nixosConfigurations.${name}.config // { outPath = "wtfwtfwtfwtfwtfwtf"; };
+        secretsMap.ssh = "deploy-ssh";
+
+        userSetupScript = ''
+          writeSSHKey ssh
+          cat >>~/.ssh/known_hosts <<EOF
+          ${hostname} ${host.ssh.id.publicKey}
+          EOF
+        '';
+        ssh.destination = "root@${hostname}";
+      });
+
+      mkDeployEffects = branch: hostnames: lib.genAttrs hostnames
+        (name: mkDeployEffect branch name hosts.${name});
+
       mkDeploy = name: let
         host = hosts.${name};
         subdomain = host.enterprise.subdomain or "services";
@@ -103,33 +123,6 @@
         inherit (self) packages;
       };
 
-      effects = { branch, ... }: {
-        deploy-prophet = effects.runIf (branch == "hci-improvements") (effects.runNixOS {
-          requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
-          config = self.nixosConfigurations.prophet.config // { outPath = "wtfwtfwtfwtfwtfwtf"; };
-          secretsMap.ssh = "deploy-ssh";
-
-          userSetupScript = ''
-            writeSSHKey ssh
-            cat >>~/.ssh/known_hosts <<EOF
-            prophet.node.privatevoid.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJZ4FyGi69MksEn+UJZ87vw1APqiZmPNlEYIr0CbEoGv
-            EOF
-          '';
-          ssh.destination = "root@prophet.node.privatevoid.net";
-        });
-        deploy-VEGAS = effects.runIf (branch == "hci-improvements") (effects.runNixOS {
-          requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
-          config = self.nixosConfigurations.VEGAS.config // { outPath = "wtfwtfwtfwtfwtfwtf"; };
-          secretsMap.ssh = "deploy-ssh";
-
-          userSetupScript = ''
-            writeSSHKey ssh
-            cat >>~/.ssh/known_hosts <<EOF
-            vegas.backbone.privatevoid.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICz2nGA+Y4OxhMKsV6vKIns3hOoBkK557712h7FfWXcE
-            EOF
-          '';
-          ssh.destination = "root@vegas.backbone.privatevoid.net";
-        });
-      };
+      effects = { branch, ... }: mkDeployEffects branch nixosHosts;
     };
 }
