@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11-small";
+    unstable.url = "github:NixOS/nixpkgs/nixos-unstable-small";
 
     nix-super.url = "git+https://git.privatevoid.net/max/nix-super-fork";
     nix-super.inputs.nixpkgs.follows = "nixpkgs";
@@ -65,7 +66,7 @@
       mkDeployEffect = branch: name: host: let
         subdomain = host.enterprise.subdomain or "services";
         hostname = "${lib.toLower name}.${subdomain}.${meta.domain}";
-      in effects.runIf (branch == "master") (effects.runNixOS {
+      in effects.runIf (branch == "master" || branch == "staging") (effects.runNixOS {
         requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
         config = self.nixosConfigurations.${name}.config // { outPath = "wtfwtfwtfwtfwtfwtf"; };
         secretsMap.ssh = "deploy-ssh";

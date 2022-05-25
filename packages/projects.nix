@@ -1,6 +1,7 @@
 { pkgs, inputs, system, ... }@args:
 let
   inherit (pkgs) lib;
+  inherit (inputs) unstable;
   dream2nix = inputs.dream2nix.lib2.init {
     systems = [ system ];
     config = {
@@ -13,9 +14,10 @@ let
   });
   
   mkShell = import lib/devshell.nix args;
+
 in
 {
-  packages = {
+  packages = rec {
     ghost = let
       version = "4.41.3";
       dream = dream2nix.makeFlakeOutputs {
@@ -51,6 +53,16 @@ in
     reflex-cache = poetry2nix.mkPoetryApplication {
       projectDir = ./servers/reflex-cache;
       meta.mainProgram = "reflex";
+    };
+
+    searxng = let
+      scope = pkgs.python3Packages.overrideScope (final: prev: let
+        pullDownPackages = pypkgs: lib.genAttrs pypkgs (pkgName:
+          final.callPackage  "${unstable}/pkgs/development/python-modules/${pkgName}/default.nix" {}
+        );
+      in pullDownPackages [ "httpcore" "httpx" "httpx-socks" "h2" "python-socks" "socksio" ]);
+    in pkgs.callPackage ./web-apps/searxng rec {
+      python3Packages = scope;
     };
 
     sips = pkgs.callPackage ./servers/sips { };
