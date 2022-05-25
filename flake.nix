@@ -66,7 +66,7 @@
       mkDeployEffect = branch: name: host: let
         subdomain = host.enterprise.subdomain or "services";
         hostname = "${lib.toLower name}.${subdomain}.${meta.domain}";
-      in effects.runIf (branch == "master") (effects.runNixOS {
+      in effects.runIf (branch == "master" || branch == "staging") (effects.runNixOS {
         requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
         config = self.nixosConfigurations.${name}.config // { outPath = "wtfwtfwtfwtfwtfwtf"; };
         secretsMap.ssh = "deploy-ssh";
