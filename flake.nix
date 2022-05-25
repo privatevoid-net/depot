@@ -63,7 +63,7 @@
       mkNixOS = mkNixOS' lib;  
 
       mkDeployEffect = branch: name: host: let
-        subdomain = hosts.enterprise.subdomain or "services";
+        subdomain = host.enterprise.subdomain or "services";
         hostname = "${lib.toLower name}.${subdomain}.${meta.domain}";
       in effects.runIf (branch == "master") (effects.runNixOS {
         requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
