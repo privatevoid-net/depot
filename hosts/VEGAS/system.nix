@@ -35,6 +35,7 @@
       ./services/nix/binary-cache.nix
       ./services/nix/nar-serve.nix
       ./services/object-storage
+      ./services/searxng
       ./services/sips
       ./services/sso
       ./services/uptime-kuma
