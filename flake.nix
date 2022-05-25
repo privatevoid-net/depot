@@ -28,6 +28,7 @@
     mms.inputs.nixpkgs.follows = "nixpkgs";
     
     hercules-ci-agent.url = "github:hercules-ci/hercules-ci-agent";
+    hercules-ci-effects.url = "github:hercules-ci/hercules-ci-effects";
   };
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
@@ -61,6 +62,26 @@
       };
       mkNixOS = mkNixOS' lib;  
 
+      mkDeployEffect = branch: name: host: let
+        subdomain = hosts.enterprise.subdomain or "services";
+        hostname = "${lib.toLower name}.${subdomain}.${meta.domain}";
+      in effects.runIf (branch == "master") (effects.runNixOS {
+        requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
+        config = self.nixosConfigurations.${name}.config // { outPath = "wtfwtfwtfwtfwtfwtf"; };
+        secretsMap.ssh = "deploy-ssh";
+
+        userSetupScript = ''
+          writeSSHKey ssh
+          cat >>~/.ssh/known_hosts <<EOF
+          ${hostname} ${host.ssh.id.publicKey}
+          EOF
+        '';
+        ssh.destination = "root@${hostname}";
+      });
+
+      mkDeployEffects = branch: hostnames: lib.genAttrs hostnames
+        (name: mkDeployEffect branch name hosts.${name});
+
       mkDeploy = name: let
         host = hosts.${name};
         subdomain = host.enterprise.subdomain or "services";
@@ -82,6 +103,7 @@
         pkgs = nixpkgsFor system;
       });
 
+      effects = inputs.hercules-ci-effects.lib.withPkgs (nixpkgsFor "x86_64-linux");
     in {
       nixosModules = aspect.modules;
 
@@ -100,5 +122,7 @@
         systems = lib.mapAttrs (_: x: x.config.system.build.toplevel) self.nixosConfigurations;
         inherit (self) packages;
       };
+
+      effects = { branch, ... }: mkDeployEffects branch nixosHosts;
     };
 }
