@@ -69,6 +69,14 @@ in
   };
 
   devShells = {
+    default = let
+      flakePkgs = inputs.self.packages.${system};
+    in mkShell {
+      tools = with flakePkgs; [
+        agenix
+        deploy-rs
+      ];
+    };
     reflex-cache = let
       inherit (inputs.self.packages.${system}) reflex-cache;
     in mkShell {
