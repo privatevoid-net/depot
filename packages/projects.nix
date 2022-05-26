@@ -84,7 +84,10 @@ in
       tools = with flakePkgs; [
         agenix
         deploy-rs
+        npins
       ];
+
+      env.NPINS_DIRECTORY.eval = "$REPO_ROOT/packages/sources";
     };
     reflex-cache = let
       inherit (inputs.self.packages.${system}) reflex-cache;
