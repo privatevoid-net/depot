@@ -48,6 +48,15 @@ in
 
     minio-console = pkgs.callPackage ./servers/minio-console { };
 
+    npins = let
+      inherit (inputs.self.packages.${system}) nix-super;
+    in pkgs.callPackage ./tools/npins {
+      nix = nix-super;
+      nix-prefetch-git = pkgs.nix-prefetch-git.override {
+        nix = nix-super;
+      };
+    };
+
     privatevoid-smart-card-ca-bundle = pkgs.callPackage ./data/privatevoid-smart-card-certificate-authority-bundle.nix { };
 
     reflex-cache = poetry2nix.mkPoetryApplication {
