@@ -4,13 +4,13 @@ with python3Packages;
 
 toPythonModule (buildPythonApplication rec {
   pname = "searxng";
-  version = "20220520";
+  version = "20220524";
 
   src = fetchFromGitHub {
     owner = "searxng";
     repo = "searxng";
-    rev = "61535a4c206aa247a6fa87697b70668048086e27";
-    sha256 = "sha256-Ek/YZ4YzXxA/spmEAgcqItSmsYa/aVTeOBZbFPqNpJ4=";
+    rev = "fddbc5ed00ded5f28ef3b643686e7c177a3a75ce";
+    sha256 = "sha256-8noXHSIxf+PprZbwJ6mYoRprred75ixatjG/uXVnJ3w=";
   };
 
   postPatch = ''
