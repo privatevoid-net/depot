@@ -2,6 +2,9 @@
 let
   inherit (pkgs) lib;
   inherit (inputs) unstable;
+
+  pins = import ./sources;
+
   dream2nix = inputs.dream2nix.lib2.init {
     systems = [ system ];
     config = {
@@ -33,12 +36,7 @@ in
 
     uptime-kuma = let
       dream = dream2nix.makeFlakeOutputs {
-        source = builtins.fetchTree {
-          type = "github";
-          owner = "louislam";
-          repo = "uptime-kuma";
-          rev = "751924b3355ca44d24ceede1cfdd983383426f5f"; # 1.15.0
-        };
+        source = pins.uptime-kuma;
       };
       inherit (dream.packages.${system}) uptime-kuma;
     in
