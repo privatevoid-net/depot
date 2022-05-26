@@ -43,4 +43,5 @@ in with hosts;
   "synapse-turn.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "wireguard-key-storm-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "wireguard-key-wgautobahn.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "wireguard-key-wgmv.age".publicKeys = max ++ map systemKeys [ VEGAS ];
 }
