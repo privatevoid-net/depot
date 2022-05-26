@@ -3,6 +3,18 @@ with tools.nginx;
 let
   minioPort = config.portsStr.minio;
   consolePort = config.portsStr.minioConsole;
+
+  mapPaths = lib.mapAttrsRecursive (
+    path: value: lib.nameValuePair
+      (lib.toUpper (lib.concatStringsSep "_" path))
+      (toString value)
+  );
+
+  translateConfig = config: lib.listToAttrs (
+    lib.collect
+      (x: x ? name && x ? value)
+      (mapPaths config)
+  );
 in
 {
   reservePortsFor = [ "minio" "minioConsole" ];
@@ -42,5 +54,14 @@ in
       locations."= /".return = "302 /index.html";
     };
   };
-  services.oauth2_proxy.nginx.virtualHosts = [ "console.object-storage.${tools.meta.domain}" ];
+  systemd.services.minio.environment = translateConfig {
+    minio.identity_openid = {
+      enable = "on";
+      display_name = "Private Void Account";
+      config_url = "https://login.${domain}/auth/realms/master/.well-known/openid-configuration";
+      client_id = "net.privatevoid.object-storage1";
+      claim_name = "minio_policy";
+      redirect_uri_dynamic = "on";
+    };
+  };
 }
