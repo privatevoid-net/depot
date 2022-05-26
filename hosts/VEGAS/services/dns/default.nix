@@ -1,11 +1,7 @@
-{ config, hosts, ... }:
+{ config, hosts, inputs, pkgs, ... }:
 # TODO: is this secure?
 let
   inherit (hosts.${config.networking.hostName}) interfaces;
-  stevenBlack = builtins.fetchurl {
-    url = "https://raw.githubusercontent.com/StevenBlack/hosts/9ac56f6b39644cb9a30451cf5195a80714eba3c2/hosts";
-    sha256 = "sha256-1QdfL/D9yfgZva25ybx4r1loYEzqtxIuGaGrwYZHJxE=";
-  };
 in {
   imports = [ ./zones.nix ];
 
@@ -19,7 +15,7 @@ in {
     config = ''
       . {
         bind ${interfaces.vstub.addr}
-        hosts ${stevenBlack} {
+        hosts ${inputs.self.packages.${pkgs.system}.stevenblack-hosts} {
           fallthrough
         }
         chaos "Private Void DNS" info@privatevoid.net
