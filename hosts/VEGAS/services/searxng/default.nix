@@ -15,6 +15,29 @@ in
       server = {
         secret_key = "@SEARXNG_SECRET@";
       };
+      outgoing.proxies = rec {
+        http = [
+            "socks5://es1-wg.socks5.mullvad.net:1080"
+            "socks5://ch10-wg.socks5.mullvad.net:1080"
+            "socks5://rs4-wg.socks5.mullvad.net:1080"
+            "socks5://ro4-wg.socks5.mullvad.net:1080"
+            "socks5://ch13-wg.socks5.mullvad.net:1080"
+            "socks5://es2-wg.socks5.mullvad.net:1080"
+            "socks5://ro5-wg.socks5.mullvad.net:1080"
+            "socks5://rs3-wg.socks5.mullvad.net:1080"
+            "socks5://ch21-wg.socks5.mullvad.net:1080"
+            "socks5://es4-wg.socks5.mullvad.net:1080"
+            "socks5://ch2-wg.socks5.mullvad.net:1080"
+            "socks5://ro6-wg.socks5.mullvad.net:1080"
+            "socks5://es5-wg.socks5.mullvad.net:1080"
+            "socks5://ch16-wg.socks5.mullvad.net:1080"
+            "socks5://ch6-wg.socks5.mullvad.net:1080"
+            "socks5://es6-wg.socks5.mullvad.net:1080"
+            "socks5://ro7-wg.socks5.mullvad.net:1080"
+            "socks5://es7-wg.socks5.mullvad.net:1080"
+        ];
+        https = http;
+      };
     };
     uwsgiConfig = {
       http = "127.0.0.1:${port}";
@@ -27,4 +50,5 @@ in
   services.nginx.virtualHosts."search.${tools.meta.domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy "http://127.0.0.1:${port}") {
     extraConfig = "access_log off;";
   };
+  systemd.services.uwsgi.after = [ "wireguard-wgmv-es7.service" "network-addresses-wgmv-es7.service" ];
 }
