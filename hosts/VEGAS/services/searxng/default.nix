@@ -19,6 +19,7 @@ in
         { name = "bing"; disabled = true; }
         { name = "brave"; disabled = true; }
       ];
+      ui.theme_args.simple_style = "dark";
       outgoing.proxies = rec {
         http = [
             "socks5://es1-wg.socks5.mullvad.net:1080"
