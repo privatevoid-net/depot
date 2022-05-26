@@ -12,6 +12,20 @@
       "url": "https://github.com/searxng/searxng/archive/fddbc5ed00ded5f28ef3b643686e7c177a3a75ce.tar.gz",
       "hash": "0z17cxsvkgrinrd2rrkvwynnn6m1k2ljgw4nmply6zri48fifypj"
     },
+    "stevenblack": {
+      "type": "GitRelease",
+      "repository": {
+        "type": "GitHub",
+        "owner": "StevenBlack",
+        "repo": "hosts"
+      },
+      "pre_releases": false,
+      "version_upper_bound": null,
+      "version": "3.10.2",
+      "revision": "1b639d31ff13e8d2befa36a5354543130329fc1a",
+      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.10.2",
+      "hash": "0jb72r0msy7x4aa47nxjkb18k7qc6dj0gq7l5s3l2qi5s41knb1g"
+    },
     "uptime-kuma": {
       "type": "GitRelease",
       "repository": {
