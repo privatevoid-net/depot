@@ -29,7 +29,6 @@ in with hosts;
   "ipfs-swarm-key.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "keycloak-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "matrix-appservice-discord-token.age".publicKeys = max ++ map systemKeys [ VEGAS ];
-  "minio-console-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "minio-root-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "nextcloud-adminpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "nextcloud-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
