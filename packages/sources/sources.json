@@ -9,10 +9,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "v0.15.1",
-      "revision": "d20be7f836667c477e004ead6329fa8586a7f61c",
-      "url": "https://api.github.com/repos/minio/console/tarball/v0.15.1",
-      "hash": "0mxkidxzczwxlgj7v2130m865llck7czlik222zzvm2mjda07vng"
+      "version": "v0.17.2",
+      "revision": "17684f37d91f1f6b89d6fcadd308d560a472ba87",
+      "url": "https://api.github.com/repos/minio/console/tarball/v0.17.2",
+      "hash": "031iwd7af88wh5ydxnnqrq6wjlnykc3r01h8gcdvm8632hdzh22p"
     },
     "searxng": {
       "type": "Git",
