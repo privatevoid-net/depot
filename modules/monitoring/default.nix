@@ -28,6 +28,9 @@ in
     };
   };
 
+  systemd.services.prometheus-node-exporter.after = [ "hyprspace.service" ];
+  systemd.services.prometheus-jitsi-exporter.after = [ "hyprspace.service" ];
+
   systemd.services.promtail = {
     wantedBy = [ "multi-user.target" ];
 
