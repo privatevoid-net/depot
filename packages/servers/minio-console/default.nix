@@ -1,15 +1,10 @@
-{ buildGoModule, fetchFromGitHub, lib }:
+{ buildGoModule, fetchFromGitHub, lib, pins }:
 
 buildGoModule rec {
   pname = "minio-console";
-  version = "0.15.1";
+  version = builtins.substring 1 (-1) pins.minio-console.version;
 
-  src = fetchFromGitHub {
-    owner = "minio";
-    repo = "console";
-    rev = "v${version}";
-    sha256 = "sha256-z+4DVJNV1P2/EGJG+tmZjNJiUAUjiH3ko51/9nuLs1c=";
-  };
+  src = pins.minio-console;
 
   vendorSha256 = "sha256-h1yIpn5XF7+UeSr1hZEUcKro634zrObvE1ies8yVeGE=";
 

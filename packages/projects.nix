@@ -44,7 +44,7 @@ in
 
     hyprspace = pkgs.callPackage ./networking/hyprspace { iproute2mac = null; };
 
-    minio-console = pkgs.callPackage ./servers/minio-console { };
+    minio-console = pkgs.callPackage ./servers/minio-console { inherit pins; };
 
     npins = let
       inherit (inputs.self.packages.${system}) nix-super;
