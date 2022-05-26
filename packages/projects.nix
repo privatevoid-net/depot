@@ -70,6 +70,7 @@ in
       in pullDownPackages [ "httpcore" "httpx" "httpx-socks" "h2" "python-socks" "socksio" ]);
     in pkgs.callPackage ./web-apps/searxng rec {
       python3Packages = scope;
+      inherit pins;
     };
 
     sips = pkgs.callPackage ./servers/sips { };

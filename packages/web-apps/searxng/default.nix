@@ -1,17 +1,12 @@
-{ lib, nixosTests, python3, python3Packages, fetchFromGitHub, fetchpatch }:
+{ lib, nixosTests, python3, python3Packages, fetchFromGitHub, fetchpatch, pins }:
 
 with python3Packages;
 
 toPythonModule (buildPythonApplication rec {
   pname = "searxng";
-  version = "20220524";
+  version = "1.0.0pre_${builtins.substring 0 7 pins.searxng.revision}";
 
-  src = fetchFromGitHub {
-    owner = "searxng";
-    repo = "searxng";
-    rev = "fddbc5ed00ded5f28ef3b643686e7c177a3a75ce";
-    sha256 = "sha256-8noXHSIxf+PprZbwJ6mYoRprred75ixatjG/uXVnJ3w=";
-  };
+  src = pins.searxng;
 
   postPatch = ''
     sed -i 's/==.*$//' requirements.txt
