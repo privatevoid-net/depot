@@ -55,6 +55,7 @@ in
     };
   };
   systemd.services.minio.environment = translateConfig {
+    minio.browser_redirect_url = "https://console.object-storage.${domain}";
     minio.identity_openid = {
       enable = "on";
       display_name = "Private Void Account";
