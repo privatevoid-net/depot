@@ -28,6 +28,9 @@ super: rec {
           "jdk.crypto.ec"
           "jdk.zipfs"
           "jdk.security.auth"
+          "jdk.unsupported"
+          "jdk.xml.dom"
+          "jdk.sctp"
       ];
     };
   in jre // { meta = jre.meta // { inherit (super.jdk17_headless.meta) platforms; }; };
