@@ -22,6 +22,7 @@ let
     shell-config = import ./shell-config;
     ssh = import ./ssh;
     sss = import ./sss;
+    system-info = import ./system-info;
     system-recovery = import ./system-recovery;
   };
 in rec {
@@ -33,6 +34,7 @@ in rec {
       maintenance
       minimal
       motd
+      system-info
     ];
 
     networking = [
