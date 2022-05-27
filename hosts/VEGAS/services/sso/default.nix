@@ -27,7 +27,6 @@ in
     frontendUrl = "https://${login}/auth";
     bindAddress = "127.0.0.1";
     httpPort = config.portsStr.keycloak;
-    package = pkgs.keycloak.override { jre = pkgs.jdk11_headless; };
     database = {
       createLocally = true;
       type = "postgresql";
