@@ -13,6 +13,10 @@
 
         inherit (patched) sssd;
 
+        jre = patched.jre17_standard;
+
+        jre_headless = patched.jre17_standard;
+
       } // lib.optionalAttrs config.krb5.enable {
         bind = patched.kerberized-bind;
         dnsutils = patched.kerberized-dnsutils;
