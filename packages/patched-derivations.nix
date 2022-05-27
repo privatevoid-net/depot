@@ -13,4 +13,14 @@ super: rec {
   lain-ipfs = patch-rename (super.ipfs_latest or super.ipfs) "lain-ipfs" "patches/base/ipfs";
 
   sssd = super.sssd.override { withSudo = true; };
+
+  jre17_standard = super.jre_minimal.override {
+    jdk = super.jdk17_headless;
+    modules = [
+        "java.se"
+        "jdk.naming.dns"
+        "jdk.crypto.ec"
+        "jdk.zipfs"
+    ];
+  };
 }
