@@ -19,13 +19,15 @@ super: rec {
     disallowedReferences = [ super.stdenv.cc.cc ];
   });
 
-  jre17_standard = super.jre_minimal.override {
-    jdk = super.jdk17_headless;
-    modules = [
-        "java.se"
-        "jdk.naming.dns"
-        "jdk.crypto.ec"
-        "jdk.zipfs"
-    ];
-  };
+  jre17_standard = let
+    jre = super.jre_minimal.override {
+      jdk = super.jdk17_headless;
+      modules = [
+          "java.se"
+          "jdk.naming.dns"
+          "jdk.crypto.ec"
+          "jdk.zipfs"
+      ];
+    };
+  in jre // { meta = jre.meta // { inherit (super.jdk17_headless.meta) platforms; }; };
 }
