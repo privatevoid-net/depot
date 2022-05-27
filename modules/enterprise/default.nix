@@ -16,7 +16,6 @@ in {
       rdns = false;
       forwardable = true;
       default_ccache_name = "KEYRING:persistent:%{uid}";
-      pkinit_anchors = "FILE:${inputs.self.packages.${pkgs.system}.privatevoid-smart-card-ca-bundle}";
     };
     realms = {
       "${orgRealm}" = rec {
@@ -27,7 +26,6 @@ in {
       };
     };
   };
-  services.pcscd.enable = true;
   networking.domain = lib.mkDefault "${host.enterprise.subdomain or "services"}.${orgDomain}";
   networking.search = [ config.networking.domain "search.${orgDomain}" ];
   security.pki.certificates = [ (builtins.readFile ../../data/ca.crt) ];
