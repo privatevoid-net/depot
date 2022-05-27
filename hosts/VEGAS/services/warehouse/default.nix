@@ -26,7 +26,7 @@ with tools.nginx;
 
   hardware.opengl = {
     enable = true;
-    extraPackages = [ pkgs.intel-media-driver ];
+    package = pkgs.intel-media-driver;
   };
   systemd.services.jellyfin.serviceConfig = {
     # allow access to GPUs for hardware transcoding
