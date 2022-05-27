@@ -27,6 +27,7 @@ super: rec {
           "jdk.naming.dns"
           "jdk.crypto.ec"
           "jdk.zipfs"
+          "jdk.security.auth"
       ];
     };
   in jre // { meta = jre.meta // { inherit (super.jdk17_headless.meta) platforms; }; };
