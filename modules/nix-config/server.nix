@@ -13,6 +13,9 @@ in {
       experimental-features = nix-command flakes
       builders-use-substitutes = true
       flake-registry = https://git.${tools.meta.domain}/private-void/registry/-/raw/master/registry.json
+      
+      # For Hercules CI agent
+      narinfo-cache-negative-ttl = 0
     '';
 
     binaryCaches = [ "https://cache.${tools.meta.domain}" ];
