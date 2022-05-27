@@ -26,7 +26,11 @@
       binaryCachesPath = config.age.secrets.hci-cache-config.path;
     };
   };
-  systemd.services.hercules-ci-agent.environment = {
-    AWS_SHARED_CREDENTIALS_FILE = config.age.secrets.hci-cache-credentials.path;
+  systemd.services.hercules-ci-agent = {
+    # hercules-ci-agent-restarter should take care of this
+    restartIfChanged = false;
+    environment = {
+      AWS_SHARED_CREDENTIALS_FILE = config.age.secrets.hci-cache-credentials.path;
+    };
   };
 }
