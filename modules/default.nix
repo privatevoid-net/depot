@@ -11,6 +11,7 @@ let
     hyprspace = import ./hyprspace;
     ipfs = import ./ipfs;
     maintenance = import ./maintenance;
+    minimal = import ./minimal;
     monitoring = import ./monitoring;
     motd = import ./motd;
     nix-builder = import ./nix-builder;
@@ -30,6 +31,7 @@ in rec {
       autopatch
       enterprise
       maintenance
+      minimal
       motd
     ];
 
