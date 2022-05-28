@@ -1,4 +1,4 @@
-inputs: 
+inputs:
 with builtins;
 let
   aspects = {
@@ -28,7 +28,7 @@ let
 in rec {
   modules = aspects;
   sets = with modules; rec {
-    base = [ 
+    base = [
       autopatch
       enterprise
       maintenance
@@ -48,6 +48,10 @@ in rec {
       monitoring
       nix-config-server
       system-recovery
+    ] ++ base ++ networking;
+
+    container = [
+      nix-config-server
     ] ++ base ++ networking;
 
     backbone = server ++ [
