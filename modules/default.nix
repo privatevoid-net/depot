@@ -15,7 +15,6 @@ let
     monitoring = import ./monitoring;
     motd = import ./motd;
     nix-builder = import ./nix-builder;
-    nix-config = import ./nix-config;
     nix-config-server = import ./nix-config/server.nix;
     nix-register-flakes = import ./nix-register-flakes;
     port-magic = import ./port-magic;
