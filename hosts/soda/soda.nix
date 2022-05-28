@@ -1,5 +1,6 @@
 {
   imports = [
+    ./data
     ./shell-profile
   ];
 

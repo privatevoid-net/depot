@@ -1,0 +1,6 @@
+--
+C S U A   # 0 8 :
+6/19    Stupid question.  how do we implement POP and IMAP access on Soda?
+        \_ imap and pop over SSL works fine - danh
+        \_ Stupid answer.  Slave monkeys and Google page-rank pigeons. - jvarga
+--
