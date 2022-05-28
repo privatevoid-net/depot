@@ -32,7 +32,6 @@ in rec {
       enterprise
       maintenance
       minimal
-      motd
       system-info
     ];
 
@@ -45,6 +44,7 @@ in rec {
       deploy-rs-receiver
       fail2ban
       monitoring
+      motd
       nix-config-server
       system-recovery
     ] ++ base ++ networking;
