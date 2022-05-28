@@ -50,6 +50,10 @@
 
       nixosHosts = lib.attrNames nixosHosts';
 
+      deployableNixosHosts' = lib.filterAttrs (_: host: host ? container -> !host.container) nixosHosts';
+
+      deployableNixosHosts = lib.attrNames deployableNixosHosts';
+
       meta = import ./tools/meta.nix;
 
       specialArgs = {
@@ -110,7 +114,7 @@
 
       nixosConfigurations = lib.genAttrs nixosHosts mkNixOS;
 
-      deploy.nodes = mkDeployments nixosHosts {};
+      deploy.nodes = mkDeployments deployableNixosHosts {};
 
       apps = forSystems (system: {
       });
@@ -124,6 +128,6 @@
         inherit (self) packages;
       };
 
-      effects = { branch, ... }: mkDeployEffects branch nixosHosts;
+      effects = { branch, ... }: mkDeployEffects branch deployableNixosHosts;
     };
 }
