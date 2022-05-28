@@ -1,4 +1,4 @@
-{ aspect, config, inputs, lib, pkgs, tools, ... }:
+{ aspect, config, hosts, inputs, lib, pkgs, tools, ... }:
 
 {
   imports =
@@ -73,4 +73,17 @@
 
   system.stateVersion = "21.05";
   services.openssh.passwordAuthentication = false;
+
+  containers.soda = {
+    path = inputs.self.nixosConfigurations.soda.config.system.build.toplevel;
+    privateNetwork = true;
+    hostBridge = "vmdefault";
+    localAddress = "${hosts.soda.interfaces.primary.addr}/24";
+    autoStart = true;
+    bindMounts.sodaDir = {
+      hostPath = "/srv/storage/www/soda";
+      mountPoint = "/soda";
+      isReadOnly = false;
+    };
+  };
 }
