@@ -1,10 +1,12 @@
+{ pkgs, ... }:
+
 {
   imports = [
     ./data
     ./shell-profile
   ];
 
-  environment.systemPackages = [
+  environment.systemPackages = with pkgs; [
     # provide some editors
     nano
     vim
