@@ -123,11 +123,6 @@
 
       devShells = forSystems (system: depot.${system}.devShells);
 
-      hydraJobs = {
-        systems = lib.mapAttrs (_: x: x.config.system.build.toplevel) self.nixosConfigurations;
-        inherit (self) packages;
-      };
-
       effects = { branch, ... }: mkDeployEffects branch deployableNixosHosts;
     };
 }
