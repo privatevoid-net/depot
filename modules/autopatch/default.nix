@@ -17,10 +17,6 @@
 
         jre_headless = patched.jre17_standard;
 
-      } // lib.optionalAttrs config.krb5.enable {
-        bind = patched.kerberized-bind;
-        dnsutils = patched.kerberized-dnsutils;
-        dig = patched.kerberized-dig;
       })
     )
   ];
