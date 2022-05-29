@@ -41,7 +41,6 @@ in
   };
   systemd.services = lib.genAttrs [ "jicofo" "jitsi-meet-init-secrets" "jitsi-videobridge2" "prosody" ] (_: {
     serviceConfig = {
-      LogNamespace = "meet";
       Slice = "communications.slice";
     };
   });
