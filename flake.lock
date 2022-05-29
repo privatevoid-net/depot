@@ -488,11 +488,11 @@
         "nixpkgs-regression": "nixpkgs-regression"
       },
       "locked": {
-        "lastModified": 1652724099,
-        "narHash": "sha256-w9GhILEhu8EdIH1+PnDOT9qWESB8wgbaP2gdIqHPfjk=",
+        "lastModified": 1653842047,
+        "narHash": "sha256-rm8OIwU0+V9KMooDvj4Hdwio5MWjAn6CvdM3MU2tGhk=",
         "ref": "refs/heads/master",
-        "rev": "2e3c7f0fed04ddcaec3116a82f226927b243b527",
-        "revCount": 12055,
+        "rev": "c6087c318fbc238269487ec3feee3d6ad762aee7",
+        "revCount": 12253,
         "type": "git",
         "url": "https://git.privatevoid.net/max/nix-super-fork"
       },
