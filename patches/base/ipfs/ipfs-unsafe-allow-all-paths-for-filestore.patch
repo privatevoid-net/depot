@@ -1,12 +1,12 @@
 diff --git a/vendor/github.com/ipfs/go-filestore/fsrefstore.go b/vendor/github.com/ipfs/go-filestore/fsrefstore.go
-index 19927e0..7ff13aa 100644
+index 9eb2b43..43e336c 100644
 --- a/vendor/github.com/ipfs/go-filestore/fsrefstore.go
 +++ b/vendor/github.com/ipfs/go-filestore/fsrefstore.go
-@@ -281,9 +281,6 @@ func (f *FileManager) putTo(b *posinfo.FilestoreNode, to putter) error {
- 		if !f.AllowFiles {
+@@ -291,9 +291,6 @@ func (f *FileManager) putTo(ctx context.Context, b *posinfo.FilestoreNode, to pu
  			return ErrFilestoreNotEnabled
  		}
--		if !filepath.HasPrefix(b.PosInfo.FullPath, f.root) { //nolint:staticcheck
+ 		//lint:ignore SA1019 // ignore staticcheck
+-		if !filepath.HasPrefix(b.PosInfo.FullPath, f.root) {
 -			return fmt.Errorf("cannot add filestore references outside ipfs root (%s)", f.root)
 -		}
  
