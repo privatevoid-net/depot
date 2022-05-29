@@ -1,7 +1,7 @@
 let tools = import ./lib/tools.nix;
 in with tools;
 super: rec {
-  hydra = (patch super.hydra-unstable "patches/base/hydra").override { nix = super.nix_2_4; };
+  hydra = (patch super.hydra-unstable "patches/base/hydra").override { nix = super.nixVersions.nix_2_8; };
 
   lain-ipfs = patch-rename (super.ipfs_latest or super.ipfs) "lain-ipfs" "patches/base/ipfs";
 
