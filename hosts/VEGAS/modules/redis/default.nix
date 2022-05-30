@@ -1,5 +1,5 @@
 {
-  services.redis = {
+  services.redis.servers.default = {
     enable = true;
   };
 }
