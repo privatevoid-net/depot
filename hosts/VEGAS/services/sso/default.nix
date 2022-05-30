@@ -17,29 +17,25 @@ in
     mode = "0400";
   };
   services.nginx.virtualHosts = { 
-    "${login}" = lib.recursiveUpdate (vhosts.proxy "http://${cfg.bindAddress}:${config.portsStr.keycloak}") {
+    "${login}" = lib.recursiveUpdate (vhosts.proxy "http://${cfg.settings.http-host}:${config.portsStr.keycloak}") {
       locations."= /".return = "302 /auth/realms/master/account/";
     };
     "account.${domain}" = vhosts.redirect "https://${login}/auth/realms/master/account/";
   };
   services.keycloak = {
     enable = true;
-    frontendUrl = "https://${login}/auth";
-    bindAddress = "127.0.0.1";
-    httpPort = config.portsStr.keycloak;
     database = {
       createLocally = true;
       type = "postgresql";
       passwordFile = config.age.secrets.keycloak-dbpass.path;
     };
-    extraConfig = {
-      "subsystem=undertow" = {
-        "server=default-server" = {
-          "http-listener=default" = {
-            proxy-address-forwarding = true;
-          };
-        };
-      };
+    settings = {
+      http-host = "127.0.0.1";
+      http-port = config.ports.keycloak;
+      hostname = login;
+      proxy = "edge";
+      # for backcompat, TODO: remove
+      http-relative-path = "/auth";
     };
   };
 }
