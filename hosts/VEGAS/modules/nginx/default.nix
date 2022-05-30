@@ -6,7 +6,7 @@ in
   with tools.nginx.vhosts;
   with tools.nginx.mappers;
 {
-  security.acme.email = adminEmail;
+  security.acme.defaults.email = adminEmail;
   security.acme.acceptTerms = true;
   services.nginx = {
     enable = true;
