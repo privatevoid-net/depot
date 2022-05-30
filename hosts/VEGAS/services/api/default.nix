@@ -6,6 +6,9 @@ let
   proxy = tools.nginx.vhosts.proxy proxyTarget;
 in
 {
+  # n8n uses "Sustainable Use License"
+  nixpkgs.config.allowUnfree = true;
+
   reservePortsFor = [ "api" ];
 
   services.n8n = {
