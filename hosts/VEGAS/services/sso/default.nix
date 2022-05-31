@@ -5,6 +5,7 @@ let
   cfg = config.services.keycloak;
 in
 {
+  tested.requiredChecks = [ "keycloak" ];
   reservePortsFor = [ "keycloak" ];
 
   imports = [
