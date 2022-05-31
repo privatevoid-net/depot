@@ -105,7 +105,6 @@ in {
   };
   systemd.services = lib.genAttrs [ "coturn" "matrix-appservice-discord" "matrix-synapse" ] (_: {
     serviceConfig = {
-      LogNamespace = "matrix";
       Slice = "communications.slice";
     };
   });
