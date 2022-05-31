@@ -32,6 +32,7 @@ in
     dataDir = "/srv/storage/ipfs/repo";
     localDiscovery = false;
 
+    extraFlags = [ "--migrate" ];
     extraConfig = {
       Bootstrap = [
         "/ip4/168.235.67.108/tcp/4001/p2p/QmRMA5pWXtfuW1y5w2t9gYxrDDD6bPRLKdWAYnHTeCxZMm"
