@@ -15,6 +15,8 @@ in
   # same as remote loki port
   reservePortsFor = [ "loki" ];
 
+  services.journald.extraConfig = "Storage=volatile";
+
   services.prometheus.exporters = {
     node = {
       enable = true;
