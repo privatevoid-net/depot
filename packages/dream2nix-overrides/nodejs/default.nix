@@ -21,7 +21,7 @@ let
       repo = "libvips";
       rev = "v8.12.2";
       sha256 = "sha256-ffDJJWe/SzG+lppXEiyfXXL5KLdZgnMjv1SYnuYnh4c=";
-      extraPostFetch = ''
+      postFetch = ''
         rm -r $out/test/test-suite/images/
       '';
     };

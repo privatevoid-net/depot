@@ -60,16 +60,7 @@ in
       meta.mainProgram = "reflex";
     };
 
-    searxng = let
-      scope = pkgs.python3Packages.overrideScope (final: prev: let
-        pullDownPackages = pypkgs: lib.genAttrs pypkgs (pkgName:
-          final.callPackage  "${unstable}/pkgs/development/python-modules/${pkgName}/default.nix" {}
-        );
-      in pullDownPackages [ "httpcore" "httpx" "httpx-socks" "h2" "python-socks" "socksio" ]);
-    in pkgs.callPackage ./web-apps/searxng rec {
-      python3Packages = scope;
-      inherit pins;
-    };
+    searxng = pkgs.callPackage ./web-apps/searxng { inherit pins; };
 
     sips = pkgs.callPackage ./servers/sips { };
 

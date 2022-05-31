@@ -3,7 +3,7 @@ let
   inherit (tools.meta) domain;
   listener = {
     port = 8008;
-    bind_address = "127.0.0.1";
+    bind_addresses = lib.singleton "127.0.0.1";
     type = "http";
     tls = false;
     x_forwarded = true;
@@ -22,27 +22,6 @@ let
     "im.vector.riot.jitsi".preferredDomain = config.services.jitsi-meet.hostName;
   };
   clientConfigJSON = pkgs.writeText "matrix-client-config.json" (builtins.toJSON clientConfig);
-  extraConfig = {
-    experimental_features.spaces_enabled = true;
-    federation_ip_range_blacklist = cfg.url_preview_ip_range_blacklist;
-    admin_contact = "mailto:admins@${domain}";
-    max_upload_size = "32M";
-    max_spider_size = "10M";
-    emable_registration = true;
-    allow_guest_access = true;
-    push.include_content = true;
-    group_creation_prefix = "unofficial/";
-    app_service_config_files =  [
-      "/etc/synapse/discord-registration.yaml"
-    ];
-    turn_uris = let
-      combinations = lib.cartesianProductOfSets {
-        proto = [ "udp" "tcp" ];
-        scheme = [ "turns" "turn" ];
-      };
-      makeTurnServer = x: "${x.scheme}:turn.${domain}?transport=${x.proto}";
-    in map makeTurnServer combinations;
-  };
   cfg = config.services.matrix-synapse;
 in {
   imports = [
@@ -82,27 +61,44 @@ in {
     enable = true;
     plugins = [ pkgs.matrix-synapse-plugins.matrix-synapse-ldap3 ];
 
-    server_name = domain;
-    listeners = lib.singleton listener;
+    settings = {
+      server_name = domain;
+      listeners = lib.singleton listener;
+      url_preview_enabled = true;
+      experimental_features.spaces_enabled = true;
+      admin_contact = "mailto:admins@${domain}";
+      max_upload_size = "32M";
+      max_spider_size = "10M";
+      emable_registration = true;
+      allow_guest_access = true;
+      push.include_content = true;
+      group_creation_prefix = "unofficial/";
+      app_service_config_files =  [
+        "/etc/synapse/discord-registration.yaml"
+      ];
+      turn_uris = let
+        combinations = lib.cartesianProductOfSets {
+          proto = [ "udp" "tcp" ];
+          scheme = [ "turns" "turn" ];
+        };
+        makeTurnServer = x: "${x.scheme}:turn.${domain}?transport=${x.proto}";
+      in map makeTurnServer combinations;
+    };
 
-    url_preview_enabled = true;
-
-    extraConfigFiles = [
-      (pkgs.writeText "synapse-extra-config.yaml" (builtins.toJSON extraConfig))
-    ] ++ (map (x: config.age.secrets.${x}.path) [
+    extraConfigFiles = map (x: config.age.secrets.${x}.path) [
       "synapse-ldap"
       "synapse-db"
       "synapse-turn"
       "synapse-keys"
-    ]); 
+    ]; 
   };
 
   services.nginx.virtualHosts = tools.nginx.mappers.mapSubdomains {
     matrix = tools.nginx.vhosts.basic // {
       locations."/".return = "204";
       locations."/_matrix" = {
-        proxyPass = with listener; "${type}://${bind_address}:${builtins.toString port}";
-        extraConfig = "client_max_body_size ${extraConfig.max_upload_size};";
+        proxyPass = "http://127.0.0.1:8008";
+        extraConfig = "client_max_body_size ${cfg.settings.max_upload_size};";
       };
       locations."= /.well-known/matrix/client".alias = clientConfigJSON;
     };

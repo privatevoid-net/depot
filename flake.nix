@@ -2,11 +2,9 @@
   description = "Private Void system configurations";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11-small";
-    unstable.url = "github:NixOS/nixpkgs/nixos-unstable-small";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05-small";
 
     nix-super.url = "git+https://git.privatevoid.net/max/nix-super-fork";
-    nix-super.inputs.nixpkgs.follows = "nixpkgs";
 
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
