@@ -67,6 +67,8 @@ in
     stevenblack-hosts = pkgs.callPackage ./data/stevenblack { inherit pins; };
   };
 
+  checks = import ./tests { inherit inputs pkgs system; };
+
   devShells = {
     default = let
       flakePkgs = inputs.self.packages.${system};

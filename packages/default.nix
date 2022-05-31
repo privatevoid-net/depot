@@ -12,5 +12,5 @@ in {
     filters ? "${name}" -> builtins.elem system filters."${name}"
   ) all;
 
-  inherit (projects) devShells;
+  inherit (projects) devShells checks;
 }

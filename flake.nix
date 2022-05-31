@@ -119,6 +119,8 @@
 
       packages = forSystems (system: depot.${system}.packages);
 
+      checks = forSystems (system: depot.${system}.checks);
+
       devShells = forSystems (system: depot.${system}.devShells);
 
       effects = { branch, ... }: mkDeployEffects branch deployableNixosHosts;
