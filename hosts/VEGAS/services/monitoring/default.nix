@@ -128,6 +128,7 @@ in
     configuration = {
       auth_enabled = false;
       server = {
+        log_level = "warn";
         http_listen_address = myNode.hypr.addr;
         http_listen_port = ports.loki;
         grpc_listen_address = "127.0.0.1";
