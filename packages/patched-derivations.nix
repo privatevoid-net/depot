@@ -24,6 +24,7 @@ super: rec {
           "jdk.unsupported"
           "jdk.xml.dom"
           "jdk.sctp"
+          "jdk.management"
       ];
     };
   in jre // { meta = jre.meta // { inherit (super.jdk17_headless.meta) platforms; }; };
