@@ -25,6 +25,7 @@ in
     enable = true;
     startWhenNeeded = false;
     autoMount = true;
+    autoMigrate = false;
 
     inherit apiAddress;
     gatewayAddress = "/ip4/127.0.0.1/tcp/${gwPort}";
