@@ -7,10 +7,13 @@ let
   // patched-inputs
   // projects.packages;
   filters = import ./system-filter.nix;
+  doFilter = filterSet: pkgSet: pkgs.lib.filterAttrs (name: _:
+    filterSet ? "${name}" -> builtins.elem system filterSet."${name}"
+  ) pkgSet;
 in {
-  packages = pkgs.lib.filterAttrs (name: _:
-    filters ? "${name}" -> builtins.elem system filters."${name}"
-  ) all;
+  packages = doFilter filters.packages all;
 
-  inherit (projects) devShells checks;
+  checks = doFilter filters.checks projects.checks;
+
+  inherit (projects) devShells;
 }
