@@ -23,6 +23,7 @@ let
     sss = import ./sss;
     system-info = import ./system-info;
     system-recovery = import ./system-recovery;
+    tested = import ./tested;
   };
 in rec {
   modules = aspects;
@@ -47,6 +48,7 @@ in rec {
       motd
       nix-config-server
       system-recovery
+      tested
     ] ++ base ++ networking;
 
     container = [
