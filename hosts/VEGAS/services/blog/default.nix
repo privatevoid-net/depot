@@ -50,6 +50,7 @@ in
   systemd.services.ghost = {
 
     wantedBy = [ "multi-user.target" ];
+    after = [ "mysql.service" ];
 
     serviceConfig = {
       User = "ghost";
