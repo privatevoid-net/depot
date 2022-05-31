@@ -33,7 +33,6 @@ in rec {
       enterprise
       maintenance
       minimal
-      system-info
     ];
 
     networking = [
@@ -47,6 +46,7 @@ in rec {
       monitoring
       motd
       nix-config-server
+      system-info
       system-recovery
       tested
     ] ++ base ++ networking;
