@@ -48,7 +48,6 @@ in {
     extraOptions = ''
       recursion yes;
       allow-recursion { trusted; };
-      dnssec-enable yes;
       dnssec-validation no;
     '';
   };
