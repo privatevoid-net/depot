@@ -8,9 +8,9 @@
         "repo": "searxng"
       },
       "branch": "master",
-      "revision": "fddbc5ed00ded5f28ef3b643686e7c177a3a75ce",
-      "url": "https://github.com/searxng/searxng/archive/fddbc5ed00ded5f28ef3b643686e7c177a3a75ce.tar.gz",
-      "hash": "0z17cxsvkgrinrd2rrkvwynnn6m1k2ljgw4nmply6zri48fifypj"
+      "revision": "51ba817e06bb15ca1768010d6873d1d7bf48b0b6",
+      "url": "https://github.com/searxng/searxng/archive/51ba817e06bb15ca1768010d6873d1d7bf48b0b6.tar.gz",
+      "hash": "0g2gy6pjd7w6dg1n4f3ci7k3qkwwnkd0kcww88rk12v2rlsrijm3"
     },
     "stevenblack": {
       "type": "GitRelease",
