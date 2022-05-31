@@ -133,6 +133,7 @@ in
         grpc_listen_address = "127.0.0.1";
         grpc_listen_port = ports.loki-grpc;
       };
+      frontend_worker.frontend_address = "127.0.0.1:${portsStr.loki-grpc}";
       ingester = {
         lifecycler = {
           address = "127.0.0.1";
