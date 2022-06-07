@@ -1,5 +1,6 @@
 {
   description = "Private Void system configurations";
+  nixConfig.allow-import-from-derivation = true;
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05-small";
