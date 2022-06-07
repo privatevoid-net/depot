@@ -28,4 +28,6 @@ super: rec {
       ];
     };
   in jre // { meta = jre.meta // { inherit (super.jdk17_headless.meta) platforms; }; };
+
+  oauth2-proxy = patch super.oauth2-proxy "patches/base/oauth2-proxy";
 }
