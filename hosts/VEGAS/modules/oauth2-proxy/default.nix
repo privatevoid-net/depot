@@ -1,4 +1,4 @@
-{ config, lib, pkgs, tools, ... }:
+{ config, inputs, lib, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
   login = x: "https://login.${domain}/auth/realms/master/protocol/openid-connect/${x}";
@@ -17,6 +17,7 @@ in
 
   services.oauth2_proxy = {
     enable = true;
+    package = inputs.self.packages.${pkgs.system}.oauth2-proxy;
     approvalPrompt = "auto";
     provider = "keycloak";
     scope = "openid";
