@@ -13,7 +13,10 @@ in
     jicofo.enable = true;
     videobridge.enable = true;
     prosody.enable = true;
-    config.p2p.enabled = false;
+    config = {
+      p2p.enabled = false;
+      startAudioOnly = true;
+    };
   };
   services.jitsi-videobridge = {
     openFirewall = true;
