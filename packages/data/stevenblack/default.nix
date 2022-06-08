@@ -1,5 +1,5 @@
-{ runCommandLocal, pins }:
+{ runCommand, pins }:
 
-runCommandLocal "stevenblack-hosts-${pins.stevenblack.version}" {} ''
+runCommand "stevenblack-hosts-${pins.stevenblack.version}" {} ''
   cp ${pins.stevenblack}/hosts $out
 ''
