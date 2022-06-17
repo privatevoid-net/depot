@@ -10,6 +10,7 @@ buildGoModule rec {
     ./0001-Lain-ipfs-bootstrap-nodes.patch
     ./0002-Remove-quic-transport-for-Lain-ipfs.patch
     ./0003-Remove-dep-from-go.mod.patch
+    ./0004-Use-more-NAT-traversal-features.patch
   ];
 
   src = fetchFromGitHub {
