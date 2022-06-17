@@ -13,21 +13,6 @@ let
       lib.assertMsg (lib.versionOlder pkg.version target.version)
       "${pkg.name} has reached the desired version upstream";
       target;
-
-  vips_8_12_2' = pkgs.vips.overrideAttrs (_: {
-    version = "8.12.2";
-    src = pkgs.fetchFromGitHub {
-      owner = "libvips";
-      repo = "libvips";
-      rev = "v8.12.2";
-      sha256 = "sha256-ffDJJWe/SzG+lppXEiyfXXL5KLdZgnMjv1SYnuYnh4c=";
-      postFetch = ''
-        rm -r $out/test/test-suite/images/
-      '';
-    };
-  });
-
-  vips_8_12_2 = versionGate pkgs.vips vips_8_12_2';
 in
 
 {
@@ -36,7 +21,7 @@ in
       pkg-config
     ];
     buildInputs = old: old ++ [
-      vips_8_12_2
+      vips
     ];
   };
   ghost.build = {
