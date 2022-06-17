@@ -5,7 +5,7 @@ let
   else x;
 in {
   nix = {
-    package = inputs.nix-super.defaultPackage.${pkgs.system};
+    package = inputs.nix-super.packages.${pkgs.system}.default;
 
     trustedUsers = [ "root" "@wheel" "@admins" ];
 
