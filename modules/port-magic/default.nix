@@ -9,12 +9,9 @@ let
   portNames = config.reservePortsFor;
 
   portHash = flip pipe [
-    (hashString "sha512")
-    stringToCharacters
-    (filter (n: match "[0-9]" n == []))
-    (map toInt)
-    (foldl add 0)
-    (mul 1009) # prime number
+    (hashString "md5")
+    (substring 0 7)
+    (hash: (fromTOML "v=0x${hash}").v)
     (flip mod cfg.amount)
     (add cfg.start)
   ];
