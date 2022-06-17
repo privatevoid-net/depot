@@ -10,7 +10,7 @@
 let
   versionGate = pkg: target:
     assert
-      lib.assertMsg (lib.versionAtLeast target.version pkg.version)
+      lib.assertMsg (lib.versionOlder pkg.version target.version)
       "${pkg.name} has reached the desired version upstream";
       target;
 
