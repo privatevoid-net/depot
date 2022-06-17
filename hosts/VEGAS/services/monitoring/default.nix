@@ -30,6 +30,9 @@ let
   myNode = hosts.${config.networking.hostName};
 in
 {
+  imports = [
+    ./tracing.nix
+  ];
   age.secrets.grafana-secrets = {
     file = ../../../../secrets/grafana-secrets.age;
   };
