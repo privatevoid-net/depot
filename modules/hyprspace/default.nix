@@ -46,6 +46,8 @@ in {
     '';
     environment.HYPRSPACE_SWARM_KEY = config.age.secrets.ipfs-swarm-key.path;
     serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = "5s";
       ExecStart = "${hyprspace}/bin/hyprspace up hyprspace -f -c ${runConfig}";
       ExecStop = "${hyprspace}/bin/hyprspace down hyprspace";
       IPAddressDeny = [
