@@ -82,12 +82,15 @@ in
       datasources = [
         {
           name = "Prometheus";
+          # wait for https://github.com/NixOS/nixpkgs/pull/175330
+          # uid = "PBFA97CFB590B2093";
           inherit (links.prometheus) url;
           type = "prometheus";
           isDefault = true;
         }
         {
           name = "Loki";
+          # uid = "P8E80F9AEF21F6940";
           inherit (links.loki) url;
           type = "loki";
         }
@@ -107,6 +110,7 @@ in
     enable = true;
     listenAddress = links.prometheus.ipv4;
     inherit (links.prometheus) port;
+    extraFlags = [ "--enable-feature=remote-write-receiver" ];
     globalConfig = {
       scrape_interval = "60s";
     };

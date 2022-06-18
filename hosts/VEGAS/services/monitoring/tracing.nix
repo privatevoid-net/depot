@@ -5,6 +5,7 @@ let
   dataDir = "/srv/storage/private/tempo";
   tempoConfig = {
     search_enabled = true;
+    metrics_generator_enabled = true;
     server = {
       http_listen_address = links.tempo.ipv4;
       http_listen_port = links.tempo.port;
@@ -44,6 +45,25 @@ let
         queue_depth = 1000;
       };
     };
+    metrics_generator = {
+      registry.external_labels = {
+        source = "tempo";
+        host = config.networking.hostName;
+      };
+      storage = {
+        path = "${dataDir}/generator/wal";
+        remote_write = [
+          {
+            url = "${links.prometheus.url}/api/v1/write";
+            send_exemplars = true;
+          }
+        ];
+      };
+    };
+    overrides.metrics_generator_processors = [
+      "service-graphs"
+      "span-metrics"
+    ];
   };
 in {
   links = {
@@ -74,8 +94,14 @@ in {
   services.grafana.provision.datasources = [
     {
       name = "Tempo";
+      # wait for https://github.com/NixOS/nixpkgs/pull/175330
+      # uid = "P214B5B846CF3925F";
       inherit (links.tempo) url;
       type = "tempo";
+      jsonData = {
+        serviceMap.datasourceUid = "PBFA97CFB590B2093"; # prometheus
+        nodeGraph.enabled = true;
+      };
     }
   ];
 }
