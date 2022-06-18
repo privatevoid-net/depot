@@ -1,4 +1,4 @@
-{ config, lib, pkgs, tools, ... }:
+{ config, inputs, lib, pkgs, tools, ... }:
 with tools.nginx;
 let
   login = "login.${tools.meta.domain}";
@@ -39,5 +39,16 @@ in
       # for backcompat, TODO: remove
       http-relative-path = "/auth";
     };
+  };
+  systemd.services.keycloak.environment = {
+    JAVA_OPTS = builtins.concatStringsSep " " [
+      "-javaagent:${inputs.self.packages.${pkgs.system}.opentelemetry-java-agent-bin}"
+      "-Dotel.resource.attributes=service.name=keycloak"
+      "-Dotel.traces.exporter=otlp"
+    ];
+    OTEL_EXPORTER_OTLP_PROTOCOL = "grpc";
+    OTEL_EXPORTER_OTLP_ENDPOINT = config.links.tempo-otlp-grpc.url;
+    OTEL_TRACES_SAMPLER = "parentbased_traceidratio";
+    OTEL_TRACES_SAMPLER_ARG = "0.01";
   };
 }
