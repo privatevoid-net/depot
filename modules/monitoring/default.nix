@@ -31,8 +31,14 @@ in
     };
   };
 
-  systemd.services.prometheus-node-exporter.after = [ "hyprspace.service" "sys-devices-virtual-net-hyprspace.device" ];
-  systemd.services.prometheus-jitsi-exporter.after = [ "hyprspace.service" "sys-devices-virtual-net-hyprspace.device" ];
+  systemd.services.prometheus-node-exporter = {
+    after = [ "hyprspace.service" "sys-devices-virtual-net-hyprspace.device" ];
+    serviceConfig.RestartSec = "10s";
+  };
+  systemd.services.prometheus-jitsi-exporter = {
+    after = [ "hyprspace.service" "sys-devices-virtual-net-hyprspace.device" ];
+    serviceConfig.RestartSec = "10s";
+  };
 
   systemd.services.promtail = {
     wantedBy = [ "multi-user.target" ];
