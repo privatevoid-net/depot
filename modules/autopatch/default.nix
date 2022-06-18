@@ -7,8 +7,6 @@
         patched = import ../../packages/patched-derivations.nix super;
       in {
 
-        ipfs = patched.lain-ipfs;
-
         hydra-unstable = patched.hydra;
 
         inherit (patched) sssd;

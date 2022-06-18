@@ -1,9 +1,7 @@
 { config, inputs, pkgs, tools, ... }:
 
-let
-  port = config.portsStr.nixIpfs;
-in {
-  reservePortsFor = [ "nixIpfs" ];
+{
+  links.nixIpfs.protocol = "http";
 
   systemd.services.nix-ipfs-cache = {
     wantedBy = [ "multi-user.target" ];
@@ -14,7 +12,7 @@ in {
       CacheDirectory = "nix-ipfs-cache";
     };
     environment = {
-      REFLEX_PORT = port;
+      REFLEX_PORT = config.links.nixIpfs.portStr;
       IPFS_API = config.services.ipfs.apiAddress;
       NIX_CACHES = toString [
         "https://cache.nixos.org"
@@ -24,5 +22,5 @@ in {
     };
   };
 
-  services.nginx.virtualHosts."reflex.${tools.meta.domain}" = tools.nginx.vhosts.proxy "http://127.0.0.1:${port}";
+  services.nginx.virtualHosts."reflex.${tools.meta.domain}" = tools.nginx.vhosts.proxy config.links.nixIpfs.url;
 }

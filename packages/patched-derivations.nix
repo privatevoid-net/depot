@@ -3,8 +3,6 @@ in with tools;
 super: rec {
   hydra = (patch super.hydra-unstable "patches/base/hydra").override { nix = super.nixVersions.nix_2_8; };
 
-  lain-ipfs = patch-rename (super.ipfs_latest or super.ipfs) "lain-ipfs" "patches/base/ipfs";
-
   sssd = (super.sssd.override { withSudo = true; }).overrideAttrs (old: {
     postFixup = (old.postFixup or "") + ''
       ${super.removeReferencesTo}/bin/remove-references-to -t ${super.stdenv.cc.cc} $out/modules/ldb/memberof.so

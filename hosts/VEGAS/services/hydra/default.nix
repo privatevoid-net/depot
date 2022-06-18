@@ -31,15 +31,15 @@ in
     )
   );
 
-  reservePortsFor = [ "hydra" ];
+  links.hydra.protocol = "http";
 
   services.nginx.appendHttpConfig = ''
     limit_req_zone $binary_remote_addr zone=hydra_api_push_limiter:10m rate=1r/m;
   '';
   
-  services.nginx.virtualHosts."hydra.${domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy "http://127.0.0.1:${config.portsStr.hydra}") {
+  services.nginx.virtualHosts."hydra.${domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy config.links.hydra.url) {
     locations."/api/push" = {
-      proxyPass = "http://127.0.0.1:${config.portsStr.hydra}";
+      proxyPass = config.links.hydra.url;
       extraConfig = ''
         auth_request off;
         proxy_method PUT;
@@ -54,7 +54,7 @@ in
   services.hydra = {
     enable = true;
     hydraURL = "https://hydra.${domain}";
-    port = config.ports.hydra;
+    inherit (config.links.hydra) port;
     notificationSender = "hydra@${domain}";
     buildMachinesFiles = [ "/etc/nix/hydra-machines" ];
     useSubstitutes = true;

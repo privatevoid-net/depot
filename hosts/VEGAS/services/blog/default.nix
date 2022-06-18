@@ -17,8 +17,6 @@ let
       (mapPaths config)
   );
 
-  port = config.portsStr.ghost;
-
   contentPath = "/srv/storage/private/ghost";
 in
 
@@ -29,7 +27,7 @@ in
     mode = "0400";
   };
 
-  reservePortsFor = [ "ghost" ];
+  links.ghost.protocol = "http";
 
   users.users.ghost = {
     isSystemUser = true;
@@ -99,7 +97,7 @@ in
       };
       server = {
         host = "127.0.0.1";
-        inherit port;
+        inherit (config.links.ghost) port;
       };
 
       privacy.useTinfoil = true;
@@ -110,6 +108,6 @@ in
     };
   };
 
-  services.nginx.virtualHosts."blog.${domain}" = tools.nginx.vhosts.proxy "http://127.0.0.1:${port}";
+  services.nginx.virtualHosts."blog.${domain}" = tools.nginx.vhosts.proxy config.links.ghost.url;
 
 }

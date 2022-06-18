@@ -12,11 +12,11 @@
     };
   in
 {
-  reservePortsFor = [
-    "nar-serve-self"
-    "nar-serve-nixos-org"
-  ];
+  links = {
+    nar-serve-self.protocol = "http";
+    nar-serve-nixos-org.protocol = "http";
+  };
 
-  systemd.services.nar-serve-self = mkNarServe "https://cache.${tools.meta.domain}" config.portsStr.nar-serve-self;
-  systemd.services.nar-serve-nixos-org = mkNarServe "https://cache.nixos.org" config.portsStr.nar-serve-nixos-org;
+  systemd.services.nar-serve-self = mkNarServe "https://cache.${tools.meta.domain}" config.links.nar-serve-self.portStr;
+  systemd.services.nar-serve-nixos-org = mkNarServe "https://cache.nixos.org" config.links.nar-serve-nixos-org.portStr;
 }

@@ -4,16 +4,17 @@ let
 
   writeJSON = filename: data: pkgs.writeText filename (builtins.toJSON data);
 
-  inherit (config) ports portsStr;
-
   relabel = from: to: {
     source_labels = [ from ];
     target_label = to;
   };
 in
 {
-  # same as remote loki port
-  reservePortsFor = [ "loki" ];
+  # remote loki
+  links.loki = {
+    protocol = "http";
+    ipv4 = hosts.VEGAS.hypr.addr;
+  };
 
   services.journald.extraConfig = "Storage=volatile";
 
@@ -41,7 +42,7 @@ in
         server.disable = true;
         positions.filename = "\${STATE_DIRECTORY:/tmp}/promtail-positions.yaml";
         clients = [
-          { url = "http://${hosts.VEGAS.hypr.addr}:${portsStr.loki}/loki/api/v1/push"; }
+          { url = "${config.links.loki.url}/loki/api/v1/push"; }
         ];
         scrape_configs = [
           {

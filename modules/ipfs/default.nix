@@ -1,10 +1,10 @@
-{ config, lib, pkgs, tools, ... }:
+{ config, inputs, lib, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
   cfg = config.services.ipfs;
   apiAddress = "/unix/run/ipfs/ipfs-api.sock";
   ipfsApi = pkgs.writeTextDir "api" apiAddress;
-  gwPort = config.portsStr.ipfsGateway;
+  gw = config.links.ipfsGateway;
 in
 {
   age.secrets.ipfs-swarm-key = {
@@ -14,7 +14,7 @@ in
     inherit (cfg) group;
   };
 
-  reservePortsFor = [ "ipfsGateway" ];
+  links.ipfsGateway.protocol = "http";
 
   networking.firewall = {
     allowedTCPPorts = [ 4001 ];
@@ -23,12 +23,13 @@ in
 
   services.ipfs = {
     enable = true;
+    package = inputs.self.packages.${pkgs.system}.ipfs;
     startWhenNeeded = false;
     autoMount = true;
     autoMigrate = false;
 
     inherit apiAddress;
-    gatewayAddress = "/ip4/127.0.0.1/tcp/${gwPort}";
+    gatewayAddress = "/ip4/${gw.ipv4}/tcp/${gw.portStr}";
     dataDir = "/srv/storage/ipfs/repo";
     localDiscovery = false;
 

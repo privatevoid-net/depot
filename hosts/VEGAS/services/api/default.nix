@@ -2,19 +2,19 @@
 let
   inherit (tools.meta) domain;
   apiAddr = "api.${domain}";
-  proxyTarget = "http://127.0.0.1:${config.portsStr.api}";
+  proxyTarget = config.links.api.url;
   proxy = tools.nginx.vhosts.proxy proxyTarget;
 in
 {
   # n8n uses "Sustainable Use License"
   nixpkgs.config.allowUnfree = true;
 
-  reservePortsFor = [ "api" ];
+  links.api.protocol = "http";
 
   services.n8n = {
     enable = true;
     settings = {
-      port = config.ports.api;
+      inherit (config.links.api) port;
     };
   };
 

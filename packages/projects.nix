@@ -6,7 +6,7 @@ let
   pins = import ./sources;
 
   dream2nix = inputs.dream2nix.lib2.init {
-    systems = [ system ];
+    inherit pkgs;
     config = {
       projectRoot = ./.;
       overridesDirs = [ ./dream2nix-overrides ];
@@ -23,26 +23,28 @@ in
   packages = rec {
     ghost = let
       version = "4.41.3";
-      dream = dream2nix.makeFlakeOutputs {
+      dream = dream2nix.makeOutputs {
         source = pkgs.fetchzip {
           url = "https://github.com/TryGhost/Ghost/releases/download/v${version}/Ghost-${version}.zip";
           sha256 = "sha256-mqN43LSkd9MHoIHyGS1VsPvpqWqX4Bx5KHcp3KOHw5A=";
           stripRoot = false;
         };
       };
-      inherit (dream.packages.${system}) ghost;
+      inherit (dream.packages) ghost;
     in
       ghost;
 
     uptime-kuma = let
-      dream = dream2nix.makeFlakeOutputs {
+      dream = dream2nix.makeOutputs {
         source = pins.uptime-kuma;
       };
-      inherit (dream.packages.${system}) uptime-kuma;
+      inherit (dream.packages) uptime-kuma;
     in
       uptime-kuma;
 
     hyprspace = pkgs.callPackage ./networking/hyprspace { iproute2mac = null; };
+
+    ipfs = pkgs.callPackage ./networking/ipfs { };
 
     npins = let
       inherit (inputs.self.packages.${system}) nix-super;

@@ -3,6 +3,7 @@ let
   host = tools.identity.autoDomain "sips";
 
   inherit (inputs.self.packages.${pkgs.system}) sips;
+  inherit (config) links;
 
   connStringNet = "host=127.0.0.1 sslmode=disable dbname=sips user=sips";
   connString = "host=/var/run/postgresql dbname=sips user=sips";
@@ -23,14 +24,18 @@ in
     mode = "0400";
   };
 
-  reservePortsFor = [ "sips" "sipsInternal" "sipsIpfsApiProxy" ];
+  links = {
+    sips.protocol = "http";
+    sipsInternal.protocol = "http";
+    sipsIpfsApiProxy.protocol = "http";
+  };
 
   systemd.services.sips = {
     wantedBy = [ "multi-user.target" ];
     after = [ "network.target" "postgresql.service" ];
     requires = [ "sips-ipfs-api-proxy.service" ]; 
     serviceConfig = {
-      ExecStart = "${sips}/bin/sips --dbdriver postgres --db \"${connString}\" --addr 127.0.0.1:${config.portsStr.sipsInternal} --api http://127.0.0.1:${config.portsStr.sipsIpfsApiProxy} --apitimeout 604800s";
+      ExecStart = "${sips}/bin/sips --dbdriver postgres --db \"${connString}\" --addr ${links.sipsInternal.tuple} --api ${links.sipsIpfsApiProxy.url} --apitimeout 604800s";
       PrivateNetwork = true;
       DynamicUser = true;
     };
@@ -41,7 +46,7 @@ in
     after = [ "network.target" "sips.service" ];
     bindsTo = [ "sips.service" ];
     serviceConfig = {
-      ExecStart = "${pkgs.socat}/bin/socat tcp4-listen:${config.portsStr.sipsIpfsApiProxy},fork,reuseaddr,bind=127.0.0.1 unix-connect:/run/ipfs/ipfs-api.sock";
+      ExecStart = "${pkgs.socat}/bin/socat tcp4-listen:${links.sipsIpfsApiProxy.portStr},fork,reuseaddr,bind=${links.sipsIpfsApiProxy.ipv4} unix-connect:/run/ipfs/ipfs-api.sock";
       PrivateNetwork = true;
       DynamicUser = true;
       SupplementaryGroups = "ipfs";
@@ -54,7 +59,7 @@ in
     bindsTo = [ "sips.service" ];
     requires = [ "sips-proxy.socket" ];
     serviceConfig = {
-      ExecStart = "${config.systemd.package}/lib/systemd/systemd-socket-proxyd 127.0.0.1:${config.portsStr.sipsInternal}";
+      ExecStart = "${config.systemd.package}/lib/systemd/systemd-socket-proxyd ${links.sipsInternal.tuple}";
       PrivateNetwork = true;
       DynamicUser = true;
       SupplementaryGroups = "ipfs";
@@ -66,11 +71,11 @@ in
     wantedBy = [ "sockets.target" ];
     after = [ "network.target" ];
     socketConfig = {
-      ListenStream = "127.0.0.1:${config.portsStr.sips}";
+      ListenStream = "${links.sips.tuple}";
     };
   };
 
   environment.systemPackages = [ sipsctl ];
 
-  services.nginx.virtualHosts.${host} = tools.nginx.vhosts.proxy "http://127.0.0.1:${config.portsStr.sips}";
+  services.nginx.virtualHosts.${host} = tools.nginx.vhosts.proxy links.sips.url;
 }
