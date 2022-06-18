@@ -10,6 +10,7 @@ in {
     allowedUDPPorts = [ 53 ];
   };
 
+  systemd.services.coredns.after = [ "network-addresses-vstub.service" ];
   services.coredns = {
     enable = true;
     config = ''
