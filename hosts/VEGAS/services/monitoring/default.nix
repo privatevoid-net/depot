@@ -71,6 +71,11 @@ in
         cookie_secure = true;
         disable_gravatar = true;
       };
+      feature_toggles.enable = [
+        "tempoSearch"
+        "tempoBackendSearch"
+        "tempoServiceGraph"
+      ];
     };
     provision = {
       enable = true;
