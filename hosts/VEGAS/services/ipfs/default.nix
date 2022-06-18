@@ -13,7 +13,7 @@ in
   systemd.services.ipfs.environment = {
     OTEL_TRACES_EXPORTER = "otlp";
     OTEL_EXPORTER_OTLP_PROTOCOL = "grpc";
-    OTEL_EXPORTER_OTLP_ENDPOINT = "http://127.0.0.1:${config.portsStr.tempo-otlp-grpc}";
+    OTEL_EXPORTER_OTLP_ENDPOINT = config.links.tempo-otlp-grpc.url;
     OTEL_TRACES_SAMPLER = "parentbased_traceidratio";
     OTEL_TRACES_SAMPLER_ARG = "0.01";
   };

@@ -1,18 +1,19 @@
 { config, pkgs, ... }:
 
 let
+  inherit (config) links;
   dataDir = "/srv/storage/private/tempo";
   tempoConfig = {
     server = {
-      http_listen_address = "127.0.0.1";
-      http_listen_port = config.ports.tempo;
-      grpc_listen_address = "127.0.0.1";
-      grpc_listen_port = config.ports.tempo-grpc;
+      http_listen_address = links.tempo.ipv4;
+      http_listen_port = links.tempo.port;
+      grpc_listen_address = links.tempo-grpc.ipv4;
+      grpc_listen_port = links.tempo-grpc.port;
     };
     distributor.receivers.otlp = {
       protocols = {
-        http.endpoint = "127.0.0.1:${config.portsStr.tempo-otlp-http}";
-        grpc.endpoint = "127.0.0.1:${config.portsStr.tempo-otlp-grpc}";
+        http.endpoint = links.tempo-otlp-http.tuple;
+        grpc.endpoint = links.tempo-otlp-grpc.tuple;
       };
     };
     ingester = {
@@ -44,7 +45,12 @@ let
     };
   };
 in {
-  reservePortsFor = [ "tempo" "tempo-grpc" "tempo-otlp-http" "tempo-otlp-grpc" ];
+  links = {
+    tempo.protocol = "http";
+    tempo-grpc.protocol = "http";
+    tempo-otlp-http.protocol = "http";
+    tempo-otlp-grpc.protocol = "http";
+  };
 
   users.users.tempo = {
     isSystemUser = true;
@@ -65,7 +71,7 @@ in {
   services.grafana.provision.datasources = [
     {
       name = "Tempo";
-      url = "http://127.0.0.1:${config.portsStr.tempo}";
+      inherit (links.tempo) url;
       type = "tempo";
     }
   ];
