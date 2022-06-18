@@ -1,4 +1,4 @@
-{ config, lib, pkgs, tools, ... }:
+{ config, inputs, lib, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
   cfg = config.services.ipfs;
@@ -23,6 +23,7 @@ in
 
   services.ipfs = {
     enable = true;
+    package = inputs.self.packages.${pkgs.system}.ipfs;
     startWhenNeeded = false;
     autoMount = true;
     autoMigrate = false;
