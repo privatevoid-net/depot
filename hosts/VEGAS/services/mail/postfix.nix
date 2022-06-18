@@ -1,4 +1,4 @@
-{ config, tools, ... }:
+{ config, hosts, tools, ... }:
 let
   inherit (tools.meta) domain;
   certDir = config.security.acme.certs."mail.${domain}".directory;
@@ -9,6 +9,8 @@ let
   dkimSocket = builtins.replaceStrings ["local:"] ["unix:"] config.services.opendkim.socket;
   lmtpSocket = "lmtp:unix:/run/dovecot2/lmtp";
   postfixLdapMailboxes = "ldap:${config.age.secrets."postfix-ldap-mailboxes.cf".path}";
+
+  inherit (hosts.${config.networking.hostName}) interfaces;
 in
 {
   age.secrets."postfix-ldap-mailboxes.cf" = {
@@ -39,7 +41,7 @@ in
     # TODO: un-hardcode
     networks = [
       "localhost"
-      "10.1.0.1/32"
+      "${interfaces.vstub.addr}/32"
       "10.10.0.0/16"
       "10.100.0.0/16"
     ];
@@ -48,8 +50,11 @@ in
 
     config = {
       myhostname = "mx.${domain}";
-      # TODO: un-hardcode + add ip address instead of $myhostname
-      inet_interfaces = [ "localhost" "$myhostname" "10.1.0.1" ];
+      inet_interfaces = [
+        "localhost"
+        interfaces.primary.addr
+        interfaces.vstub.addr
+      ];
 
       disable_vrfy_command = true;
 
