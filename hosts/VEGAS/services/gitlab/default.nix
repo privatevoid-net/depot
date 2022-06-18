@@ -82,6 +82,7 @@ in
     };
   };
 
+  systemd.services.gitlab-runner.after = [ "gitlab.target" ];
   services.gitlab-runner = {
     enable = true;
     services = {
