@@ -5,13 +5,13 @@ let
 
   flakePkgs = inputs.self.packages.${pkgs.system};
 
-  port = config.portsStr.uptime-kuma;
+  link = config.links.uptime-kuma;
 
   dataDir = "/srv/storage/private/uptime-kuma";
 in
 
 {
-  reservePortsFor = [ "uptime-kuma" ];
+  links.uptime-kuma.protocol = "http";
 
   users.users.uptime-kuma = {
     isSystemUser = true;
@@ -62,8 +62,8 @@ in
     environment = {
       NODE_ENV = "production";
       DATA_DIR = dataDir;
-      UPTIME_KUMA_HOST = "127.0.0.1";
-      UPTIME_KUMA_PORT = port;
+      UPTIME_KUMA_HOST = link.ipv4;
+      UPTIME_KUMA_PORT = link.portStr;
       UPTIME_KUMA_HIDE_LOG = lib.concatStringsSep "," [
         "debug_monitor"
         "info_monitor"
@@ -71,7 +71,7 @@ in
     };
   };
 
-  services.nginx.virtualHosts."status.${domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy "http://127.0.0.1:${port}") {
+  services.nginx.virtualHosts."status.${domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy link.url) {
     locations = {
       "/".proxyWebsockets = true;
       "=/".return = "302 /status/${builtins.replaceStrings ["."] ["-"] domain}";

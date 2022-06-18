@@ -1,8 +1,7 @@
 { config, inputs, lib, pkgs, tools, ... }:
 with tools.nginx;
 let
-  minioPort = config.portsStr.minio;
-  consolePort = config.portsStr.minioConsole;
+  inherit (config) links;
 
   mapPaths = lib.mapAttrsRecursive (
     path: value: lib.nameValuePair
@@ -17,7 +16,10 @@ let
   );
 in
 {
-  reservePortsFor = [ "minio" "minioConsole" ];
+  links = {
+    minio.protocol = "http";
+    minioConsole.protocol = "http";
+  };
 
   age.secrets.minio-root-credentials = {
     file = ../../../../secrets/minio-root-credentials.age;
@@ -30,8 +32,8 @@ in
     rootCredentialsFile = config.age.secrets.minio-root-credentials.path;
     dataDir = [ "/srv/storage/objects" ];
     browser = true;
-    listenAddress = "127.0.0.1:${minioPort}";
-    consoleAddress = "127.0.0.1:${consolePort}";
+    listenAddress = links.minio.tuple;
+    consoleAddress = links.minioConsole.tuple;
   };
   systemd.services.minio.serviceConfig = {
     Slice = "remotefshost.slice";
@@ -40,17 +42,17 @@ in
     # TODO: vhosts.proxy?
     "object-storage" = vhosts.basic // {
       locations = {
-        "/".proxyPass = "http://127.0.0.1:${minioPort}";
-        "= /dashboard".proxyPass = "http://127.0.0.1:${minioPort}";
+        "/".proxyPass = links.minio.url;
+        "= /dashboard".proxyPass = links.minio.url;
       };
       extraConfig = "client_max_body_size 4G;";
     };
     "console.object-storage" = vhosts.basic // {
       locations = {
-        "/".proxyPass = "http://127.0.0.1:${consolePort}";
+        "/".proxyPass = links.minioConsole.url;
       };
     };
-    "cdn" = lib.recursiveUpdate (vhosts.proxy "http://127.0.0.1:${minioPort}/content-delivery$request_uri") {
+    "cdn" = lib.recursiveUpdate (vhosts.proxy "${links.minio.url}/content-delivery$request_uri") {
       locations."= /".return = "302 /index.html";
     };
   };

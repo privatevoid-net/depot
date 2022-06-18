@@ -2,7 +2,7 @@
 let
   inherit (tools.meta) domain;
 
-  inherit (config) ports portsStr;
+  inherit (config) links;
 
   cfg = { inherit (config.services) loki; };
 
@@ -34,10 +34,21 @@ in
     file = ../../../../secrets/grafana-secrets.age;
   };
 
-  reservePortsFor = [ "grafana" "prometheus" "loki" "loki-grpc" ];
+  links = {
+    grafana.protocol = "http";
+    prometheus.protocol = "http";
+    loki = {
+      protocol = "http";
+      ipv4 = myNode.hypr.addr;
+    };
+    loki-grpc = {
+      protocol = "grpc";
+      ipv4 = myNode.hypr.addr;
+    };
+  };
   services.grafana = {
     enable = true;
-    port = ports.grafana;
+    inherit (links.grafana) port;
     rootUrl = "https://monitoring.${domain}/";
     dataDir = "/srv/storage/private/grafana";
     analytics.reporting.enable = false;
@@ -63,13 +74,13 @@ in
       datasources = [
         {
           name = "Prometheus";
-          url = "http://127.0.0.1:${portsStr.prometheus}";
+          inherit (links.prometheus) url;
           type = "prometheus";
           isDefault = true;
         }
         {
           name = "Loki";
-          url = "http://${myNode.hypr.addr}:${portsStr.loki}";
+          inherit (links.loki) url;
           type = "loki";
         }
       ];
@@ -80,14 +91,14 @@ in
     EnvironmentFile = config.age.secrets.grafana-secrets.path;
   };
 
-  services.nginx.virtualHosts."monitoring.${domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy "http://127.0.0.1:${portsStr.grafana}") {
+  services.nginx.virtualHosts."monitoring.${domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy links.grafana.url) {
     locations."/".proxyWebsockets = true;
   };
 
   services.prometheus = {
     enable = true;
-    listenAddress = "127.0.0.1";
-    port = ports.prometheus;
+    listenAddress = links.prometheus.ipv4;
+    inherit (links.prometheus) port;
     globalConfig = {
       scrape_interval = "60s";
     };
@@ -129,12 +140,12 @@ in
       auth_enabled = false;
       server = {
         log_level = "warn";
-        http_listen_address = myNode.hypr.addr;
-        http_listen_port = ports.loki;
-        grpc_listen_address = "127.0.0.1";
-        grpc_listen_port = ports.loki-grpc;
+        http_listen_address = links.loki.ipv4;
+        http_listen_port = links.loki.port;
+        grpc_listen_address = links.loki-grpc.ipv4;
+        grpc_listen_port = links.loki-grpc.port;
       };
-      frontend_worker.frontend_address = "127.0.0.1:${portsStr.loki-grpc}";
+      frontend_worker.frontend_address = links.loki-grpc.tuple;
       ingester = {
         lifecycler = {
           address = "127.0.0.1";

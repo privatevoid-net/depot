@@ -1,9 +1,9 @@
 { config, inputs, lib, pkgs, tools, ... }:
 let
-  port = config.portsStr.searxng;
+  inherit (config) links;
 in
 {
-  reservePortsFor = [ "searxng" ];
+  links.searxng.protocol = "http";
 
   age.secrets.searxng-secrets.file = ../../../../secrets/searxng-secrets.age;
   services.searx = {
@@ -45,14 +45,14 @@ in
       };
     };
     uwsgiConfig = {
-      http = "127.0.0.1:${port}";
+      http = links.searxng.tuple;
       cache2 = "name=searxcache,items=2000,blocks=2000,blocksize=65536,bitmap=1";
       buffer-size = 65536;
       env = ["SEARXNG_SETTINGS_PATH=/run/searx/settings.yml"];
       disable-logging = true;
     };
   };
-  services.nginx.virtualHosts."search.${tools.meta.domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy "http://127.0.0.1:${port}") {
+  services.nginx.virtualHosts."search.${tools.meta.domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy links.searxng.url) {
     extraConfig = "access_log off;";
   };
   systemd.services.uwsgi.after = [ "wireguard-wgmv-es7.service" "network-addresses-wgmv-es7.service" ];

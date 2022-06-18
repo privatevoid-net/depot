@@ -10,8 +10,8 @@ in
 {
   services.nginx.upstreams.nar-serve.extraConfig = ''
     random;
-    server 127.0.0.1:${config.portsStr.nar-serve-self} fail_timeout=0;
-    server 127.0.0.1:${config.portsStr.nar-serve-nixos-org} fail_timeout=0;
+    server ${config.links.nar-serve-self.tuple} fail_timeout=0;
+    server ${config.links.nar-serve-nixos-org.tuple} fail_timeout=0;
   '';
   services.nginx.appendHttpConfig = ''
     proxy_cache_path /var/cache/nginx/nixstore levels=1:2 keys_zone=nixstore:10m max_size=10g inactive=24h use_temp_path=off;

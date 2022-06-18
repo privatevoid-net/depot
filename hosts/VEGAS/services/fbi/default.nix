@@ -1,7 +1,21 @@
 { config, lib, tools, ... }:
 with tools.nginx;
 {
-  reservePortsFor = [ "ombi" ];
+  links = {
+    ombi.protocol = "http";
+    radarr = {
+      protocol = "http";
+      port = 7878;
+    };
+    sonarr = {
+      protocol = "http";
+      port = 8989;
+    };
+    prowlarr = {
+      protocol = "http";
+      port = 9696;
+    };
+  };
 
   services = {
     radarr = {
@@ -15,14 +29,14 @@ with tools.nginx;
     };
     ombi = {
       enable = true;
-      port = config.ports.ombi;
+      inherit (config.links.ombi) port;
     };
 
-    nginx.virtualHosts = mappers.mapSubdomains {
-      radarr = vhosts.proxy "http://127.0.0.1:7878";
-      sonarr = vhosts.proxy "http://127.0.0.1:8989";
-      fbi-index = vhosts.proxy "http://127.0.0.1:9696";
-      fbi-requests = vhosts.proxy "http://127.0.0.1:${config.portsStr.ombi}";
+    nginx.virtualHosts = with config.links; mappers.mapSubdomains {
+      radarr = vhosts.proxy radarr.url;
+      sonarr = vhosts.proxy sonarr.url;
+      fbi-index = vhosts.proxy prowlarr.url;
+      fbi-requests = vhosts.proxy ombi.url;
     };
   };
   systemd.services.radarr.serviceConfig.Slice = "mediamanagement.slice";

@@ -1,17 +1,17 @@
 { config, lib, tools, ... }:
 with tools.nginx;
 {
-  reservePortsFor = [ "bitwarden" ];
+  links.bitwarden.protocol = "http";
 
   services.nginx.virtualHosts = mappers.mapSubdomains {
-    keychain = vhosts.proxy "http://127.0.0.1:${config.portsStr.bitwarden}";
+    keychain = vhosts.proxy config.links.bitwarden.url;
   };
   services.vaultwarden = {
     enable = true;
     backupDir = "/srv/storage/private/bitwarden/backups";
     config = {
       dataFolder = "/srv/storage/private/bitwarden/data";
-      rocketPort = config.ports.bitwarden;
+      rocketPort = config.links.bitwarden.port;
     };
     #environmentFile = ""; # TODO: agenix
   };

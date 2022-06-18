@@ -3,7 +3,7 @@ with tools.nginx;
 let
   inherit (tools.meta) domain;
   cfg = config.services.ipfs;
-  gwPort = config.portsStr.ipfsGateway;
+  gw = config.links.ipfsGateway;
 in
 {
   imports = [
@@ -31,7 +31,7 @@ in
   services.nginx.virtualHosts = {
     "top-level.${domain}".locations = {
       "~ ^/ip[fn]s" = {
-        proxyPass = "http://127.0.0.1:${gwPort}";
+        proxyPass = gw.url;
         extraConfig = ''
           add_header X-Content-Type-Options "";
           add_header Access-Control-Allow-Origin *;
@@ -43,7 +43,7 @@ in
       locations = {
         "= /".return = "404";
         "~ ^/ip[fn]s" = {
-          proxyPass = "http://127.0.0.1:${gwPort}";
+          proxyPass = gw.url;
           extraConfig = ''
             add_header X-Content-Type-Options "";
             add_header Access-Control-Allow-Origin *;
@@ -54,7 +54,7 @@ in
     };
     "ipfs.admin.${domain}" = vhosts.basic // {
       locations."/api".proxyPass = "http://unix:/run/ipfs/ipfs-api.sock:";
-      locations."/ipns/webui.ipfs.${domain}".proxyPass = "http://127.0.0.1:${gwPort}/ipns/webui.ipfs.${domain}";
+      locations."/ipns/webui.ipfs.${domain}".proxyPass = "${gw.url}/ipns/webui.ipfs.${domain}";
       locations."= /".return = "302 /ipns/webui.ipfs.${domain}";
       locations."/debug/metrics/prometheus" = {
         proxyPass = "http://unix:/run/ipfs/ipfs-api.sock:";
@@ -85,7 +85,7 @@ in
     useACMEHost = "ipfs.${domain}";
     locations = {
       "/" = {
-        proxyPass = "http://127.0.0.1:${gwPort}";
+        proxyPass = gw.url;
         extraConfig = ''
           add_header X-Content-Type-Options "";
           add_header Access-Control-Allow-Origin *;

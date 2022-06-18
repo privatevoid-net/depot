@@ -3,10 +3,11 @@ with tools.nginx;
 let
   login = "login.${tools.meta.domain}";
   cfg = config.services.keycloak;
+  kc = config.links.keycloak;
 in
 {
   tested.requiredChecks = [ "keycloak" ];
-  reservePortsFor = [ "keycloak" ];
+  links.keycloak.protocol = "http";
 
   imports = [
     ./identity-management.nix
@@ -18,7 +19,7 @@ in
     mode = "0400";
   };
   services.nginx.virtualHosts = { 
-    "${login}" = lib.recursiveUpdate (vhosts.proxy "http://${cfg.settings.http-host}:${config.portsStr.keycloak}") {
+    "${login}" = lib.recursiveUpdate (vhosts.proxy kc.url) {
       locations."= /".return = "302 /auth/realms/master/account/";
     };
     "account.${domain}" = vhosts.redirect "https://${login}/auth/realms/master/account/";
@@ -31,8 +32,8 @@ in
       passwordFile = config.age.secrets.keycloak-dbpass.path;
     };
     settings = {
-      http-host = "127.0.0.1";
-      http-port = config.ports.keycloak;
+      http-host = kc.ipv4;
+      http-port = kc.port;
       hostname = login;
       proxy = "edge";
       # for backcompat, TODO: remove

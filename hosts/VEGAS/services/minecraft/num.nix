@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 {
-  reservePortsFor = [ "mc-num" ];
+  links.mc-num = {};
   services.modded-minecraft-servers.instances.num = {
     enable = true;
     rsyncSSHKeys = [
@@ -10,7 +10,7 @@
     jvmInitialAllocation = "2G";
     jvmMaxAllocation = "8G";
     serverConfig = {
-      server-port = config.ports.mc-num;
+      server-port = config.links.mc-num.port;
       motd = "Welcome to num's minecraft server";
     };
   };
