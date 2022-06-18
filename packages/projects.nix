@@ -44,6 +44,8 @@ in
 
     hyprspace = pkgs.callPackage ./networking/hyprspace { iproute2mac = null; };
 
+    ipfs = pkgs.callPackage ./networking/ipfs { };
+
     npins = let
       inherit (inputs.self.packages.${system}) nix-super;
     in pkgs.callPackage ./tools/npins {
