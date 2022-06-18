@@ -86,4 +86,5 @@
       isReadOnly = false;
     };
   };
+  systemd.services."container@soda".after = [ "libvirtd.service" ];
 }
