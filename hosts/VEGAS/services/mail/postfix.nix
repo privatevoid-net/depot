@@ -93,7 +93,7 @@ in
     };
   };
 
-  systemd.services.postfix.after = [ "network-online.target" ];
+  systemd.services.postfix.after = [ "network-online.target" "network-addresses-vstub" ];
 
   services.fail2ban.jails.postfix = ''
     enabled = true
