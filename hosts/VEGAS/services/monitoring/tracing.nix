@@ -64,6 +64,8 @@ in {
   systemd.services.tempo = {
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
+      User = "tempo";
+      Group = "tempo";
       ExecStart = "${pkgs.tempo}/bin/tempo -config.file=${pkgs.writeText "tempo.yaml" (builtins.toJSON tempoConfig)}";
       PrivateTmp = true;
     };
