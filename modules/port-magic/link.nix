@@ -68,7 +68,7 @@ in
   };
   config = mkIf true {
     hostname = mkDefault cfg.ipv4;
-    port = mkDefault (portHash name);
+    port = mkDefault (portHash "${cfg.hostname}:${name}");
     portStr = toString cfg.port;
     tuple = "${cfg.hostname}:${cfg.portStr}";
     url = "${cfg.protocol}://${cfg.hostname}:${cfg.portStr}${if cfg.path == null then "" else cfg.path}";
