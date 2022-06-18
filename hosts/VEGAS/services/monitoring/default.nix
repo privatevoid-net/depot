@@ -46,7 +46,6 @@ in
     };
     loki-grpc = {
       protocol = "grpc";
-      ipv4 = myNode.hypr.addr;
     };
   };
   services.grafana = {
