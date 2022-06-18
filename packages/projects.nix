@@ -57,6 +57,8 @@ in
       };
     };
 
+    opentelemetry-java-agent-bin = pkgs.callPackage ./monitoring/opentelemetry-java-agent-bin { };
+
     privatevoid-smart-card-ca-bundle = pkgs.callPackage ./data/privatevoid-smart-card-certificate-authority-bundle.nix { };
 
     reflex-cache = poetry2nix.mkPoetryApplication {
