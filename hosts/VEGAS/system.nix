@@ -85,5 +85,5 @@
       isReadOnly = false;
     };
   };
-  systemd.services."container@soda".after = [ "libvirtd.service" ];
+  systemd.services."container@soda".after = [ "libvirtd.service" "sys-devices-virtual-net-vmdefault.device" ];
 }
