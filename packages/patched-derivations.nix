@@ -1,4 +1,6 @@
-let tools = import ./lib/tools.nix;
+let
+  tools = import ./lib/tools.nix;
+  pins = import ./sources;
 in with tools;
 super: rec {
   hydra = (patch super.hydra-unstable "patches/base/hydra").override { nix = super.nixVersions.nix_2_8; };
@@ -28,4 +30,10 @@ super: rec {
   in jre // { meta = jre.meta // { inherit (super.jdk17_headless.meta) platforms; }; };
 
   oauth2-proxy = patch super.oauth2-proxy "patches/base/oauth2-proxy";
+
+  tempo = super.tempo.overrideAttrs (_: {
+    version = builtins.substring 1 (-1) pins.tempo.version;
+    src = pins.tempo;
+    subPackages = [ "cmd/tempo" ];
+  });
 }
