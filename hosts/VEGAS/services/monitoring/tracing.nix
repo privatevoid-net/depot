@@ -4,6 +4,7 @@ let
   inherit (config) links;
   dataDir = "/srv/storage/private/tempo";
   tempoConfig = {
+    search_enabled = true;
     server = {
       http_listen_address = links.tempo.ipv4;
       http_listen_port = links.tempo.port;
