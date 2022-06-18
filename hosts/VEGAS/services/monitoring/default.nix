@@ -122,6 +122,7 @@ in
     ];
   };
 
+  systemd.services.loki.after = [ "hyprspace.service" "sys-devices-virtual-net-hyprspace.device" ];
   services.loki = {
     enable = true;
     dataDir = "/srv/storage/private/loki";
