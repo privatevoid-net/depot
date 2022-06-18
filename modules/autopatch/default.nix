@@ -9,7 +9,7 @@
 
         hydra-unstable = patched.hydra;
 
-        inherit (patched) sssd;
+        inherit (patched) sssd tempo;
 
         jre = patched.jre17_standard;
 
