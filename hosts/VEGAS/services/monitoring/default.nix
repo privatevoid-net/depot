@@ -1,4 +1,4 @@
-{ config, hosts, lib, tools, ... }:
+{ config, hosts, inputs, lib, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
 
@@ -51,6 +51,7 @@ in
   };
   services.grafana = {
     enable = true;
+    package = inputs.self.packages.${pkgs.system}.grafana;
     inherit (links.grafana) port;
     rootUrl = "https://monitoring.${domain}/";
     dataDir = "/srv/storage/private/grafana";

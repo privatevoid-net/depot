@@ -42,6 +42,8 @@ in
     in
       uptime-kuma;
 
+    grafana = pkgs.callPackage ./monitoring/grafana { };
+
     hyprspace = pkgs.callPackage ./networking/hyprspace { iproute2mac = null; };
 
     ipfs = pkgs.callPackage ./networking/ipfs { };
