@@ -15,6 +15,10 @@ in
       server = {
         secret_key = "@SEARXNG_SECRET@";
       };
+      search.formats = [
+        "html"
+        "json"
+      ];
       engines = [
         { name = "bing"; disabled = true; }
         { name = "brave"; disabled = true; }
