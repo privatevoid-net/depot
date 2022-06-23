@@ -36,7 +36,7 @@
       mkNixOS' = lib: name: let host = hosts.${name}; in lib.nixosSystem {
         inherit specialArgs;
         system = "${host.arch}-linux";
-        modules = [ host.nixos ./tools/inject.nix ];
+        modules = [ host.nixos ./tools/inject.nix (import ./cluster/inject.nix name) ];
       };
       mkNixOS = mkNixOS' lib;  
 
