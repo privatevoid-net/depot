@@ -14,6 +14,8 @@ with tools.vhosts;
       proxy_cache_methods GET HEAD POST;
       proxy_cache_valid any 10m;
       proxy_cache_bypass $cookie_nocache $arg_nocache$arg_comment;
+      proxy_cache_lock on;
+      proxy_cache_use_stale updating;
     '';
   };
 }
