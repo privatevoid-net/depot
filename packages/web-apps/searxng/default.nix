@@ -1,4 +1,4 @@
-{ lib, nixosTests, python3, python3Packages, fetchFromGitHub, fetchpatch, pins }:
+{ lib, nixosTests, python3, python3Packages, npins, pins }:
 
 with python3Packages;
 
@@ -6,7 +6,7 @@ toPythonModule (buildPythonApplication rec {
   pname = "searxng";
   version = "1.0.0pre_${builtins.substring 0 7 pins.searxng.revision}";
 
-  src = pins.searxng;
+  src = npins.mkSource pins.searxng;
 
   postPatch = ''
     sed -i 's/==.*$//' requirements.txt

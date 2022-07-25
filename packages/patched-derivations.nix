@@ -33,7 +33,7 @@ super: rec {
 
   tempo = super.tempo.overrideAttrs (_: {
     version = builtins.substring 1 (-1) pins.tempo.version;
-    src = pins.tempo;
+    src = super.npins.mkSource pins.tempo;
     subPackages = [ "cmd/tempo" ];
   });
 }
