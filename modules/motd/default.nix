@@ -1,7 +1,14 @@
 { config, inputs, pkgs, ... }:
 {
   users.motd = builtins.readFile ./motd.txt;
-  environment.interactiveShellInit = ''
+  environment.interactiveShellInit = let
+    exec = package: program: "${package}/bin/${program}";
+    util = exec pkgs.coreutils;
+    uptime = exec pkgs.procps "uptime";
+    grep = exec pkgs.gnugrep "grep";
+    countUsers = '' ${util "who"} -q | ${util "head"} -n1 | ${util "tr"} ' ' \\n | ${util "uniq"} | ${util "wc"} -l'';
+    countSessions = '' ${util "who"} -q | ${util "head"} -n1 | ${util "wc"} -w'';
+  in ''
     (
     # Reset colors
     CO='\033[0m'
@@ -34,8 +41,8 @@
     echo    " █"
     echo -e " █ ''${BWHITE}OS Version....:''${CO} NixOS ''${CAB}${config.system.nixos.version}''${CO}" 
     echo -e " █ ''${BWHITE}Configuration.:''${CO} ''${CAB}${inputs.self.rev or "\${BRED}(✘)\${CO}\${BWHITE} Dirty"}''${CO}" 
-    echo -e " █ ''${BWHITE}Uptime........:''${CO} ''${CAB}$(${pkgs.procps}/bin/uptime -p | cut -d ' ' -f2-)''${CO}"
-    echo -e " █ ''${BWHITE}SSH Logins....:''${CO} There are currently ''${CAB}$(${pkgs.coreutils}/bin/who | ${pkgs.coreutils}/bin/wc -l)''${CO} users logged in"
+    echo -e " █ ''${BWHITE}Uptime........:''${CO} $(${uptime} -p | ${util "cut"} -d ' ' -f2- | GREP_COLORS='mt=01;35' ${grep} --color=always '[0-9]*')"
+    echo -e " █ ''${BWHITE}SSH Logins....:''${CO} There are currently ''${CAB}$(${countUsers})''${CO} users logged in on ''${CAB}$(${countSessions})''${CO} sessions"
     )
   '';
 }
