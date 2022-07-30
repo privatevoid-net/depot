@@ -12,7 +12,7 @@
       "url": "https://github.com/searxng/searxng/archive/88733c0ce6e76a78593b8e4060e33a617cce3cd8.tar.gz",
       "hash": "1pamar97lh0pbkbxqxn4grf9h98jg9xddrz98rgabvriz32rkn6l"
     },
-    "stevenblack": {
+    "stevenblack-hosts": {
       "type": "GitRelease",
       "repository": {
         "type": "GitHub",
