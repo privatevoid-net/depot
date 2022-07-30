@@ -2,6 +2,7 @@
 let
   inherit (pkgs) lib;
   inherit (inputs) unstable;
+  inherit (inputs.self.packages.${system}) nix-super;
 
   pins = import ./sources;
 
@@ -48,9 +49,7 @@ in
 
     ipfs = pkgs.callPackage ./networking/ipfs { };
 
-    npins = let
-      inherit (inputs.self.packages.${system}) nix-super;
-    in pkgs.callPackage ./tools/npins {
+    npins = pkgs.callPackage ./tools/npins {
       nix = nix-super;
       nix-prefetch-git = pkgs.nix-prefetch-git.override {
         nix = nix-super;
@@ -58,6 +57,11 @@ in
     };
 
     opentelemetry-java-agent-bin = pkgs.callPackage ./monitoring/opentelemetry-java-agent-bin { };
+
+    pin = pkgs.callPackage ./tools/pin {
+      inherit npins;
+      nix = nix-super;
+    };
 
     privatevoid-smart-card-ca-bundle = pkgs.callPackage ./data/privatevoid-smart-card-certificate-authority-bundle.nix { };
 
