@@ -1,9 +1,13 @@
-{ runCommand, npins, pins }:
+{ stdenvNoCC, npins, pins }:
 
 let
   src = npins.mkSource pins.stevenblack;
 in
 
-runCommand "stevenblack-hosts-${pins.stevenblack.version}" {} ''
-  cp ${src}/hosts $out
-''
+stdenvNoCC.mkDerivation {
+  pname = "stevenblack-hosts";
+  inherit (pins.stevenblack) version;
+  buildCommand = ''
+    cp ${src}/hosts $out
+  '';
+}
