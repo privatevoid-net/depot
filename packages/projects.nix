@@ -87,6 +87,7 @@ in
         agenix
         deploy-rs
         npins
+        pin
       ];
 
       env.NPINS_DIRECTORY.eval = "$REPO_ROOT/packages/sources";
