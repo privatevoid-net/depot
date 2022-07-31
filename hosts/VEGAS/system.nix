@@ -19,7 +19,6 @@
       ./services/api
       ./services/backbone-routing
       ./services/bitwarden
-      ./services/blog
       ./services/dns
       ./services/fbi
       ./services/gitlab

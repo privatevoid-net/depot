@@ -6,7 +6,6 @@ in with hosts;
 {
   "acme-dns-key.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "coturn-static-auth.age".publicKeys = max ++ map systemKeys [ VEGAS ];
-  "ghost-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "gitlab-initial-root-password.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "gitlab-openid-secret.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "gitlab-runner-registration.age".publicKeys = max ++ map systemKeys [ VEGAS ];
