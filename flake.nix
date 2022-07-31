@@ -6,88 +6,6 @@
     extra-trusted-public-keys = "cache.privatevoid.net:SErQ8bvNWANeAvtsOESUwVYr2VJynfuc9JRwlzTTkVg=";
   };
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05-small";
-
-    nix-super = {
-      url = "gitlab:max/nix-super-fork?host=git.privatevoid.net";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    deploy-rs = {
-      url = "gitlab:max/deploy-rs?host=git.privatevoid.net";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "repin-flake-compat";
-        utils.follows = "repin-flake-utils";
-      };
-    };
-
-    agenix = {
-      url = "github:ryantm/agenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nar-serve = {
-      url = "github:numtide/nar-serve/v0.5.0";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "repin-flake-utils";
-      };
-    };
-
-    dream2nix = {
-      url = "github:nix-community/dream2nix";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        #alejandra.inputs.flakeCompat.follows = "repin-flake-compat";
-        flake-utils-pre-commit.follows = "repin-flake-utils";
-      };
-    };
-    
-    devshell = {
-      url = "github:numtide/devshell";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "repin-flake-utils";
-      };
-    };
-    
-    mms = {
-      url = "github:mkaito/nixos-modded-minecraft-servers";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        nix.follows = "nix-super";
-        flake-compat.follows = "repin-flake-compat";
-        flake-utils.follows = "repin-flake-utils";
-      };
-    };
-    
-    hercules-ci-agent = {
-      url = "github:hercules-ci/hercules-ci-agent";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-parts.follows = "flake-parts";
-      };
-    };
-    hercules-ci-effects = {
-      url = "github:hercules-ci/hercules-ci-effects";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
-
-    flake-parts = {
-      url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    
-    repin-flake-compat = {
-      url = "github:edolstra/flake-compat";
-      flake = false;
-    };
-    repin-flake-utils.url = "github:numtide/flake-utils";
-  };
   outputs = { self, nixpkgs, flake-parts, ... }@inputs:
     let
       systems = [ "x86_64-linux" "aarch64-linux" ];
@@ -176,4 +94,87 @@
         ./packages/part.nix
       ];
     };
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05-small";
+
+    nix-super = {
+      url = "gitlab:max/nix-super-fork?host=git.privatevoid.net";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    deploy-rs = {
+      url = "gitlab:max/deploy-rs?host=git.privatevoid.net";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-compat.follows = "repin-flake-compat";
+        utils.follows = "repin-flake-utils";
+      };
+    };
+
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nar-serve = {
+      url = "github:numtide/nar-serve/v0.5.0";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "repin-flake-utils";
+      };
+    };
+
+    dream2nix = {
+      url = "github:nix-community/dream2nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        #alejandra.inputs.flakeCompat.follows = "repin-flake-compat";
+        flake-utils-pre-commit.follows = "repin-flake-utils";
+      };
+    };
+    
+    devshell = {
+      url = "github:numtide/devshell";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "repin-flake-utils";
+      };
+    };
+    
+    mms = {
+      url = "github:mkaito/nixos-modded-minecraft-servers";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        nix.follows = "nix-super";
+        flake-compat.follows = "repin-flake-compat";
+        flake-utils.follows = "repin-flake-utils";
+      };
+    };
+    
+    hercules-ci-agent = {
+      url = "github:hercules-ci/hercules-ci-agent";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+      };
+    };
+    hercules-ci-effects = {
+      url = "github:hercules-ci/hercules-ci-effects";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    
+    repin-flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
+    repin-flake-utils.url = "github:numtide/flake-utils";
+  };
 }
