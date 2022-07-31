@@ -1,5 +1,19 @@
 {
   "pins": {
+    "gohugo-theme-ananke": {
+      "type": "GitRelease",
+      "repository": {
+        "type": "GitHub",
+        "owner": "theNewDynamic",
+        "repo": "gohugo-theme-ananke"
+      },
+      "pre_releases": false,
+      "version_upper_bound": null,
+      "version": "v2.9.1",
+      "revision": "470ea40982f5036554819253c3ac6ed4a34193f4",
+      "url": "https://api.github.com/repos/theNewDynamic/gohugo-theme-ananke/tarball/v2.9.1",
+      "hash": "00lp2db3kifizfhmgyihsa1gn5pb91j2kcg64rz0m7lh4b4bqpvg"
+    },
     "searxng": {
       "type": "Git",
       "repository": {
