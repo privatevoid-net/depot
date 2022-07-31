@@ -29,6 +29,10 @@ super: rec {
     };
   in jre // { meta = jre.meta // { inherit (super.jdk17_headless.meta) platforms; }; };
 
+  keycloak = super.keycloak.override {
+    jre = jre17_standard;
+  };
+
   oauth2-proxy = patch super.oauth2-proxy "patches/base/oauth2-proxy";
 
   tempo = super.tempo.overrideAttrs (_: {

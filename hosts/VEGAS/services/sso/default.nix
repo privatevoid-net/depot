@@ -26,6 +26,7 @@ in
   };
   services.keycloak = {
     enable = true;
+    package = inputs.self.packages.${pkgs.system}.keycloak;
     database = {
       createLocally = true;
       type = "postgresql";

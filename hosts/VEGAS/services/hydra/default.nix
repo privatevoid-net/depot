@@ -1,4 +1,4 @@
-{ pkgs, lib, config, tools, ... }:
+{ config, inputs, lib, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
 in
@@ -53,6 +53,7 @@ in
 
   services.hydra = {
     enable = true;
+    package = inputs.self.packages.${pkgs.system}.hydra;
     hydraURL = "https://hydra.${domain}";
     inherit (config.links.hydra) port;
     notificationSender = "hydra@${domain}";
