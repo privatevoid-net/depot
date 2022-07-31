@@ -1,6 +1,10 @@
 {
   description = "Private Void system configurations";
-  nixConfig.allow-import-from-derivation = true;
+  nixConfig = {
+    allow-import-from-derivation = true;
+    extra-substituters = "https://cache.privatevoid.net";
+    extra-trusted-public-keys = "cache.privatevoid.net:SErQ8bvNWANeAvtsOESUwVYr2VJynfuc9JRwlzTTkVg=";
+  };
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05-small";
