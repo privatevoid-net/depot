@@ -9,12 +9,12 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05-small";
 
-    nix-super.url = "git+https://git.privatevoid.net/max/nix-super-fork";
+    nix-super.url = "gitlab:max/nix-super-fork?host=git.privatevoid.net";
 
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    deploy-rs.url = "git+https://git.privatevoid.net/max/deploy-rs";
+    deploy-rs.url = "gitlab:max/deploy-rs?host=git.privatevoid.net";
 
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
