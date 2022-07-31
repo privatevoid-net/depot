@@ -9,7 +9,7 @@
   };
 
   services.mysql = {
-    enable = true;
+    enable = false;
     settings.mysqld.bind-address = "127.0.0.1";
     package = pkgs.mariadb;
     dataDir = "/srv/storage/database/mariadb/data";
