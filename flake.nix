@@ -14,15 +14,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    home-manager = {
-      url = "github:nix-community/home-manager/master";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "repin-flake-compat";
-        utils.follows = "repin-flake-utils";
-      };
-    };
-
     deploy-rs = {
       url = "gitlab:max/deploy-rs?host=git.privatevoid.net";
       inputs = {
