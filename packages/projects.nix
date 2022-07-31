@@ -18,15 +18,12 @@
     poetry2nix = pkgs.poetry2nix.overrideScope' (final: prev: {
       defaultPoetryOverrides = prev.defaultPoetryOverrides.extend (import ./poetry2nix-overrides);
     });
-  
-    mkShell = import lib/devshell.nix {
-      inherit inputs' pkgs;
-    };
 
   in
   {
     imports = [
       ./tests
+      ./modules/devshell.nix
     ];
     packages = filters.doFilter filters.packages rec {
       ghost = let
@@ -84,10 +81,10 @@
       stevenblack-hosts = pkgs.callPackage ./data/stevenblack { inherit pins; };
     };
 
-    devShells = {
+    projectShells = {
       default = let
         flakePkgs = self'.packages;
-      in mkShell {
+      in {
         tools = with flakePkgs; [
           agenix
           deploy-rs
@@ -99,7 +96,7 @@
       };
       reflex-cache = let
         inherit (self'.packages) reflex-cache;
-      in mkShell {
+      in {
         packages = [
           reflex-cache.dependencyEnv
         ];
