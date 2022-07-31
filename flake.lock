@@ -65,17 +65,19 @@
         "utils": "utils"
       },
       "locked": {
+        "host": "git.privatevoid.net",
         "lastModified": 1638903228,
         "narHash": "sha256-mEbLD0A9gp159pFtdK4n1Yp2uFSE1T2nOr8BkfwgrC8=",
-        "ref": "refs/heads/master",
+        "owner": "max",
+        "repo": "deploy-rs",
         "rev": "0d11e93f47be21051683e1b38f6b0dcb3f0a71cf",
-        "revCount": 244,
-        "type": "git",
-        "url": "https://git.privatevoid.net/max/deploy-rs"
+        "type": "gitlab"
       },
       "original": {
-        "type": "git",
-        "url": "https://git.privatevoid.net/max/deploy-rs"
+        "host": "git.privatevoid.net",
+        "owner": "max",
+        "repo": "deploy-rs",
+        "type": "gitlab"
       }
     },
     "devshell": {
@@ -543,17 +545,19 @@
         "nixpkgs-regression": "nixpkgs-regression"
       },
       "locked": {
+        "host": "git.privatevoid.net",
         "lastModified": 1655504882,
         "narHash": "sha256-R3pRcYsxpHuCI4Z/XeiBle6qYQWt8IriZP3vz58OpMk=",
-        "ref": "refs/heads/master",
+        "owner": "max",
+        "repo": "nix-super-fork",
         "rev": "6281f78ce2059dbbcc98319cff773de5d71fd327",
-        "revCount": 12340,
-        "type": "git",
-        "url": "https://git.privatevoid.net/max/nix-super-fork"
+        "type": "gitlab"
       },
       "original": {
-        "type": "git",
-        "url": "https://git.privatevoid.net/max/nix-super-fork"
+        "host": "git.privatevoid.net",
+        "owner": "max",
+        "repo": "nix-super-fork",
+        "type": "gitlab"
       }
     },
     "nixpkgs": {
