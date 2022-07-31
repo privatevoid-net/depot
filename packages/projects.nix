@@ -24,6 +24,8 @@
     imports = [
       ./tests
       ./modules/devshell.nix
+
+      ./websites/landing/project.nix
     ];
     packages = filters.doFilter filters.packages rec {
       ghost = let
