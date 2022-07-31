@@ -38,7 +38,13 @@ in
         mkdir -p $out/share/www
         hugo ${hugoArgsStr} -s $sourceRoot -d $out/share/www/${pname}
       '';
-      passthru.webroot = "${site}/share/www/${site.pname}";
+      passthru = {
+        webroot = "${site}/share/www/${site.pname}";
+        serve = writeShellScriptBin "serve-site" ''
+          command -v xdg-open >/dev/null && xdg-open http://127.0.0.1:1314 || true
+          ${darkhttpd}/bin/darkhttpd ${site.webroot} --addr 127.0.0.1 --port 1314
+        '';
+      };
     };
   in site;
 }
