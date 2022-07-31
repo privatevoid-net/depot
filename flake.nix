@@ -29,8 +29,11 @@
     
     hercules-ci-agent.url = "github:hercules-ci/hercules-ci-agent";
     hercules-ci-effects.url = "github:hercules-ci/hercules-ci-effects";
+
+   flake-parts.url = "github:hercules-ci/flake-parts";
+   flake-parts.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = { self, nixpkgs, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, flake-parts, ... }@inputs:
     let
       systems = [ "x86_64-linux" "aarch64-linux" ];
 
