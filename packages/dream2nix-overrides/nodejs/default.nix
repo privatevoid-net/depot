@@ -32,7 +32,6 @@ in
 
   uptime-kuma.runtime-bugfixes = {
     patches = [
-      ./uptime-kuma/log-in-data-dir.patch
       ./uptime-kuma/chmod-database.patch
       ./uptime-kuma/data-dir-concat-with-slash.patch
     ];
