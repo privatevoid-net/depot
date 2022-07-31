@@ -15,12 +15,30 @@ let
   hugoArgs = [
     "--config" configFile
   ];
+  hugoArgsStr = lib.concatStringsSep " " hugoArgs;
 in
 {
   projectShells.landing = {
     commands.hugo = {
       help = pkgs.hugo.meta.description;
-      command = "exec ${pkgs.hugo}/bin/hugo ${lib.concatStringsSep " " hugoArgs} \"$@\"";
+      command = "exec ${pkgs.hugo}/bin/hugo ${hugoArgsStr} \"$@\"";
     };
   };
+
+  packages.landing = with pkgs; let
+    site = stdenvNoCC.mkDerivation rec {
+      pname = "private-void-landing-page";
+      version = "0.0.0";
+      src = ./.;
+      nativeBuildInputs = [
+        hugo
+      ];
+      buildCommand = ''
+        unpackPhase
+        mkdir -p $out/share/www
+        hugo ${hugoArgsStr} -s $sourceRoot -d $out/share/www/${pname}
+      '';
+      passthru.webroot = "${site}/share/www/${site.pname}";
+    };
+  in site;
 }
