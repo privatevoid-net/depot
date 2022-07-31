@@ -1,16 +1,22 @@
-{ inputs, pkgs, system, ... }:
-let
-  tools = import ./lib/tools.nix;
-  packages = builtins.mapAttrs (_: v: v.packages.${system}) inputs;
-in with tools;
-rec {
-  inherit (packages.deploy-rs) deploy-rs;
+{
+  perSystem = { filters, inputs', ... }:
 
-  nix-super = packages.nix-super.nix;
+  let
+    tools = import ./lib/tools.nix;
+    packages = builtins.mapAttrs (_: v: v.packages) inputs';
+  in with tools;
 
-  agenix = packages.agenix.agenix.override { nix = nix-super; };
+  {
+    packages = filters.doFilter filters.packages rec {
+      inherit (packages.deploy-rs) deploy-rs;
 
-  hercules-ci-agent = packages.hercules-ci-agent.hercules-ci-agent;
+      nix-super = packages.nix-super.nix;
 
-  hci = packages.hercules-ci-agent.hercules-ci-cli;
+      agenix = packages.agenix.agenix.override { nix = nix-super; };
+
+      hercules-ci-agent = packages.hercules-ci-agent.hercules-ci-agent;
+
+      hci = packages.hercules-ci-agent.hercules-ci-cli;
+    };
+  };
 }

@@ -105,28 +105,20 @@
       mkDeployments = hosts: overrides: lib.genAttrs hosts
         (host: mkDeploy host // (overrides.${host} or {}) );
 
-      depot = forSystems (system: import ./packages {
-        inherit inputs system;
-        pkgs = nixpkgsFor system;
-      });
-
       effects = inputs.hercules-ci-effects.lib.withPkgs (nixpkgsFor "x86_64-linux");
-    in {
-      nixosModules = aspect.modules;
+    in flake-parts.lib.mkFlake { inherit self; } {
+      inherit systems;
+      flake = {
+        nixosModules = aspect.modules;
 
-      nixosConfigurations = lib.genAttrs nixosHosts mkNixOS;
+        nixosConfigurations = lib.genAttrs nixosHosts mkNixOS;
 
-      deploy.nodes = mkDeployments deployableNixosHosts {};
+        deploy.nodes = mkDeployments deployableNixosHosts {};
 
-      apps = forSystems (system: {
-      });
-
-      packages = forSystems (system: depot.${system}.packages);
-
-      checks = forSystems (system: depot.${system}.checks);
-
-      devShells = forSystems (system: depot.${system}.devShells);
-
-      effects = { branch, ... }: mkDeployEffects branch deployableNixosHosts;
+        effects = { branch, ... }: mkDeployEffects branch deployableNixosHosts;
+      };
+      imports = [
+        ./packages/part.nix
+      ];
     };
 }

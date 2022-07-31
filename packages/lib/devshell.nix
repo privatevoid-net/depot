@@ -1,8 +1,6 @@
-{ inputs, pkgs, ... }:
+{ inputs', pkgs, ... }:
 let
-  inherit (pkgs) system;
-  
-  inherit (inputs.devshell.legacyPackages.${system}) mkShell;
+  inherit (inputs'.devshell.legacyPackages) mkShell;
   
   wrapInAttrs = value: if builtins.isAttrs value then value else { inherit value; };
   
