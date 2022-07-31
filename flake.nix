@@ -12,9 +12,7 @@
 
       forSystems = nixpkgs.lib.genAttrs systems;
 
-      nixpkgsFor = system: import nixpkgs {
-        inherit system;
-      };
+      nixpkgsFor = nixpkgs.legacyPackages;
 
       inherit (nixpkgs) lib;
 
@@ -78,7 +76,7 @@
       mkDeployments = hosts: overrides: lib.genAttrs hosts
         (host: mkDeploy host // (overrides.${host} or {}) );
 
-      effects = inputs.hercules-ci-effects.lib.withPkgs (nixpkgsFor "x86_64-linux");
+      effects = inputs.hercules-ci-effects.lib.withPkgs (nixpkgsFor.x86_64-linux);
     in flake-parts.lib.mkFlake { inherit self; } {
       inherit systems;
       flake = {
