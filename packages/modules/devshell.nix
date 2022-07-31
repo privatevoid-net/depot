@@ -49,7 +49,7 @@ in {
         };
         commands = mkOption {
           default = {};
-          type = types.attrsOf types.package;
+          type = types.attrsOf types.attrs;
         };
         env = mkOption {
           default = {};
