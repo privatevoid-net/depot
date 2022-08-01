@@ -33,8 +33,6 @@ super: rec {
     jre = jre17_standard;
   };
 
-  oauth2-proxy = patch super.oauth2-proxy "patches/base/oauth2-proxy";
-
   tempo = super.tempo.overrideAttrs (_: {
     version = builtins.substring 1 (-1) pins.tempo.version;
     src = super.npins.mkSource pins.tempo;
