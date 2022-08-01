@@ -20,9 +20,11 @@ with tools.nginx;
   services = {
     radarr = {
       enable = true;
+      user = "svcradarr";
     };
     sonarr = {
       enable = true;
+      user = "svcsonarr";
     };
     prowlarr = {
       enable = true;
