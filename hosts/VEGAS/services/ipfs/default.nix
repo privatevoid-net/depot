@@ -11,7 +11,10 @@ in
   ];
 
   systemd.services.ipfs = {
-    serviceConfig.LimitNOFILE = 524288;
+    serviceConfig = {
+      LimitNOFILE = 524288;
+      IOSchedulingPriority = 7;
+    };
     environment = {
       OTEL_TRACES_EXPORTER = "otlp";
       OTEL_EXPORTER_OTLP_PROTOCOL = "grpc";
