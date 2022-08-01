@@ -21,7 +21,21 @@ let
   } // lib.optionalAttrs config.services.jitsi-meet.enable {
     "im.vector.riot.jitsi".preferredDomain = config.services.jitsi-meet.hostName;
   };
+  logConfig = {
+    version = 1;
+    formatters.structured.class = "synapse.logging.TerseJsonFormatter";
+    handlers.journal = {
+      class = "systemd.journal.JournalHandler";
+      formatter = "structured";
+      SYSLOG_IDENTIFIER = "synapse";
+    };
+    loggers.synapse = {
+      level = "WARNING";
+      handlers = [ "journal" ];
+    };
+  };
   clientConfigJSON = pkgs.writeText "matrix-client-config.json" (builtins.toJSON clientConfig);
+  logConfigJSON = pkgs.writeText "matrix-log-config.json" (builtins.toJSON logConfig);
   cfg = config.services.matrix-synapse;
 in {
   imports = [
@@ -73,6 +87,7 @@ in {
       allow_guest_access = true;
       push.include_content = true;
       group_creation_prefix = "unofficial/";
+      log_config = logConfigJSON;
       app_service_config_files =  [
         "/etc/synapse/discord-registration.yaml"
       ];
@@ -98,7 +113,10 @@ in {
       locations."/".return = "204";
       locations."/_matrix" = {
         proxyPass = "http://127.0.0.1:8008";
-        extraConfig = "client_max_body_size ${cfg.settings.max_upload_size};";
+        extraConfig = ''
+          client_max_body_size ${cfg.settings.max_upload_size};
+          access_log off;
+        '';
       };
       locations."= /.well-known/matrix/client".alias = clientConfigJSON;
     };
