@@ -383,11 +383,11 @@
       },
       "locked": {
         "host": "git.privatevoid.net",
-        "lastModified": 1659296959,
-        "narHash": "sha256-qWLz+7Ph4h0d3TT/qKqlEFFDwcLlEOuFUFPRRnj4AKQ=",
+        "lastModified": 1659373312,
+        "narHash": "sha256-ACyS/bZI8rT6MFQDs7B3ogsoMi79dIrN+mna1QiFJLU=",
         "owner": "max",
         "repo": "nix-super-fork",
-        "rev": "9baab7cd1c9e0de515c3f905af4f284ea35fd074",
+        "rev": "16eae95adfce8e781470748b95f32064028c0f27",
         "type": "gitlab"
       },
       "original": {
