@@ -34,7 +34,7 @@ in
       "/dev/sda 100"
       "/dev/sdb 100"
     ];
-    IODviceLatencyTargetSec = [ 
+    IODeviceLatencyTargetSec = [ 
       "/dev/sda 500ms"
       "/dev/sdb 500ms"
     ];
