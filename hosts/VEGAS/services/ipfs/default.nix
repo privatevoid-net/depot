@@ -10,12 +10,15 @@ in
     aspect.modules.ipfs
   ];
 
-  systemd.services.ipfs.environment = {
-    OTEL_TRACES_EXPORTER = "otlp";
-    OTEL_EXPORTER_OTLP_PROTOCOL = "grpc";
-    OTEL_EXPORTER_OTLP_ENDPOINT = config.links.tempo-otlp-grpc.url;
-    OTEL_TRACES_SAMPLER = "parentbased_traceidratio";
-    OTEL_TRACES_SAMPLER_ARG = "0.01";
+  systemd.services.ipfs = {
+    serviceConfig.LimitNOFILE = 524288;
+    environment = {
+      OTEL_TRACES_EXPORTER = "otlp";
+      OTEL_EXPORTER_OTLP_PROTOCOL = "grpc";
+      OTEL_EXPORTER_OTLP_ENDPOINT = config.links.tempo-otlp-grpc.url;
+      OTEL_TRACES_SAMPLER = "parentbased_traceidratio";
+      OTEL_TRACES_SAMPLER_ARG = "0.01";
+    };
   };
 
   systemd.slices.remotefshost.sliceConfig = {
