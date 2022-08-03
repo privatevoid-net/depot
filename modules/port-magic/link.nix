@@ -65,6 +65,10 @@ in
       type = types.str;
       description = "The hostname:port tuple.";
     };
+    extra = mkOption {
+      type = types.attrs;
+      description = "Arbitrary extra data.";
+    };
   };
   config = mkIf true {
     hostname = mkDefault cfg.ipv4;
