@@ -20,6 +20,7 @@ in
 
   networking = {
     firewall = {
+      trustedInterfaces = [ "wgmesh" ];
       allowedUDPPorts = [ link.port ];
     };
 
