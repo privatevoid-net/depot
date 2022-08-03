@@ -1,4 +1,4 @@
-{ aspect, inputs, config, pkgs, ... }:
+{ aspect, inputs, config, hosts, pkgs, ... }:
 
 {
   imports =
@@ -16,6 +16,7 @@
       aspect.modules.hyprspace
       aspect.modules.ipfs
       aspect.modules.nix-builder
+      aspect.modules.sss
 
 
     ]
@@ -26,6 +27,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "prophet";
+  networking.nameservers = [ hosts.VEGAS.interfaces.vstub.addr ];
 
   time.timeZone = "Europe/Zurich";
 
@@ -33,13 +35,6 @@
   networking.interfaces.enp0s3.useDHCP = true;
 
   i18n.defaultLocale = "en_US.UTF-8";
-
-  users.users.opc = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ];
-  };
-
-  security.sudo.wheelNeedsPassword = false;
 
   services.openssh.enable = true;
 
