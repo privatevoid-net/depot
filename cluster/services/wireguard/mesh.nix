@@ -8,7 +8,7 @@ let
     peerLink = cluster.config.links."mesh-node-${peerName}";
   in {
     publicKey = peerLink.extra.pubKey;
-    allowedIPs = [ "${peerLink.extra.meshIp}/32" ];
+    allowedIPs = [ "${peerLink.extra.meshIp}/32" ] ++ peerLink.extra.extraRoutes;
     endpoint = peerLink.tuple;
   };
 in

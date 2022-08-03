@@ -24,6 +24,7 @@ in
         inherit meshNet;
         pubKey = "NpeB8O4erGTas1pz6Pt7qtY9k45YV6tcZmvvA4qXoFk=";
         privKeyFile = ./mesh-keys/VEGAS.age;
+        extraRoutes = [ "${hosts.VEGAS.interfaces.vstub.addr}/32" "10.10.0.0/16" ];
       };
     };
     mesh-node-prophet = {
@@ -33,6 +34,7 @@ in
         inherit meshNet;
         pubKey = "MMZAbRtNE+gsLm6DJy9VN/Y39E69oAZnvOcFZPUAVDc=";
         privKeyFile = ./mesh-keys/prophet.age;
+        extraRoutes = [];
       };
     };
   };
