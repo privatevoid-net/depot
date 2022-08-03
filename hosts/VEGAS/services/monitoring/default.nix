@@ -27,8 +27,6 @@ let
 
   login = x: "https://login.${domain}/auth/realms/master/protocol/openid-connect/${x}";
 
-  filteredHosts = lib.filterAttrs (_: host: host ? hypr && host ? nixos) hosts;
-
   myNode = hosts.${config.networking.hostName};
 in
 {
@@ -115,8 +113,8 @@ in
     scrapeConfigs = [
       {
         job_name = "node";
-        static_configs = lib.flip lib.mapAttrsToList filteredHosts (name: host: {
-          targets = [ "${host.hypr.addr}:9100" ];
+        static_configs = lib.flip lib.mapAttrsToList cluster.config.vars.mesh (name: host: {
+          targets = [ "${host.meshIp}:9100" ];
           labels.instance = name;
         });
       }
@@ -124,7 +122,7 @@ in
         job_name = "jitsi";
         static_configs = [
           {
-            targets = [ "${hosts.prophet.hypr.addr}:9700" ];
+            targets = [ "${cluster.config.vars.mesh.prophet.meshIp}:9700" ];
             labels.instance = "meet.${domain}";
           }
         ];
