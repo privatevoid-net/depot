@@ -1,8 +1,10 @@
-{ config, hosts, inputs, lib, pkgs, tools, ... }:
+{ cluster, config, hosts, inputs, lib, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
 
   inherit (config) links;
+
+  inherit (cluster.config.links) loki-ingest;
 
   cfg = { inherit (config.services) loki; };
 
@@ -40,10 +42,6 @@ in
   links = {
     grafana.protocol = "http";
     prometheus.protocol = "http";
-    loki = {
-      protocol = "http";
-      ipv4 = myNode.hypr.addr;
-    };
     loki-grpc = {
       protocol = "grpc";
     };
@@ -91,7 +89,7 @@ in
         {
           name = "Loki";
           # uid = "P8E80F9AEF21F6940";
-          inherit (links.loki) url;
+          inherit (loki-ingest) url;
           type = "loki";
         }
       ];
@@ -145,7 +143,7 @@ in
     ];
   };
 
-  systemd.services.loki.after = [ "hyprspace.service" "sys-devices-virtual-net-hyprspace.device" ];
+  systemd.services.loki.after = [ "wireguard-wgmesh.service" ];
   services.loki = {
     enable = true;
     dataDir = "/srv/storage/private/loki";
@@ -153,8 +151,8 @@ in
       auth_enabled = false;
       server = {
         log_level = "warn";
-        http_listen_address = links.loki.ipv4;
-        http_listen_port = links.loki.port;
+        http_listen_address = loki-ingest.ipv4;
+        http_listen_port = loki-ingest.port;
         grpc_listen_address = links.loki-grpc.ipv4;
         grpc_listen_port = links.loki-grpc.port;
       };
