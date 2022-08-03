@@ -41,7 +41,7 @@ in
       cache_credentials = true;
       krb5_store_password_if_offline = true;
 
-      dyndns_update = interfaces ? primary.link;
+      dyndns_update = interfaces ? primary.link && ! interfaces.primary ? addrPublic;
       dyndns_iface = interfaces.primary.link or "";
 
       fallback_homedir = "/home/%u@%d";
