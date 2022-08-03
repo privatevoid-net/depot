@@ -12,7 +12,7 @@ in
 {
   options.services = mkOption {
     description = "Cluster services.";
-    type = with types; attrsOf (submodule (import ./service-module.nix ));
+    type = with types; attrsOf (submodule (import ./service-module.nix config.vars));
     default = {};
   };
   config.out.injectedNixosConfig = lib.flatten (lib.mapAttrsToList (_: getServiceConfigurations) config.services);

@@ -1,5 +1,12 @@
+vars:
 { name, config, lib, ... }:
 with lib;
+
+let
+  notSelf = x: x != vars.hostName;
+
+  filterGroup = builtins.filter notSelf;
+in
 
 {
   options = {
@@ -17,10 +24,16 @@ with lib;
       type = with types; attrsOf (oneOf [ str (listOf str) ]);
       default = [];
     };
+    otherNodes = mkOption {
+      description = "Other nodes in the group.";
+      type = with types; attrsOf (listOf str);
+      default = [];
+    };
     nixos = mkOption {
       description = "NixOS configurations per node group.";
       type = with types; attrs;
       default = {};
     };
   };
+  config.otherNodes = builtins.mapAttrs (_: filterGroup) config.nodes;
 }
