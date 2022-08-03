@@ -12,7 +12,6 @@ let
     ipfs = import ./ipfs;
     maintenance = import ./maintenance;
     minimal = import ./minimal;
-    monitoring = import ./monitoring;
     motd = import ./motd;
     nix-builder = import ./nix-builder;
     nix-config-server = import ./nix-config/server.nix;
@@ -43,7 +42,6 @@ in rec {
     server = [
       deploy-rs-receiver
       fail2ban
-      monitoring
       motd
       nix-config-server
       system-info

@@ -12,6 +12,10 @@ let
   getExtAddr = host: host.interfaces.primary.addrPublic or host.interfaces.primary.addr;
 in
 {
+  vars.mesh = {
+    VEGAS = config.links.mesh-node-VEGAS.extra;
+    prophet = config.links.mesh-node-prophet.extra;
+  };
   links = {
     mesh-node-VEGAS = {
       ipv4 = getExtAddr hosts.VEGAS;

@@ -1,6 +1,6 @@
-{ config, hosts, lib, pkgs, ... }:
+{ cluster, config, lib, pkgs, ... }:
 let
-  myNode = hosts.${config.networking.hostName};
+  myNode = cluster.config.vars.mesh.${cluster.config.vars.hostName};
 
   writeJSON = filename: data: pkgs.writeText filename (builtins.toJSON data);
 
@@ -8,35 +8,28 @@ let
     source_labels = [ from ];
     target_label = to;
   };
-in
-{
-  # remote loki
-  links.loki = {
-    protocol = "http";
-    ipv4 = hosts.VEGAS.hypr.addr;
-  };
-
+in {
   services.journald.extraConfig = "Storage=volatile";
 
   services.prometheus.exporters = {
     node = {
       enable = true;
-      listenAddress = myNode.hypr.addr;
+      listenAddress = myNode.meshIp;
     };
 
     jitsi = {
       enable = config.services.jitsi-meet.enable;
-      listenAddress = myNode.hypr.addr;
+      listenAddress = myNode.meshIp;
       interval = "60s";
     };
   };
 
   systemd.services.prometheus-node-exporter = {
-    after = [ "hyprspace.service" "sys-devices-virtual-net-hyprspace.device" ];
+    after = [ "wireguard-wgmesh.service" ];
     serviceConfig.RestartSec = "10s";
   };
   systemd.services.prometheus-jitsi-exporter = {
-    after = [ "hyprspace.service" "sys-devices-virtual-net-hyprspace.device" ];
+    after = [ "wireguard-wgmesh.service" ];
     serviceConfig.RestartSec = "10s";
   };
 
@@ -48,14 +41,14 @@ in
         server.disable = true;
         positions.filename = "\${STATE_DIRECTORY:/tmp}/promtail-positions.yaml";
         clients = [
-          { url = "${config.links.loki.url}/loki/api/v1/push"; }
+          { url = "${cluster.config.links.loki-ingest.url}/loki/api/v1/push"; }
         ];
         scrape_configs = [
           {
             job_name = "journal";
             journal = {
               max_age = "12h";
-              labels.host = config.networking.hostName;
+              labels.host = cluster.config.vars.hostName;
             };
               relabel_configs = [
                 (relabel "__journal__systemd_unit" "systemd_unit")
