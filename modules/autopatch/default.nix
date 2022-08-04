@@ -6,7 +6,11 @@
         patched = import ../../packages/patched-derivations.nix super;
       in {
 
-        inherit (patched) sssd tempo;
+        inherit (patched)
+          prometheus-jitsi-exporter
+          sssd
+          tempo
+        ;
 
         jre_headless = patched.jre17_standard;
 
