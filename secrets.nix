@@ -4,6 +4,9 @@ let
   systemKeys = x: x.ssh.id.publicKey or null;
 in with hosts;
 {
+  "cluster/services/patroni/passwords/replication.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
+  "cluster/services/patroni/passwords/rewind.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
+  "cluster/services/patroni/passwords/superuser.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/wireguard/mesh-keys/VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/wireguard/mesh-keys/prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "secrets/acme-dns-key.age".publicKeys = max ++ map systemKeys [ VEGAS ];
