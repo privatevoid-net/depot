@@ -1,0 +1,33 @@
+From d2b0794c2e7ecc45ccd237fb80ccd84efb976e7a Mon Sep 17 00:00:00 2001
+From: Max <max@privatevoid.net>
+Date: Thu, 4 Aug 2022 13:46:03 +0200
+Subject: [PATCH] reduce log noise
+
+
+diff --git a/jitsiexporter.go b/jitsiexporter.go
+index 41663ee..2df96bd 100644
+--- a/jitsiexporter.go
++++ b/jitsiexporter.go
+@@ -57,7 +57,7 @@ func (m *Metrics) Update() error {
+ 
+ 			name := fmt.Sprintf("jitsi_%s", k)
+ 			if _, ok := m.Metrics[name]; !ok {
+-				fieldLogger.Info("creating and registering metric")
++				fieldLogger.Debug("creating and registering metric")
+ 
+ 				m.Metrics[name] = Metric{
+ 					Name: name,
+@@ -72,11 +72,11 @@ func (m *Metrics) Update() error {
+ 			}
+ 
+ 			value := v.(float64)
+-			fieldLogger.Infof("set to %f", value)
++			fieldLogger.Debugf("set to %f", value)
+ 			m.Metrics[name].Gauge.Set(value)
+ 		default:
+ 			fieldLogger.Debugf("found %v", t)
+-			fieldLogger.Info("skipping")
++			fieldLogger.Debug("skipping")
+ 
+ 			continue
+ 		}
