@@ -1,4 +1,4 @@
-{ lib, pkgs, self', ... }:
+{ builders, lib, pkgs, self', ... }:
 let
   configFile = pkgs.writeText "hugo-config.json" (builtins.toJSON {
     title = "Private Void | Zero-maintenance perfection";
@@ -33,7 +33,7 @@ in
     site = stdenvNoCC.mkDerivation rec {
       pname = "private-void-landing-page";
       version = "0.0.0";
-      src = ./.;
+      src = builders.hydrateAssetDirectory ./.;
       nativeBuildInputs = [
         hugo
       ];
