@@ -23,6 +23,9 @@ in
       help = pkgs.hugo.meta.description;
       command = "exec ${pkgs.hugo}/bin/hugo ${hugoArgsStr} \"$@\"";
     };
+    tools = with self'.packages; [
+      dvc
+    ];
   };
 
   packages.landing = with pkgs; let
