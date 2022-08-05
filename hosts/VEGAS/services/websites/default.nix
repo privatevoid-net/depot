@@ -1,7 +1,10 @@
-{ config, lib, tools, ... }:
+{ config, inputs, lib, pkgs, tools, ... }:
 
 let
-  importWebsites = expr: import expr { tools = tools.nginx; };
+  importWebsites = expr: import expr {
+    tools = tools.nginx;
+    packages = inputs.self.packages.${pkgs.system};
+  };
 
   websites = tools.nginx.mappers.mapSubdomains (importWebsites ./websites.nix);
 

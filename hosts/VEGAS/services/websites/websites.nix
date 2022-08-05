@@ -1,4 +1,4 @@
-{ tools }:
+{ packages, tools }:
 with tools.vhosts;
 let inherit (tools) domain; in
 {
@@ -6,7 +6,7 @@ let inherit (tools) domain; in
   ktp    = static "/srv/storage/www/soda/ktp";
   legacy = static "/srv/storage/www/legacy";
   soda   = static "/srv/storage/www/soda"; # TODO: add back custom error pages, wttr.in cache
-  www    = simplePHP "/srv/storage/www/${domain}" // { default = true; };
+  www    = static packages.landing.webroot // { default = true; };
 
   "shadertool.dev" = proxy "http://test-generic.int.${domain}";
   "kokaido" = proxy "http://test-generic.int.${domain}:8080";

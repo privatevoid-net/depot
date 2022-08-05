@@ -1,4 +1,4 @@
-{ tools }:
+{ tools, ... }:
 with tools.vhosts;
 let
   inherit (tools) domain;
