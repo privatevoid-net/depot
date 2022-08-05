@@ -3,7 +3,18 @@ let
   pins = import ./sources;
 in with tools;
 super: rec {
-  dvc = patch super.dvc "patches/base/dvc";
+  dvc = patch (super.dvc.overrideAttrs (old: {
+    propagatedBuildInputs = with super.python3Packages; old.propagatedBuildInputs ++ [
+      aiobotocore
+      boto3
+      (s3fs.overrideAttrs (_: { postPatch = ''
+          substituteInPlace requirements.txt \
+            --replace "fsspec==2022.02.0" "fsspec" \
+            --replace "aiobotocore~=2.1.0" "aiobotocore"
+        '';
+      }))
+    ];
+  })) "patches/base/dvc";
 
   hydra = (patch super.hydra-unstable "patches/base/hydra").override { nix = super.nixVersions.nix_2_8; };
 
