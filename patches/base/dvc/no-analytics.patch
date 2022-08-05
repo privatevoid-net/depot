@@ -1,0 +1,280 @@
+diff --git a/dvc/analytics.py b/dvc/analytics.py
+index 8b9c6310..e6586005 100644
+--- a/dvc/analytics.py
++++ b/dvc/analytics.py
+@@ -1,12 +1,3 @@
+-import json
+-import logging
+-import os
+-
+-from .env import DVC_NO_ANALYTICS
+-
+-logger = logging.getLogger(__name__)
+-
+-
+ def collect_and_send_report(args=None, return_code=None):
+     """
+     Collect information from the runtime/environment and the command
+@@ -19,40 +10,11 @@ def collect_and_send_report(args=None, return_code=None):
+     report as a JSON, where the _collector_ generates it and the _sender_
+     removes it after sending it.
+     """
+-    import tempfile
+-
+-    from dvc.daemon import daemon
+-
+-    report = {}
+-
+-    # Include command execution information on the report only when available.
+-    if args and hasattr(args, "func"):
+-        report.update({"cmd_class": args.func.__name__})
+-
+-    if return_code is not None:
+-        report.update({"cmd_return_code": return_code})
+-
+-    with tempfile.NamedTemporaryFile(delete=False, mode="w") as fobj:
+-        json.dump(report, fobj)
+-    daemon(["analytics", fobj.name])
++    raise NotImplementedError
+ 
+ 
+ def is_enabled():
+-    from dvc.config import Config, to_bool
+-    from dvc.utils import env2bool
+-
+-    if env2bool("DVC_TEST"):
+-        return False
+-
+-    enabled = not os.getenv(DVC_NO_ANALYTICS)
+-    if enabled:
+-        enabled = to_bool(
+-            Config(validate=False).get("core", {}).get("analytics", "true")
+-        )
+-
+-    logger.debug("Analytics is {}abled.".format("en" if enabled else "dis"))
+-
+-    return enabled
++    return False
+ 
+ 
+ def send(path):
+@@ -63,88 +25,21 @@ def send(path):
+     `collect_and_send_report`. Sending happens on another process,
+     thus, the need of removing such file afterwards.
+     """
+-    import requests
+-
+-    url = "https://analytics.dvc.org"
+-    headers = {"content-type": "application/json"}
+-
+-    with open(path, encoding="utf-8") as fobj:
+-        report = json.load(fobj)
+-
+-    report.update(_runtime_info())
+-
+-    try:
+-        requests.post(url, json=report, headers=headers, timeout=5)
+-    except requests.exceptions.RequestException:
+-        logger.debug("failed to send analytics report", exc_info=True)
+-
+-    os.remove(path)
++    raise NotImplementedError
+ 
+ 
+ def _scm_in_use():
+-    from scmrepo.noscm import NoSCM
+-
+-    from dvc.exceptions import NotDvcRepoError
+-    from dvc.repo import Repo
+-
+-    from .scm import SCM, SCMError
+-
+-    try:
+-        scm = SCM(root_dir=Repo.find_root())
+-        return type(scm).__name__
+-    except SCMError:
+-        return NoSCM.__name__
+-    except NotDvcRepoError:
+-        pass
++    raise NotImplementedError
+ 
+ 
+ def _runtime_info():
+     """
+     Gather information from the environment where DVC runs to fill a report.
+     """
+-    from dvc import __version__
+-    from dvc.utils import is_binary
+-
+-    return {
+-        "dvc_version": __version__,
+-        "is_binary": is_binary(),
+-        "scm_class": _scm_in_use(),
+-        "system_info": _system_info(),
+-        "user_id": _find_or_create_user_id(),
+-    }
++    raise NotImplementedError
+ 
+ 
+ def _system_info():
+-    import platform
+-    import sys
+-
+-    import distro
+-
+-    system = platform.system()
+-
+-    if system == "Windows":
+-        version = sys.getwindowsversion()
+-
+-        return {
+-            "os": "windows",
+-            "windows_version_build": version.build,
+-            "windows_version_major": version.major,
+-            "windows_version_minor": version.minor,
+-            "windows_version_service_pack": version.service_pack,
+-        }
+-
+-    if system == "Darwin":
+-        return {"os": "mac", "mac_version": platform.mac_ver()[0]}
+-
+-    if system == "Linux":
+-        return {
+-            "os": "linux",
+-            "linux_distro": distro.id(),
+-            "linux_distro_like": distro.like(),
+-            "linux_distro_version": distro.version(),
+-        }
+-
+-    # We don't collect data for any other system.
+     raise NotImplementedError
+ 
+ 
+@@ -158,33 +53,4 @@ def _find_or_create_user_id():
+ 
+     IDs are generated randomly with UUID.
+     """
+-    import uuid
+-
+-    from dvc.config import Config
+-    from dvc.lock import Lock, LockError
+-    from dvc.utils.fs import makedirs
+-
+-    config_dir = Config.get_dir("global")
+-    fname = os.path.join(config_dir, "user_id")
+-    lockfile = os.path.join(config_dir, "user_id.lock")
+-
+-    # Since the `fname` and `lockfile` are under the global config,
+-    # we need to make sure such directory exist already.
+-    makedirs(config_dir, exist_ok=True)
+-
+-    try:
+-        with Lock(lockfile):
+-            try:
+-                with open(fname, encoding="utf-8") as fobj:
+-                    user_id = json.load(fobj)["user_id"]
+-
+-            except (FileNotFoundError, ValueError, KeyError):
+-                user_id = str(uuid.uuid4())
+-
+-                with open(fname, "w", encoding="utf-8") as fobj:
+-                    json.dump({"user_id": user_id}, fobj)
+-
+-            return user_id
+-
+-    except LockError:
+-        logger.debug(f"Failed to acquire '{lockfile}'")
++    raise NotImplementedError
+diff --git a/dvc/cli/__init__.py b/dvc/cli/__init__.py
+index 3002654e..ee61bee4 100644
+--- a/dvc/cli/__init__.py
++++ b/dvc/cli/__init__.py
+@@ -115,11 +115,6 @@ def main(argv=None):  # noqa: C901
+         ret = 255
+ 
+     try:
+-        from dvc import analytics
+-
+-        if analytics.is_enabled():
+-            analytics.collect_and_send_report(args, ret)
+-
+         return ret
+     finally:
+         logger.setLevel(outerLogLevel)
+diff --git a/dvc/commands/daemon.py b/dvc/commands/daemon.py
+index 3e212899..09abaccf 100644
+--- a/dvc/commands/daemon.py
++++ b/dvc/commands/daemon.py
+@@ -26,15 +26,6 @@ class CmdDaemonUpdater(CmdDaemonBase):
+         return 0
+ 
+ 
+-class CmdDaemonAnalytics(CmdDaemonBase):
+-    def run(self):
+-        from dvc import analytics
+-
+-        analytics.send(self.args.target)
+-
+-        return 0
+-
+-
+ def add_parser(subparsers, parent_parser):
+     DAEMON_HELP = "Service daemon."
+     daemon_parser = subparsers.add_parser(
+@@ -59,15 +50,3 @@ def add_parser(subparsers, parent_parser):
+         help=DAEMON_UPDATER_HELP,
+     )
+     daemon_updater_parser.set_defaults(func=CmdDaemonUpdater)
+-
+-    DAEMON_ANALYTICS_HELP = "Send dvc usage analytics."
+-    daemon_analytics_parser = daemon_subparsers.add_parser(
+-        "analytics",
+-        parents=[parent_parser],
+-        description=DAEMON_ANALYTICS_HELP,
+-        help=DAEMON_ANALYTICS_HELP,
+-    )
+-    daemon_analytics_parser.add_argument(
+-        "target", help="Analytics file."
+-    ).complete = completion.FILE
+-    daemon_analytics_parser.set_defaults(func=CmdDaemonAnalytics)
+diff --git a/dvc/commands/init.py b/dvc/commands/init.py
+index 3d0c774b..19b86b50 100644
+--- a/dvc/commands/init.py
++++ b/dvc/commands/init.py
+@@ -3,7 +3,6 @@ import logging
+ 
+ import colorama
+ 
+-from dvc import analytics
+ from dvc.cli.command import CmdBaseNoRepo
+ from dvc.cli.utils import append_doc_link
+ from dvc.utils import boxify
+@@ -15,16 +14,6 @@ logger = logging.getLogger(__name__)
+ def _welcome_message():
+     from dvc.ui import ui
+ 
+-    if analytics.is_enabled():
+-        ui.write(
+-            boxify(
+-                "DVC has enabled anonymous aggregate usage analytics.\n"
+-                "Read the analytics documentation (and how to opt-out) here:\n"
+-                + fmt_link("https://dvc.org/doc/user-guide/analytics"),
+-                border_color="red",
+-            )
+-        )
+-
+     msg = (
+         "{yellow}What's next?{nc}\n"
+         "{yellow}------------{nc}\n"
+diff --git a/dvc/config_schema.py b/dvc/config_schema.py
+index aa495a89..54ae30b1 100644
+--- a/dvc/config_schema.py
++++ b/dvc/config_schema.py
+@@ -114,7 +114,6 @@ SCHEMA = {
+         "remote": Lower,
+         "checksum_jobs": All(Coerce(int), Range(1)),
+         Optional("interactive", default=False): Bool,
+-        Optional("analytics", default=True): Bool,
+         Optional("hardlink_lock", default=False): Bool,
+         Optional("no_scm", default=False): Bool,
+         Optional("autostage", default=False): Bool,
