@@ -1,0 +1,121 @@
+diff --git a/dvc/dvcfile.py b/dvc/dvcfile.py
+index e542ba98..40d13a40 100644
+--- a/dvc/dvcfile.py
++++ b/dvc/dvcfile.py
+@@ -14,7 +14,7 @@ from dvc.stage.exceptions import (
+ from dvc.types import AnyPath
+ from dvc.utils import relpath
+ from dvc.utils.collections import apply_diff
+-from dvc.utils.serialize import dump_yaml, modify_yaml
++from dvc.utils.serialize import dump_json, modify_json
+ 
+ if TYPE_CHECKING:
+     from dvc.repo import Repo
+@@ -24,7 +24,7 @@ _T = TypeVar("_T")
+ 
+ DVC_FILE = "Dvcfile"
+ DVC_FILE_SUFFIX = ".dvc"
+-PIPELINE_FILE = "dvc.yaml"
++PIPELINE_FILE = "dvc.json"
+ PIPELINE_LOCK = "dvc.lock"
+ 
+ 
+@@ -147,7 +147,7 @@ class FileMixin:
+             raise StageFileIsNotDvcFileError(self.path)
+ 
+         self._check_gitignored()
+-        return self._load_yaml(**kwargs)
++        return self._load_json(**kwargs)
+ 
+     @classmethod
+     def validate(cls, d: _T, fname: str = None) -> _T:
+@@ -155,7 +155,7 @@ class FileMixin:
+ 
+         return validate(d, cls.SCHEMA, path=fname)  # type: ignore[arg-type]
+ 
+-    def _load_yaml(self, **kwargs: Any) -> Tuple[Any, str]:
++    def _load_json(self, **kwargs: Any) -> Tuple[Any, str]:
+         from dvc.utils import strictyaml
+ 
+         return strictyaml.load(
+@@ -198,7 +198,7 @@ class SingleStageFile(FileMixin):
+         if self.verify:
+             check_dvcfile_path(self.repo, self.path)
+         logger.debug(f"Saving information to '{relpath(self.path)}'.")
+-        dump_yaml(self.path, serialize.to_single_stage_file(stage))
++        dump_json(self.path, serialize.to_single_stage_file(stage))
+         self.repo.scm_context.track_file(self.relpath)
+ 
+     def remove_stage(self, stage):  # pylint: disable=unused-argument
+@@ -214,7 +214,7 @@ class SingleStageFile(FileMixin):
+ 
+ 
+ class PipelineFile(FileMixin):
+-    """Abstraction for pipelines file, .yaml + .lock combined."""
++    """Abstraction for pipelines file, .json + .lock combined."""
+ 
+     from dvc.schema import COMPILED_MULTI_STAGE_SCHEMA as SCHEMA
+     from dvc.stage.loader import StageLoader as LOADER
+@@ -251,7 +251,7 @@ class PipelineFile(FileMixin):
+         self._check_if_parametrized(stage)
+         stage_data = serialize.to_pipeline_file(stage)
+ 
+-        with modify_yaml(self.path, fs=self.repo.fs) as data:
++        with modify_json(self.path, fs=self.repo.fs) as data:
+             if not data:
+                 logger.info("Creating '%s'", self.relpath)
+ 
+@@ -295,7 +295,7 @@ class PipelineFile(FileMixin):
+         if not self.exists():
+             return
+ 
+-        d, _ = self._load_yaml(round_trip=True)
++        d, _ = self._load_json(round_trip=True)
+         if stage.name not in d.get("stages", {}):
+             return
+ 
+@@ -303,7 +303,7 @@ class PipelineFile(FileMixin):
+         del d["stages"][stage.name]
+ 
+         if d["stages"]:
+-            dump_yaml(self.path, d)
++            dump_json(self.path, d)
+         else:
+             super().remove()
+ 
+@@ -365,7 +365,7 @@ class Lockfile(FileMixin):
+     def dump(self, stage, **kwargs):
+         stage_data = serialize.to_lockfile(stage)
+ 
+-        with modify_yaml(self.path, fs=self.repo.fs) as data:
++        with modify_json(self.path, fs=self.repo.fs) as data:
+             version = LOCKFILE_VERSION.from_dict(data)
+             if version == LOCKFILE_VERSION.V1:
+                 logger.info(
+@@ -394,7 +394,7 @@ class Lockfile(FileMixin):
+         if not self.exists():
+             return
+ 
+-        d, _ = self._load_yaml(round_trip=True)
++        d, _ = self._load_json(round_trip=True)
+         version = LOCKFILE_VERSION.from_dict(d)
+         data = d if version == LOCKFILE_VERSION.V1 else d.get("stages", {})
+         if stage.name not in data:
+@@ -404,7 +404,7 @@ class Lockfile(FileMixin):
+         del data[stage.name]
+ 
+         if data:
+-            dump_yaml(self.path, d)
++            dump_json(self.path, d)
+         else:
+             self.remove()
+ 
+@@ -425,7 +425,7 @@ DVCFile = Union["PipelineFile", "SingleStageFile"]
+ 
+ def make_dvcfile(repo: "Repo", path: AnyPath, **kwargs: Any) -> DVCFile:
+     _, ext = os.path.splitext(str(path))
+-    if ext in [".yaml", ".yml"]:
++    if ext in [".json", ".yml"]:
+         return PipelineFile(repo, path, **kwargs)
+     # fallback to single stage file for better error messages
+     return SingleStageFile(repo, path, **kwargs)
