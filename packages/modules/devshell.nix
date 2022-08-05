@@ -1,4 +1,4 @@
-{ lib, config, inputs', ... }:
+{ lib, config, inputs', system, ... }:
 with lib;
 let
   inherit (inputs'.devshell.legacyPackages) mkShell;
@@ -62,6 +62,6 @@ in {
       };
     });
   };
-  config.devShells = mapAttrs (_: mkProjectShell) config.projectShells;
+  config.devShells = lib.mkIf (system == "x86_64-linux") (mapAttrs (_: mkProjectShell) config.projectShells);
 }
 
