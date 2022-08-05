@@ -24,6 +24,7 @@
     imports = [
       ./tests
       ./modules/devshell.nix
+      ./build-support
 
       ./websites/landing/project.nix
     ];
