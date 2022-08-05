@@ -1,5 +1,6 @@
 {
   packages = {
+    dvc = [ "x86_64-linux" ];
     grafana = [ "x86_64-linux" ];
     hci = [ "x86_64-linux" ];
     hydra = [ "x86_64-linux" ];
