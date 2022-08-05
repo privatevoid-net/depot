@@ -79,6 +79,7 @@
         tools = with flakePkgs; [
           agenix
           deploy-rs
+          dvc
           npins
           pin
         ];
