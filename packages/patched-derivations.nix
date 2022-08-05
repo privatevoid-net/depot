@@ -3,6 +3,8 @@ let
   pins = import ./sources;
 in with tools;
 super: rec {
+  dvc = patch super.dvc "patches/base/dvc";
+
   hydra = (patch super.hydra-unstable "patches/base/hydra").override { nix = super.nixVersions.nix_2_8; };
 
   sssd = (super.sssd.override { withSudo = true; }).overrideAttrs (old: {

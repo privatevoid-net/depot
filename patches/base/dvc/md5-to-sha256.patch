@@ -1,0 +1,2423 @@
+diff --git a/dvc/api.py b/dvc/api.py
+index b1ac0a0f..238b7f56 100644
+--- a/dvc/api.py
++++ b/dvc/api.py
+@@ -28,8 +28,8 @@ def get_url(path, repo=None, rev=None, remote=None):
+ 
+         cloud = info["repo"].cloud
+         dvc_path = _repo.fs.path.relpath(fs_path, info["repo"].root_dir)
+-        md5 = info["repo"].dvcfs.info(dvc_path)["md5"]
+-        return cloud.get_url_for(remote, checksum=md5)
++        sha256 = info["repo"].dvcfs.info(dvc_path)["sha256"]
++        return cloud.get_url_for(remote, checksum=sha256)
+ 
+ 
+ def open(  # noqa, pylint: disable=redefined-builtin
+diff --git a/dvc/data/stage.py b/dvc/data/stage.py
+index 4ab026dd..7151761a 100644
+--- a/dvc/data/stage.py
++++ b/dvc/data/stage.py
+@@ -10,7 +10,7 @@ from dvc.hash_info import HashInfo
+ from dvc.ignore import DvcIgnore
+ from dvc.objects.file import HashFile
+ from dvc.progress import Tqdm
+-from dvc.utils import file_md5, is_exec
++from dvc.utils import file_sha256, is_exec
+ 
+ from .db.reference import ReferenceObjectDB
+ from .meta import Meta
+@@ -67,8 +67,8 @@ def _get_file_hash(fs_path, fs, name):
+     elif hasattr(fs, name):
+         func = getattr(fs, name)
+         hash_value = func(fs_path)
+-    elif name == "md5":
+-        hash_value = file_md5(fs_path, fs)
++    elif name == "sha256":
++        hash_value = file_sha256(fs_path, fs)
+     else:
+         raise NotImplementedError
+ 
+@@ -98,7 +98,7 @@ def _stage_file(fs_path, fs, name, odb=None, upload_odb=None, dry_run=False):
+     state = odb.state if odb else None
+     meta, hash_info = get_file_hash(fs_path, fs, name, state=state)
+     if upload_odb and not dry_run:
+-        assert odb and name == "md5"
++        assert odb and name == "sha256"
+         return _upload_file(fs_path, fs, odb, upload_odb)
+ 
+     if dry_run:
+@@ -124,7 +124,7 @@ def _build_objects(
+     else:
+         walk_iterator = fs.find(fs_path)
+     with Tqdm(
+-        unit="md5",
++        unit="sha256",
+         desc="Computing file/dir hashes (only done once)",
+         disable=no_progress_bar,
+     ) as pbar:
+@@ -269,9 +269,9 @@ def _load_from_state(odb, staging, fs_path, fs, name):
+ def _stage_external_tree_info(odb, tree, name):
+     # NOTE: used only for external outputs. Initial reasoning was to be
+     # able to validate .dir files right in the workspace (e.g. check s3
+-    # etag), but could be dropped for manual validation with regular md5,
++    # etag), but could be dropped for manual validation with regular sha256,
+     # that would be universal for all clouds.
+-    assert odb and name != "md5"
++    assert odb and name != "sha256"
+ 
+     odb.add(tree.fs_path, tree.fs, tree.hash_info)
+     raw = odb.get(tree.hash_info)
+@@ -330,7 +330,7 @@ def stage(
+             **kwargs,
+         )
+         logger.debug("staged tree '%s'", obj)
+-        if name != "md5":
++        if name != "sha256":
+             obj = _stage_external_tree_info(odb, obj, name)
+     else:
+         _, meta, obj = _stage_file(
+diff --git a/dvc/data/tree.py b/dvc/data/tree.py
+index 25e29d81..9bbb64b4 100644
+--- a/dvc/data/tree.py
++++ b/dvc/data/tree.py
+@@ -65,7 +65,7 @@ class Tree(HashFile):
+         if hash_info:
+             self.hash_info = hash_info
+         else:
+-            _, self.hash_info = get_file_hash(fs_path, memfs, "md5")
++            _, self.hash_info = get_file_hash(fs_path, memfs, "sha256")
+             assert self.hash_info.value
+             self.hash_info.value += ".dir"
+ 
+diff --git a/dvc/fs/dvc.py b/dvc/fs/dvc.py
+index cbe45713..9dedc753 100644
+--- a/dvc/fs/dvc.py
++++ b/dvc/fs/dvc.py
+@@ -21,7 +21,7 @@ class DvcFileSystem(FileSystem):  # pylint:disable=abstract-method
+     sep = os.sep
+ 
+     scheme = "local"
+-    PARAM_CHECKSUM = "md5"
++    PARAM_CHECKSUM = "sha256"
+ 
+     def __init__(self, **kwargs):
+         super().__init__(**kwargs)
+@@ -56,7 +56,7 @@ class DvcFileSystem(FileSystem):  # pylint:disable=abstract-method
+         if info["type"] == "directory":
+             raise IsADirectoryError
+ 
+-        value = info.get("md5")
++        value = info.get("sha256")
+         if not value:
+             raise FileNotFoundError
+ 
+@@ -216,7 +216,7 @@ class DvcFileSystem(FileSystem):  # pylint:disable=abstract-method
+ 
+     def checksum(self, path):
+         info = self.info(path)
+-        md5 = info.get("md5")
+-        if md5:
+-            return md5
++        sha256 = info.get("sha256")
++        if sha256:
++            return sha256
+         raise NotImplementedError
+diff --git a/dvc/fs/local.py b/dvc/fs/local.py
+index 8bbfa212..bae885ee 100644
+--- a/dvc/fs/local.py
++++ b/dvc/fs/local.py
+@@ -16,7 +16,7 @@ class LocalFileSystem(FileSystem):
+     sep = os.sep
+ 
+     scheme = Schemes.LOCAL
+-    PARAM_CHECKSUM = "md5"
++    PARAM_CHECKSUM = "sha256"
+     PARAM_PATH = "path"
+     TRAVERSE_PREFIX_LEN = 2
+ 
+diff --git a/dvc/fs/memory.py b/dvc/fs/memory.py
+index 32d4402a..6d44f520 100644
+--- a/dvc/fs/memory.py
++++ b/dvc/fs/memory.py
+@@ -9,7 +9,7 @@ from .fsspec_wrapper import FSSpecWrapper
+ 
+ class MemoryFileSystem(FSSpecWrapper):  # pylint:disable=abstract-method
+     scheme = Schemes.MEMORY
+-    PARAM_CHECKSUM = "md5"
++    PARAM_CHECKSUM = "sha256"
+     TRAVERSE_PREFIX_LEN = 2
+     DEFAULT_BLOCKSIZE = 4096
+ 
+diff --git a/dvc/fs/repo.py b/dvc/fs/repo.py
+index ba4258a6..2454fa2b 100644
+--- a/dvc/fs/repo.py
++++ b/dvc/fs/repo.py
+@@ -36,7 +36,7 @@ class RepoFileSystem(FileSystem):  # pylint:disable=abstract-method
+     sep = os.sep
+ 
+     scheme = "local"
+-    PARAM_CHECKSUM = "md5"
++    PARAM_CHECKSUM = "sha256"
+     PARAM_REPO_URL = "repo_url"
+     PARAM_REPO_ROOT = "repo_root"
+     PARAM_REV = "rev"
+diff --git a/dvc/fs/ssh.py b/dvc/fs/ssh.py
+index ba069b1d..709753c2 100644
+--- a/dvc/fs/ssh.py
++++ b/dvc/fs/ssh.py
+@@ -32,7 +32,7 @@ class SSHFileSystem(FSSpecWrapper):
+     REQUIRES = {"sshfs": "sshfs"}
+ 
+     DEFAULT_PORT = 22
+-    PARAM_CHECKSUM = "md5"
++    PARAM_CHECKSUM = "sha256"
+ 
+     @classmethod
+     def _strip_protocol(cls, path: str) -> str:
+diff --git a/dvc/lock.py b/dvc/lock.py
+index 3360001c..706a1f10 100644
+--- a/dvc/lock.py
++++ b/dvc/lock.py
+@@ -181,7 +181,7 @@ class HardlinkLock(flufl.lock.Lock, LockBase):
+ 
+         if self._tmp_dir is not None:
+             # Under Windows file path length is limited so we hash it
+-            filename = hashlib.md5(self._claimfile.encode()).hexdigest()
++            filename = hashlib.sha256(self._claimfile.encode()).hexdigest()
+             self._claimfile = os.path.join(self._tmp_dir, filename + ".lock")
+ 
+ 
+diff --git a/dvc/objects/db.py b/dvc/objects/db.py
+index a30c2c6f..56c84b41 100644
+--- a/dvc/objects/db.py
++++ b/dvc/objects/db.py
+@@ -288,7 +288,7 @@ class ObjectDB:
+         returned.
+ 
+         NOTE: For large remotes the list of hashes will be very
+-        big(e.g. 100M entries, md5 for each is 32 bytes, so ~3200Mb list)
++        big(e.g. 100M entries, sha256 for each is 32 bytes, so ~3200Mb list)
+         and we don't really need all of it at the same time, so it makes
+         sense to use a generator to gradually iterate over it, without
+         keeping all of it in memory.
+diff --git a/dvc/output.py b/dvc/output.py
+index 13fd8e73..429a17e1 100644
+--- a/dvc/output.py
++++ b/dvc/output.py
+@@ -54,7 +54,7 @@ CASE_SENSITIVE_CHECKSUM_SCHEMA = Any(
+ 
+ # NOTE: currently there are only 3 possible checksum names:
+ #
+-#    1) md5 (LOCAL, SSH);
++#    1) sha256 (LOCAL, SSH);
+ #    2) etag (S3, GS, OSS, AZURE, HTTP);
+ #    3) checksum (HDFS);
+ #
+@@ -808,7 +808,7 @@ class Output:
+             odb,
+             from_info,
+             from_fs,
+-            "md5",
++            "sha256",
+             upload=upload,
+             jobs=jobs,
+             no_progress_bar=no_progress_bar,
+diff --git a/dvc/repo/__init__.py b/dvc/repo/__init__.py
+index fba275f0..ed515b64 100644
+--- a/dvc/repo/__init__.py
++++ b/dvc/repo/__init__.py
+@@ -112,7 +112,7 @@ class Repo:
+ 
+     def _get_database_dir(self, db_name):
+         # NOTE: by default, store SQLite-based remote indexes and state's
+-        # `links` and `md5s` caches in the repository itself to avoid any
++        # `links` and `sha256s` caches in the repository itself to avoid any
+         # possible state corruption in 'shared cache dir' scenario, but allow
+         # user to override this through config when, say, the repository is
+         # located on a mounted volume — see
+diff --git a/dvc/repo/diff.py b/dvc/repo/diff.py
+index f6b6920f..26f4f4a4 100644
+--- a/dvc/repo/diff.py
++++ b/dvc/repo/diff.py
+@@ -140,7 +140,7 @@ def _output_paths(repo, targets):
+                     repo.odb.local,
+                     output.fs_path,
+                     repo.odb.local.fs,
+-                    "md5",
++                    "sha256",
+                     dry_run=True,
+                     dvcignore=output.dvcignore,
+                 )
+diff --git a/dvc/repo/imp_url.py b/dvc/repo/imp_url.py
+index aa8ec83b..c92cfa7b 100644
+--- a/dvc/repo/imp_url.py
++++ b/dvc/repo/imp_url.py
+@@ -78,7 +78,7 @@ def imp_url(
+         remote_odb = self.cloud.get_remote_odb(remote, "import-url")
+         stage.outs[0].transfer(url, odb=remote_odb, jobs=jobs)
+         stage.save_deps()
+-        stage.md5 = stage.compute_md5()
++        stage.sha256 = stage.compute_sha256()
+     else:
+         stage.run(jobs=jobs)
+ 
+diff --git a/dvc/repo/index.py b/dvc/repo/index.py
+index ccf667b0..a781747e 100644
+--- a/dvc/repo/index.py
++++ b/dvc/repo/index.py
+@@ -13,7 +13,7 @@ from typing import (
+ 
+ from funcy import cached_property, nullcontext
+ 
+-from dvc.utils import dict_md5
++from dvc.utils import dict_sha256
+ 
+ if TYPE_CHECKING:
+     from networkx import DiGraph
+@@ -287,7 +287,7 @@ class Index:
+ 
+         Currently, it is unique to the platform (windows vs posix).
+         """
+-        return dict_md5(self.dumpd())
++        return dict_sha256(self.dumpd())
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/dvc/stage/__init__.py b/dvc/stage/__init__.py
+index c4a1e443..ed2568c5 100644
+--- a/dvc/stage/__init__.py
++++ b/dvc/stage/__init__.py
+@@ -28,7 +28,7 @@ from .utils import (
+     check_missing_outputs,
+     check_no_externals,
+     check_stage_path,
+-    compute_md5,
++    compute_sha256,
+     fill_stage_dependencies,
+     fill_stage_outputs,
+     get_dump,
+@@ -131,7 +131,7 @@ class Stage(params.StageParams):
+         wdir=os.curdir,
+         deps=None,
+         outs=None,
+-        md5=None,
++        sha256=None,
+         locked=False,  # backward compatibility
+         frozen=False,
+         always_changed=False,
+@@ -151,7 +151,7 @@ class Stage(params.StageParams):
+         self.wdir = wdir
+         self.outs = outs
+         self.deps = deps
+-        self.md5 = md5
++        self.sha256 = sha256
+         self.frozen = locked or frozen
+         self.always_changed = always_changed
+         self._stage_text = stage_text
+@@ -345,7 +345,7 @@ class Stage(params.StageParams):
+         return False
+ 
+     def changed_stage(self):
+-        changed = self.md5 != self.compute_md5()
++        changed = self.sha256 != self.compute_sha256()
+         if changed:
+             logger.debug(self._changed_stage_entry())
+         return changed
+@@ -353,7 +353,7 @@ class Stage(params.StageParams):
+     @rwlocked(read=["deps", "outs"])
+     def changed(self):
+         is_changed = (
+-            # Short-circuit order: stage md5 is fast,
++            # Short-circuit order: stage sha256 is fast,
+             # deps are expected to change
+             self.changed_stage()
+             or self.changed_deps()
+@@ -443,19 +443,19 @@ class Stage(params.StageParams):
+     def dumpd(self):
+         return get_dump(self)
+ 
+-    def compute_md5(self):
+-        # `dvc add`ed files don't need stage md5
++    def compute_sha256(self):
++        # `dvc add`ed files don't need stage sha256
+         if self.is_data_source and not (self.is_import or self.is_repo_import):
+             m = None
+         else:
+-            m = compute_md5(self)
+-        logger.debug(f"Computed {self} md5: '{m}'")
++            m = compute_sha256(self)
++        logger.debug(f"Computed {self} sha256: '{m}'")
+         return m
+ 
+     def save(self, allow_missing=False):
+         self.save_deps(allow_missing=allow_missing)
+         self.save_outs(allow_missing=allow_missing)
+-        self.md5 = self.compute_md5()
++        self.sha256 = self.compute_sha256()
+ 
+         self.repo.stage_cache.save(self)
+ 
+@@ -488,7 +488,7 @@ class Stage(params.StageParams):
+         return [str(entry) for entry in entries if entry.workspace_status()]
+ 
+     def _changed_stage_entry(self):
+-        return f"'md5' of {self} changed."
++        return f"'sha256' of {self} changed."
+ 
+     def changed_entries(self):
+         changed_deps = self._changed_entries(self.deps)
+diff --git a/dvc/stage/params.py b/dvc/stage/params.py
+index c43a75b1..961a8168 100644
+--- a/dvc/stage/params.py
++++ b/dvc/stage/params.py
+@@ -1,5 +1,5 @@
+ class StageParams:
+-    PARAM_MD5 = "md5"
++    PARAM_MD5 = "sha256"
+     PARAM_CMD = "cmd"
+     PARAM_WDIR = "wdir"
+     PARAM_DEPS = "deps"
+diff --git a/dvc/stage/utils.py b/dvc/stage/utils.py
+index a48b8ef9..0c36d256 100644
+--- a/dvc/stage/utils.py
++++ b/dvc/stage/utils.py
+@@ -168,26 +168,26 @@ def check_missing_outputs(stage):
+         raise MissingDataSource(paths)
+ 
+ 
+-def compute_md5(stage):
++def compute_sha256(stage):
+     from dvc.output import Output
+ 
+-    from ..utils import dict_md5
++    from ..utils import dict_sha256
+ 
+     d = stage.dumpd()
+ 
+-    # Remove md5 and meta, these should not affect stage md5
++    # Remove sha256 and meta, these should not affect stage sha256
+     d.pop(stage.PARAM_MD5, None)
+     d.pop(stage.PARAM_META, None)
+     d.pop(stage.PARAM_DESC, None)
+ 
+     # Ignore the wdir default value. In this case DVC file w/o
+-    # wdir has the same md5 as a file with the default value specified.
++    # wdir has the same sha256 as a file with the default value specified.
+     # It's important for backward compatibility with pipelines that
+     # didn't have WDIR in their DVC files.
+     if d.get(stage.PARAM_WDIR) == ".":
+         del d[stage.PARAM_WDIR]
+ 
+-    return dict_md5(
++    return dict_sha256(
+         d,
+         exclude=[
+             stage.PARAM_LOCKED,  # backward compatibility
+@@ -222,7 +222,7 @@ def get_dump(stage):
+         key: value
+         for key, value in {
+             stage.PARAM_DESC: stage.desc,
+-            stage.PARAM_MD5: stage.md5,
++            stage.PARAM_MD5: stage.sha256,
+             stage.PARAM_CMD: stage.cmd,
+             stage.PARAM_WDIR: resolve_wdir(stage.wdir, stage.path),
+             stage.PARAM_FROZEN: stage.frozen,
+diff --git a/dvc/state.py b/dvc/state.py
+index a1463a23..d2a78fa0 100644
+--- a/dvc/state.py
++++ b/dvc/state.py
+@@ -63,13 +63,13 @@ class State(StateBase):  # pylint: disable=too-many-instance-attributes
+             "disk_pickle_protocol": 4,
+         }
+         self.links = Cache(directory=os.path.join(tmp_dir, "links"), **config)
+-        self.md5s = Cache(directory=os.path.join(tmp_dir, "md5s"), **config)
++        self.sha256s = Cache(directory=os.path.join(tmp_dir, "sha256s"), **config)
+ 
+     def close(self):
+-        self.md5s.close()
++        self.sha256s.close()
+         self.links.close()
+ 
+-    @with_diskcache(name="md5s")
++    @with_diskcache(name="sha256s")
+     def save(self, path, fs, hash_info):
+         """Save hash for the specified path info.
+ 
+@@ -92,9 +92,9 @@ class State(StateBase):  # pylint: disable=too-many-instance-attributes
+             hash_info.value,
+         )
+ 
+-        self.md5s[inode] = (mtime, str(size), hash_info.value)
++        self.sha256s[inode] = (mtime, str(size), hash_info.value)
+ 
+-    @with_diskcache(name="md5s")
++    @with_diskcache(name="sha256s")
+     def get(self, path, fs):
+         """Gets the hash for the specified path info. Hash will be
+         retrieved from the state database if available.
+@@ -118,12 +118,12 @@ class State(StateBase):  # pylint: disable=too-many-instance-attributes
+ 
+         inode = get_inode(path)
+ 
+-        value = self.md5s.get(inode)
++        value = self.sha256s.get(inode)
+ 
+         if not value or value[0] != mtime or value[1] != str(size):
+             return None, None
+ 
+-        return Meta(size=size), HashInfo("md5", value[2])
++        return Meta(size=size), HashInfo("sha256", value[2])
+ 
+     @with_diskcache(name="links")
+     def save_link(self, path, fs):
+diff --git a/dvc/testing/test_workspace.py b/dvc/testing/test_workspace.py
+index f6225a2f..486442e7 100644
+--- a/dvc/testing/test_workspace.py
++++ b/dvc/testing/test_workspace.py
+@@ -12,14 +12,14 @@ class TestImport:
+         assert dvc.status() == {}
+ 
+     @pytest.fixture
+-    def stage_md5(self):
++    def stage_sha256(self):
+         pytest.skip()
+ 
+     @pytest.fixture
+-    def dir_md5(self):
++    def dir_sha256(self):
+         pytest.skip()
+ 
+-    def test_import_dir(self, tmp_dir, dvc, workspace, stage_md5, dir_md5):
++    def test_import_dir(self, tmp_dir, dvc, workspace, stage_sha256, dir_sha256):
+         from dvc.data.db import ODBManager
+ 
+         workspace.gen(
+@@ -43,17 +43,17 @@ class TestImport:
+ 
+         assert dvc.status() == {}
+ 
+-        if stage_md5 is not None and dir_md5 is not None:
++        if stage_sha256 is not None and dir_sha256 is not None:
+             assert (tmp_dir / "dir.dvc").read_text() == (
+-                f"md5: {stage_md5}\n"
++                f"sha256: {stage_sha256}\n"
+                 "frozen: true\n"
+                 "deps:\n"
+-                f"- md5: {dir_md5}\n"
++                f"- sha256: {dir_sha256}\n"
+                 "  size: 11\n"
+                 "  nfiles: 2\n"
+                 "  path: remote://workspace/dir\n"
+                 "outs:\n"
+-                "- md5: b6dcab6ccd17ca0a8bf4a215a37d14cc.dir\n"
++                "- sha256: b6dcab6ccd17ca0a8bf4a215a37d14cc.dir\n"
+                 "  size: 11\n"
+                 "  nfiles: 2\n"
+                 "  path: dir\n"
+diff --git a/dvc/utils/__init__.py b/dvc/utils/__init__.py
+index b2388287..d7062bde 100644
+--- a/dvc/utils/__init__.py
++++ b/dvc/utils/__init__.py
+@@ -25,7 +25,7 @@ def dos2unix(data):
+     return data.replace(b"\r\n", b"\n")
+ 
+ 
+-def _fobj_md5(fobj, hash_md5, binary, progress_func=None):
++def _fobj_sha256(fobj, hash_sha256, binary, progress_func=None):
+     while True:
+         data = fobj.read(LOCAL_CHUNK_SIZE)
+         if not data:
+@@ -36,24 +36,24 @@ def _fobj_md5(fobj, hash_md5, binary, progress_func=None):
+         else:
+             chunk = dos2unix(data)
+ 
+-        hash_md5.update(chunk)
++        hash_sha256.update(chunk)
+         if progress_func:
+             progress_func(len(data))
+ 
+ 
+-def file_md5(fname, fs):
+-    """get the (md5 hexdigest, md5 digest) of a file"""
++def file_sha256(fname, fs):
++    """get the (sha256 hexdigest, sha256 digest) of a file"""
+     from dvc.istextfile import istextfile
+     from dvc.progress import Tqdm
+ 
+-    hash_md5 = hashlib.md5()
++    hash_sha256 = hashlib.sha256()
+     binary = not istextfile(fname, fs=fs)
+     size = fs.getsize(fname) or 0
+     no_progress_bar = True
+     if size >= LARGE_FILE_SIZE:
+         no_progress_bar = False
+         msg = (
+-            f"Computing md5 for a large file '{fname}'. "
++            f"Computing sha256 for a large file '{fname}'. "
+             "This is only done once."
+         )
+         logger.info(msg)
+@@ -66,9 +66,9 @@ def file_md5(fname, fs):
+         leave=False,
+     ) as pbar:
+         with fs.open(fname, "rb") as fobj:
+-            _fobj_md5(fobj, hash_md5, binary, pbar.update)
++            _fobj_sha256(fobj, hash_sha256, binary, pbar.update)
+ 
+-    return hash_md5.hexdigest()
++    return hash_sha256.hexdigest()
+ 
+ 
+ def bytes_hash(byts, typ):
+@@ -98,8 +98,8 @@ def dict_hash(d, typ, exclude=()):
+     return bytes_hash(byts, typ)
+ 
+ 
+-def dict_md5(d, **kwargs):
+-    return dict_hash(d, "md5", **kwargs)
++def dict_sha256(d, **kwargs):
++    return dict_hash(d, "sha256", **kwargs)
+ 
+ 
+ def dict_sha256(d, **kwargs):
+diff --git a/dvc/utils/fs.py b/dvc/utils/fs.py
+index c12ce400..7d719177 100644
+--- a/dvc/utils/fs.py
++++ b/dvc/utils/fs.py
+@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
+ 
+ from dvc.exceptions import DvcException
+ from dvc.system import System
+-from dvc.utils import dict_md5
++from dvc.utils import dict_sha256
+ 
+ if TYPE_CHECKING:
+     from dvc.types import StrPath
+@@ -51,7 +51,7 @@ def get_mtime_and_size(path, fs, dvcignore=None):
+ 
+         # We track file changes and moves, which cannot be detected with simply
+         # max(mtime(f) for f in non_ignored_files)
+-        mtime = dict_md5(files_mtimes)
++        mtime = dict_sha256(files_mtimes)
+     else:
+         base_stat = fs.info(path)
+         size = base_stat["size"]
+diff --git a/dvc/utils/stream.py b/dvc/utils/stream.py
+index a0a7ac8f..7da46934 100644
+--- a/dvc/utils/stream.py
++++ b/dvc/utils/stream.py
+@@ -10,11 +10,11 @@ from dvc.utils import dos2unix
+ 
+ class HashedStreamReader(io.IOBase):
+ 
+-    PARAM_CHECKSUM = "md5"
++    PARAM_CHECKSUM = "sha256"
+ 
+     def __init__(self, fobj):
+         self.fobj = fobj
+-        self.md5 = hashlib.md5()
++        self.sha256 = hashlib.sha256()
+         self.total_read = 0
+         self.is_text_file = None
+         super().__init__()
+@@ -40,11 +40,11 @@ class HashedStreamReader(io.IOBase):
+             data = dos2unix(chunk)
+         else:
+             data = chunk
+-        self.md5.update(data)
++        self.sha256.update(data)
+         self.total_read += len(data)
+ 
+         return chunk
+ 
+     @property
+     def hash_info(self):
+-        return HashInfo(self.PARAM_CHECKSUM, self.md5.hexdigest())
++        return HashInfo(self.PARAM_CHECKSUM, self.sha256.hexdigest())
+diff --git a/scripts/innosetup/dvc.ico.dvc b/scripts/innosetup/dvc.ico.dvc
+index e8ca30f5..78b76603 100644
+--- a/scripts/innosetup/dvc.ico.dvc
++++ b/scripts/innosetup/dvc.ico.dvc
+@@ -1,3 +1,3 @@
+ outs:
+-- md5: 90104d9e83cfb825cf45507e90aadd27
++- sha256: 90104d9e83cfb825cf45507e90aadd27
+   path: dvc.ico
+diff --git a/scripts/innosetup/dvc_left.bmp.dvc b/scripts/innosetup/dvc_left.bmp.dvc
+index be60334b..c97e16f8 100644
+--- a/scripts/innosetup/dvc_left.bmp.dvc
++++ b/scripts/innosetup/dvc_left.bmp.dvc
+@@ -1,3 +1,3 @@
+ outs:
+-- md5: 9106cda08aa427e73492389a0f17c72d
++- sha256: 9106cda08aa427e73492389a0f17c72d
+   path: dvc_left.bmp
+diff --git a/scripts/innosetup/dvc_up.bmp.dvc b/scripts/innosetup/dvc_up.bmp.dvc
+index 7fb5ae55..59df4a87 100644
+--- a/scripts/innosetup/dvc_up.bmp.dvc
++++ b/scripts/innosetup/dvc_up.bmp.dvc
+@@ -1,3 +1,3 @@
+ outs:
+-- md5: 94614d6650e062655f9f77507dc9c1f2
++- sha256: 94614d6650e062655f9f77507dc9c1f2
+   path: dvc_up.bmp
+diff --git a/tests/func/test_add.py b/tests/func/test_add.py
+index 43c2f3c0..33e6f368 100644
+--- a/tests/func/test_add.py
++++ b/tests/func/test_add.py
+@@ -35,7 +35,7 @@ from dvc.stage.exceptions import (
+ )
+ from dvc.system import System
+ from dvc.testing.test_workspace import TestAdd
+-from dvc.utils import LARGE_DIR_SIZE, file_md5, relpath
++from dvc.utils import LARGE_DIR_SIZE, file_sha256, relpath
+ from dvc.utils.fs import path_isin
+ from dvc.utils.serialize import YAMLFileCorruptedError, load_yaml
+ from tests.basic_env import TestDvc
+@@ -44,7 +44,7 @@ from tests.utils import get_gitignore_content
+ 
+ def test_add(tmp_dir, dvc):
+     (stage,) = tmp_dir.dvc_gen({"foo": "foo"})
+-    md5 = file_md5("foo", dvc.fs)
++    sha256 = file_sha256("foo", dvc.fs)
+ 
+     assert stage is not None
+ 
+@@ -53,13 +53,13 @@ def test_add(tmp_dir, dvc):
+     assert len(stage.outs) == 1
+     assert len(stage.deps) == 0
+     assert stage.cmd is None
+-    assert stage.outs[0].hash_info == HashInfo("md5", md5)
+-    assert stage.md5 is None
++    assert stage.outs[0].hash_info == HashInfo("sha256", sha256)
++    assert stage.sha256 is None
+ 
+     assert (tmp_dir / "foo.dvc").parse() == {
+         "outs": [
+             {
+-                "md5": "acbd18db4cc2f85cedef654fccc4a4d8",
++                "sha256": "acbd18db4cc2f85cedef654fccc4a4d8",
+                 "path": "foo",
+                 "size": 3,
+             }
+@@ -77,7 +77,7 @@ def test_add_executable(tmp_dir, dvc):
+     assert (tmp_dir / "foo.dvc").parse() == {
+         "outs": [
+             {
+-                "md5": "acbd18db4cc2f85cedef654fccc4a4d8",
++                "sha256": "acbd18db4cc2f85cedef654fccc4a4d8",
+                 "path": "foo",
+                 "size": 3,
+                 "isexec": True,
+@@ -295,7 +295,7 @@ def test_add_filtered_files_in_dir(
+ class TestAddExternal(TestAdd):
+     @pytest.fixture
+     def hash_name(self):
+-        return "md5"
++        return "sha256"
+ 
+     @pytest.fixture
+     def hash_value(self):
+@@ -316,7 +316,7 @@ def test_add_external_relpath(tmp_dir, dvc, local_cloud):
+     dvc.add(rel, external=True)
+     assert (tmp_dir / "file.dvc").read_text() == (
+         "outs:\n"
+-        "- md5: 8c7dd922ad47494fc02c388e12c00eac\n"
++        "- sha256: 8c7dd922ad47494fc02c388e12c00eac\n"
+         "  size: 4\n"
+         f"  path: {rel}\n"
+     )
+@@ -378,7 +378,7 @@ class TestDoubleAddUnchanged(TestDvc):
+ 
+ 
+ def test_should_update_state_entry_for_file_after_add(mocker, dvc, tmp_dir):
+-    file_md5_counter = mocker.spy(dvc_module.data.stage, "file_md5")
++    file_sha256_counter = mocker.spy(dvc_module.data.stage, "file_sha256")
+     tmp_dir.gen("foo", "foo")
+ 
+     ret = main(["config", "cache.type", "copy"])
+@@ -386,30 +386,30 @@ def test_should_update_state_entry_for_file_after_add(mocker, dvc, tmp_dir):
+ 
+     ret = main(["add", "foo"])
+     assert ret == 0
+-    assert file_md5_counter.mock.call_count == 1
++    assert file_sha256_counter.mock.call_count == 1
+ 
+     ret = main(["status"])
+     assert ret == 0
+-    assert file_md5_counter.mock.call_count == 1
++    assert file_sha256_counter.mock.call_count == 1
+ 
+     ret = main(["run", "--single-stage", "-d", "foo", "echo foo"])
+     assert ret == 0
+-    assert file_md5_counter.mock.call_count == 1
++    assert file_sha256_counter.mock.call_count == 1
+ 
+     os.rename("foo", "foo.back")
+     ret = main(["checkout"])
+     assert ret == 0
+-    assert file_md5_counter.mock.call_count == 1
++    assert file_sha256_counter.mock.call_count == 1
+ 
+     ret = main(["status"])
+     assert ret == 0
+-    assert file_md5_counter.mock.call_count == 1
++    assert file_sha256_counter.mock.call_count == 1
+ 
+ 
+ def test_should_update_state_entry_for_directory_after_add(
+     mocker, dvc, tmp_dir
+ ):
+-    file_md5_counter = mocker.spy(dvc_module.data.stage, "file_md5")
++    file_sha256_counter = mocker.spy(dvc_module.data.stage, "file_sha256")
+ 
+     tmp_dir.gen({"data/data": "foo", "data/data_sub/sub_data": "foo"})
+ 
+@@ -418,27 +418,27 @@ def test_should_update_state_entry_for_directory_after_add(
+ 
+     ret = main(["add", "data"])
+     assert ret == 0
+-    assert file_md5_counter.mock.call_count == 3
++    assert file_sha256_counter.mock.call_count == 3
+ 
+     ret = main(["status"])
+     assert ret == 0
+-    assert file_md5_counter.mock.call_count == 3
++    assert file_sha256_counter.mock.call_count == 3
+ 
+     ls = "dir" if os.name == "nt" else "ls"
+     ret = main(
+         ["run", "--single-stage", "-d", "data", "{} {}".format(ls, "data")]
+     )
+     assert ret == 0
+-    assert file_md5_counter.mock.call_count == 3
++    assert file_sha256_counter.mock.call_count == 3
+ 
+     os.rename("data", "data" + ".back")
+     ret = main(["checkout"])
+     assert ret == 0
+-    assert file_md5_counter.mock.call_count == 3
++    assert file_sha256_counter.mock.call_count == 3
+ 
+     ret = main(["status"])
+     assert ret == 0
+-    assert file_md5_counter.mock.call_count == 3
++    assert file_sha256_counter.mock.call_count == 3
+ 
+ 
+ class TestAddCommit(TestDvc):
+@@ -915,7 +915,7 @@ def test_add_preserve_meta(tmp_dir, dvc):
+         outs:
+         - path: foo # out comment
+           desc: out desc
+-          md5: acbd18db4cc2f85cedef654fccc4a4d8
++          sha256: acbd18db4cc2f85cedef654fccc4a4d8
+           size: 3
+         meta: some metadata
+     """
+diff --git a/tests/func/test_checkout.py b/tests/func/test_checkout.py
+index 865e8d2e..12620ec9 100644
+--- a/tests/func/test_checkout.py
++++ b/tests/func/test_checkout.py
+@@ -986,7 +986,7 @@ def test_checkout_dir_compat(tmp_dir, dvc):
+         textwrap.dedent(
+             f"""\
+         outs:
+-        - md5: {stage.outs[0].hash_info.value}
++        - sha256: {stage.outs[0].hash_info.value}
+           path: data
+         """
+         ),
+diff --git a/tests/func/test_commit.py b/tests/func/test_commit.py
+index afa7bec2..808c0f3d 100644
+--- a/tests/func/test_commit.py
++++ b/tests/func/test_commit.py
+@@ -60,12 +60,12 @@ def test_commit_with_deps(tmp_dir, dvc, run_copy, run_kw):
+     assert not stage.outs[0].changed_cache()
+ 
+ 
+-def test_commit_changed_md5(tmp_dir, dvc):
++def test_commit_changed_sha256(tmp_dir, dvc):
+     tmp_dir.gen({"file": "file content"})
+     (stage,) = dvc.add("file", no_commit=True)
+ 
+     stage_file_content = (tmp_dir / stage.path).parse()
+-    stage_file_content["md5"] = "1111111111"
++    stage_file_content["sha256"] = "1111111111"
+     (tmp_dir / stage.path).dump(stage_file_content)
+ 
+     clean_staging()
+@@ -74,7 +74,7 @@ def test_commit_changed_md5(tmp_dir, dvc):
+         dvc.commit(stage.path)
+ 
+     dvc.commit(stage.path, force=True)
+-    assert "md5" not in (tmp_dir / stage.path).parse()
++    assert "sha256" not in (tmp_dir / stage.path).parse()
+ 
+ 
+ def test_commit_no_exec(tmp_dir, dvc):
+diff --git a/tests/func/test_data_cloud.py b/tests/func/test_data_cloud.py
+index eea0e549..d9a6de16 100644
+--- a/tests/func/test_data_cloud.py
++++ b/tests/func/test_data_cloud.py
+@@ -132,7 +132,7 @@ def test_warn_on_outdated_stage(tmp_dir, dvc, local_remote, caplog):
+ 
+     stage_file_path = stage.relpath
+     content = (tmp_dir / stage_file_path).parse()
+-    del content["outs"][0]["md5"]
++    del content["outs"][0]["sha256"]
+     (tmp_dir / stage_file_path).dump(content)
+ 
+     with caplog.at_level(logging.WARNING, logger="dvc"):
+@@ -149,7 +149,7 @@ def test_warn_on_outdated_stage(tmp_dir, dvc, local_remote, caplog):
+ 
+ def test_hash_recalculation(mocker, dvc, tmp_dir, local_remote):
+     tmp_dir.gen({"foo": "foo"})
+-    test_file_md5 = mocker.spy(dvc_module.data.stage, "file_md5")
++    test_file_sha256 = mocker.spy(dvc_module.data.stage, "file_sha256")
+     ret = main(["config", "cache.type", "hardlink"])
+     assert ret == 0
+     ret = main(["add", "foo"])
+@@ -158,7 +158,7 @@ def test_hash_recalculation(mocker, dvc, tmp_dir, local_remote):
+     assert ret == 0
+     ret = main(["run", "--single-stage", "-d", "foo", "echo foo"])
+     assert ret == 0
+-    assert test_file_md5.mock.call_count == 1
++    assert test_file_sha256.mock.call_count == 1
+ 
+ 
+ def test_missing_cache(tmp_dir, dvc, local_remote, caplog):
+@@ -174,8 +174,8 @@ def test_missing_cache(tmp_dir, dvc, local_remote, caplog):
+         "Some of the cache files do not exist "
+         "neither locally nor on remote. Missing cache files:\n"
+     )
+-    foo = "name: bar, md5: 37b51d194a7513e45b56f6524f2d51f2\n"
+-    bar = "name: foo, md5: acbd18db4cc2f85cedef654fccc4a4d8\n"
++    foo = "name: bar, sha256: 37b51d194a7513e45b56f6524f2d51f2\n"
++    bar = "name: foo, sha256: acbd18db4cc2f85cedef654fccc4a4d8\n"
+ 
+     caplog.clear()
+     dvc.push()
+@@ -211,7 +211,7 @@ def test_verify_hashes(
+     remove("dir")
+     remove(dvc.odb.local.cache_dir)
+ 
+-    hash_spy = mocker.spy(dvc_module.data.stage, "file_md5")
++    hash_spy = mocker.spy(dvc_module.data.stage, "file_sha256")
+ 
+     dvc.pull()
+     assert hash_spy.call_count == 0
+diff --git a/tests/func/test_diff.py b/tests/func/test_diff.py
+index 976facc4..c5a794a1 100644
+--- a/tests/func/test_diff.py
++++ b/tests/func/test_diff.py
+@@ -9,7 +9,7 @@ from dvc.utils.fs import remove
+ 
+ 
+ def digest(text):
+-    return hashlib.md5(bytes(text, "utf-8")).hexdigest()
++    return hashlib.sha256(bytes(text, "utf-8")).hexdigest()
+ 
+ 
+ def test_no_scm(tmp_dir, dvc):
+diff --git a/tests/func/test_external_repo.py b/tests/func/test_external_repo.py
+index 068a20c1..1b6ae70d 100644
+--- a/tests/func/test_external_repo.py
++++ b/tests/func/test_external_repo.py
+@@ -212,7 +212,7 @@ def test_subrepos_are_ignored(tmp_dir, erepo_dir):
+             repo.odb.local,
+             os.path.join(repo.root_dir, "dir"),
+             repo.repo_fs,
+-            "md5",
++            "sha256",
+             dvcignore=repo.dvcignore,
+         )
+         transfer(
+diff --git a/tests/func/test_gc.py b/tests/func/test_gc.py
+index c2c33046..d74d41c6 100644
+--- a/tests/func/test_gc.py
++++ b/tests/func/test_gc.py
+@@ -22,8 +22,8 @@ class TestGC(TestDvcGit):
+         self.dvc.add(self.FOO)
+         self.dvc.add(self.DATA_DIR)
+         self.good_cache = [
+-            self.dvc.odb.local.hash_to_path(md5)
+-            for md5 in self.dvc.odb.local.all()
++            self.dvc.odb.local.hash_to_path(sha256)
++            for sha256 in self.dvc.odb.local.all()
+         ]
+ 
+         self.bad_cache = []
+diff --git a/tests/func/test_import_url.py b/tests/func/test_import_url.py
+index 5868716b..309bf74e 100644
+--- a/tests/func/test_import_url.py
++++ b/tests/func/test_import_url.py
+@@ -120,11 +120,11 @@ def test_import_url_with_no_exec(tmp_dir, dvc, erepo_dir):
+ 
+ class TestImport(_TestImport):
+     @pytest.fixture
+-    def stage_md5(self):
++    def stage_sha256(self):
+         return "dc24e1271084ee317ac3c2656fb8812b"
+ 
+     @pytest.fixture
+-    def dir_md5(self):
++    def dir_sha256(self):
+         return "b6dcab6ccd17ca0a8bf4a215a37d14cc.dir"
+ 
+     @pytest.fixture
+@@ -155,15 +155,15 @@ def test_import_url_preserve_meta(tmp_dir, dvc):
+         desc: top desc
+         deps:
+         - path: foo # dep comment
+-          md5: acbd18db4cc2f85cedef654fccc4a4d8
++          sha256: acbd18db4cc2f85cedef654fccc4a4d8
+           size: 3
+         outs:
+         - path: bar # out comment
+           desc: out desc
+-          md5: acbd18db4cc2f85cedef654fccc4a4d8
++          sha256: acbd18db4cc2f85cedef654fccc4a4d8
+           size: 3
+         meta: some metadata
+-        md5: be7ade0aa89cc8d56e320867a9de9740
++        sha256: be7ade0aa89cc8d56e320867a9de9740
+         frozen: true
+     """
+     )
+@@ -229,7 +229,7 @@ def test_import_url_to_remote_directory(tmp_dir, dvc, workspace, local_remote):
+ 
+     for file_part in file_parts:
+         with open(
+-            local_remote.hash_to_path(file_part["md5"]), encoding="utf-8"
++            local_remote.hash_to_path(file_part["sha256"]), encoding="utf-8"
+         ) as fobj:
+             assert fobj.read() == file_part["relpath"]
+ 
+@@ -263,7 +263,7 @@ def test_import_url_to_remote_status(tmp_dir, dvc, local_cloud, local_remote):
+     local_cloud.gen("foo", "foo")
+ 
+     stage = dvc.imp_url(str(local_cloud / "foo"), to_remote=True)
+-    assert stage.md5 is not None
++    assert stage.sha256 is not None
+ 
+     status = dvc.status()
+     assert status["foo.dvc"] == [{"changed outs": {"foo": "not in cache"}}]
+diff --git a/tests/func/test_install.py b/tests/func/test_install.py
+index ee6fde29..e7f4d6d8 100644
+--- a/tests/func/test_install.py
++++ b/tests/func/test_install.py
+@@ -6,7 +6,7 @@ import pytest
+ from git import GitCommandError
+ 
+ from dvc.exceptions import DvcException
+-from dvc.utils import file_md5
++from dvc.utils import file_sha256
+ from tests.func.parsing.test_errors import escape_ansi
+ 
+ 
+@@ -76,7 +76,7 @@ class TestInstall:
+             conf["core"]["remote"] = "store"
+         tmp_dir.dvc_gen("file", "file_content", "commit message")
+ 
+-        file_checksum = file_md5("file", dvc.fs)
++        file_checksum = file_sha256("file", dvc.fs)
+         expected_storage_path = (
+             storage_path / file_checksum[:2] / file_checksum[2:]
+         )
+@@ -117,7 +117,7 @@ def test_merge_driver_no_ancestor(tmp_dir, scm, dvc):
+     assert (tmp_dir / "data").read_text() == {"bar": "bar"}
+     assert (tmp_dir / "data.dvc").read_text() == (
+         "outs:\n"
+-        "- md5: 5ea40360f5b4ec688df672a4db9c17d1.dir\n"
++        "- sha256: 5ea40360f5b4ec688df672a4db9c17d1.dir\n"
+         "  size: 6\n"
+         "  nfiles: 2\n"
+         "  path: data\n"
+@@ -154,7 +154,7 @@ def test_merge_driver(tmp_dir, scm, dvc):
+     assert (tmp_dir / "data").read_text() == {"master": "master", "two": "two"}
+     assert (tmp_dir / "data.dvc").read_text() == (
+         "outs:\n"
+-        "- md5: 839ef9371606817569c1ee0e5f4ed233.dir\n"
++        "- sha256: 839ef9371606817569c1ee0e5f4ed233.dir\n"
+         "  size: 12\n"
+         "  nfiles: 3\n"
+         "  path: data\n"
+diff --git a/tests/func/test_lockfile.py b/tests/func/test_lockfile.py
+index eefeb210..4e1f1fcb 100644
+--- a/tests/func/test_lockfile.py
++++ b/tests/func/test_lockfile.py
+@@ -48,12 +48,12 @@ def test_deps_outs_are_sorted_by_path(tmp_dir, dvc, run_head):
+     # lock stage key order:
+     assert list(lock.keys()) == ["cmd", "deps", "outs"]
+ 
+-    # `path` key appear first and then the `md5`
++    # `path` key appear first and then the `sha256`
+     assert all(
+-        list(dep.keys()) == ["path", "md5", "size"] for dep in lock["deps"]
++        list(dep.keys()) == ["path", "sha256", "size"] for dep in lock["deps"]
+     )
+     assert all(
+-        list(out.keys()) == ["path", "md5", "size"] for out in lock["outs"]
++        list(out.keys()) == ["path", "sha256", "size"] for out in lock["outs"]
+     )
+ 
+     # deps are always sorted by the file path naming
+@@ -167,7 +167,7 @@ def test_params_dump(tmp_dir, dvc, run_head):
+ def v1_repo_lock(tmp_dir, dvc):
+     """Generates a repo having v1 format lockfile"""
+     size = 5 if os.name == "nt" else 4
+-    hi = HashInfo(name="md5", value="c157a79031e1c40f85931829bc5fc552")
++    hi = HashInfo(name="sha256", value="c157a79031e1c40f85931829bc5fc552")
+     v1_lockdata = {
+         "foo": {"cmd": "echo foo"},
+         "bar": {
+diff --git a/tests/func/test_merge_driver.py b/tests/func/test_merge_driver.py
+index 113984f9..218e524a 100644
+--- a/tests/func/test_merge_driver.py
++++ b/tests/func/test_merge_driver.py
+@@ -118,11 +118,11 @@ def test_merge_different_output_options(tmp_dir, dvc, caplog):
+     (tmp_dir / "ancestor").touch()
+ 
+     (tmp_dir / "our").write_text(
+-        "outs:\n- md5: f123456789.dir\n  path: path\n"
++        "outs:\n- sha256: f123456789.dir\n  path: path\n"
+     )
+ 
+     (tmp_dir / "their").write_text(
+-        "outs:\n- md5: f987654321.dir\n  path: path\n  cache: false\n"
++        "outs:\n- sha256: f987654321.dir\n  path: path\n  cache: false\n"
+     )
+ 
+     assert (
+@@ -149,10 +149,10 @@ def test_merge_file(tmp_dir, dvc, caplog):
+     (tmp_dir / "ancestor").touch()
+ 
+     (tmp_dir / "our").write_text(
+-        "outs:\n- md5: f123456789.dir\n  path: path\n"
++        "outs:\n- sha256: f123456789.dir\n  path: path\n"
+     )
+ 
+-    (tmp_dir / "their").write_text("outs:\n- md5: f987654321\n  path: path\n")
++    (tmp_dir / "their").write_text("outs:\n- sha256: f987654321\n  path: path\n")
+ 
+     assert (
+         main(
+@@ -179,13 +179,13 @@ def test_merge_non_dvc_add(tmp_dir, dvc, caplog):
+ 
+     (tmp_dir / "our").write_text(
+         "outs:\n"
+-        "- md5: f123456789.dir\n"
++        "- sha256: f123456789.dir\n"
+         "  path: path\n"
+-        "- md5: ff123456789.dir\n"
++        "- sha256: ff123456789.dir\n"
+         "  path: another\n"
+     )
+ 
+-    (tmp_dir / "their").write_text("outs:\n- md5: f987654321\n  path: path\n")
++    (tmp_dir / "their").write_text("outs:\n- sha256: f987654321\n  path: path\n")
+ 
+     assert (
+         main(
+diff --git a/tests/func/test_move.py b/tests/func/test_move.py
+index aad2003a..3e28e628 100644
+--- a/tests/func/test_move.py
++++ b/tests/func/test_move.py
+@@ -261,7 +261,7 @@ def test_move_meta(tmp_dir, dvc):
+     assert res == textwrap.dedent(
+         """\
+         outs:
+-        - md5: acbd18db4cc2f85cedef654fccc4a4d8
++        - sha256: acbd18db4cc2f85cedef654fccc4a4d8
+           size: 3
+           path: bar
+         meta:
+diff --git a/tests/func/test_odb.py b/tests/func/test_odb.py
+index ea548e00..2a85d4b4 100644
+--- a/tests/func/test_odb.py
++++ b/tests/func/test_odb.py
+@@ -12,17 +12,17 @@ from dvc.utils import relpath
+ 
+ 
+ def test_cache(tmp_dir, dvc):
+-    cache1_md5 = "123"
+-    cache2_md5 = "234"
++    cache1_sha256 = "123"
++    cache2_sha256 = "234"
+     cache1 = os.path.join(
+         dvc.odb.local.cache_dir,
+-        cache1_md5[0:2],
+-        cache1_md5[2:],
++        cache1_sha256[0:2],
++        cache1_sha256[2:],
+     )
+     cache2 = os.path.join(
+         dvc.odb.local.cache_dir,
+-        cache2_md5[0:2],
+-        cache2_md5[2:],
++        cache2_sha256[0:2],
++        cache2_sha256[2:],
+     )
+     tmp_dir.gen({cache1: "1", cache2: "2"})
+ 
+@@ -31,13 +31,13 @@ def test_cache(tmp_dir, dvc):
+ 
+     odb = ODBManager(dvc)
+ 
+-    md5_list = list(odb.local.all())
+-    assert len(md5_list) == 2
+-    assert cache1_md5 in md5_list
+-    assert cache2_md5 in md5_list
++    sha256_list = list(odb.local.all())
++    assert len(sha256_list) == 2
++    assert cache1_sha256 in sha256_list
++    assert cache2_sha256 in sha256_list
+ 
+-    odb_cache1 = odb.local.hash_to_path(cache1_md5)
+-    odb_cache2 = odb.local.hash_to_path(cache2_md5)
++    odb_cache1 = odb.local.hash_to_path(cache1_sha256)
++    odb_cache2 = odb.local.hash_to_path(cache2_sha256)
+     assert os.fspath(odb_cache1) == cache1
+     assert os.fspath(odb_cache2) == cache2
+ 
+@@ -49,13 +49,13 @@ def test_cache_load_bad_dir_cache(tmp_dir, dvc):
+     fname = os.fspath(dvc.odb.local.hash_to_path(dir_hash))
+     tmp_dir.gen({fname: "<clearly>not,json"})
+     with pytest.raises(ObjectFormatError):
+-        load(dvc.odb.local, HashInfo("md5", dir_hash))
++        load(dvc.odb.local, HashInfo("sha256", dir_hash))
+ 
+     dir_hash = "234.dir"
+     fname = os.fspath(dvc.odb.local.hash_to_path(dir_hash))
+     tmp_dir.gen({fname: '{"a": "b"}'})
+     with pytest.raises(ObjectFormatError):
+-        load(dvc.odb.local, HashInfo("md5", dir_hash))
++        load(dvc.odb.local, HashInfo("sha256", dir_hash))
+ 
+ 
+ def test_external_cache_dir(tmp_dir, dvc, make_tmp_dir):
+diff --git a/tests/func/test_remote.py b/tests/func/test_remote.py
+index ff844ed7..5cbb8fe9 100644
+--- a/tests/func/test_remote.py
++++ b/tests/func/test_remote.py
+@@ -147,19 +147,19 @@ def test_dir_hash_should_be_key_order_agnostic(tmp_dir, dvc):
+     path = (tmp_dir / "data").fs_path
+ 
+     tree = Tree.from_list(
+-        [{"relpath": "1", "md5": "1"}, {"relpath": "2", "md5": "2"}]
++        [{"relpath": "1", "sha256": "1"}, {"relpath": "2", "sha256": "2"}]
+     )
+     tree.digest()
+     with patch("dvc.data.stage._stage_tree", return_value=(None, tree)):
+-        _, _, obj = stage(dvc.odb.local, path, dvc.odb.local.fs, "md5")
++        _, _, obj = stage(dvc.odb.local, path, dvc.odb.local.fs, "sha256")
+         hash1 = obj.hash_info
+ 
+     tree = Tree.from_list(
+-        [{"md5": "1", "relpath": "1"}, {"md5": "2", "relpath": "2"}]
++        [{"sha256": "1", "relpath": "1"}, {"sha256": "2", "relpath": "2"}]
+     )
+     tree.digest()
+     with patch("dvc.data.stage._stage_tree", return_value=(None, tree)):
+-        _, _, obj = stage(dvc.odb.local, path, dvc.odb.local.fs, "md5")
++        _, _, obj = stage(dvc.odb.local, path, dvc.odb.local.fs, "sha256")
+         hash2 = obj.hash_info
+ 
+     assert hash1 == hash2
+@@ -245,7 +245,7 @@ def test_remote_modify_local_on_repo_config(tmp_dir, dvc):
+ 
+ def test_external_dir_resource_on_no_cache(tmp_dir, dvc, tmp_path_factory):
+     # https://github.com/iterative/dvc/issues/2647, is some situations
+-    # (external dir dependency) cache is required to calculate dir md5
++    # (external dir dependency) cache is required to calculate dir sha256
+     external_dir = tmp_path_factory.mktemp("external_dir")
+     file = external_dir / "file"
+ 
+diff --git a/tests/func/test_repo_index.py b/tests/func/test_repo_index.py
+index 22826a78..875a1a7f 100644
+--- a/tests/func/test_repo_index.py
++++ b/tests/func/test_repo_index.py
+@@ -269,17 +269,17 @@ def test_used_objs(tmp_dir, scm, dvc, run_copy, rev):
+ 
+     expected_objs = [
+         HashInfo(
+-            name="md5",
++            name="sha256",
+             value="acbd18db4cc2f85cedef654fccc4a4d8",
+             obj_name="bar",
+         ),
+         HashInfo(
+-            name="md5",
++            name="sha256",
+             value="8c7dd922ad47494fc02c388e12c00eac",
+             obj_name="dir/subdir/file",
+         ),
+         HashInfo(
+-            name="md5",
++            name="sha256",
+             value="d28c9e28591aeb7e303dc6772ffa6f6b.dir",
+             obj_name="dir",
+         ),
+diff --git a/tests/func/test_repro.py b/tests/func/test_repro.py
+index 4426e9aa..d0a62183 100644
+--- a/tests/func/test_repro.py
++++ b/tests/func/test_repro.py
+@@ -19,7 +19,7 @@ from dvc.output import Output
+ from dvc.stage import Stage
+ from dvc.stage.exceptions import StageFileDoesNotExistError
+ from dvc.system import System
+-from dvc.utils import file_md5, relpath
++from dvc.utils import file_sha256, relpath
+ from dvc.utils.fs import remove
+ from dvc.utils.serialize import dump_yaml, load_yaml
+ from tests.basic_env import TestDvc
+@@ -654,7 +654,7 @@ class TestReproDataSource(TestReproChangedData):
+ 
+         self.assertTrue(filecmp.cmp(self.FOO, self.BAR, shallow=False))
+         self.assertEqual(
+-            stages[0].outs[0].hash_info.value, file_md5(self.BAR, self.dvc.fs)
++            stages[0].outs[0].hash_info.value, file_sha256(self.BAR, self.dvc.fs)
+         )
+ 
+ 
+@@ -1127,21 +1127,21 @@ def test_dvc_formatting_retained(tmp_dir, dvc, run_copy):
+     (tmp_dir / "foo").write_text("new foo")
+     dvc.reproduce("foo_copy.dvc", force=True)
+ 
+-    def _hide_md5(text):
+-        return re.sub(r"\b[a-f0-9]{32}\b", "<md5>", text)
++    def _hide_sha256(text):
++        return re.sub(r"\b[a-f0-9]{32}\b", "<sha256>", text)
+ 
+     def _hide_size(text):
+         return re.sub(r"size: [0-9]*\b", "size: <size>", text)
+ 
+     def _mask(text):
+-        return _hide_size(_hide_md5(text))
++        return _hide_size(_hide_sha256(text))
+ 
+     assert _mask(stage_text) == _mask(stage_path.read_text())
+ 
+ 
+ def _format_dvc_line(line):
+-    # Add line comment for all cache and md5 keys
+-    if "cache:" in line or "md5:" in line:
++    # Add line comment for all cache and sha256 keys
++    if "cache:" in line or "sha256:" in line:
+         return line + " # line comment"
+     # Format command as one word per line
+     if line.startswith("cmd: "):
+diff --git a/tests/func/test_run_multistage.py b/tests/func/test_run_multistage.py
+index f83b7e18..569a86de 100644
+--- a/tests/func/test_run_multistage.py
++++ b/tests/func/test_run_multistage.py
+@@ -355,7 +355,7 @@ def test_run_external_outputs(
+     dvc,
+     local_workspace,
+ ):
+-    hash_name = "md5"
++    hash_name = "sha256"
+     foo_hash = "acbd18db4cc2f85cedef654fccc4a4d8"
+     bar_hash = "37b51d194a7513e45b56f6524f2d51f2"
+ 
+diff --git a/tests/func/test_run_single_stage.py b/tests/func/test_run_single_stage.py
+index a4db9b13..62ea01f3 100644
+--- a/tests/func/test_run_single_stage.py
++++ b/tests/func/test_run_single_stage.py
+@@ -30,7 +30,7 @@ from dvc.stage.exceptions import (
+     StagePathOutsideError,
+ )
+ from dvc.system import System
+-from dvc.utils import file_md5
++from dvc.utils import file_sha256
+ from dvc.utils.serialize import load_yaml
+ from tests.basic_env import TestDvc, TestDvcGit
+ 
+@@ -60,7 +60,7 @@ class TestRun(TestDvc):
+         self.assertEqual(len(stage.outs), len(outs + outs_no_cache))
+         self.assertEqual(stage.outs[0].fspath, outs[0])
+         self.assertEqual(
+-            stage.outs[0].hash_info.value, file_md5(self.FOO, self.dvc.fs)
++            stage.outs[0].hash_info.value, file_sha256(self.FOO, self.dvc.fs)
+         )
+         self.assertTrue(stage.path, fname)
+ 
+@@ -990,20 +990,20 @@ def test_run_force_preserves_comments_and_meta(tmp_dir, dvc, run_copy):
+         cmd: python copy.py foo bar
+         deps:
+         - path: copy.py
+-          md5: 90c27dd80b698fe766f0c3ee0b6b9729
++          sha256: 90c27dd80b698fe766f0c3ee0b6b9729
+           size: {code_size}
+         - path: foo
+-          md5: acbd18db4cc2f85cedef654fccc4a4d8
++          sha256: acbd18db4cc2f85cedef654fccc4a4d8
+           size: 3
+         outs:
+         # comment preserved
+         - path: bar
+           desc: out desc
+-          md5: acbd18db4cc2f85cedef654fccc4a4d8
++          sha256: acbd18db4cc2f85cedef654fccc4a4d8
+           size: 3
+         meta:
+           name: copy-foo-bar
+-        md5: be659ce4a33cebb85d4e8e1335d394ad
++        sha256: be659ce4a33cebb85d4e8e1335d394ad
+     """
+     )
+ 
+@@ -1014,18 +1014,18 @@ def test_run_force_preserves_comments_and_meta(tmp_dir, dvc, run_copy):
+         cmd: python copy.py foo1 bar1
+         deps:
+         - path: foo1
+-          md5: 299a0be4a5a79e6a59fdd251b19d78bb
++          sha256: 299a0be4a5a79e6a59fdd251b19d78bb
+           size: 4
+         - path: copy.py
+-          md5: 90c27dd80b698fe766f0c3ee0b6b9729
++          sha256: 90c27dd80b698fe766f0c3ee0b6b9729
+           size: {code_size}
+         outs:
+         # comment preserved
+         - path: bar1
+-          md5: 299a0be4a5a79e6a59fdd251b19d78bb
++          sha256: 299a0be4a5a79e6a59fdd251b19d78bb
+           size: 4
+         meta:
+           name: copy-foo-bar
+-        md5: 9e725b11cb393e6a7468369fa50328b7
++        sha256: 9e725b11cb393e6a7468369fa50328b7
+     """
+     )
+diff --git a/tests/func/test_stage.py b/tests/func/test_stage.py
+index 99908d8b..4c2a7bc9 100644
+--- a/tests/func/test_stage.py
++++ b/tests/func/test_stage.py
+@@ -78,8 +78,8 @@ class TestReload(TestDvc):
+         d = load_yaml(stage.relpath)
+ 
+         # NOTE: checking that reloaded stage didn't change its checksum
+-        md5 = "11111111111111111111111111111111"
+-        d[stage.PARAM_MD5] = md5
++        sha256 = "11111111111111111111111111111111"
++        d[stage.PARAM_MD5] = sha256
+         dump_yaml(stage.relpath, d)
+ 
+         dvcfile = SingleStageFile(self.dvc, stage.relpath)
+@@ -89,7 +89,7 @@ class TestReload(TestDvc):
+         dvcfile.dump(stage)
+ 
+         d = load_yaml(stage.relpath)
+-        self.assertEqual(d[stage.PARAM_MD5], md5)
++        self.assertEqual(d[stage.PARAM_MD5], sha256)
+ 
+ 
+ class TestDefaultWorkingDirectory(TestDvc):
+@@ -154,7 +154,7 @@ class TestExternalRemoteResolution(TestDvc):
+         assert os.path.exists("movie.txt")
+ 
+ 
+-def test_md5_ignores_comments(tmp_dir, dvc):
++def test_sha256_ignores_comments(tmp_dir, dvc):
+     (stage,) = tmp_dir.dvc_gen("foo", "foo content")
+ 
+     with open(stage.path, "a", encoding="utf-8") as f:
+diff --git a/tests/func/test_state.py b/tests/func/test_state.py
+index 173821a6..d7eab49e 100644
+--- a/tests/func/test_state.py
++++ b/tests/func/test_state.py
+@@ -4,13 +4,13 @@ import re
+ from dvc.hash_info import HashInfo
+ from dvc.repo import Repo
+ from dvc.state import State
+-from dvc.utils import file_md5
++from dvc.utils import file_sha256
+ 
+ 
+ def test_state(tmp_dir, dvc):
+     tmp_dir.gen("foo", "foo content")
+     path = tmp_dir / "foo"
+-    hash_info = HashInfo("md5", file_md5(path, dvc.fs))
++    hash_info = HashInfo("sha256", file_sha256(path, dvc.fs))
+ 
+     state = State(dvc.root_dir, dvc.tmp_dir, dvc.dvcignore)
+ 
+@@ -22,7 +22,7 @@ def test_state(tmp_dir, dvc):
+ 
+     assert state.get(path, dvc.fs) == (None, None)
+ 
+-    hash_info = HashInfo("md5", file_md5(path, dvc.fs))
++    hash_info = HashInfo("sha256", file_sha256(path, dvc.fs))
+     state.save(path, dvc.fs, hash_info)
+ 
+     assert state.get(path, dvc.fs)[1] == hash_info
+diff --git a/tests/func/test_utils.py b/tests/func/test_utils.py
+index 026357af..eaa0abfb 100644
+--- a/tests/func/test_utils.py
++++ b/tests/func/test_utils.py
+@@ -2,14 +2,14 @@ from dvc import utils
+ from dvc.fs.local import LocalFileSystem
+ 
+ 
+-def test_file_md5_crlf(tmp_dir):
++def test_file_sha256_crlf(tmp_dir):
+     fs = LocalFileSystem()
+     tmp_dir.gen("cr", b"a\nb\nc")
+     tmp_dir.gen("crlf", b"a\r\nb\r\nc")
+-    assert utils.file_md5("cr", fs) == utils.file_md5("crlf", fs)
++    assert utils.file_sha256("cr", fs) == utils.file_sha256("crlf", fs)
+ 
+ 
+-def test_dict_md5():
++def test_dict_sha256():
+     d = {
+         "cmd": "python code.py foo file1",
+         "locked": "true",
+@@ -18,18 +18,18 @@ def test_dict_md5():
+                 "path": "file1",
+                 "metric": {"type": "raw"},
+                 "cache": False,
+-                "md5": "acbd18db4cc2f85cedef654fccc4a4d8",
++                "sha256": "acbd18db4cc2f85cedef654fccc4a4d8",
+             }
+         ],
+         "deps": [
+-            {"path": "foo", "md5": "acbd18db4cc2f85cedef654fccc4a4d8"},
+-            {"path": "code.py", "md5": "d05447644b89960913c7eee5fd776adb"},
++            {"path": "foo", "sha256": "acbd18db4cc2f85cedef654fccc4a4d8"},
++            {"path": "code.py", "sha256": "d05447644b89960913c7eee5fd776adb"},
+         ],
+     }
+ 
+-    md5 = "8b263fa05ede6c3145c164829be694b4"
++    sha256 = "8b263fa05ede6c3145c164829be694b4"
+ 
+-    assert md5 == utils.dict_md5(d, exclude=["metric", "locked"])
++    assert sha256 == utils.dict_sha256(d, exclude=["metric", "locked"])
+ 
+ 
+ def test_boxify():
+diff --git a/tests/unit/fs/test_dvc.py b/tests/unit/fs/test_dvc.py
+index 4dd7a9c0..fb94bc63 100644
+--- a/tests/unit/fs/test_dvc.py
++++ b/tests/unit/fs/test_dvc.py
+@@ -221,7 +221,7 @@ def test_isdvc(tmp_dir, dvc):
+ def test_get_hash_file(tmp_dir, dvc):
+     tmp_dir.dvc_gen({"foo": "foo"})
+     fs = DvcFileSystem(repo=dvc)
+-    assert fs.info("foo")["md5"] == "acbd18db4cc2f85cedef654fccc4a4d8"
++    assert fs.info("foo")["sha256"] == "acbd18db4cc2f85cedef654fccc4a4d8"
+ 
+ 
+ def test_get_hash_dir(tmp_dir, dvc, mocker):
+@@ -232,7 +232,7 @@ def test_get_hash_dir(tmp_dir, dvc, mocker):
+     )
+     fs = DvcFileSystem(repo=dvc)
+     get_file_hash_spy = mocker.spy(dvc_module.data.stage, "get_file_hash")
+-    assert fs.info("dir")["md5"] == "8761c4e9acad696bee718615e23e22db.dir"
++    assert fs.info("dir")["sha256"] == "8761c4e9acad696bee718615e23e22db.dir"
+     assert not get_file_hash_spy.called
+ 
+ 
+@@ -242,15 +242,15 @@ def test_get_hash_granular(tmp_dir, dvc):
+     )
+     fs = DvcFileSystem(repo=dvc)
+     subdir = os.path.join("dir", "subdir")
+-    assert fs.info(subdir).get("md5") is None
+-    _, _, obj = stage(dvc.odb.local, subdir, fs, "md5", dry_run=True)
++    assert fs.info(subdir).get("sha256") is None
++    _, _, obj = stage(dvc.odb.local, subdir, fs, "sha256", dry_run=True)
+     assert obj.hash_info == HashInfo(
+-        "md5", "af314506f1622d107e0ed3f14ec1a3b5.dir"
++        "sha256", "af314506f1622d107e0ed3f14ec1a3b5.dir"
+     )
+     data = os.path.join(subdir, "data")
+-    assert fs.info(data)["md5"] == "8d777f385d3dfec8815d20f7496026dc"
+-    _, _, obj = stage(dvc.odb.local, data, fs, "md5", dry_run=True)
+-    assert obj.hash_info == HashInfo("md5", "8d777f385d3dfec8815d20f7496026dc")
++    assert fs.info(data)["sha256"] == "8d777f385d3dfec8815d20f7496026dc"
++    _, _, obj = stage(dvc.odb.local, data, fs, "sha256", dry_run=True)
++    assert obj.hash_info == HashInfo("sha256", "8d777f385d3dfec8815d20f7496026dc")
+ 
+ 
+ def test_get_hash_dirty_file(tmp_dir, dvc):
+@@ -259,9 +259,9 @@ def test_get_hash_dirty_file(tmp_dir, dvc):
+ 
+     fs = DvcFileSystem(repo=dvc)
+     expected = "8c7dd922ad47494fc02c388e12c00eac"
+-    assert fs.info("file").get("md5") == expected
+-    _, _, obj = stage(dvc.odb.local, "file", fs, "md5", dry_run=True)
+-    assert obj.hash_info == HashInfo("md5", expected)
++    assert fs.info("file").get("sha256") == expected
++    _, _, obj = stage(dvc.odb.local, "file", fs, "sha256", dry_run=True)
++    assert obj.hash_info == HashInfo("sha256", expected)
+ 
+ 
+ def test_get_hash_dirty_dir(tmp_dir, dvc):
+@@ -270,6 +270,6 @@ def test_get_hash_dirty_dir(tmp_dir, dvc):
+ 
+     fs = DvcFileSystem(repo=dvc)
+     expected = "5ea40360f5b4ec688df672a4db9c17d1.dir"
+-    assert fs.info("dir").get("md5") == expected
+-    _, _, obj = stage(dvc.odb.local, "dir", fs, "md5", dry_run=True)
+-    assert obj.hash_info == HashInfo("md5", expected)
++    assert fs.info("dir").get("sha256") == expected
++    _, _, obj = stage(dvc.odb.local, "dir", fs, "sha256", dry_run=True)
++    assert obj.hash_info == HashInfo("sha256", expected)
+diff --git a/tests/unit/fs/test_repo.py b/tests/unit/fs/test_repo.py
+index 24b241fc..40b7ee89 100644
+--- a/tests/unit/fs/test_repo.py
++++ b/tests/unit/fs/test_repo.py
+@@ -508,11 +508,11 @@ def test_get_hash_cached_file(tmp_dir, dvc, mocker):
+     tmp_dir.dvc_gen({"foo": "foo"})
+     fs = RepoFileSystem(repo=dvc)
+     expected = "acbd18db4cc2f85cedef654fccc4a4d8"
+-    assert fs.info((tmp_dir / "foo").fs_path).get("md5") is None
+-    _, _, obj = stage(dvc.odb.local, (tmp_dir / "foo").fs_path, fs, "md5")
+-    assert obj.hash_info == HashInfo("md5", expected)
++    assert fs.info((tmp_dir / "foo").fs_path).get("sha256") is None
++    _, _, obj = stage(dvc.odb.local, (tmp_dir / "foo").fs_path, fs, "sha256")
++    assert obj.hash_info == HashInfo("sha256", expected)
+     (tmp_dir / "foo").unlink()
+-    assert fs.info((tmp_dir / "foo").fs_path)["md5"] == expected
++    assert fs.info((tmp_dir / "foo").fs_path)["sha256"] == expected
+ 
+ 
+ def test_get_hash_cached_dir(tmp_dir, dvc, mocker):
+@@ -521,17 +521,17 @@ def test_get_hash_cached_dir(tmp_dir, dvc, mocker):
+     )
+     fs = RepoFileSystem(repo=dvc)
+     expected = "8761c4e9acad696bee718615e23e22db.dir"
+-    assert fs.info((tmp_dir / "dir").fs_path).get("md5") is None
+-    _, _, obj = stage(dvc.odb.local, (tmp_dir / "dir").fs_path, fs, "md5")
++    assert fs.info((tmp_dir / "dir").fs_path).get("sha256") is None
++    _, _, obj = stage(dvc.odb.local, (tmp_dir / "dir").fs_path, fs, "sha256")
+     assert obj.hash_info == HashInfo(
+-        "md5", "8761c4e9acad696bee718615e23e22db.dir"
++        "sha256", "8761c4e9acad696bee718615e23e22db.dir"
+     )
+ 
+     shutil.rmtree(tmp_dir / "dir")
+-    assert fs.info((tmp_dir / "dir").fs_path)["md5"] == expected
+-    _, _, obj = stage(dvc.odb.local, (tmp_dir / "dir").fs_path, fs, "md5")
++    assert fs.info((tmp_dir / "dir").fs_path)["sha256"] == expected
++    _, _, obj = stage(dvc.odb.local, (tmp_dir / "dir").fs_path, fs, "sha256")
+     assert obj.hash_info == HashInfo(
+-        "md5", "8761c4e9acad696bee718615e23e22db.dir"
++        "sha256", "8761c4e9acad696bee718615e23e22db.dir"
+     )
+ 
+ 
+@@ -541,17 +541,17 @@ def test_get_hash_cached_granular(tmp_dir, dvc, mocker):
+     )
+     fs = RepoFileSystem(repo=dvc)
+     subdir = tmp_dir / "dir" / "subdir"
+-    assert fs.info(subdir.fs_path).get("md5") is None
+-    _, _, obj = stage(dvc.odb.local, subdir.fs_path, fs, "md5")
++    assert fs.info(subdir.fs_path).get("sha256") is None
++    _, _, obj = stage(dvc.odb.local, subdir.fs_path, fs, "sha256")
+     assert obj.hash_info == HashInfo(
+-        "md5", "af314506f1622d107e0ed3f14ec1a3b5.dir"
++        "sha256", "af314506f1622d107e0ed3f14ec1a3b5.dir"
+     )
+-    assert fs.info((subdir / "data").fs_path).get("md5") is None
+-    _, _, obj = stage(dvc.odb.local, (subdir / "data").fs_path, fs, "md5")
+-    assert obj.hash_info == HashInfo("md5", "8d777f385d3dfec8815d20f7496026dc")
++    assert fs.info((subdir / "data").fs_path).get("sha256") is None
++    _, _, obj = stage(dvc.odb.local, (subdir / "data").fs_path, fs, "sha256")
++    assert obj.hash_info == HashInfo("sha256", "8d777f385d3dfec8815d20f7496026dc")
+     (tmp_dir / "dir" / "subdir" / "data").unlink()
+     assert (
+-        fs.info((subdir / "data").fs_path)["md5"]
++        fs.info((subdir / "data").fs_path)["sha256"]
+         == "8d777f385d3dfec8815d20f7496026dc"
+     )
+ 
+@@ -570,9 +570,9 @@ def test_get_hash_mixed_dir(tmp_dir, scm, dvc):
+     clean_staging()
+ 
+     fs = RepoFileSystem(repo=dvc)
+-    _, _, obj = stage(dvc.odb.local, (tmp_dir / "dir").fs_path, fs, "md5")
++    _, _, obj = stage(dvc.odb.local, (tmp_dir / "dir").fs_path, fs, "sha256")
+     assert obj.hash_info == HashInfo(
+-        "md5", "e1d9e8eae5374860ae025ec84cfd85c7.dir"
++        "sha256", "e1d9e8eae5374860ae025ec84cfd85c7.dir"
+     )
+ 
+ 
+@@ -582,19 +582,19 @@ def test_get_hash_dirty_file(tmp_dir, dvc):
+     from dvc.objects.errors import ObjectFormatError
+ 
+     tmp_dir.dvc_gen("file", "file")
+-    file_hash_info = HashInfo("md5", "8c7dd922ad47494fc02c388e12c00eac")
++    file_hash_info = HashInfo("sha256", "8c7dd922ad47494fc02c388e12c00eac")
+ 
+     (tmp_dir / "file").write_text("something")
+-    something_hash_info = HashInfo("md5", "437b930db84b8079c2dd804a71936b5f")
++    something_hash_info = HashInfo("sha256", "437b930db84b8079c2dd804a71936b5f")
+ 
+     clean_staging()
+ 
+     # file is modified in workspace
+     # get_file_hash(file) should return workspace hash, not DVC cached hash
+     fs = RepoFileSystem(repo=dvc)
+-    assert fs.info((tmp_dir / "file").fs_path).get("md5") is None
++    assert fs.info((tmp_dir / "file").fs_path).get("sha256") is None
+     staging, _, obj = stage(
+-        dvc.odb.local, (tmp_dir / "file").fs_path, fs, "md5"
++        dvc.odb.local, (tmp_dir / "file").fs_path, fs, "sha256"
+     )
+     assert obj.hash_info == something_hash_info
+     check(staging, obj)
+@@ -606,15 +606,15 @@ def test_get_hash_dirty_file(tmp_dir, dvc):
+         check(staging, obj)
+ 
+     # get_file_hash(file) should return DVC cached hash
+-    assert fs.info((tmp_dir / "file").fs_path)["md5"] == file_hash_info.value
++    assert fs.info((tmp_dir / "file").fs_path)["sha256"] == file_hash_info.value
+     _, hash_info = get_file_hash(
+-        (tmp_dir / "file").fs_path, fs, "md5", state=dvc.state
++        (tmp_dir / "file").fs_path, fs, "sha256", state=dvc.state
+     )
+     assert hash_info == file_hash_info
+ 
+     # tmp_dir/file can be staged even though it is missing in workspace since
+     # repofs will use the DVC cached hash (and refer to the local cache object)
+-    _, _, obj = stage(dvc.odb.local, (tmp_dir / "file").fs_path, fs, "md5")
++    _, _, obj = stage(dvc.odb.local, (tmp_dir / "file").fs_path, fs, "sha256")
+     assert obj.hash_info == file_hash_info
+ 
+ 
+@@ -624,9 +624,9 @@ def test_get_hash_dirty_dir(tmp_dir, dvc):
+     clean_staging()
+ 
+     fs = RepoFileSystem(repo=dvc)
+-    _, meta, obj = stage(dvc.odb.local, (tmp_dir / "dir").fs_path, fs, "md5")
++    _, meta, obj = stage(dvc.odb.local, (tmp_dir / "dir").fs_path, fs, "sha256")
+     assert obj.hash_info == HashInfo(
+-        "md5", "ba75a2162ca9c29acecb7957105a0bc2.dir"
++        "sha256", "ba75a2162ca9c29acecb7957105a0bc2.dir"
+     )
+     assert meta.nfiles == 3
+ 
+diff --git a/tests/unit/objects/db/test_local.py b/tests/unit/objects/db/test_local.py
+index 57b452bc..2f46ff53 100644
+--- a/tests/unit/objects/db/test_local.py
++++ b/tests/unit/objects/db/test_local.py
+@@ -17,8 +17,8 @@ def test_status_download_optimization(mocker, dvc):
+ 
+     odb = LocalObjectDB(LocalFileSystem(), os.getcwd())
+     obj_ids = {
+-        HashInfo("md5", "acbd18db4cc2f85cedef654fccc4a4d8"),
+-        HashInfo("md5", "37b51d194a7513e45b56f6524f2d51f2"),
++        HashInfo("sha256", "acbd18db4cc2f85cedef654fccc4a4d8"),
++        HashInfo("sha256", "37b51d194a7513e45b56f6524f2d51f2"),
+     }
+ 
+     local_exists = [hash_info.value for hash_info in obj_ids]
+@@ -94,7 +94,7 @@ def test_staging_file(tmp_dir, dvc):
+ 
+     local_odb = dvc.odb.local
+     staging_odb, _, obj = stage(
+-        local_odb, (tmp_dir / "foo").fs_path, fs, "md5"
++        local_odb, (tmp_dir / "foo").fs_path, fs, "sha256"
+     )
+ 
+     assert not local_odb.exists(obj.hash_info)
+@@ -122,7 +122,7 @@ def test_staging_dir(tmp_dir, dvc):
+     local_odb = dvc.odb.local
+ 
+     staging_odb, _, obj = stage(
+-        local_odb, (tmp_dir / "dir").fs_path, fs, "md5"
++        local_odb, (tmp_dir / "dir").fs_path, fs, "sha256"
+     )
+ 
+     assert not local_odb.exists(obj.hash_info)
+diff --git a/tests/unit/objects/test_tree.py b/tests/unit/objects/test_tree.py
+index f765a663..9dd53ae0 100644
+--- a/tests/unit/objects/test_tree.py
++++ b/tests/unit/objects/test_tree.py
+@@ -13,57 +13,57 @@ from dvc.hash_info import HashInfo
+         ([], {}),
+         (
+             [
+-                {"md5": "def", "relpath": "zzz"},
+-                {"md5": "123", "relpath": "foo"},
+-                {"md5": "abc", "relpath": "aaa"},
+-                {"md5": "456", "relpath": "bar"},
++                {"sha256": "def", "relpath": "zzz"},
++                {"sha256": "123", "relpath": "foo"},
++                {"sha256": "abc", "relpath": "aaa"},
++                {"sha256": "456", "relpath": "bar"},
+             ],
+             {
+-                ("zzz",): (None, HashInfo("md5", "def")),
+-                ("foo",): (None, HashInfo("md5", "123")),
+-                ("bar",): (None, HashInfo("md5", "456")),
+-                ("aaa",): (None, HashInfo("md5", "abc")),
++                ("zzz",): (None, HashInfo("sha256", "def")),
++                ("foo",): (None, HashInfo("sha256", "123")),
++                ("bar",): (None, HashInfo("sha256", "456")),
++                ("aaa",): (None, HashInfo("sha256", "abc")),
+             },
+         ),
+         (
+             [
+-                {"md5": "123", "relpath": "dir/b"},
+-                {"md5": "456", "relpath": "dir/z"},
+-                {"md5": "789", "relpath": "dir/a"},
+-                {"md5": "abc", "relpath": "b"},
+-                {"md5": "def", "relpath": "a"},
+-                {"md5": "ghi", "relpath": "z"},
+-                {"md5": "jkl", "relpath": "dir/subdir/b"},
+-                {"md5": "mno", "relpath": "dir/subdir/z"},
+-                {"md5": "pqr", "relpath": "dir/subdir/a"},
++                {"sha256": "123", "relpath": "dir/b"},
++                {"sha256": "456", "relpath": "dir/z"},
++                {"sha256": "789", "relpath": "dir/a"},
++                {"sha256": "abc", "relpath": "b"},
++                {"sha256": "def", "relpath": "a"},
++                {"sha256": "ghi", "relpath": "z"},
++                {"sha256": "jkl", "relpath": "dir/subdir/b"},
++                {"sha256": "mno", "relpath": "dir/subdir/z"},
++                {"sha256": "pqr", "relpath": "dir/subdir/a"},
+             ],
+             {
+                 ("dir", "b"): (
+                     None,
+-                    HashInfo("md5", "123"),
++                    HashInfo("sha256", "123"),
+                 ),
+                 ("dir", "z"): (
+                     None,
+-                    HashInfo("md5", "456"),
++                    HashInfo("sha256", "456"),
+                 ),
+                 ("dir", "a"): (
+                     None,
+-                    HashInfo("md5", "789"),
++                    HashInfo("sha256", "789"),
+                 ),
+-                ("b",): (None, HashInfo("md5", "abc")),
+-                ("a",): (None, HashInfo("md5", "def")),
+-                ("z",): (None, HashInfo("md5", "ghi")),
++                ("b",): (None, HashInfo("sha256", "abc")),
++                ("a",): (None, HashInfo("sha256", "def")),
++                ("z",): (None, HashInfo("sha256", "ghi")),
+                 ("dir", "subdir", "b"): (
+                     None,
+-                    HashInfo("md5", "jkl"),
++                    HashInfo("sha256", "jkl"),
+                 ),
+                 ("dir", "subdir", "z"): (
+                     None,
+-                    HashInfo("md5", "mno"),
++                    HashInfo("sha256", "mno"),
+                 ),
+                 ("dir", "subdir", "a"): (
+                     None,
+-                    HashInfo("md5", "pqr"),
++                    HashInfo("sha256", "pqr"),
+                 ),
+             },
+         ),
+@@ -81,19 +81,19 @@ def test_list(lst, trie_dict):
+         ({}, 0),
+         (
+             {
+-                ("a",): (Meta(size=1), HashInfo("md5", "abc")),
+-                ("b",): (Meta(size=2), HashInfo("md5", "def")),
+-                ("c",): (Meta(size=3), HashInfo("md5", "ghi")),
+-                ("dir", "foo"): (Meta(size=4), HashInfo("md5", "jkl")),
+-                ("dir", "bar"): (Meta(size=5), HashInfo("md5", "mno")),
+-                ("dir", "baz"): (Meta(size=6), HashInfo("md5", "pqr")),
++                ("a",): (Meta(size=1), HashInfo("sha256", "abc")),
++                ("b",): (Meta(size=2), HashInfo("sha256", "def")),
++                ("c",): (Meta(size=3), HashInfo("sha256", "ghi")),
++                ("dir", "foo"): (Meta(size=4), HashInfo("sha256", "jkl")),
++                ("dir", "bar"): (Meta(size=5), HashInfo("sha256", "mno")),
++                ("dir", "baz"): (Meta(size=6), HashInfo("sha256", "pqr")),
+             },
+             6,
+         ),
+         (
+             {
+-                ("a",): (Meta(size=1), HashInfo("md5", "abc")),
+-                ("b",): (Meta(), HashInfo("md5", "def")),
++                ("a",): (Meta(size=1), HashInfo("sha256", "abc")),
++                ("b",): (Meta(), HashInfo("sha256", "def")),
+             },
+             2,
+         ),
+@@ -110,15 +110,15 @@ def test_nfiles(trie_dict, nfiles):
+     [
+         {},
+         {
+-            ("a",): (None, HashInfo("md5", "abc")),
+-            ("b",): (None, HashInfo("md5", "def")),
+-            ("c",): (None, HashInfo("md5", "ghi")),
+-            ("dir", "foo"): (None, HashInfo("md5", "jkl")),
+-            ("dir", "bar"): (None, HashInfo("md5", "mno")),
+-            ("dir", "baz"): (None, HashInfo("md5", "pqr")),
+-            ("dir", "subdir", "1"): (None, HashInfo("md5", "stu")),
+-            ("dir", "subdir", "2"): (None, HashInfo("md5", "vwx")),
+-            ("dir", "subdir", "3"): (None, HashInfo("md5", "yz")),
++            ("a",): (None, HashInfo("sha256", "abc")),
++            ("b",): (None, HashInfo("sha256", "def")),
++            ("c",): (None, HashInfo("sha256", "ghi")),
++            ("dir", "foo"): (None, HashInfo("sha256", "jkl")),
++            ("dir", "bar"): (None, HashInfo("sha256", "mno")),
++            ("dir", "baz"): (None, HashInfo("sha256", "pqr")),
++            ("dir", "subdir", "1"): (None, HashInfo("sha256", "stu")),
++            ("dir", "subdir", "2"): (None, HashInfo("sha256", "vwx")),
++            ("dir", "subdir", "3"): (None, HashInfo("sha256", "yz")),
+         },
+     ],
+ )
+@@ -135,63 +135,63 @@ def test_items(trie_dict):
+     [
+         ({}, {}, {}, {}),
+         (
+-            {("foo",): HashInfo("md5", "123")},
++            {("foo",): HashInfo("sha256", "123")},
+             {
+-                ("foo",): HashInfo("md5", "123"),
+-                ("bar",): HashInfo("md5", "345"),
++                ("foo",): HashInfo("sha256", "123"),
++                ("bar",): HashInfo("sha256", "345"),
+             },
+             {
+-                ("foo",): HashInfo("md5", "123"),
+-                ("baz",): HashInfo("md5", "678"),
++                ("foo",): HashInfo("sha256", "123"),
++                ("baz",): HashInfo("sha256", "678"),
+             },
+             {
+-                ("foo",): HashInfo("md5", "123"),
+-                ("bar",): HashInfo("md5", "345"),
+-                ("baz",): HashInfo("md5", "678"),
++                ("foo",): HashInfo("sha256", "123"),
++                ("bar",): HashInfo("sha256", "345"),
++                ("baz",): HashInfo("sha256", "678"),
+             },
+         ),
+         (
+             {
+-                ("common",): HashInfo("md5", "123"),
+-                ("subdir", "foo"): HashInfo("md5", "345"),
++                ("common",): HashInfo("sha256", "123"),
++                ("subdir", "foo"): HashInfo("sha256", "345"),
+             },
+             {
+-                ("common",): HashInfo("md5", "123"),
+-                ("subdir", "foo"): HashInfo("md5", "345"),
+-                ("subdir", "bar"): HashInfo("md5", "678"),
++                ("common",): HashInfo("sha256", "123"),
++                ("subdir", "foo"): HashInfo("sha256", "345"),
++                ("subdir", "bar"): HashInfo("sha256", "678"),
+             },
+             {
+-                ("common",): HashInfo("md5", "123"),
+-                ("subdir", "foo"): HashInfo("md5", "345"),
+-                ("subdir", "baz"): HashInfo("md5", "91011"),
++                ("common",): HashInfo("sha256", "123"),
++                ("subdir", "foo"): HashInfo("sha256", "345"),
++                ("subdir", "baz"): HashInfo("sha256", "91011"),
+             },
+             {
+-                ("common",): HashInfo("md5", "123"),
+-                ("subdir", "foo"): HashInfo("md5", "345"),
+-                ("subdir", "bar"): HashInfo("md5", "678"),
+-                ("subdir", "baz"): HashInfo("md5", "91011"),
++                ("common",): HashInfo("sha256", "123"),
++                ("subdir", "foo"): HashInfo("sha256", "345"),
++                ("subdir", "bar"): HashInfo("sha256", "678"),
++                ("subdir", "baz"): HashInfo("sha256", "91011"),
+             },
+         ),
+         (
+             {},
+-            {("foo",): HashInfo("md5", "123")},
+-            {("bar",): HashInfo("md5", "456")},
++            {("foo",): HashInfo("sha256", "123")},
++            {("bar",): HashInfo("sha256", "456")},
+             {
+-                ("foo",): HashInfo("md5", "123"),
+-                ("bar",): HashInfo("md5", "456"),
++                ("foo",): HashInfo("sha256", "123"),
++                ("bar",): HashInfo("sha256", "456"),
+             },
+         ),
+         (
+             {},
+             {},
+-            {("bar",): HashInfo("md5", "123")},
+-            {("bar",): HashInfo("md5", "123")},
++            {("bar",): HashInfo("sha256", "123")},
++            {("bar",): HashInfo("sha256", "123")},
+         ),
+         (
+             {},
+-            {("bar",): HashInfo("md5", "123")},
++            {("bar",): HashInfo("sha256", "123")},
+             {},
+-            {("bar",): HashInfo("md5", "123")},
++            {("bar",): HashInfo("sha256", "123")},
+         ),
+     ],
+ )
+diff --git a/tests/unit/output/test_local.py b/tests/unit/output/test_local.py
+index 2cb3ce14..ee8f961d 100644
+--- a/tests/unit/output/test_local.py
++++ b/tests/unit/output/test_local.py
+@@ -64,12 +64,12 @@ class TestGetFilesNumber(TestDvc):
+ 
+     def test_return_multiple_for_dir(self):
+         o = self._get_output()
+-        o.hash_info = HashInfo("md5", "12345678.dir")
++        o.hash_info = HashInfo("sha256", "12345678.dir")
+         o.meta = Meta(nfiles=2)
+         self.assertEqual(2, o.get_files_number())
+ 
+     @patch.object(Output, "is_dir_checksum", False)
+     def test_return_1_on_single_file_cache(self):
+         o = self._get_output()
+-        o.hash_info = HashInfo("md5", "12345678")
++        o.hash_info = HashInfo("sha256", "12345678")
+         self.assertEqual(1, o.get_files_number())
+diff --git a/tests/unit/output/test_output.py b/tests/unit/output/test_output.py
+index 46e892b1..0bdcd3fd 100644
+--- a/tests/unit/output/test_output.py
++++ b/tests/unit/output/test_output.py
+@@ -29,7 +29,7 @@ def test_save_missing(dvc, mocker):
+         (
+             "3cc286c534a71504476da009ed174423",
+             "3cc286c534a71504476da009ed174423",
+-        ),  # md5
++        ),  # sha256
+         (
+             "d41d8cd98f00b204e9800998ecf8427e-38",
+             "d41d8cd98f00b204e9800998ecf8427e-38",
+diff --git a/tests/unit/repo/test_repo.py b/tests/unit/repo/test_repo.py
+index 1528ca6b..93e094c9 100644
+--- a/tests/unit/repo/test_repo.py
++++ b/tests/unit/repo/test_repo.py
+@@ -48,8 +48,8 @@ def test_used_objs(tmp_dir, dvc, path):
+     tmp_dir.dvc_gen({"dir": {"subdir": {"file": "file"}, "other": "other"}})
+ 
+     expected = {
+-        HashInfo("md5", "70922d6bf66eb073053a82f77d58c536.dir"),
+-        HashInfo("md5", "8c7dd922ad47494fc02c388e12c00eac"),
++        HashInfo("sha256", "70922d6bf66eb073053a82f77d58c536.dir"),
++        HashInfo("sha256", "8c7dd922ad47494fc02c388e12c00eac"),
+     }
+ 
+     used = set()
+diff --git a/tests/unit/stage/test_loader_pipeline_file.py b/tests/unit/stage/test_loader_pipeline_file.py
+index 84847ed2..696b3302 100644
+--- a/tests/unit/stage/test_loader_pipeline_file.py
++++ b/tests/unit/stage/test_loader_pipeline_file.py
+@@ -20,8 +20,8 @@ def stage_data():
+ def lock_data():
+     return {
+         "cmd": "command",
+-        "deps": [{"path": "foo", "md5": "foo_checksum"}],
+-        "outs": [{"path": "bar", "md5": "bar_checksum"}],
++        "deps": [{"path": "foo", "sha256": "foo_checksum"}],
++        "outs": [{"path": "bar", "sha256": "bar_checksum"}],
+     }
+ 
+ 
+@@ -35,8 +35,8 @@ def test_fill_from_lock_deps_outs(dvc, lock_data):
+ 
+     StageLoader.fill_from_lock(stage, lock_data)
+ 
+-    assert stage.deps[0].hash_info == HashInfo("md5", "foo_checksum")
+-    assert stage.outs[0].hash_info == HashInfo("md5", "bar_checksum")
++    assert stage.deps[0].hash_info == HashInfo("sha256", "foo_checksum")
++    assert stage.outs[0].hash_info == HashInfo("sha256", "bar_checksum")
+ 
+ 
+ def test_fill_from_lock_outs_isexec(dvc):
+@@ -48,12 +48,12 @@ def test_fill_from_lock_outs_isexec(dvc):
+         stage,
+         {
+             "cmd": "command",
+-            "outs": [{"path": "foo", "md5": "foo_checksum", "isexec": True}],
++            "outs": [{"path": "foo", "sha256": "foo_checksum", "isexec": True}],
+         },
+     )
+ 
+     assert stage.outs[0].def_path == "foo"
+-    assert stage.outs[0].hash_info == HashInfo("md5", "foo_checksum")
++    assert stage.outs[0].hash_info == HashInfo("sha256", "foo_checksum")
+     assert stage.outs[0].meta.isexec
+ 
+ 
+@@ -118,8 +118,8 @@ def test_fill_from_lock_missing_checksums(dvc, lock_data):
+ 
+     StageLoader.fill_from_lock(stage, lock_data)
+ 
+-    assert stage.deps[0].hash_info == HashInfo("md5", "foo_checksum")
+-    assert stage.outs[0].hash_info == HashInfo("md5", "bar_checksum")
++    assert stage.deps[0].hash_info == HashInfo("sha256", "foo_checksum")
++    assert stage.outs[0].hash_info == HashInfo("sha256", "bar_checksum")
+     assert not stage.deps[1].hash_info and not stage.outs[1].hash_info
+ 
+ 
+@@ -134,7 +134,7 @@ def test_fill_from_lock_use_appropriate_checksum(dvc, lock_data):
+     lock_data["deps"] = [{"path": "s3://dvc-temp/foo", "etag": "e-tag"}]
+     StageLoader.fill_from_lock(stage, lock_data)
+     assert stage.deps[0].hash_info == HashInfo("etag", "e-tag")
+-    assert stage.outs[0].hash_info == HashInfo("md5", "bar_checksum")
++    assert stage.outs[0].hash_info == HashInfo("sha256", "bar_checksum")
+ 
+ 
+ def test_fill_from_lock_with_missing_sections(dvc, lock_data):
+@@ -145,12 +145,12 @@ def test_fill_from_lock_with_missing_sections(dvc, lock_data):
+     del lock["deps"]
+     StageLoader.fill_from_lock(stage, lock)
+     assert not stage.deps[0].hash_info
+-    assert stage.outs[0].hash_info == HashInfo("md5", "bar_checksum")
++    assert stage.outs[0].hash_info == HashInfo("sha256", "bar_checksum")
+ 
+     lock = deepcopy(lock_data)
+     del lock["outs"]
+     StageLoader.fill_from_lock(stage, lock)
+-    assert stage.deps[0].hash_info == HashInfo("md5", "foo_checksum")
++    assert stage.deps[0].hash_info == HashInfo("sha256", "foo_checksum")
+     assert not stage.outs[0].hash_info
+ 
+ 
+@@ -173,9 +173,9 @@ def test_load_stage(dvc, stage_data, lock_data):
+     assert stage.cmd == "command"
+     assert stage.path == os.path.abspath(PIPELINE_FILE)
+     assert stage.deps[0].def_path == "foo"
+-    assert stage.deps[0].hash_info == HashInfo("md5", "foo_checksum")
++    assert stage.deps[0].hash_info == HashInfo("sha256", "foo_checksum")
+     assert stage.outs[0].def_path == "bar"
+-    assert stage.outs[0].hash_info == HashInfo("md5", "bar_checksum")
++    assert stage.outs[0].hash_info == HashInfo("sha256", "bar_checksum")
+ 
+ 
+ def test_load_stage_cmd_with_list(dvc, stage_data, lock_data):
+@@ -210,8 +210,8 @@ def test_load_stage_with_params(dvc, stage_data, lock_data):
+     assert deps[0].def_path == "foo" and stage.outs[0].def_path == "bar"
+     assert params[0].def_path == "params.yaml"
+     assert params[0].hash_info == HashInfo("params", {"lorem": "ipsum"})
+-    assert deps[0].hash_info == HashInfo("md5", "foo_checksum")
+-    assert stage.outs[0].hash_info == HashInfo("md5", "bar_checksum")
++    assert deps[0].hash_info == HashInfo("sha256", "foo_checksum")
++    assert stage.outs[0].hash_info == HashInfo("sha256", "bar_checksum")
+ 
+ 
+ @pytest.mark.parametrize("typ", ["metrics", "plots"])
+@@ -221,7 +221,7 @@ def test_load_stage_with_metrics_and_plots(dvc, stage_data, lock_data, typ):
+     stage = StageLoader.load_stage(dvcfile, "stage-1", stage_data, lock_data)
+ 
+     assert stage.outs[0].def_path == "bar"
+-    assert stage.outs[0].hash_info == HashInfo("md5", "bar_checksum")
++    assert stage.outs[0].hash_info == HashInfo("sha256", "bar_checksum")
+ 
+ 
+ def test_load_changed_command(dvc, stage_data, lock_data):
+diff --git a/tests/unit/stage/test_serialize_pipeline_lock.py b/tests/unit/stage/test_serialize_pipeline_lock.py
+index 968b3183..846c2c62 100644
+--- a/tests/unit/stage/test_serialize_pipeline_lock.py
++++ b/tests/unit/stage/test_serialize_pipeline_lock.py
+@@ -31,11 +31,11 @@ def test_lock(dvc):
+ 
+ def test_lock_deps(dvc):
+     stage = create_stage(PipelineStage, dvc, deps=["input"], **kwargs)
+-    stage.deps[0].hash_info = HashInfo("md5", "md-five")
++    stage.deps[0].hash_info = HashInfo("sha256", "md-five")
+     assert to_single_stage_lockfile(stage) == OrderedDict(
+         [
+             ("cmd", "command"),
+-            ("deps", [OrderedDict([("path", "input"), ("md5", "md-five")])]),
++            ("deps", [OrderedDict([("path", "input"), ("sha256", "md-five")])]),
+         ]
+     )
+ 
+@@ -44,16 +44,16 @@ def test_lock_deps_order(dvc):
+     stage = create_stage(
+         PipelineStage, dvc, deps=["input1", "input0"], **kwargs
+     )
+-    stage.deps[0].hash_info = HashInfo("md5", "md-one1")
+-    stage.deps[1].hash_info = HashInfo("md5", "md-zer0")
++    stage.deps[0].hash_info = HashInfo("sha256", "md-one1")
++    stage.deps[1].hash_info = HashInfo("sha256", "md-zer0")
+     assert to_single_stage_lockfile(stage) == OrderedDict(
+         [
+             ("cmd", "command"),
+             (
+                 "deps",
+                 [
+-                    OrderedDict([("path", "input0"), ("md5", "md-zer0")]),
+-                    OrderedDict([("path", "input1"), ("md5", "md-one1")]),
++                    OrderedDict([("path", "input0"), ("sha256", "md-zer0")]),
++                    OrderedDict([("path", "input1"), ("sha256", "md-one1")]),
+                 ],
+             ),
+         ]
+@@ -123,11 +123,11 @@ def test_lock_params_no_values_filled(dvc):
+ @pytest.mark.parametrize("typ", ["plots", "metrics", "outs"])
+ def test_lock_outs(dvc, typ):
+     stage = create_stage(PipelineStage, dvc, **{typ: ["input"]}, **kwargs)
+-    stage.outs[0].hash_info = HashInfo("md5", "md-five")
++    stage.outs[0].hash_info = HashInfo("sha256", "md-five")
+     assert to_single_stage_lockfile(stage) == OrderedDict(
+         [
+             ("cmd", "command"),
+-            ("outs", [OrderedDict([("path", "input"), ("md5", "md-five")])]),
++            ("outs", [OrderedDict([("path", "input"), ("sha256", "md-five")])]),
+         ]
+     )
+ 
+@@ -135,7 +135,7 @@ def test_lock_outs(dvc, typ):
+ @pytest.mark.parametrize("typ", ["plots", "metrics", "outs"])
+ def test_lock_outs_isexec(dvc, typ):
+     stage = create_stage(PipelineStage, dvc, **{typ: ["input"]}, **kwargs)
+-    stage.outs[0].hash_info = HashInfo("md5", "md-five")
++    stage.outs[0].hash_info = HashInfo("sha256", "md-five")
+     stage.outs[0].meta.isexec = True
+     assert to_single_stage_lockfile(stage) == OrderedDict(
+         [
+@@ -146,7 +146,7 @@ def test_lock_outs_isexec(dvc, typ):
+                     OrderedDict(
+                         [
+                             ("path", "input"),
+-                            ("md5", "md-five"),
++                            ("sha256", "md-five"),
+                             ("isexec", True),
+                         ]
+                     )
+@@ -161,16 +161,16 @@ def test_lock_outs_order(dvc, typ):
+     stage = create_stage(
+         PipelineStage, dvc, **{typ: ["input1", "input0"]}, **kwargs
+     )
+-    stage.outs[0].hash_info = HashInfo("md5", "md-one1")
+-    stage.outs[1].hash_info = HashInfo("md5", "md-zer0")
++    stage.outs[0].hash_info = HashInfo("sha256", "md-one1")
++    stage.outs[1].hash_info = HashInfo("sha256", "md-zer0")
+     assert to_single_stage_lockfile(stage) == OrderedDict(
+         [
+             ("cmd", "command"),
+             (
+                 "outs",
+                 [
+-                    OrderedDict([("path", "input0"), ("md5", "md-zer0")]),
+-                    OrderedDict([("path", "input1"), ("md5", "md-one1")]),
++                    OrderedDict([("path", "input0"), ("sha256", "md-zer0")]),
++                    OrderedDict([("path", "input1"), ("sha256", "md-one1")]),
+                 ],
+             ),
+         ]
+@@ -181,7 +181,7 @@ def test_dump_nondefault_hash(dvc):
+     stage = create_stage(
+         PipelineStage, dvc, deps=["s3://dvc-temp/file"], **kwargs
+     )
+-    stage.deps[0].hash_info = HashInfo("md5", "value")
++    stage.deps[0].hash_info = HashInfo("sha256", "value")
+     assert to_single_stage_lockfile(stage) == OrderedDict(
+         [
+             ("cmd", "command"),
+@@ -189,7 +189,7 @@ def test_dump_nondefault_hash(dvc):
+                 "deps",
+                 [
+                     OrderedDict(
+-                        [("path", "s3://dvc-temp/file"), ("md5", "value")]
++                        [("path", "s3://dvc-temp/file"), ("sha256", "value")]
+                     )
+                 ],
+             ),
+@@ -208,23 +208,23 @@ def test_order(dvc):
+     )
+     params, deps = split_params_deps(stage)
+ 
+-    deps[0].hash_info = HashInfo("md5", "md-five")
++    deps[0].hash_info = HashInfo("sha256", "md-five")
+     params[0].hash_info = HashInfo("params", {"foo-param": "value"})
+-    stage.outs[0].hash_info = HashInfo("md5", "md5-output")
++    stage.outs[0].hash_info = HashInfo("sha256", "sha256-output")
+ 
+     assert to_single_stage_lockfile(stage) == OrderedDict(
+         [
+             ("cmd", "command"),
+-            ("deps", [{"path": "input", "md5": "md-five"}]),
++            ("deps", [{"path": "input", "sha256": "md-five"}]),
+             ("params", {"params.yaml": {"foo-param": "value"}}),
+-            ("outs", [{"path": "output", "md5": "md5-output"}]),
++            ("outs", [{"path": "output", "sha256": "sha256-output"}]),
+         ]
+     )
+ 
+ 
+ def test_to_lockfile(dvc):
+     stage = create_stage(PipelineStage, dvc, deps=["input"], **kwargs)
+-    stage.deps[0].hash_info = HashInfo("md5", "md-five")
++    stage.deps[0].hash_info = HashInfo("sha256", "md-five")
+     entry = to_lockfile(stage)
+     assert len(entry) == 1
+     _Schema(LOCKFILE_STAGES_SCHEMA)(entry)
+@@ -232,7 +232,7 @@ def test_to_lockfile(dvc):
+         "something": OrderedDict(
+             [
+                 ("cmd", "command"),
+-                ("deps", [{"path": "input", "md5": "md-five"}]),
++                ("deps", [{"path": "input", "sha256": "md-five"}]),
+             ]
+         )
+     }
+diff --git a/tests/unit/stage/test_stage.py b/tests/unit/stage/test_stage.py
+index f564448a..fb6ac3d2 100644
+--- a/tests/unit/stage/test_stage.py
++++ b/tests/unit/stage/test_stage.py
+@@ -10,10 +10,10 @@ from dvc.stage import Stage
+ from dvc.stage.exceptions import StageUpdateError
+ 
+ TEST_STAGE_DICT = {
+-    "md5": "123456",
++    "sha256": "123456",
+     "cmd": "mycmd",
+-    "outs": [{"path": "a", "md5": "123456789"}],
+-    "deps": [{"path": "b", "md5": "987654321"}],
++    "outs": [{"path": "a", "sha256": "123456789"}],
++    "deps": [{"path": "b", "sha256": "987654321"}],
+ }
+ 
+ 
+@@ -21,7 +21,7 @@ def test_stage_checksum(mocker):
+     stage = Stage(None, "path", cmd="mycmd")
+ 
+     mocker.patch.object(stage, "dumpd", return_value=TEST_STAGE_DICT)
+-    assert stage.compute_md5() == "e9521a22111493406ea64a88cda63e0b"
++    assert stage.compute_sha256() == "e9521a22111493406ea64a88cda63e0b"
+ 
+ 
+ def test_wdir_default_ignored(mocker):
+@@ -29,7 +29,7 @@ def test_wdir_default_ignored(mocker):
+     d = dict(TEST_STAGE_DICT, wdir=".")
+ 
+     mocker.patch.object(stage, "dumpd", return_value=d)
+-    assert stage.compute_md5() == "e9521a22111493406ea64a88cda63e0b"
++    assert stage.compute_sha256() == "e9521a22111493406ea64a88cda63e0b"
+ 
+ 
+ def test_wdir_non_default_is_not_ignored(mocker):
+@@ -37,7 +37,7 @@ def test_wdir_non_default_is_not_ignored(mocker):
+     d = dict(TEST_STAGE_DICT, wdir="..")
+ 
+     mocker.patch.object(stage, "dumpd", return_value=d)
+-    assert stage.compute_md5() == "2ceba15e87f6848aa756502c1e6d24e9"
++    assert stage.compute_sha256() == "2ceba15e87f6848aa756502c1e6d24e9"
+ 
+ 
+ def test_meta_ignored(mocker):
+@@ -45,7 +45,7 @@ def test_meta_ignored(mocker):
+     d = dict(TEST_STAGE_DICT, meta={"author": "Suor"})
+ 
+     mocker.patch.object(stage, "dumpd", return_value=d)
+-    assert stage.compute_md5() == "e9521a22111493406ea64a88cda63e0b"
++    assert stage.compute_sha256() == "e9521a22111493406ea64a88cda63e0b"
+ 
+ 
+ def test_path_conversion(dvc):
+diff --git a/tests/unit/test_lockfile.py b/tests/unit/test_lockfile.py
+index ff42a775..831f9c45 100644
+--- a/tests/unit/test_lockfile.py
++++ b/tests/unit/test_lockfile.py
+@@ -31,8 +31,8 @@ def test_stage_dump_with_deps_and_outs(tmp_dir, dvc):
+     data = {
+         "s1": {
+             "cmd": "command",
+-            "deps": [{"md5": "1.txt", "path": "checksum"}],
+-            "outs": [{"md5": "2.txt", "path": "checksum"}],
++            "deps": [{"sha256": "1.txt", "path": "checksum"}],
++            "outs": [{"sha256": "2.txt", "path": "checksum"}],
+         }
+     }
+     (tmp_dir / "path.lock").dump(data)
+@@ -70,11 +70,11 @@ def test_load_when_lockfile_does_not_exist(tmp_dir, dvc):
+             "s1": {
+                 "cmd": "command",
+                 "outs": [
+-                    {"md5": "checksum", "path": "path", "random": "value"}
++                    {"sha256": "checksum", "path": "path", "random": "value"}
+                 ],
+             }
+         },
+-        {"s1": {"cmd": "command", "deps": [{"md5": "checksum"}]}},
++        {"s1": {"cmd": "command", "deps": [{"sha256": "checksum"}]}},
+     ],
+ )
+ def test_load_when_lockfile_is_corrupted(tmp_dir, dvc, corrupt_data):
+diff --git a/tests/unit/utils/test_stream.py b/tests/unit/utils/test_stream.py
+index 2a80c3f0..ce454733 100644
+--- a/tests/unit/utils/test_stream.py
++++ b/tests/unit/utils/test_stream.py
+@@ -2,7 +2,7 @@ import pytest
+ 
+ from dvc.fs.local import LocalFileSystem
+ from dvc.istextfile import DEFAULT_CHUNK_SIZE, istextfile
+-from dvc.utils import file_md5
++from dvc.utils import file_sha256
+ from dvc.utils.stream import HashedStreamReader
+ 
+ 
+@@ -22,7 +22,7 @@ def test_hashed_stream_reader(tmp_dir):
+         assert stream_reader.read(1) == b"o"
+         assert stream_reader.tell() == 3
+ 
+-    hex_digest = file_md5(foo, LocalFileSystem())
++    hex_digest = file_sha256(foo, LocalFileSystem())
+     assert stream_reader.is_text_file
+     assert hex_digest == stream_reader.hash_info.value
+ 
+@@ -46,7 +46,7 @@ def test_hashed_stream_reader_as_chunks(tmp_dir):
+ 
+         assert stream_reader.tell() == actual_size == total_read
+ 
+-    hex_digest = file_md5(foo, LocalFileSystem())
++    hex_digest = file_sha256(foo, LocalFileSystem())
+     assert not stream_reader.is_text_file
+     assert hex_digest == stream_reader.hash_info.value
+ 
+@@ -68,7 +68,7 @@ def test_hashed_stream_reader_compatibility(tmp_dir, contents):
+         stream_reader.read(chunk_size)
+ 
+     local_fs = LocalFileSystem()
+-    hex_digest = file_md5(data, local_fs)
++    hex_digest = file_sha256(data, local_fs)
+ 
+     assert stream_reader.is_text_file is istextfile(data, local_fs)
+     assert stream_reader.hash_info.value == hex_digest
+diff --git a/tests/unit/utils/test_utils.py b/tests/unit/utils/test_utils.py
+index a4800b46..7066b63c 100644
+--- a/tests/unit/utils/test_utils.py
++++ b/tests/unit/utils/test_utils.py
+@@ -6,7 +6,7 @@ import pytest
+ from dvc.fs.local import LocalFileSystem
+ from dvc.utils import (
+     dict_sha256,
+-    file_md5,
++    file_sha256,
+     fix_env,
+     parse_target,
+     relpath,
+@@ -83,11 +83,11 @@ def test_fix_env_pyenv(path, orig):
+     assert fix_env(env)["PATH"] == orig
+ 
+ 
+-def test_file_md5(tmp_dir):
++def test_file_sha256(tmp_dir):
+     tmp_dir.gen("foo", "foo content")
+ 
+     fs = LocalFileSystem()
+-    assert file_md5("foo", fs) == file_md5("foo", fs)
++    assert file_sha256("foo", fs) == file_sha256("foo", fs)
+ 
+ 
+ def test_tmp_fname():
