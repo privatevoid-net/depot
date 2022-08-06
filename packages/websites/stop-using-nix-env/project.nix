@@ -4,7 +4,7 @@
   packages.stop-using-nix-env = let
     site = with pkgs; stdenvNoCC.mkDerivation rec {
       name = "stop-using-nix-env";
-      version = "1.0.0";
+      version = "1.0.1";
       src = ./src;
       buildCommand = ''
         install -Dm644 $src/* -t $out/share/www/${name}

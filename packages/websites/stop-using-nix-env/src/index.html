@@ -69,7 +69,7 @@
     Packages in Nix are usually bundled in attribute sets. Each
     <i>attribute name</i> represents the name of a package. When installing
     packages declaratively through NixOS or Home Manager, or when declaring
-    a package's dependencies, these are referred to using their attribute
+    a package's dependencies, these are uniquely identified using their attribute
     name. When installing packages via <x-term>nix-env -i</x-term>,
     attribute names are ignored. Instead, <x-term>nix-env</x-term> traverses
     the entire attribute set to find a package with a matching
