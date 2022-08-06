@@ -7,6 +7,9 @@ let inherit (tools) domain; in
   legacy = static "/srv/storage/www/legacy";
   soda   = static "/srv/storage/www/soda"; # TODO: add back custom error pages, wttr.in cache
   www    = static packages.landing.webroot // { default = true; };
+  
+  # PSA sites
+  stop-using-nix-env = static packages.stop-using-nix-env.webroot;
 
   "shadertool.dev" = proxy "http://test-generic.int.${domain}";
   "kokaido" = proxy "http://test-generic.int.${domain}:8080";
