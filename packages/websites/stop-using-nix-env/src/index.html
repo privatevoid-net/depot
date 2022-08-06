@@ -1,0 +1,209 @@
+<html>
+<head>
+  <style>
+    body {
+      background-color: #222222;
+    }
+    * {
+      color: #ffffff;
+      font-family: sans-serif;
+    }
+    h1, h3 {
+      text-align: center;
+    }
+    h3 {
+      margin-bottom: 10vh;
+    }
+    h1 {
+      margin-top: 10vh;
+      margin-bottom: 1vh;
+      font-size: 10vh;
+    }
+    h2, p, pre {
+      margin-left: 20vw;
+      margin-right: 20vw;
+    }
+    h2 {
+      margin-top: 10vh;
+      font-size: 3vh;
+    }
+    p {
+      font-size: 2vh;
+      color: #dddddd;
+      line-height: 1.5;
+    }
+    x-term {
+      font-family: monospace;
+      background-color: #111111;
+      white-space: nowrap;
+    }
+    x-termblock {
+      display: block;
+      font-family: monospace;
+      background-color: #111111;
+    }
+    .yt {
+      margin-top: 5vh;
+      margin-bottom: 5vh;
+      /* 16:9 */
+      width: 60vw;
+      height: 33.75vw;
+    }
+  </style>
+</head>
+<body>
+  <h1>Stop using nix-env.</h1>
+  <h3>For the sake of you and others.</h3>
+  <p>
+    <x-term>nix-env</x-term> was built as tool for Nix
+    as a way to manage packages in a traditional (imperative) fashion.
+    It tries to bridge the gap between the imperative and declarative
+    world. A replacement for the venerable
+    <nobr>"just <x-term>sudo apt install &lt;anything&gt;</x-term>"</nobr>.
+    As a result of its design, it often causes unexpected bevahior.
+    This page is dedicated to explaining what its issues are and what
+    to use instead.
+  </p>
+  <h2>Installing packages by derivation name</h2>
+  <p>
+    Packages in Nix are usually bundled in attribute sets. Each
+    <i>attribute name</i> represents the name of a package. When installing
+    packages declaratively through NixOS or Home Manager, or when declaring
+    a package's dependencies, these are referred to using their attribute
+    name. When installing packages via <x-term>nix-env -i</x-term>,
+    attribute names are ignored. Instead, <x-term>nix-env</x-term> traverses
+    the entire attribute set to find a package with a matching
+    <i>derivation name</i>. This can lead to fun surprises when
+    the derivation name does not match the attribute name, such as
+    installing an unwrapped package that requires a wrapper to function
+    properly. This can be avoided by using <x-term>nix-env -iA</x-term>
+    instead, which picks packages via attribute name, but does not
+    note down from which attribute path a package originally came from,
+    resulting in surprises when upgrading it.
+  </p>
+  <pre>
+    <x-termblock>
+      {
+
+        package = < derivation package-wrapper-1.3 >;
+
+        package-unwrapped = < derivation package-1.3 >;
+
+      }
+    </x-termblock>
+  </pre>
+  <h2>Name collisions when upgrading packages</h2>
+  <p>
+    <x-term>nix-env -u</x-term> will upgrade all packages in your profile
+    by searching through the attribute set for a derivation with the same
+    derivation name and a higher version number. When using large,
+    nested package collections like nixpkgs, derivations from different
+    language ecosystems may be stored under a distinct attribute path,
+    but their derivation name may be the same, despite the two packages
+    being clearly different otherwise.
+  </p>
+  <pre>
+    <x-termblock>
+      {
+
+        zstd = < derivation zstd-2.0 >;
+
+        haskellPackages = {
+
+          zstd = < derivation zstd-3.0 >;
+
+        };
+
+      }
+    </x-termblock>
+  </pre>
+  <h2>Unintentional major version jumps</h2>
+  <p>
+    Nixpkgs sometimes keeps multiple major versions for packages that have
+    multiple continuously maintained release trains, such as PostgreSQL.
+    Because the distinction between major versions is done via attribute
+    names, <x-term>nix-env</x-term> completely ignores it. When installing
+    <x-term>postgresql_12</x-term> via its attribute name, you would
+    expect PostgreSQL to stay at major version 12, even when upgraded.
+    Even though <x-term>postgresql_12</x-term> and
+    <x-term>postgresql_14</x-term> may exist in parallel within the same
+    nixpkgs revision, <x-term>nix-env</x-term> ignores this fact and will
+    happily upgrade your PostgreSQL package to major version 14.
+  </p>
+  <h2>Performance issues</h2>
+  <p>
+    As you may have already guessed, iterating over a large package set and
+    evaluating every derivation in it is
+    <a href="https://github.com/NixOS/nixpkgs/issues/38635">not very efficient</a>.
+  </p>
+  <h2>Non-obvious shadowing</h2>
+  <p>
+    <x-term>nix-env</x-term> installs packages into a user-specific
+    profile that has precedence over system-level directories in
+    <x-term>$PATH</x-term>. This means that you can install a
+    different version of any tool in your user profile without the rest of
+    the system having to use that version. If you forget that you installed
+    a program into your user profile like this, you may end up with a nasty
+    surprise later down the line.
+  </p>
+  <p>
+    For example, installing <x-term>busybox</x-term> this way would shadow
+    common utilities such as <x-term>ls</x-term>, <x-term>cat</x-term> or
+    <x-term>grep</x-term>. The next time you would try to use a GNU-specific
+    feature of <x-term>grep</x-term> months down the line, you might end up
+    going on a wild goose chase to figure out why your version of
+    <x-term>grep</x-term> behaves differently than everyone else's.
+  </p>
+  <h2>Informational Video by Matthew Croughan</h2>
+  <p>Matthew Croughan demonstrates some of the issues with <x-term>nix-env</x-term>.
+  <iframe class="yt" src="https://www.youtube-nocookie.com/embed/hyf4M3eFh2M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </p>
+  <h2>Alternatives</h2>
+  <p>
+    So, <x-term>nix-env</x-term> is bad. What do we use instead? First,
+    it's important to consider that Nix is a far more powerful package
+    manager than your garden variety ones like APT or DNF. As such, there
+    is more than one way to <i>provide</i> a package. Merely installing
+    the package is probably never your end goal. Consider what you want
+    to do with this package, and then choose how to expose the package
+    in the target environment appropriately.
+  </p>
+  <h2>Declarative package management</h2>
+  <p>
+    This is the best choice for any packages you expect to be
+    <i>long-living</i>. Any applications that you commonly use should be
+    managed in this way. Packages can be managed declaratively through
+    tools such as NixOS configuration or Home Manager. These will often
+    also provide a set of options to configure the application in Nix code.
+    System services should only be configured through these options,
+    which will automatically define a suitable systemd service according
+    to your specifications.
+  </p>
+  <h2>Ephemeral shell environments</h2>
+  <p>
+    Do you often run into a situation where you need a particular command
+    for a one-off thing, but don't feel like it should reside on your system
+    at all times?
+    <a href="https://nixos.org/guides/ad-hoc-developer-environments.html">Ephemeral shells</a>
+    allow you to <i>gain temporary access</i> to a command and after you exit
+    out of the shell, it's as if the package was never installed.
+    If you're using Flakes,
+    <a href="https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-shell.html"><x-term>nix shell</x-term></a>
+    may be more up your alley.
+  </p>
+  <h2><x-term>nix profile</x-term></h2>
+  <p>
+    Lastly,
+    <a href="https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-profile.html"><x-term>nix profile</x-term></a>
+    from the Nix 3.0 (Flakes) set of CLI commands aims to provide a more
+    polished imperative package management solution. If you really need to
+    imperatively manage some of your packages, this is your best option.
+    It picks packages by attribute name rather than derivation name and it
+    keeps track of the attribute path from which each package was installed,
+    meaning name collisions when upgrading are eliminated. Thanks to Flakes,
+    it also allows you to easily install packages from package collections
+    other than nixpkgs.
+  </p>
+  <div style="height: 20vh"></div>
+</body>
+</html>

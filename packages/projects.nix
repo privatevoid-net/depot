@@ -27,6 +27,7 @@
       ./build-support
 
       ./websites/landing/project.nix
+      ./websites/stop-using-nix-env/project.nix
     ];
     packages = filters.doFilter filters.packages rec {
       uptime-kuma = let
