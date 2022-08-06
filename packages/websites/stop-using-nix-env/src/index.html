@@ -11,24 +11,55 @@
     h1, h3 {
       text-align: center;
     }
+    @media (max-width: 64em) {
+      h1 {
+        font-size: 5em;
+      }
+      h2, p, pre {
+        margin-left: 7vw;
+        margin-right: 7vw;
+      }
+      p {
+        font-size: 1em;
+      }
+      x-termblock {
+        font-size: 2.5em;
+      }
+      .yt {
+        /* 16:9 */
+        width: 86vw;
+        height: 48.375vw;
+      }
+    }
+    @media (min-width: 64em) {
+      h1 {
+        font-size: 10vh;
+      }
+      h2, p, pre {
+        margin-left: 20vw;
+        margin-right: 20vw;
+      }
+      p, x-termblock {
+        font-size: 1.5em;
+      }
+      .yt {
+        /* 16:9 */
+        width: 60vw;
+        height: 33.75vw;
+      }
+    }
     h3 {
       margin-bottom: 10vh;
     }
     h1 {
       margin-top: 10vh;
       margin-bottom: 1vh;
-      font-size: 10vh;
-    }
-    h2, p, pre {
-      margin-left: 20vw;
-      margin-right: 20vw;
     }
     h2 {
       margin-top: 10vh;
-      font-size: 3vh;
+      font-size: 3em;
     }
     p {
-      font-size: 2vh;
       color: #dddddd;
       line-height: 1.5;
     }
@@ -45,9 +76,6 @@
     .yt {
       margin-top: 5vh;
       margin-bottom: 5vh;
-      /* 16:9 */
-      width: 60vw;
-      height: 33.75vw;
     }
   </style>
 </head>
@@ -83,13 +111,11 @@
   </p>
   <pre>
     <x-termblock>
-      {
+{
+  pkg = < derivation pkg-wrapper-1.3 >;
 
-        package = < derivation package-wrapper-1.3 >;
-
-        package-unwrapped = < derivation package-1.3 >;
-
-      }
+  pkg-unwrapped = < derivation pkg-1.3 >;
+}
     </x-termblock>
   </pre>
   <h2>Name collisions when upgrading packages</h2>
@@ -104,17 +130,15 @@
   </p>
   <pre>
     <x-termblock>
-      {
+{
+  zstd = < derivation zstd-2.0 >;
 
-        zstd = < derivation zstd-2.0 >;
+  haskellPackages = {
 
-        haskellPackages = {
+    zstd = < derivation zstd-3.0 >;
 
-          zstd = < derivation zstd-3.0 >;
-
-        };
-
-      }
+  };
+}
     </x-termblock>
   </pre>
   <h2>Unintentional major version jumps</h2>
