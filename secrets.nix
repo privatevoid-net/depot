@@ -4,6 +4,11 @@ let
   systemKeys = x: x.ssh.id.publicKey or null;
 in with hosts;
 {
+  "cluster/services/dns/pdns-admin-oidc-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "cluster/services/dns/pdns-admin-salt.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "cluster/services/dns/pdns-admin-secret.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "cluster/services/dns/pdns-api-key.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "cluster/services/dns/pdns-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/patroni/passwords/replication.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/patroni/passwords/rewind.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/patroni/passwords/superuser.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
