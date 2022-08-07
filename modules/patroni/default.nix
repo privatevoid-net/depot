@@ -237,7 +237,7 @@ in
 
         script = ''
           ${concatStringsSep "\n" (attrValues (mapAttrs (name: path: "export ${name}=\"$(<'${path}')\"") cfg.environmentFiles))}
-          ${patroni}/bin/patroni ${configFile}
+          exec ${patroni}/bin/patroni ${configFile}
         '';
 
         serviceConfig = mkMerge [{
