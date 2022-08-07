@@ -67,6 +67,7 @@ in
           "host replication patronirep ${net} scram-sha-256"
           "host all patronirew ${net} scram-sha-256"
           "host all postgres ${net} scram-sha-256"
+          "host all all ${net} scram-sha-256"
           "host all all 127.0.0.1/32 scram-sha-256"
         ];
       };
