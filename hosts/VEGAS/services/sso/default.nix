@@ -1,9 +1,10 @@
-{ config, inputs, lib, pkgs, tools, ... }:
+{ cluster, config, inputs, lib, pkgs, tools, ... }:
 with tools.nginx;
 let
   login = "login.${tools.meta.domain}";
   cfg = config.services.keycloak;
   kc = config.links.keycloak;
+  patroni = cluster.config.links.patroni-pg-access;
 in
 {
   tested.requiredChecks = [ "keycloak" ];
@@ -28,8 +29,11 @@ in
     enable = true;
     package = inputs.self.packages.${pkgs.system}.keycloak;
     database = {
-      createLocally = true;
+      createLocally = false;
       type = "postgresql";
+      host = patroni.ipv4;
+      inherit (patroni) port;
+      useSSL = false;
       passwordFile = config.age.secrets.keycloak-dbpass.path;
     };
     settings = {
