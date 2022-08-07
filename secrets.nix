@@ -14,7 +14,6 @@ in with hosts;
   "cluster/services/patroni/passwords/superuser.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/wireguard/mesh-keys/VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/wireguard/mesh-keys/prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
-  "secrets/acme-dns-key.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/coturn-static-auth.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/gitlab-initial-root-password.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/gitlab-openid-secret.age".publicKeys = max ++ map systemKeys [ VEGAS ];

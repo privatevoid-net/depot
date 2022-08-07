@@ -83,14 +83,11 @@ in
   };
   services.oauth2_proxy.nginx.virtualHosts = [ "ipfs.admin.${domain}" ];
 
-  inherit (tools.acme.dns01) age;
-
   security.acme.certs."ipfs.${domain}" = {
     domain = "*.ipfs.${domain}";
     extraDomainNames = [ "*.ipns.${domain}" ];
-    dnsProvider = "rfc2136";
+    dnsProvider = "pdns";
     group = "nginx";
-    inherit (tools.acme.dns01) credentialsFile;
   };
 
   services.nginx.virtualHosts."ipfs.${domain}" = vhosts.basic // {
