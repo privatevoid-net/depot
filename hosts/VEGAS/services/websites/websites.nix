@@ -7,16 +7,12 @@ let inherit (tools) domain; in
   legacy = static "/srv/storage/www/legacy";
   soda   = static "/srv/storage/www/soda"; # TODO: add back custom error pages, wttr.in cache
   www    = static packages.landing.webroot // { default = true; };
-  
+
   # PSA sites
   stop-using-nix-env = static packages.stop-using-nix-env.webroot;
 
-  "shadertool.dev" = proxy "http://test-generic.int.${domain}";
-  "kokaido" = proxy "http://test-generic.int.${domain}:8080";
-
   # content delivery
   autoconfig = static "/srv/storage/www/autoconfig";
-  rpm = static "/srv/storage/rpm";
 
   "whoami".locations = { # no tls
     "/".return = ''200 "$remote_addr\n"'';
