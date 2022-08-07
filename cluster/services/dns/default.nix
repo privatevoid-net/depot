@@ -19,6 +19,7 @@ in
       master = [ "VEGAS" ];
       slave = [ "prophet" ];
       coredns = [ "VEGAS" ];
+      client = [ "VEGAS" "prophet" ];
     };
     nixos = {
       master = [
@@ -27,6 +28,7 @@ in
       ];
       slave = ./authoritative.nix;
       coredns = ./coredns.nix;
+      client = ./client.nix;
     };
   };
 }
