@@ -1,6 +1,8 @@
-{ config, lib, pkgs, tools, ... }:
+{ cluster, config, lib, pkgs, tools, ... }:
 let
   cfg = config.services.nextcloud.config;
+
+  patroni = cluster.config.links.patroni-pg-access;
 in
 {
   age.secrets = {
@@ -35,16 +37,16 @@ in
     };
 
     config = {
-      dbhost = "/run/postgresql";
+      dbhost = patroni.tuple;
       dbtype = "pgsql";
       dbname = "storage";
       dbuser = "storage";
-      dbpassFile = config.age.secrets.nextcloud-adminpass.path;
+      dbpassFile = config.age.secrets.nextcloud-dbpass.path;
 
       overwriteProtocol = "https";
 
       adminuser = "sa";
-      adminpassFile = config.age.secrets.nextcloud-dbpass.path;
+      adminpassFile = config.age.secrets.nextcloud-adminpass.path;
     };
   };
   services.postgresql.authentication = "local ${cfg.dbname} ${cfg.dbuser} md5";
