@@ -12,6 +12,7 @@ let
 
   translateConfig = withQuotes: cfg: let
     pythonValue = val: if lib.isString val then "'${val}'"
+      else if lib.isAttrs val && val ? file then "[(f.read().strip('\\n'), f.close()) for f in [open('${val.file}')]][0][0]"
       else if lib.isAttrs val && val ? env then "__import__('os').getenv('${val.env}')"
       else if lib.isBool val then (if val then "True" else "False")
       else if lib.isInt val then toString val
@@ -41,10 +42,7 @@ in {
       owner = "powerdnsadmin";
       group = "powerdnsadmin";
     };
-    pdns-api-key = {
-      file = ./pdns-api-key.age;
-      mode = "0400";
-    };
+    pdns-api-key = vars.pdns-api-key-secret // { owner = "powerdnsadmin"; };
   };
 
   links.pdnsAdmin.protocol = "http";
@@ -78,7 +76,7 @@ in {
       SQLALCHEMY_DATABASE_URI = "sqlite:///${dataDirUI}/pda.db";
       PDNS_VERSION = pkgs.pdns.version;
       PDNS_API_URL = pdns-api.url;
-      PDNS_API_KEY.env = "PDNS_API_KEY";
+      PDNS_API_KEY.file = config.age.secrets.pdns-api-key.path;
 
       SIGNUP_ENABLED = false;
       OIDC_OAUTH_ENABLED = true;
@@ -94,11 +92,11 @@ in {
   };
 
   systemd.services.powerdns-admin.serviceConfig = {
-    BindPaths = [ dataDirUI ];
-    EnvironmentFile = [
+    BindPaths = [
+      dataDirUI
       config.age.secrets.pdns-api-key.path
-      config.age.secrets.pdns-admin-oidc-secrets.path
     ];
+    EnvironmentFile = config.age.secrets.pdns-admin-oidc-secrets.path;
   };
 
   services.nginx.virtualHosts."dnsadmin.${domain}" = lib.recursiveUpdate

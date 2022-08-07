@@ -4,6 +4,10 @@ let
   inherit (config.vars) hosts;
 in
 {
+  vars.pdns-api-key-secret = {
+    file = ./pdns-api-key.age;
+    mode = "0400";
+  };
   links = {
     dnsResolver = {
       ipv4 = hosts.VEGAS.interfaces.vstub.addr;
