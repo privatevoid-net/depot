@@ -56,6 +56,9 @@ in
   };
   systemd.services = {
     phpfpm-nextcloud.aliases = [ "nextcloud.service" ];
-    nextcloud-setup.after = [ "postgresql.service" ];
+    nextcloud-setup.serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = "10s";
+    };
   };
 }
