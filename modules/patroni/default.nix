@@ -240,6 +240,34 @@ in
           exec ${patroni}/bin/patroni ${configFile}
         '';
 
+        preStop = ''
+          export PATH=${makeBinPath [ pkgs.jq patroni ]}:$PATH
+          export PATRONICTL_CONFIG_FILE=${configFile}
+          if [[ "$(patronictl list -f json | jq -r '.[] | select(.Member == "${cfg.name}") | .Role')" != "Leader" ]]; then
+            # not leader, exit right away
+            kill -SIGTERM $MAINPID
+            exit 0
+          fi
+          echo "I am the leader. Waiting 10 seconds before beginning shutdown procedure."
+          sleep 10
+          count=0
+          maxCount=60
+          while [[ "$(patronictl list -f json | jq 'map(select(.State == "running")) | length')" -lt 2 ]]; do
+            if [[ $count -ge $maxCount ]]; then
+              echo "Timeout: No replica to hand off to."
+              exit 1
+            fi
+            count=$((count + 1))
+            echo "Waiting for a member to hand off to before shutting down... [$count/$maxCount]"
+            # extend timeout by 30 seconds if required
+            systemd-notify EXTEND_TIMEOUT_USEC=30000000
+            sleep 10
+          done
+          echo "Found active replica for hand-off, shutting down now."
+          # give Patroni 300 seconds to shut down afterwards
+          systemd-notify EXTEND_TIMEOUT_USEC=300000000
+        '';
+
         serviceConfig = mkMerge [{
           User = cfg.user;
           Group = cfg.group;
@@ -247,6 +275,7 @@ in
           Restart = "on-failure";
           TimeoutSec = 30;
           ExecReload = "${pkgs.coreutils}/bin/kill -s HUP $MAINPID";
+          NotifyAccess = "all";
           KillMode = "process";
         }
           (mkIf (cfg.postgresqlDataDir == "/var/lib/postgresql/${postgresql.psqlSchema}" && cfg.dataDir == "/var/lib/patroni") {
