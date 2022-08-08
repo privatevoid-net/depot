@@ -118,7 +118,12 @@ in {
           access_log off;
         '';
       };
-      locations."= /.well-known/matrix/client".alias = clientConfigJSON;
+      locations."= /.well-known/matrix/client" = {
+        alias = clientConfigJSON;
+        extraConfig = ''
+          add_header Access-Control-Allow-Origin "*";
+        '';
+      };
     };
   };
   systemd.services = lib.genAttrs [ "coturn" "matrix-appservice-discord" "matrix-synapse" ] (_: {
