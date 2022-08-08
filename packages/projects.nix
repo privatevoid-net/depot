@@ -30,6 +30,8 @@
       ./websites/stop-using-nix-env/project.nix
     ];
     packages = filters.doFilter filters.packages rec {
+      cinny = pkgs.callPackage ./web-apps/cinny { inherit pins; };
+
       uptime-kuma = let
         dream = dream2nix.makeOutputs {
           source = pins.uptime-kuma;

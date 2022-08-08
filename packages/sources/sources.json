@@ -1,5 +1,19 @@
 {
   "pins": {
+    "cinny": {
+      "type": "GitRelease",
+      "repository": {
+        "type": "GitHub",
+        "owner": "cinnyapp",
+        "repo": "cinny"
+      },
+      "pre_releases": false,
+      "version_upper_bound": null,
+      "version": "v2.1.1",
+      "revision": "20e1df43d02d0089f7fe46dbd6e4bf84d8d6e2a3",
+      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v2.1.1",
+      "hash": "17qynrrrkb397q1q96i28ah172zm5if4nxr6lvynx903iwvcr9pz"
+    },
     "gohugo-theme-ananke": {
       "type": "GitRelease",
       "repository": {
