@@ -38,4 +38,5 @@ in
           ${builtins.concatStringsSep "    \n" (map mkServerString nodes)}
     '';
   };
+  systemd.services.haproxy.aliases = [ "postgresql.service" ];
 }
