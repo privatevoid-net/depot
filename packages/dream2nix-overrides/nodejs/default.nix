@@ -55,6 +55,9 @@ in
       mv $NIX_BUILD_TOP/node_modules_saved node_modules
     '';
 
+    # unfortunately, upstream's installMethod = copy results in bloat, so we can't use it
+    installMethod = "symlink";
+
     postInstall = ''
       makeWrapper $(command -v node) $out/bin/uptime-kuma \
         --add-flags "server/server.js" \
