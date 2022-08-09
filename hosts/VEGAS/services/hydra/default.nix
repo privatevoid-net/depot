@@ -1,6 +1,7 @@
-{ config, inputs, lib, pkgs, tools, ... }:
+{ cluster, config, inputs, lib, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
+  patroni = cluster.config.links.patroni-pg-access;
 in
 {
   age.secrets = {
@@ -55,6 +56,7 @@ in
     enable = true;
     package = inputs.self.packages.${pkgs.system}.hydra;
     hydraURL = "https://hydra.${domain}";
+    dbi = "dbi:Pg:dbname=hydra;host=${patroni.ipv4};port=${patroni.portStr};user=hydra;";
     inherit (config.links.hydra) port;
     notificationSender = "hydra@${domain}";
     buildMachinesFiles = [ "/etc/nix/hydra-machines" ];
