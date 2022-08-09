@@ -49,7 +49,6 @@ in
       adminpassFile = config.age.secrets.nextcloud-adminpass.path;
     };
   };
-  services.postgresql.authentication = "local ${cfg.dbname} ${cfg.dbuser} md5";
   services.nginx.virtualHosts."${config.services.nextcloud.hostName}" = {
     addSSL = true;
     enableACME = true;
