@@ -41,6 +41,7 @@ with tools.nginx;
       fbi-requests = vhosts.proxy ombi.url;
     };
   };
+  systemd.slices.mediamanagement.after = [ "nss-user-lookup.target" ];
   systemd.services.radarr.serviceConfig.Slice = "mediamanagement.slice";
   systemd.services.sonarr.serviceConfig.Slice = "mediamanagement.slice";
   systemd.services.prowlarr = {
