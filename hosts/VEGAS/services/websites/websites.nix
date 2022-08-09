@@ -6,18 +6,7 @@ let inherit (tools) domain; in
   ktp    = static "/srv/storage/www/soda/ktp";
   legacy = static "/srv/storage/www/legacy";
   soda   = static "/srv/storage/www/soda"; # TODO: add back custom error pages, wttr.in cache
-  www    = static packages.landing.webroot // { default = true; };
-
-  # PSA sites
-  stop-using-nix-env = static packages.stop-using-nix-env.webroot;
 
   # content delivery
   autoconfig = static "/srv/storage/www/autoconfig";
-
-  "whoami".locations = { # no tls
-    "/".return = ''200 "$remote_addr\n"'';
-    "/online".return = ''200 "CONNECTED_GLOBAL\n"'';
-  };
-
-  top-level = redirect "https://www.${domain}$request_uri" // { serverName = domain; };
 }
