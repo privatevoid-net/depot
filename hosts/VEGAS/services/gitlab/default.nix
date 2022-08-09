@@ -1,7 +1,9 @@
-{ config, lib, tools, ... }:
+{ cluster, config, lib, tools, ... }:
 
 let
   inherit (tools.meta) domain adminEmail;
+
+  patroni = cluster.config.links.patroni-pg-access;
 
   mkSecret = name: {
     owner = "gitlab";
@@ -17,6 +19,7 @@ in
 
 {
   age.secrets = lib.flip lib.genAttrs mkSecret [
+    "gitlab-db-credentials"
     "gitlab-initial-root-password"
     "gitlab-openid-secret"
     "gitlab-runner-registration"
@@ -31,6 +34,12 @@ in
     https = true;
     host = "git.${domain}";
     port = 443;
+
+    databaseCreateLocally = false;
+    databaseHost = patroni.ipv4;
+    extraDatabaseConfig = { inherit (patroni) port; };
+    databaseUsername = "gitlab";
+    databasePasswordFile = secrets.gitlab-db-credentials;
 
     initialRootEmail = adminEmail;
 
