@@ -1,6 +1,9 @@
-{ config, lib, pkgs, tools, ... }:
+{ cluster, config, lib, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
+
+  patroni = cluster.config.links.patroni-pg-access;
+
   listener = {
     port = 8008;
     bind_addresses = lib.singleton "127.0.0.1";
@@ -34,8 +37,22 @@ let
       handlers = [ "journal" ];
     };
   };
+  dbConfig.database = {
+    name = "psycopg2";
+    args = {
+      user = "matrix";
+      database = "matrix";
+      host = patroni.ipv4;
+      inherit (patroni) port;
+      cp_min = 1;
+      cp_max = 10;
+    };
+  };
   clientConfigJSON = pkgs.writeText "matrix-client-config.json" (builtins.toJSON clientConfig);
   logConfigJSON = pkgs.writeText "matrix-log-config.json" (builtins.toJSON logConfig);
+  dbConfigJSON = pkgs.writeText "matrix-log-config.json" (builtins.toJSON dbConfig);
+  dbPasswordFile = config.age.secrets.synapse-db.path;
+  dbConfigOut = "${cfg.dataDir}/synapse-db-config-generated.yml";
   cfg = config.services.matrix-synapse;
 in {
   imports = [
@@ -74,6 +91,7 @@ in {
   services.matrix-synapse = {
     enable = true;
     plugins = [ pkgs.matrix-synapse-plugins.matrix-synapse-ldap3 ];
+    dataDir = "/srv/storage/private/matrix";
 
     settings = {
       server_name = domain;
@@ -100,12 +118,11 @@ in {
       in map makeTurnServer combinations;
     };
 
-    extraConfigFiles = map (x: config.age.secrets.${x}.path) [
+    extraConfigFiles = (map (x: config.age.secrets.${x}.path) [
       "synapse-ldap"
-      "synapse-db"
       "synapse-turn"
       "synapse-keys"
-    ]; 
+    ]) ++ [ dbConfigOut ];
   };
 
   services.nginx.virtualHosts = tools.nginx.mappers.mapSubdomains {
@@ -126,9 +143,16 @@ in {
       };
     };
   };
-  systemd.services = lib.genAttrs [ "coturn" "matrix-appservice-discord" "matrix-synapse" ] (_: {
-    serviceConfig = {
-      Slice = "communications.slice";
-    };
-  });
+  systemd.services = lib.mkMerge [
+    (lib.genAttrs [ "coturn" "matrix-appservice-discord" "matrix-synapse" ] (_: {
+      serviceConfig = {
+        Slice = "communications.slice";
+      };
+    }))
+    {
+      matrix-synapse.preStart = ''
+        ${pkgs.jq}/bin/jq -c --slurp '.[0] * .[1]' ${dbConfigJSON} '${dbPasswordFile}' | install -Dm400 -o matrix-synapse -g matrix-synapse /dev/stdin '${dbConfigOut}'
+      '';
+    }
+  ];
 }
