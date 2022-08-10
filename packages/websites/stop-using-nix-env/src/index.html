@@ -178,6 +178,16 @@
     going on a wild goose chase to figure out why your version of
     <x-term>grep</x-term> behaves differently than everyone else's.
   </p>
+  <h2>Implicit package pinning</h2>
+  <p>
+    Packages installed by <x-term>nix-env</x-term> are independent of the NixOS
+    or Home Manager configuration. This can be beneficial because NixOS
+    upgrades will never change what versions of packages a user has installed,
+    however it is a common source of confusion, as a system update
+    ("<x-term>apt upgrade</x-term>") on regular distros will truly upgrade
+    all packages, while on NixOS or when using Home Manager, this is not the
+    case.
+  </p>
   <h2>Informational Video by Matthew Croughan</h2>
   <p>Matthew Croughan demonstrates some of the issues with <x-term>nix-env</x-term>.
   <iframe class="yt" src="https://www.youtube-nocookie.com/embed/hyf4M3eFh2M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
