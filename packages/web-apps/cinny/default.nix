@@ -13,7 +13,7 @@ let
     src = fetchzip {
       name = "cinny-tarball-${version}";
       url = "https://github.com/${repo.owner}/${repo.repo}/releases/download/${cinny.version}/cinny-${cinny.version}.tar.gz";
-      sha256 = "sha256-u44fWBRfD/ZTXkuJHgcdiWo293aTqF0/Iz5rBPRuieg=";
+      sha256 = "sha256-6Ns+wNEeu7vGfQ2e45w92eOIPazu5CL5eVPcEpIPWnE=";
     };
 
     buildCommand = ''
