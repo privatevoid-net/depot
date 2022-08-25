@@ -7,7 +7,6 @@ let
   patroni = cluster.config.links.patroni-pg-access;
 in
 {
-  tested.requiredChecks = [ "keycloak" ];
   links.keycloak.protocol = "http";
 
   imports = [
