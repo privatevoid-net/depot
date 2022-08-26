@@ -17,14 +17,19 @@ with tools.nginx;
     };
   };
 
+  users = {
+    groups.mediamanagers.gid = 646000020;
+    users = {
+      radarr.extraGroups = [ "mediamanagers" ];
+      sonarr.extraGroups = [ "mediamanagers" ];
+    };
+  };
   services = {
     radarr = {
       enable = true;
-      user = "svcradarr";
     };
     sonarr = {
       enable = true;
-      user = "svcsonarr";
     };
     prowlarr = {
       enable = true;
@@ -41,7 +46,6 @@ with tools.nginx;
       fbi-requests = vhosts.proxy ombi.url;
     };
   };
-  systemd.slices.mediamanagement.after = [ "nss-user-lookup.target" ];
   systemd.services.radarr.serviceConfig.Slice = "mediamanagement.slice";
   systemd.services.sonarr.serviceConfig.Slice = "mediamanagement.slice";
   systemd.services.prowlarr = {
