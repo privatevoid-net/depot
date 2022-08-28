@@ -4,6 +4,7 @@ let inherit (tools) domain; in
 {
   # websites
   www = static packages.landing.webroot // { default = true; };
+  draw = static packages.excalidraw.webroot;
 
   # PSA sites
   stop-using-nix-env = static packages.stop-using-nix-env.webroot;
