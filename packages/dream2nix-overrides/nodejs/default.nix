@@ -17,6 +17,8 @@ in
 
 {
   excalidraw.build = {
+    REACT_APP_DISABLE_SENTRY = "true";
+
     nativeBuildInputs = [ pkgs.yarn ];
 
     installPhase = ''
