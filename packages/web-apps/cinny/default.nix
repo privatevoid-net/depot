@@ -7,7 +7,7 @@ in
 
 let
   app = stdenvNoCC.mkDerivation rec {
-    name = "cinny-bin";
+    pname = "cinny-bin";
     version = builtins.substring 1 (-1) cinny.version;
 
     src = fetchzip {
