@@ -14,5 +14,6 @@
   };
   checks = {
     keycloak = [ "x86_64-linux" ];
+    patroni = [ "x86_64-linux" ];
   };
 }
