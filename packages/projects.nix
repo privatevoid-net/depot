@@ -24,7 +24,7 @@
     _module.args = { inherit inputs self; };
 
     imports = [
-      ./tests
+      ./checks
       ./modules/devshell.nix
       ./build-support
 
