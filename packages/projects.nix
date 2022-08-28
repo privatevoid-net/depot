@@ -21,6 +21,8 @@
 
   in
   {
+    _module.args = { inherit inputs self; };
+
     imports = [
       ./tests
       ./modules/devshell.nix
