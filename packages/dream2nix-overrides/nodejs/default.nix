@@ -18,6 +18,9 @@ in
 {
   excalidraw.build = {
     REACT_APP_DISABLE_SENTRY = "true";
+    REACT_APP_FIREBASE_CONFIG = "";
+    REACT_APP_GOOGLE_ANALYTICS_ID = "";
+    
 
     nativeBuildInputs = [ pkgs.yarn ];
 
