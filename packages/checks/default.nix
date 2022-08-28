@@ -8,5 +8,8 @@
     patroni = pkgs.callPackage ./patroni.nix {
       patroniModule = self.nixosModules.patroni;
     };
+    tempo = pkgs.callPackage ./tempo.nix {
+      inherit (self'.packages) tempo;
+    };
   };
 }
