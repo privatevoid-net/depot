@@ -40,7 +40,7 @@
         };
         inherit (dream.packages) excalidraw;
       in
-        excalidraw;
+        excalidraw // { webroot = "${excalidraw}/${excalidraw.webPath}"; };
 
       uptime-kuma = let
         dream = dream2nix.makeOutputs {
