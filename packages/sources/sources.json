@@ -14,6 +14,20 @@
       "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v2.1.2",
       "hash": "1aw0v1wj8fbhi4v5jjn0dpyi4irnad5ni5f1ph6r1wyrgzncl9vg"
     },
+    "excalidraw": {
+      "type": "GitRelease",
+      "repository": {
+        "type": "GitHub",
+        "owner": "excalidraw",
+        "repo": "excalidraw"
+      },
+      "pre_releases": false,
+      "version_upper_bound": null,
+      "version": "v0.12.0",
+      "revision": "fe3d0b5e8b25d1530b5902359fdd21ed99cd3e93",
+      "url": "https://api.github.com/repos/excalidraw/excalidraw/tarball/v0.12.0",
+      "hash": "1y943iqamqd9kv8ph1mwxr5c4ypha6245qwkfdyjzmky2hzm3388"
+    },
     "gohugo-theme-ananke": {
       "type": "GitRelease",
       "repository": {

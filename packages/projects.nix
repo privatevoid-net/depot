@@ -34,6 +34,14 @@
     packages = filters.doFilter filters.packages rec {
       cinny = pkgs.callPackage ./web-apps/cinny { inherit pins; };
 
+      excalidraw = let
+        dream = dream2nix.makeOutputs {
+          source = pins.excalidraw;
+        };
+        inherit (dream.packages) excalidraw;
+      in
+        excalidraw;
+
       uptime-kuma = let
         dream = dream2nix.makeOutputs {
           source = pins.uptime-kuma;
