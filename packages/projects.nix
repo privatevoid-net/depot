@@ -50,8 +50,6 @@
       in
         uptime-kuma;
 
-      gohugo-theme-ananke = pkgs.callPackage ./themes/gohugo-theme-ananke { inherit pins; };
-
       grafana = pkgs.callPackage ./monitoring/grafana { };
 
       hyprspace = pkgs.callPackage ./networking/hyprspace { iproute2mac = null; };
