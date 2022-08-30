@@ -1,6 +1,6 @@
 {
   writeShellApplication,
-  nix, npins
+  nix, npins, jq
 }:
 
 writeShellApplication {
@@ -8,6 +8,7 @@ writeShellApplication {
   runtimeInputs = [
     nix
     npins
+    jq
   ];
   text = builtins.readFile ./pin.sh;
 }
