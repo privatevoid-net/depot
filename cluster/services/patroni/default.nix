@@ -1,8 +1,6 @@
 { config, lib, ... }:
 
 let
-  inherit (config.vars) hosts;
-
   cfg = config.services.patroni;
 
   renameToLink = mode: n: v: lib.nameValuePair "patroni-etcd-node-${mode}-${n}" v;

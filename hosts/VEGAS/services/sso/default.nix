@@ -2,7 +2,6 @@
 with tools.nginx;
 let
   login = "login.${tools.meta.domain}";
-  cfg = config.services.keycloak;
   kc = config.links.keycloak;
   patroni = cluster.config.links.patroni-pg-access;
 in

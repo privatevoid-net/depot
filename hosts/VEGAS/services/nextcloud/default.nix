@@ -1,7 +1,5 @@
 { cluster, config, lib, pkgs, tools, ... }:
 let
-  cfg = config.services.nextcloud.config;
-
   patroni = cluster.config.links.patroni-pg-access;
 in
 {

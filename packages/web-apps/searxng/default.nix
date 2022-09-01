@@ -2,7 +2,7 @@
 
 with python3Packages;
 
-toPythonModule (buildPythonApplication rec {
+toPythonModule (buildPythonApplication {
   pname = "searxng";
   version = "1.0.0pre_${builtins.substring 0 7 pins.searxng.revision}";
 

@@ -1,7 +1,6 @@
 { cluster, config, hosts, inputs, lib, pkgs, tools, ... }:
 
 let
-  inherit (hosts.${config.networking.hostName}) interfaces;
   inherit (tools.meta) domain;
   inherit (config.links) pdnsAdmin;
   inherit (cluster.config) vars;

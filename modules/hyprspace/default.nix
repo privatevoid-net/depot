@@ -20,7 +20,6 @@ let
   '';
 
   privateKeyFile = config.age.secrets.hyprspace-key.path;
-  discoverKey = config.age.secrets.hyprspace-discover-key.path;
   runConfig = "/run/hyprspace.yml";
 in {
   networking.hosts = lib.mapAttrs' (k: v: lib.nameValuePair v.hypr.addr [k "${k}.hypr"]) hyprspaceCapableNodes;

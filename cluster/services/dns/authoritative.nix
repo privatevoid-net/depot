@@ -2,10 +2,8 @@
 
 let
   inherit (hosts.${config.networking.hostName}) interfaces;
-  inherit (cluster.config) vars;
 
   patroni = cluster.config.links.patroni-pg-access;
-  pdns-api = cluster.config.links.powerdns-api;
 
   translateConfig = cfg: let
     configList = lib.mapAttrsToList (n: v: "${n}=${v}") cfg;

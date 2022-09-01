@@ -10,8 +10,6 @@ let
   pg = pkgs.postgresql_14;
 
   baseDir = "/srv/storage/database/postgres-ha";
-
-  cfg = config.services.patroni;
 in
 
 {

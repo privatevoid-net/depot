@@ -1,8 +1,6 @@
 { tools, ... }:
 with tools.vhosts;
 let
-  inherit (tools) domain;
-
   noSSL = { enableACME = false; forceSSL = false; };
 in
 {

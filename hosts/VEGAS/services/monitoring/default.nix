@@ -26,8 +26,6 @@ let
   );
 
   login = x: "https://login.${domain}/auth/realms/master/protocol/openid-connect/${x}";
-
-  myNode = hosts.${config.networking.hostName};
 in
 {
   imports = [

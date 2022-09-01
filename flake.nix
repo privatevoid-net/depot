@@ -10,8 +10,6 @@
     let
       systems = [ "x86_64-linux" "aarch64-linux" ];
 
-      forSystems = nixpkgs.lib.genAttrs systems;
-
       nixpkgsFor = nixpkgs.legacyPackages;
 
       inherit (nixpkgs) lib;

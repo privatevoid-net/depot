@@ -29,6 +29,6 @@ buildGoModule rec {
     description = "A Simple IPFS Pinning Service";
     homepage = "https://github.com/DeedleFake/sips";
     license = licenses.mit;
-    maintainers = with maintainers; [  ];
+    maintainers = [  ];
   };
 }

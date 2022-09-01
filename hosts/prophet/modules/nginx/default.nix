@@ -1,11 +1,8 @@
 { lib, config, tools, ... }:
 
 let
-  inherit (tools.meta) domain adminEmail;
-in
-  with tools.nginx.vhosts;
-  with tools.nginx.mappers;
-{
+  inherit (tools.meta) adminEmail;
+in {
   security.acme.defaults.email = adminEmail;
   security.acme.acceptTerms = true;
   services.nginx = {

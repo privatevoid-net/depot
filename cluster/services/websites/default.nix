@@ -1,9 +1,5 @@
 { config, ... }:
 
-let
-  inherit (config.vars) hosts;
-
-in
 {
   services.websites = {
     nodes = {

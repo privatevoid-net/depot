@@ -30,11 +30,8 @@ in
     origin = domain;
     recipientDelimiter = "+";
 
-    # TODO: replace with proper certs
-    sslCert = "/var/lib/acme/mail.${domain}/fullchain.pem";
-    sslKey = "/var/lib/acme/mail.${domain}/key.pem";
-    #sslCert = "${certDir}/fullchain.pem";
-    #sslKey = "${certDir}/privkey.pem";
+    sslCert = "${certDir}/fullchain.pem";
+    sslKey = "${certDir}/key.pem";
 
     setSendmail = true;
 

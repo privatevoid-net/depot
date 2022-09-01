@@ -3,7 +3,6 @@
 {
   perSystem = { filters, inputs', pkgs, self', system, ... }:
   let
-    inherit (pkgs) lib;
     inherit (self'.packages) nix-super;
 
     pins = import ./sources;
