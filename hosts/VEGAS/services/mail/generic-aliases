@@ -103,5 +103,5 @@ root:		admins
 admin:		admins
 
 # TODO: unhardcode
-admins:		max, bone, num
+admins:		max, ark, num
 
