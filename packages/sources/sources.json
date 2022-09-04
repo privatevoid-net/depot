@@ -9,10 +9,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "v2.1.2",
-      "revision": "214d49f1d973814a2a9f29378232aae7027832b6",
-      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v2.1.2",
-      "hash": "1aw0v1wj8fbhi4v5jjn0dpyi4irnad5ni5f1ph6r1wyrgzncl9vg"
+      "version": "v2.1.3",
+      "revision": "17fabcaf02d7b5a38564c55b3316f966fb313a03",
+      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v2.1.3",
+      "hash": "1z6whps0ygqgfaj8c407hjzxcgxad7p6dmhc3cypnvk94j83sw1s"
     },
     "excalidraw": {
       "type": "GitRelease",
