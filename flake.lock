@@ -409,14 +409,14 @@
         "lastModified": 1661451836,
         "narHash": "sha256-iPcmDy/lAZ1V+fFEFEqd1EFrwBTy5MHdF4QM9PLBmA0=",
         "owner": "max",
-        "repo": "nix-super-fork",
+        "repo": "nix-super",
         "rev": "3076571fc95f4c7d45ce383a36404b5386ed2707",
         "type": "gitlab"
       },
       "original": {
         "host": "git.privatevoid.net",
         "owner": "max",
-        "repo": "nix-super-fork",
+        "repo": "nix-super",
         "type": "gitlab"
       }
     },
