@@ -9,10 +9,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "v2.1.2",
-      "revision": "214d49f1d973814a2a9f29378232aae7027832b6",
-      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v2.1.2",
-      "hash": "1aw0v1wj8fbhi4v5jjn0dpyi4irnad5ni5f1ph6r1wyrgzncl9vg"
+      "version": "v2.1.3",
+      "revision": "17fabcaf02d7b5a38564c55b3316f966fb313a03",
+      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v2.1.3",
+      "hash": "1z6whps0ygqgfaj8c407hjzxcgxad7p6dmhc3cypnvk94j83sw1s"
     },
     "excalidraw": {
       "type": "GitRelease",
@@ -36,9 +36,9 @@
         "repo": "searxng"
       },
       "branch": "master",
-      "revision": "242db5311817c1f8b9ab6b428060e3eb2a4aea76",
-      "url": "https://github.com/searxng/searxng/archive/242db5311817c1f8b9ab6b428060e3eb2a4aea76.tar.gz",
-      "hash": "1v2x4f7fx5ndri6n13h5asm7c823drcxhkyf7kjcyb38cxldqqnz"
+      "revision": "691c0ed6b97c2480fdc1245fd09231b0b384bbf0",
+      "url": "https://github.com/searxng/searxng/archive/691c0ed6b97c2480fdc1245fd09231b0b384bbf0.tar.gz",
+      "hash": "1phgq070j1hy4aml9gbp206v07hgyvknh1g5wmck29ypkys5cdm5"
     },
     "stevenblack-hosts": {
       "type": "GitRelease",
@@ -49,10 +49,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "3.11.10",
-      "revision": "d05f79b324905f71fedaa378fc2bc4bd7950b062",
-      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.11.10",
-      "hash": "11lrd8b8jixnzxd3l3dvdgbi75gcwdggh37iiil8sdsmxqgyr3n1"
+      "version": "3.11.11",
+      "revision": "0afeb4fee8783090b75b5f5d40c11e9e953617bf",
+      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.11.11",
+      "hash": "1fsf9xrl1mi45h84y4p68g90rchz4c590phzhxswbfybngaxh3zr"
     },
     "tempo": {
       "type": "GitRelease",
