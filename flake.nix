@@ -95,7 +95,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05-small";
 
     nix-super = {
-      url = "gitlab:max/nix-super-fork?host=git.privatevoid.net";
+      url = "gitlab:max/nix-super?host=git.privatevoid.net";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
