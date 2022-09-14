@@ -36,9 +36,9 @@
         "repo": "searxng"
       },
       "branch": "master",
-      "revision": "691c0ed6b97c2480fdc1245fd09231b0b384bbf0",
-      "url": "https://github.com/searxng/searxng/archive/691c0ed6b97c2480fdc1245fd09231b0b384bbf0.tar.gz",
-      "hash": "1phgq070j1hy4aml9gbp206v07hgyvknh1g5wmck29ypkys5cdm5"
+      "revision": "eb3d185e66dea1add88ef8d3a3c6bb74b8a3b166",
+      "url": "https://github.com/searxng/searxng/archive/eb3d185e66dea1add88ef8d3a3c6bb74b8a3b166.tar.gz",
+      "hash": "01cjsvmry3f2dv9ayqpr1yyh7nwb6xg69pw0syy518l1wlw7m09m"
     },
     "stevenblack-hosts": {
       "type": "GitRelease",
@@ -49,10 +49,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "3.11.12",
-      "revision": "879f1d9abc3cceb43d1b0cf34e15d8bd50c96b5f",
-      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.11.12",
-      "hash": "1vxwqw14y5rq1nmdq53qgdb9dyqn9mwc46i4fb05jsgz7w8cwzi5"
+      "version": "3.11.15",
+      "revision": "a5e1e405a795108c24cbab29aca9170c8285d9dc",
+      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.11.15",
+      "hash": "1dnbvpvrcxsvwjkw13a0plirii2433bb9jclr0ihr5gd55apdcyw"
     },
     "tempo": {
       "type": "GitRelease",
