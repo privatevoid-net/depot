@@ -15,18 +15,16 @@
       "hash": "1z6whps0ygqgfaj8c407hjzxcgxad7p6dmhc3cypnvk94j83sw1s"
     },
     "excalidraw": {
-      "type": "GitRelease",
+      "type": "Git",
       "repository": {
         "type": "GitHub",
         "owner": "excalidraw",
         "repo": "excalidraw"
       },
-      "pre_releases": false,
-      "version_upper_bound": null,
-      "version": "v0.12.0",
-      "revision": "fe3d0b5e8b25d1530b5902359fdd21ed99cd3e93",
-      "url": "https://api.github.com/repos/excalidraw/excalidraw/tarball/v0.12.0",
-      "hash": "1y943iqamqd9kv8ph1mwxr5c4ypha6245qwkfdyjzmky2hzm3388"
+      "branch": "master",
+      "revision": "0d1058a596145894b703fe3078b574f83bfbb312",
+      "url": "https://github.com/excalidraw/excalidraw/archive/0d1058a596145894b703fe3078b574f83bfbb312.tar.gz",
+      "hash": "1fyvm28lhh3hl3ciaj4hyb83a96899hmrir91i8rdcinld96grrq"
     },
     "searxng": {
       "type": "Git",
