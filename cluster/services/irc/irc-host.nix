@@ -67,6 +67,12 @@ in {
     reloadServices = [ "ngircd" ];
     extraDomainNames = [ "irc.${domain}" ];
   };
+  security.pam.services.ngircd = {
+    text = ''
+      # verify IRC users via SSSD
+      auth required ${pkgs.sssd}/lib/security/pam_sss.so
+    '';
+  };
   age.secrets = { inherit (vars) ircPeerKey; };
   systemd.services.ngircd = {
     after = [ "acme-finished-${serverName}.target" "dhparams-gen-ngircd.service" ];
