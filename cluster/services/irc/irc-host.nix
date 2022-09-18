@@ -9,6 +9,7 @@ let
   linkSecure = cluster.config.links.ircSecure;
   otherServers = map mkServer cluster.config.services.irc.otherNodes.host;
   otherServerFiles = map (builtins.toFile "ngircd-peer.conf") otherServers;
+  opers = map mkOper [ "max" "num" "ark" ];
 
   mkServer = name: ''
     [Server]
@@ -19,6 +20,14 @@ let
     PeerPassword = @PEER_PASSWORD@
     SSLConnect = yes
     Passive = no
+  '';
+  
+  # oper password is irrelevant, mask ensures security thanks to PAM
+  mkOper = name: ''
+    [Operator]
+    Name = ${name}
+    Password = please
+    Mask = *!${name}@*
   '';
 
   serverName = "${subDomain}.irc.${domain}";
@@ -51,6 +60,10 @@ in {
       MorePrivacy = yes
       PAM = yes
       PAMIsOptional = yes
+      OperCanUseMode = yes
+      OperChanPAutoOp = yes
+      
+      ${builtins.concatStringsSep "\n" opers}
     '';
   };
   networking.firewall.allowedTCPPorts = [
