@@ -63,6 +63,10 @@ in {
       OperCanUseMode = yes
       OperChanPAutoOp = yes
       
+      [Channel]
+      Name = #general
+      Topic = General discussions
+      
       ${builtins.concatStringsSep "\n" opers}
     '';
   };
