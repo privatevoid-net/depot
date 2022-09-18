@@ -9,10 +9,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "v2.1.3",
-      "revision": "17fabcaf02d7b5a38564c55b3316f966fb313a03",
-      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v2.1.3",
-      "hash": "1z6whps0ygqgfaj8c407hjzxcgxad7p6dmhc3cypnvk94j83sw1s"
+      "version": "v2.2.0",
+      "revision": "80d9a2ca7d716ae7c088058cdcd1a335da5b4a87",
+      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v2.2.0",
+      "hash": "05s6mjn41kwy90im16rjkmliap9757pbhdiclig7hji3wcs8lsp6"
     },
     "excalidraw": {
       "type": "Git",
@@ -22,9 +22,9 @@
         "repo": "excalidraw"
       },
       "branch": "master",
-      "revision": "0d1058a596145894b703fe3078b574f83bfbb312",
-      "url": "https://github.com/excalidraw/excalidraw/archive/0d1058a596145894b703fe3078b574f83bfbb312.tar.gz",
-      "hash": "1fyvm28lhh3hl3ciaj4hyb83a96899hmrir91i8rdcinld96grrq"
+      "revision": "3a776f8795f2a2f3fcd42b84d9b165b620210d7f",
+      "url": "https://github.com/excalidraw/excalidraw/archive/3a776f8795f2a2f3fcd42b84d9b165b620210d7f.tar.gz",
+      "hash": "0gsw7zq9lwb6hbi1cz05lrpfdbbhfbc41zwnjdvid71adbzii255"
     },
     "searxng": {
       "type": "Git",
@@ -34,9 +34,9 @@
         "repo": "searxng"
       },
       "branch": "master",
-      "revision": "eb3d185e66dea1add88ef8d3a3c6bb74b8a3b166",
-      "url": "https://github.com/searxng/searxng/archive/eb3d185e66dea1add88ef8d3a3c6bb74b8a3b166.tar.gz",
-      "hash": "01cjsvmry3f2dv9ayqpr1yyh7nwb6xg69pw0syy518l1wlw7m09m"
+      "revision": "2ca62fec33e274fba7e11379ae4db9156741cc41",
+      "url": "https://github.com/searxng/searxng/archive/2ca62fec33e274fba7e11379ae4db9156741cc41.tar.gz",
+      "hash": "0wzx4fk8avkqgqzp5x8c1z31my9388rbqndynpjyxzj2m2yhp29p"
     },
     "stevenblack-hosts": {
       "type": "GitRelease",
@@ -47,10 +47,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "3.11.15",
-      "revision": "a5e1e405a795108c24cbab29aca9170c8285d9dc",
-      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.11.15",
-      "hash": "1dnbvpvrcxsvwjkw13a0plirii2433bb9jclr0ihr5gd55apdcyw"
+      "version": "3.11.17",
+      "revision": "bbf77167fc232d3dc169c0ee71e70ee9083c1f1f",
+      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.11.17",
+      "hash": "087i7729vrhnapis5qk88lz4f3alnlnlnqzfm53kmxx0q2zxd4rh"
     },
     "tempo": {
       "type": "GitRelease",
