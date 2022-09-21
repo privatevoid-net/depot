@@ -86,4 +86,11 @@ in
         --set NODE_PATH "$out/lib/node_modules/uptime-kuma/node_modules"
     '';
   };
+
+  "@louislam/sqlite3".closure-bloat = {
+    postFixup = ''
+      rm -rf build-*/
+      find $out -type d -name '*-node-addon-api-*' -print0 | xargs -0 rm -rf
+    '';
+  };
 }
