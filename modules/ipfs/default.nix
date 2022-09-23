@@ -41,6 +41,7 @@ in
         "/ip4/77.54.95.19/tcp/12104/p2p/12D3KooWC1RZxLvAeEFNTZWk1FWc1sZZ3yemF4FNNRYa3X854KJ8"
         "/ip4/95.216.8.12/tcp/4001/p2p/Qmd7QHZU8UjfYdwmjmq1SBh9pvER9AwHpfwQvnvNo3HBBo"
       ];
+      AutoNAT.ServiceMode = "enabled";
       API.HTTPHeaders = {
         Access-Control-Allow-Origin = [
           "https://ipfs.admin.${domain}"
