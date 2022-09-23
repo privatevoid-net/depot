@@ -94,7 +94,7 @@ in {
   systemd.services.ngircd = {
     after = [ "acme-finished-${serverName}.target" "dhparams-gen-ngircd.service" ];
     wants = [ "acme-finished-${serverName}.target" "dhparams-gen-ngircd.service" ];
-    restartTriggers = [ config.age.secrets.ircPeerKey.file ];
+    restartTriggers = [ "${config.age.secrets.ircPeerKey.file}" ];
     serviceConfig.RuntimeDirectory = "ngircd";
     preStart = ''
       install -d -m700 /run/ngircd/secrets
