@@ -15,6 +15,7 @@ tools: {
   hypr = {
     id = "QmbrAHuh4RYcyN9fWePCZMVmQjbaNXtyvrDCWz4VrchbXh";
     addr = "10.100.3.9";
+    listenPort = 995;
   };
 
   enterprise = {
