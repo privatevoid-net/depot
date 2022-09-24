@@ -45,7 +45,7 @@ def run_bot(c):
         bot.hooks.clear()
 
         for path in filter(lambda h: h[-3:] == '.py', os.listdir('hooks')):
-            name = '.'.join(['hooks', path.split('.py')[0]])
+            name = '.'.join(['hooks', path[:-3]])
             if name in sys.modules.keys():
                 del sys.modules[name]
             try:
