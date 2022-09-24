@@ -18,8 +18,8 @@ in
   links.ipfsGateway.protocol = "http";
 
   networking.firewall = {
-    allowedTCPPorts = [ ipfsPort ];
-    allowedUDPPorts = [ ipfsPort ];
+    allowedTCPPorts = [ ipfsPort 4001 ];
+    allowedUDPPorts = [ ipfsPort 4001 ];
   };
 
   services.ipfs = {
@@ -29,7 +29,10 @@ in
     autoMount = true;
     autoMigrate = false;
 
-    swarmAddress = "/ip4/0.0.0.0/tcp/${toString ipfsPort}";
+    swarmAddress = [
+      "/ip4/0.0.0.0/tcp/${toString ipfsPort}"
+      "/ip4/0.0.0.0/tcp/4001"
+    ];
     inherit apiAddress;
     gatewayAddress = "/ip4/${gw.ipv4}/tcp/${gw.portStr}";
     dataDir = "/srv/storage/ipfs/repo";
