@@ -1,23 +1,21 @@
 import justirc
 
-NICK = 'smith'
-
 def main():
+    config = dict(nick='smith', debug=False)
+    run_bot(config)
+
+def run_bot(c):
     bot = justirc.IRCConnection()
 
-    @bot.on('packet')
-    def new_packet(e):
-        print(e.packet)
-
-    @bot.on('connected')
-    def reload_plugins(e):
-        print('bot has connected')
+    if c['debug']:
+        @bot.on('packet')
+        def new_packet(e):
+            print(e.packet)
 
     @bot.on('connect')
     def connect(e):
-        bot.send_line(f'NICK {NICK}')
-        bot.send_line(f'USER {NICK} 8 * {NICK}')
-        bot.emit('connected')
+        bot.send_line(f'NICK {c["nick"]}')
+        bot.send_line(f'USER {c["nick"]} 8 * {c["nick"]}')
 
     @bot.on('welcome')
     def welcome(e):
