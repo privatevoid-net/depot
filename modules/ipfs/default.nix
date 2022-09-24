@@ -29,6 +29,7 @@ in
     autoMount = true;
     autoMigrate = false;
 
+    swarmAddress = "/ip4/0.0.0.0/tcp/${toString ipfsPort}";
     inherit apiAddress;
     gatewayAddress = "/ip4/${gw.ipv4}/tcp/${gw.portStr}";
     dataDir = "/srv/storage/ipfs/repo";
