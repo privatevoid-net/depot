@@ -5,6 +5,7 @@ let
   apiAddress = "/unix/run/ipfs/ipfs-api.sock";
   ipfsApi = pkgs.writeTextDir "api" apiAddress;
   gw = config.links.ipfsGateway;
+  ipfsPort = 110;
 in
 {
   age.secrets.ipfs-swarm-key = {
@@ -17,8 +18,8 @@ in
   links.ipfsGateway.protocol = "http";
 
   networking.firewall = {
-    allowedTCPPorts = [ 4001 ];
-    allowedUDPPorts = [ 4001 ];
+    allowedTCPPorts = [ ipfsPort ];
+    allowedUDPPorts = [ ipfsPort ];
   };
 
   services.ipfs = {
@@ -39,7 +40,7 @@ in
         "/ip4/168.235.67.108/tcp/4001/p2p/QmRMA5pWXtfuW1y5w2t9gYxrDDD6bPRLKdWAYnHTeCxZMm"
         "/ip4/51.38.87.150/tcp/4001/p2p/12D3KooWDUgNsoLVauCDpRAo54mc4whoBudgeXQnZZK2iVYhBLCN"
         "/ip4/77.54.95.19/tcp/12104/p2p/12D3KooWC1RZxLvAeEFNTZWk1FWc1sZZ3yemF4FNNRYa3X854KJ8"
-        "/ip4/95.216.8.12/tcp/4001/p2p/Qmd7QHZU8UjfYdwmjmq1SBh9pvER9AwHpfwQvnvNo3HBBo"
+        "/ip4/95.216.8.12/tcp/${toString ipfsPort}/p2p/Qmd7QHZU8UjfYdwmjmq1SBh9pvER9AwHpfwQvnvNo3HBBo"
       ];
       AutoNAT.ServiceMode = "enabled";
       API.HTTPHeaders = {
