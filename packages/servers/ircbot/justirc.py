@@ -212,8 +212,12 @@ class IRCConnection(EventEmitter):
         if tls:
             import ssl
 
-            context = ssl.SSLContext()
-            self.socket = context.wrap_socket(self.socket, server)
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+            context.minimum_version = ssl.TLSVersion.TLSv1_3
+            context.maximum_version = ssl.TLSVersion.TLSv1_3
+            self.socket = context.wrap_socket(self.socket)
 
         self.lines = self._read_lines()
         self.emit("connect", _IRCEvent(self))
