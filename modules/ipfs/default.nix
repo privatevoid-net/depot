@@ -87,7 +87,10 @@ in
 
   systemd.services.ipfs = {
     environment.LIBP2P_FORCE_PNET = "1";
-    serviceConfig.Slice = "remotefshost.slice";
+    serviceConfig = {
+      Slice = "remotefshost.slice";
+      AmbientCapabilities = [ "CAP_NET_BIND_SERVICE" ];
+    };
     postStart = "chmod 660 /run/ipfs/ipfs-api.sock";
   };
 
