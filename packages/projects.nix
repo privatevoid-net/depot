@@ -27,6 +27,7 @@
       ./modules/devshell.nix
       ./build-support
 
+      ./networking/hyprspace/project.nix
       ./websites/landing/project.nix
       ./websites/stop-using-nix-env/project.nix
     ];
@@ -50,8 +51,6 @@
         uptime-kuma;
 
       grafana = pkgs.callPackage ./monitoring/grafana { };
-
-      hyprspace = pkgs.callPackage ./networking/hyprspace { iproute2mac = null; };
 
       ipfs = pkgs.callPackage ./networking/ipfs { };
 
