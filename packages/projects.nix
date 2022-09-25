@@ -27,6 +27,7 @@
       ./modules/devshell.nix
       ./build-support
 
+      ./servers/ircbot/project.nix
       ./websites/landing/project.nix
       ./websites/stop-using-nix-env/project.nix
     ];
