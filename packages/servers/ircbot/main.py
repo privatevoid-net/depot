@@ -1,6 +1,7 @@
 import os
 import sys
 import justirc
+import json
 import importlib
 
 class EventHandler(object):
@@ -11,7 +12,7 @@ class EventHandler(object):
         ...
 
 def main():
-    config = dict(
+    default_config = dict(
         debug=False,
         nick='smith',
         channel='#general',
@@ -19,7 +20,11 @@ def main():
         port=6697,
         tls=True,
     )
-    run_bot(config)
+    config = dict()
+    if (config_file := os.getenv("IRCBOT_CONFIG")) and config_file != "":
+        with open(config_file) as f:
+            config = json.load(f)
+    run_bot(default_config | config)
 
 def shutdown_bot_hooks(bot):
     for name, hook in bot.hooks:
