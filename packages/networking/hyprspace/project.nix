@@ -1,6 +1,12 @@
 { inputs, lib, pkgs, ... }:
 
 {
+  projectShells.hyprspace = {
+    tools = [
+      pkgs.go
+    ];
+    env.GOPATH.eval = "$PRJ_DATA_DIR/go";
+  };
   packages.hyprspace = with pkgs; buildGoModule {
     pname = "hyprspace";
     version = "0.2.2";
