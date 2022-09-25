@@ -4,6 +4,7 @@ let
   python = pkgs.python3;
   procfile = pkgs.writeText "Procfile" ''
     ircd: ${pkgs.ngircd}/bin/ngircd --config ${ircdConfig} --nodaemon
+    bot: ${python.interpreter} main.py
   '';
 
   ircdConfig = pkgs.writeText "ngircd.conf" ''
@@ -29,6 +30,12 @@ let
     Name = op
     Password = op
   '';
+
+  botConfig = pkgs.writeText "ircbot-config.json" (builtins.toJSON {
+    server = "127.0.0.1";
+    port = 6668;
+    tls = false;
+  });
 in
 {
   projectShells.ircbot = {
@@ -45,6 +52,7 @@ in
     tools = [
       python
     ];
+    env.IRCBOT_CONFIG.value = botConfig;
   };
   packages.ircbot = with pkgs; stdenvNoCC.mkDerivation {
     pname = "ircbot";
