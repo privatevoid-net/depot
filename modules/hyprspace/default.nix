@@ -12,7 +12,7 @@ let
   interfaceConfig = pkgs.writeText "hyprspace.yml" (builtins.toJSON {
     interface = {
       name = "hyprspace";
-      listen_port = toString listenPort;
+      listen_port = listenPort;
       inherit (myNode.hypr) id;
       address = "${myNode.hypr.addr}/24";
       private_key = "@HYPRSPACEPRIVATEKEY@";
