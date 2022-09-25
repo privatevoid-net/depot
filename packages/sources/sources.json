@@ -34,9 +34,9 @@
         "repo": "searxng"
       },
       "branch": "master",
-      "revision": "2ca62fec33e274fba7e11379ae4db9156741cc41",
-      "url": "https://github.com/searxng/searxng/archive/2ca62fec33e274fba7e11379ae4db9156741cc41.tar.gz",
-      "hash": "0wzx4fk8avkqgqzp5x8c1z31my9388rbqndynpjyxzj2m2yhp29p"
+      "revision": "94c4cc126b16d4cd1653c410df63af4bc0a4e998",
+      "url": "https://github.com/searxng/searxng/archive/94c4cc126b16d4cd1653c410df63af4bc0a4e998.tar.gz",
+      "hash": "097sjr9mjz6a8y54a2784spsfa55687wljc4xhjnzwl18ympnhad"
     },
     "stevenblack-hosts": {
       "type": "GitRelease",
