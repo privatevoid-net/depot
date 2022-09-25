@@ -166,6 +166,8 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-filter.url = "github:numtide/nix-filter";
     
     repin-flake-compat = {
       url = "github:edolstra/flake-compat";
