@@ -13,6 +13,7 @@ require (
 	github.com/libp2p/go-libp2p-kad-dht v0.15.0
 	github.com/libp2p/go-tcp-transport v0.4.0
 	github.com/multiformats/go-multiaddr v0.4.1
+	github.com/multiformats/go-multibase v0.0.3
 	github.com/nxadm/tail v1.4.8
 	github.com/songgao/water v0.0.0-20200317203138-2b4b6d7c09d8
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
