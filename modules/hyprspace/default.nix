@@ -5,19 +5,20 @@ let
   hyprspaceCapableNodes = lib.filterAttrs (_: host: host ? hypr) hosts;
   peersFormatted = builtins.mapAttrs (_: x: { "${x.hypr.addr}".id = x.hypr.id; }) hyprspaceCapableNodes;
   peersFiltered = lib.filterAttrs (name: _: name != hostName) peersFormatted;
-  buildHyprspacePeerList = peers: pkgs.writeText "hyprspace-peers.yml" (builtins.toJSON peers);
-  peerList = buildHyprspacePeerList (lib.foldAttrs (n: _: n) null (builtins.attrValues peersFiltered));
+  peerList = lib.foldAttrs (n: _: n) null (builtins.attrValues peersFiltered);
   myNode = hosts.${hostName};
   listenPort = myNode.hypr.listenPort or 8001;
 
-  precedingConfig = pkgs.writeText "hyprspace-interface.yml" ''
-    interface:
-      name: hyprspace
-      listen_port: ${builtins.toString listenPort}
-      id: ${myNode.hypr.id}
-      address: ${myNode.hypr.addr}/24
-      private_key: !!binary |
-  '';
+  interfaceConfig = pkgs.writeText "hyprspace.yml" (builtins.toJSON {
+    interface = {
+      name = "hyprspace";
+      listen_port = toString listenPort;
+      inherit (myNode.hypr) id;
+      address = "${myNode.hypr.addr}/24";
+      private_key = "@HYPRSPACEPRIVATEKEY@";
+    };
+    peers = peerList;
+  });
 
   privateKeyFile = config.age.secrets.hyprspace-key.path;
   runConfig = "/run/hyprspace.yml";
@@ -33,14 +34,9 @@ in {
     wantedBy = [ "multi-user.target" ];
     preStart = ''
       test -e ${runConfig} && rm ${runConfig}
-      touch ${runConfig}
+      cp ${interfaceConfig} ${runConfig}
       chmod 0600 ${runConfig}
-
-      cat ${precedingConfig} >> ${runConfig}
-      sed 's/^/    /g' ${privateKeyFile} >> ${runConfig}
-      echo -n 'peers: ' >> ${runConfig}
-      cat ${peerList} >> ${runConfig}
-
+      ${pkgs.replace-secret}/bin/replace-secret '@HYPRSPACEPRIVATEKEY@' "${privateKeyFile}" ${runConfig}
       chmod 0400 ${runConfig}
     '';
     environment.HYPRSPACE_SWARM_KEY = config.age.secrets.ipfs-swarm-key.path;
