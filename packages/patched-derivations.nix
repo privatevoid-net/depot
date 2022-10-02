@@ -38,6 +38,7 @@ super: rec {
           "jdk.xml.dom"
           "jdk.sctp"
           "jdk.management"
+          "jdk.dynalink"
       ];
     };
   in jre // { meta = jre.meta // { inherit (super.jdk17_headless.meta) platforms; }; };
