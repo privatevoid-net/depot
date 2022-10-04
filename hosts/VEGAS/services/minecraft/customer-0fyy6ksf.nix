@@ -19,6 +19,7 @@ in
       enable-rcon = true;
       rcon-port = config.links."mc-rcon-${custId}".port;
       rcon-password = "manager";
+      allow-flight = true;
     };
   };
   systemd.services."mc-${custId}".serviceConfig = {
