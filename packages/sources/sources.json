@@ -22,9 +22,9 @@
         "repo": "excalidraw"
       },
       "branch": "master",
-      "revision": "6c1246ef77433fcd178be380b451c5b904aece00",
-      "url": "https://github.com/excalidraw/excalidraw/archive/6c1246ef77433fcd178be380b451c5b904aece00.tar.gz",
-      "hash": "0z39aa2hl33mn433m05sjbnx58i3wnfml2nb4sc97ddgyic2y4dr"
+      "revision": "76cf560914b4d1ed2212fd6033aab36f114ad549",
+      "url": "https://github.com/excalidraw/excalidraw/archive/76cf560914b4d1ed2212fd6033aab36f114ad549.tar.gz",
+      "hash": "0rawdrajbwlc55k1537v2v4bfd8mjvyplvwjn3ykbcc6bycjm770"
     },
     "searxng": {
       "type": "Git",
