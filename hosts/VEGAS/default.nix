@@ -19,6 +19,10 @@ tools: {
     id = "QmYs4xNBby2fTs8RnzfXEk161KD4mftBfCiR8yXtgGPj4J";
     addr = "10.100.3.5";
     listenPort = 995;
+    routes = [
+      "10.1.0.1/32"
+      "10.10.0.0/16"
+    ];
   };
 
   enterprise = {
