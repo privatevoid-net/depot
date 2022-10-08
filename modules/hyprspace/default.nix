@@ -9,6 +9,9 @@ let
   myNode = hosts.${hostName};
   listenPort = myNode.hypr.listenPort or 8001;
 
+  routes' = map (x: lib.genAttrs (x.hypr.routes or []) (_: { ip = x.hypr.addr; })) (builtins.attrValues hyprspaceCapableNodes);
+  routes = builtins.foldl' (x: y: x // y) {} (lib.flatten routes');
+
   interfaceConfig = pkgs.writeText "hyprspace.yml" (builtins.toJSON {
     interface = {
       name = "hyprspace";
@@ -18,6 +21,7 @@ let
       private_key = "@HYPRSPACEPRIVATEKEY@";
     };
     peers = peerList;
+    inherit routes;
   });
 
   privateKeyFile = config.age.secrets.hyprspace-key.path;
