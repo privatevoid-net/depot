@@ -93,6 +93,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05-small";
+    nixpkgs-lib.url = "github:NixOS/nixpkgs/nixos-22.05-small?dir=lib";
 
     nix-super = {
       url = "gitlab:max/nix-super?host=git.privatevoid.net";
@@ -164,7 +165,7 @@
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-lib.follows = "nixpkgs-lib";
     };
 
     nix-filter.url = "github:numtide/nix-filter";
