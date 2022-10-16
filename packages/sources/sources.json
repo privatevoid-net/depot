@@ -75,10 +75,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "1.18.3",
-      "revision": "60460442f869f2cc581690bd7c8930b3eb7777b8",
-      "url": "https://api.github.com/repos/louislam/uptime-kuma/tarball/1.18.3",
-      "hash": "1jcjpdzbaz5hhhb2gzb9pi0kzwmvp954n90qv4hp4b02h79a66gh"
+      "version": "1.18.5",
+      "revision": "2ee8378814d5cf92dceabcf2d9e4e79505001f16",
+      "url": "https://api.github.com/repos/louislam/uptime-kuma/tarball/1.18.5",
+      "hash": "1g59652436q993ngyyizrpac8g9i3n85dd7n90kvg1daqdiww4p1"
     }
   },
   "version": 2
