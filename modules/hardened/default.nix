@@ -1,4 +1,3 @@
-{ pkgs, config, ... }:
 {
   boot.kernel.sysctl = {
     "kernel.yama.ptrace_scope" = 1;

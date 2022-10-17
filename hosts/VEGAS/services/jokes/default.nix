@@ -1,4 +1,4 @@
-{ config, lib, tools, ... }:
+{ tools, ... }:
 with tools.nginx.mappers;
 with tools.nginx.vhosts;
 {

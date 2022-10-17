@@ -1,4 +1,4 @@
-{ cluster, config, hosts, inputs, lib, pkgs, tools, ... }:
+{ cluster, config, inputs, lib, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
 

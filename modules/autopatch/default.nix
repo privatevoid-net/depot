@@ -1,4 +1,3 @@
-{ pkgs, lib, config, inputs, ... }:
 {
   nixpkgs.overlays = [
     (self: super:

@@ -1,4 +1,4 @@
-{ config, lib, tools, ... }:
+{ config, tools, ... }:
 with tools.nginx;
 {
   links = {

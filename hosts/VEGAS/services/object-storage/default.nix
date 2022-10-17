@@ -1,4 +1,4 @@
-{ config, inputs, lib, pkgs, tools, ... }:
+{ config, lib, tools, ... }:
 with tools.nginx;
 let
   inherit (config) links;

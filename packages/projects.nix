@@ -1,7 +1,7 @@
 { inputs, self, ... }:
 
 {
-  perSystem = { filters, inputs', pkgs, self', system, ... }:
+  perSystem = { filters, pkgs, self', ... }:
   let
     inherit (self'.packages) nix-super;
 

@@ -1,4 +1,4 @@
-{ aspect, config, hosts, lib, pkgs, tools, ... }:
+{ aspect, config, hosts, tools, ... }:
 with tools.nginx;
 let
   inherit (tools.meta) domain;

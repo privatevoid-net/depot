@@ -1,4 +1,4 @@
-{ config, lib, pkgs, tools, ... }:
+{ config, lib, tools, ... }:
 let
   inherit (tools.meta) domain;
   login = x: "https://login.${domain}/auth/realms/master/protocol/openid-connect/${x}";
@@ -35,7 +35,7 @@ in
       skip-provider-button = true;
     };
   };
-  services.nginx.virtualHosts = lib.genAttrs cfg.nginx.virtualHosts (vhost: {
+  services.nginx.virtualHosts = lib.genAttrs cfg.nginx.virtualHosts (_vhost: {
     # apply protection to the whole vhost, not just /
     extraConfig = ''
       auth_request /oauth2/auth;

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, tools, ... }:
+{ config, pkgs, tools, ... }:
 let
   inherit (tools.identity) ldap;
   inherit (tools.meta) domain;

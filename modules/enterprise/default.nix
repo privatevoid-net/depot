@@ -1,4 +1,4 @@
-{ config, pkgs, hosts, inputs, lib, tools, ... }:
+{ config, hosts, lib, tools, ... }:
 let
   orgDomain = tools.meta.domain;
   orgRealm = lib.toUpper orgDomain;

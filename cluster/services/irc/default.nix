@@ -1,4 +1,4 @@
-{ config, tools, ... }:
+{ tools, ... }:
 
 {
   vars = {

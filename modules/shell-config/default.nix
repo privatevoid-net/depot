@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 let
   component = name: builtins.readFile (builtins.toString ../../config/zsh/components + "/${name}.zsh");
 

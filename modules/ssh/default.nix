@@ -1,4 +1,4 @@
-{ hosts, config, lib, ... }:
+{ hosts, lib, ... }:
 let
   filtered = lib.filterAttrs (_: host: host ? ssh) hosts;
   idCapable = lib.filterAttrs (_: host: host.ssh ? id) filtered;

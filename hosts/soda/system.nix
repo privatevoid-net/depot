@@ -1,4 +1,4 @@
-{ pkgs, aspect, hosts, tools, ... }:
+{ aspect, hosts, ... }:
 
 {
   imports = with aspect; [

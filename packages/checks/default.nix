@@ -1,4 +1,4 @@
-{ filters, inputs', pkgs, self, self', ... }:
+{ filters, pkgs, self, self', ... }:
 {
   checks = filters.doFilter filters.checks {
     keycloak = pkgs.callPackage ./keycloak-custom-jre.nix {

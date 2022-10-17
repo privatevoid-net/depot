@@ -1,4 +1,4 @@
-{ cluster, config, hosts, inputs, lib, pkgs, tools, ... }:
+{ cluster, config, hosts, lib, ... }:
 
 let
   inherit (hosts.${config.networking.hostName}) interfaces;

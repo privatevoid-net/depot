@@ -1,5 +1,3 @@
-{ config, ... }:
-
 {
   services.websites = {
     nodes = {

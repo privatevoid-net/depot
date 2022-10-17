@@ -1,4 +1,4 @@
-{ lib, config, tools, ... }:
+{ config, tools, ... }:
 
 let
   inherit (tools.meta) adminEmail;

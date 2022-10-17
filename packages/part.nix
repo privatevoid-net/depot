@@ -1,4 +1,4 @@
-{ inputs, lib, ... }:
+{ lib, ... }:
 let
  filters = import ./system-filter.nix;
   doFilter' = system: filterSet: lib.filterAttrs (name: _:

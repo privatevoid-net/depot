@@ -1,4 +1,3 @@
-{ pkgs, config, ... }:
 {
   nix.trustedUsers = [ "nix" ];
   users.users.nix = {

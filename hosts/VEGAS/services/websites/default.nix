@@ -1,4 +1,4 @@
-{ config, inputs, lib, pkgs, tools, ... }:
+{ inputs, pkgs, tools, ... }:
 
 let
   importWebsites = expr: import expr {
