@@ -92,6 +92,8 @@
           dvc
           npins
           pin
+          pkgs.deadnix
+          pkgs.statix
         ];
 
         env.NPINS_DIRECTORY.eval = "$REPO_ROOT/packages/sources";
