@@ -93,17 +93,21 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05-small";
+    nixpkgs-lib.url = "github:NixOS/nixpkgs/nixos-22.05-small?dir=lib";
 
     nix-super = {
       url = "gitlab:max/nix-super?host=git.privatevoid.net";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        nixpkgs-regression.follows = "blank";
+      };
     };
 
     deploy-rs = {
       url = "gitlab:max/deploy-rs?host=git.privatevoid.net";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "repin-flake-compat";
+        flake-compat.follows = "blank";
         utils.follows = "repin-flake-utils";
       };
     };
@@ -125,8 +129,15 @@
       url = "github:nix-community/dream2nix";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        #alejandra.inputs.flakeCompat.follows = "repin-flake-compat";
-        flake-utils-pre-commit.follows = "repin-flake-utils";
+        alejandra.follows = "blank";
+        all-cabal-json.follows = "blank";
+        crane.follows = "blank";
+        devshell.follows = "blank";
+        flake-utils-pre-commit.follows = "blank";
+        gomod2nix.follows = "blank";
+        mach-nix.follows = "blank";
+        poetry2nix.follows = "poetry2nix";
+        pre-commit-hooks.follows = "blank";
       };
     };
     
@@ -143,7 +154,7 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         nix.follows = "nix-super";
-        flake-compat.follows = "repin-flake-compat";
+        flake-compat.follows = "blank";
         flake-utils.follows = "repin-flake-utils";
       };
     };
@@ -153,6 +164,7 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
+        nix-darwin.follows = "blank";
       };
     };
     hercules-ci-effects = {
@@ -164,15 +176,21 @@
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-lib.follows = "nixpkgs-lib";
     };
 
     nix-filter.url = "github:numtide/nix-filter";
     
-    repin-flake-compat = {
-      url = "github:edolstra/flake-compat";
-      flake = false;
-    };
     repin-flake-utils.url = "github:numtide/flake-utils";
+
+    blank.url = "github:divnix/blank";
+
+    poetry2nix = {
+      url = "github:nix-community/poetry2nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "repin-flake-utils";
+      };
+    };
   };
 }
