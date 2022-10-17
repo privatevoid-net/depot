@@ -9,8 +9,8 @@ let
   cfg = { inherit (config.services) loki; };
 
   toString' = v:
-    if v then "true" else
-    if !v then "false" else
+    if v == true then "true" else
+    if v == false then "false" else
     toString v;
 
   mapPaths = lib.mapAttrsRecursive (
