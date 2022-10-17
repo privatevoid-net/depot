@@ -1,9 +1,9 @@
 { inputs, lib, ... }:
 let
  filters = import ./system-filter.nix;
-  doFilter' = system: filterSet: pkgSet: lib.filterAttrs (name: _:
+  doFilter' = system: filterSet: lib.filterAttrs (name: _:
     filterSet ? "${name}" -> builtins.elem system filterSet."${name}"
-  ) pkgSet;
+  );
 in {
   imports = [
     ./projects.nix

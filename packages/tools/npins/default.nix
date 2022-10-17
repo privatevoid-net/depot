@@ -18,7 +18,7 @@ let
   sources = (builtins.fromJSON (builtins.readFile ./sources.json)).pins;
 in rustPlatform.buildRustPackage rec {
   pname = "npins";
-  version = src.version;
+  inherit (src) version;
   src = passthru.mkSource sources.npins;
 
   cargoSha256 = "0rwnzkmx91cwcz9yw0rbbqv73ba6ggim9f4qgz5pgy6h696ld2k8";

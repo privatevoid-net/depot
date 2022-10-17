@@ -4,7 +4,7 @@ with lib;
 let
   getHostConfigurations = svcConfig: hostName:
     lib.mapAttrsToList (groupName: _: svcConfig.nixos.${groupName})
-    (lib.filterAttrs (_: v: lib.elem hostName v) svcConfig.nodes);
+    (lib.filterAttrs (_: lib.elem hostName) svcConfig.nodes);
 
   getServiceConfigurations = svcConfig: getHostConfigurations svcConfig config.vars.hostName;
 in

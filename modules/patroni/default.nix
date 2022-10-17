@@ -162,7 +162,7 @@ in
     };
 
     settings = mkOption {
-      type = format.type;
+      inherit (format) type;
       default = { };
       description = mdDoc ''
         The primary patroni configuration. See the [documentation](https://patroni.readthedocs.io/en/latest/SETTINGS.html)
@@ -185,13 +185,13 @@ in
   config = mkIf cfg.enable {
 
     services.patroni.settings = {
-      scope = cfg.scope;
-      name = cfg.name;
-      namespace = cfg.namespace;
+      inherit (cfg) scope;
+      inherit (cfg) name;
+      inherit (cfg) namespace;
 
       restapi = {
-        listen = "${cfg.nodeIp}:${toString(cfg.restApiPort)}";
-        connect_address = "${cfg.nodeIp}:${toString(cfg.restApiPort)}";
+        listen = "${cfg.nodeIp}:${toString cfg.restApiPort}";
+        connect_address = "${cfg.nodeIp}:${toString cfg.restApiPort}";
       };
 
       raft = mkIf cfg.raft {
@@ -201,8 +201,8 @@ in
       };
 
       postgresql = {
-        listen = "${cfg.nodeIp}:${toString(cfg.postgresqlPort)}";
-        connect_address = "${cfg.nodeIp}:${toString(cfg.postgresqlPort)}";
+        listen = "${cfg.nodeIp}:${toString cfg.postgresqlPort}";
+        connect_address = "${cfg.nodeIp}:${toString cfg.postgresqlPort}";
         data_dir = cfg.postgresqlDataDir;
         bin_dir = "${postgresql}/bin";
         pgpass = "${cfg.dataDir}/pgpass";
@@ -219,7 +219,7 @@ in
     users = {
       users = mkIf (cfg.user == defaultUser) {
         patroni = {
-          group = cfg.group;
+          inherit (cfg) group;
           isSystemUser = true;
         };
       };
@@ -282,7 +282,7 @@ in
             StateDirectory = "patroni patroni/raft postgresql postgresql/${postgresql.psqlSchema}";
             StateDirectoryMode = "0750";
           })
-          (mkIf (cfg.softwareWatchdog) {
+          (mkIf cfg.softwareWatchdog {
             ExecStartPre = "+" + pkgs.writeShellScript "configure-software-watchdog.sh" ''
               ${pkgs.kmod}/bin/modprobe softdog
               ${pkgs.coreutils}/bin/chown ${cfg.user} /dev/watchdog

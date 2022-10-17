@@ -3,7 +3,7 @@
 let
   cfg = config.services.patroni;
 
-  renameToLink = mode: n: v: lib.nameValuePair "patroni-etcd-node-${mode}-${n}" v;
+  renameToLink = mode: n: lib.nameValuePair "patroni-etcd-node-${mode}-${n}";
 
   genLinks = mode: nodes: f: lib.mapAttrs' (renameToLink mode) (lib.genAttrs nodes f);
 

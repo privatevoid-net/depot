@@ -3,9 +3,7 @@
 let
   inherit (pins) cinny;
   repo = cinny.repository;
-in
 
-let
   app = stdenvNoCC.mkDerivation rec {
     pname = "cinny-bin";
     version = builtins.substring 1 (-1) cinny.version;

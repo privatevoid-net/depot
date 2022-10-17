@@ -2,7 +2,7 @@
 
 rootDir: let
 
-  prefix = ((toString rootDir) + "/");
+  prefix = (toString rootDir) + "/";
 
   files = lib.filesystem.listFilesRecursive rootDir;
 
