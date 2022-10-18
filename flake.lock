@@ -325,6 +325,32 @@
         "type": "gitlab"
       }
     },
+    "nixos-command": {
+      "inputs": {
+        "flake-utils": [
+          "repin-flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "poetry2nix": [
+          "poetry2nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1662057103,
+        "narHash": "sha256-8czeYcJPbKFcX/F/GuBjgIOXzqNwqr0iOjY5mImgSaM=",
+        "owner": "max-privatevoid",
+        "repo": "nixos-command",
+        "rev": "9d1015b4d366fab6ae46f830e1699a7b9b5dea18",
+        "type": "github"
+      },
+      "original": {
+        "owner": "max-privatevoid",
+        "repo": "nixos-command",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1665870850,
@@ -434,6 +460,7 @@
         "nar-serve": "nar-serve",
         "nix-filter": "nix-filter",
         "nix-super": "nix-super",
+        "nixos-command": "nixos-command",
         "nixpkgs": "nixpkgs",
         "nixpkgs-lib": "nixpkgs-lib",
         "poetry2nix": "poetry2nix",
