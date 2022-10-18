@@ -192,5 +192,14 @@
         flake-utils.follows = "repin-flake-utils";
       };
     };
+
+    nixos-command = {
+      url = "github:max-privatevoid/nixos-command";
+      inputs = {
+        flake-utils.follows = "repin-flake-utils";
+        nixpkgs.follows = "nixpkgs";
+        poetry2nix.follows = "poetry2nix";
+      };
+    };
   };
 }
