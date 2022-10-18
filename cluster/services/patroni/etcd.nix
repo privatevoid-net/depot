@@ -16,6 +16,12 @@ in
     listenPeerUrls = lib.singleton vars.patroni.etcdNodes.${vars.hostName}.url;
     listenClientUrls = lib.singleton vars.patroni.etcdNodesClient.${vars.hostName}.url;
   };
-  # run on any architecture
-  systemd.services.etcd.environment.ETCD_UNSUPPORTED_ARCH = pkgs.go.GOARCH;
+  systemd.services.etcd = {
+    # run on any architecture
+    environment.ETCD_UNSUPPORTED_ARCH = pkgs.go.GOARCH;
+    serviceConfig = {
+      RestartSec = "5s";
+      Restart = "on-failure";
+    };
+  };
 }
