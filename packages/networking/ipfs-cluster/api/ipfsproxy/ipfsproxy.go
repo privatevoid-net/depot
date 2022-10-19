@@ -24,6 +24,7 @@ import (
 	"github.com/ipfs-cluster/ipfs-cluster/adder/adderutils"
 	"github.com/ipfs-cluster/ipfs-cluster/api"
 	"github.com/ipfs-cluster/ipfs-cluster/rpcutil"
+	"github.com/tv42/httpunix"
 
 	handlers "github.com/gorilla/handlers"
 	mux "github.com/gorilla/mux"
@@ -33,6 +34,7 @@ import (
 	path "github.com/ipfs/go-path"
 	peer "github.com/libp2p/go-libp2p-core/peer"
 	rpc "github.com/libp2p/go-libp2p-gorpc"
+	"github.com/multiformats/go-multiaddr"
 	madns "github.com/multiformats/go-multiaddr-dns"
 	manet "github.com/multiformats/go-multiaddr/net"
 
@@ -129,6 +131,22 @@ func New(cfg *Config) (*Server, error) {
 		return nil, err
 	}
 
+	nodeScheme := "http"
+	if cfg.NodeHTTPS {
+		nodeScheme = "https"
+	}
+
+	isUnixSocket := false
+	var unixTransport *httpunix.Transport
+	if unixSocketPath, err := nodeMAddr.ValueForProtocol(multiaddr.P_UNIX); err == nil {
+		unixTransport = &httpunix.Transport{}
+		unixTransport.RegisterLocation("ipfsproxyunix", unixSocketPath)
+		nodeAddr = "ipfsproxyunix"
+
+		nodeScheme = nodeScheme + "+unix"
+		isUnixSocket = true
+	}
+
 	var listeners []net.Listener
 	for _, addr := range cfg.ListenAddr {
 		proxyNet, proxyAddr, err := manet.DialArgs(addr)
@@ -143,10 +161,6 @@ func New(cfg *Config) (*Server, error) {
 		listeners = append(listeners, l)
 	}
 
-	nodeScheme := "http"
-	if cfg.NodeHTTPS {
-		nodeScheme = "https"
-	}
 	nodeHTTPAddr := fmt.Sprintf("%s://%s", nodeScheme, nodeAddr)
 	proxyURL, err := url.Parse(nodeHTTPAddr)
 	if err != nil {
@@ -195,7 +209,13 @@ func New(cfg *Config) (*Server, error) {
 	s.SetKeepAlivesEnabled(true) // A reminder that this can be changed
 
 	reverseProxy := httputil.NewSingleHostReverseProxy(proxyURL)
-	reverseProxy.Transport = http.DefaultTransport
+	if isUnixSocket {
+		t := &http.Transport{}
+		t.RegisterProtocol(httpunix.Scheme, unixTransport)
+		reverseProxy.Transport = t
+	} else {
+		reverseProxy.Transport = http.DefaultTransport
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 	proxy := &Server{
 		ctx:              ctx,
