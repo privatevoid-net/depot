@@ -19,6 +19,7 @@ import (
 
 	"github.com/ipfs-cluster/ipfs-cluster/api"
 	"github.com/ipfs-cluster/ipfs-cluster/observations"
+	"github.com/tv42/httpunix"
 
 	cid "github.com/ipfs/go-cid"
 	files "github.com/ipfs/go-ipfs-files"
@@ -27,6 +28,7 @@ import (
 	gopath "github.com/ipfs/go-path"
 	peer "github.com/libp2p/go-libp2p-core/peer"
 	rpc "github.com/libp2p/go-libp2p-gorpc"
+	"github.com/multiformats/go-multiaddr"
 	madns "github.com/multiformats/go-multiaddr-dns"
 	manet "github.com/multiformats/go-multiaddr/net"
 	"github.com/multiformats/go-multicodec"
@@ -51,8 +53,9 @@ type Connector struct {
 	ctx    context.Context
 	cancel func()
 
-	config   *Config
-	nodeAddr string
+	config         *Config
+	nodeAddr       string
+	nodeAddrScheme string
 
 	rpcClient *rpc.Client
 	rpcReady  chan struct{}
@@ -154,7 +157,25 @@ func NewConnector(cfg *Config) (*Connector, error) {
 		return nil, err
 	}
 
-	c := &http.Client{} // timeouts are handled by context timeouts
+	var c *http.Client
+	var nodeAddrScheme string
+	if unixSocketPath, err := nodeMAddr.ValueForProtocol(multiaddr.P_UNIX); err == nil {
+		u := &httpunix.Transport{}
+		u.RegisterLocation("ipfsapiunix", unixSocketPath)
+		nodeAddr = "ipfsapiunix"
+
+		t := &http.Transport{}
+		t.RegisterProtocol(httpunix.Scheme, u)
+
+		c = &http.Client{
+			Transport: t,
+		}
+		nodeAddrScheme = "http+unix"
+	} else {
+		c = &http.Client{} // timeouts are handled by context timeouts
+		nodeAddrScheme = "http"
+	}
+
 	if cfg.Tracing {
 		c.Transport = &ochttp.Transport{
 			Base:           http.DefaultTransport,
@@ -168,12 +189,13 @@ func NewConnector(cfg *Config) (*Connector, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	ipfs := &Connector{
-		ctx:      ctx,
-		config:   cfg,
-		cancel:   cancel,
-		nodeAddr: nodeAddr,
-		rpcReady: make(chan struct{}, 1),
-		client:   c,
+		ctx:            ctx,
+		config:         cfg,
+		cancel:         cancel,
+		nodeAddr:       nodeAddr,
+		nodeAddrScheme: nodeAddrScheme,
+		rpcReady:       make(chan struct{}, 1),
+		client:         c,
 	}
 
 	initializeMetrics(ctx)
@@ -705,7 +727,7 @@ func (ipfs *Connector) postCtxStreamResponse(ctx context.Context, path string, c
 // apiURL is a short-hand for building the url of the IPFS
 // daemon API.
 func (ipfs *Connector) apiURL() string {
-	return fmt.Sprintf("http://%s/api/v0", ipfs.nodeAddr)
+	return fmt.Sprintf("%s://%s/api/v0", ipfs.nodeAddrScheme, ipfs.nodeAddr)
 }
 
 // ConnectSwarms requests the ipfs addresses of other peers and

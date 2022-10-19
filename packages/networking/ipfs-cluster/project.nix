@@ -43,7 +43,9 @@
       ]);
     };
 
-    vendorSha256 = "sha256-lxJZ3W+VY1XWLePrT0uLT2Y2tIOETLzn8NC8FVDruNM=";
+    vendorSha256 = "sha256-4pCJnQ/X5bvlgyHcRVZ8LyOexaKmz+1xAntMpZCpvd0=";
+
+    doCheck = false;
 
     meta = with lib; { 
       description = "Allocate, replicate, and track Pins across a cluster of IPFS daemons"; 
