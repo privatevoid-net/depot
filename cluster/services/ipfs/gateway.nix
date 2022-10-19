@@ -1,4 +1,4 @@
-{ aspect, config, hosts, tools, ... }:
+{ config, hosts, tools, ... }:
 with tools.nginx;
 let
   inherit (tools.meta) domain;
@@ -6,21 +6,10 @@ let
   gw = config.links.ipfsGateway;
 in
 {
-  imports = [
-    aspect.modules.ipfs
-  ];
-
   systemd.services.ipfs = {
     serviceConfig = {
       LimitNOFILE = 524288;
       IOSchedulingPriority = 7;
-    };
-    environment = {
-      OTEL_TRACES_EXPORTER = "otlp";
-      OTEL_EXPORTER_OTLP_PROTOCOL = "grpc";
-      OTEL_EXPORTER_OTLP_ENDPOINT = config.links.tempo-otlp-grpc.url;
-      OTEL_TRACES_SAMPLER = "parentbased_traceidratio";
-      OTEL_TRACES_SAMPLER_ARG = "0.01";
     };
   };
 

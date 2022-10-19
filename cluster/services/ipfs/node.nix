@@ -9,7 +9,7 @@ let
 in
 {
   age.secrets.ipfs-swarm-key = {
-    file = ../../secrets/ipfs-swarm-key.age;
+    file = ../../../secrets/ipfs-swarm-key.age;
     mode = "0400";
     owner = cfg.user;
     inherit (cfg) group;

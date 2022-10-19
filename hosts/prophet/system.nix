@@ -14,7 +14,6 @@
       ./services/reflex
       aspect.modules.hercules-ci-agent
       aspect.modules.hyprspace
-      aspect.modules.ipfs
       aspect.modules.nix-builder
       aspect.modules.sss
 

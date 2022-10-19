@@ -22,7 +22,6 @@
       ./services/fbi
       ./services/gitlab
       ./services/hydra
-      ./services/ipfs
       ./services/jokes
       ./services/nextcloud
       ./services/nfs
