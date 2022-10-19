@@ -20,6 +20,12 @@ in {
       enable = mkEnableOption
         "Pinset orchestration for IPFS - requires ipfs daemon to be useful";
 
+      package = mkOption {
+        type = types.package;
+        default = pkgs.ipfs-cluster;
+        description = "ipfs-cluster package";
+      };
+
       user = mkOption {
         type = types.str;
         default = "ipfs";
@@ -75,14 +81,14 @@ in {
   ###### implementation
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.ipfs-cluster ];
+    environment.systemPackages = [ cfg.package ];
 
 
     systemd.tmpfiles.rules =
       [ "d '${cfg.dataDir}' - ${cfg.user} ${cfg.group} - -" ];
 
     systemd.services.ipfs-cluster-init = {
-      path = [ "/run/wrappers" pkgs.ipfs-cluster ];
+      path = [ "/run/wrappers" cfg.package ];
       environment.IPFS_CLUSTER_PATH = cfg.dataDir;
       wantedBy = [ "default.target" ];
 
@@ -90,7 +96,7 @@ in {
         # "" clears exec list (man systemd.service -> execStart)
         ExecStart = [
           ""
-          "${pkgs.ipfs-cluster}/bin/ipfs-cluster-service init --consensus ${cfg.consensus} ${initFlags}"
+          "${cfg.package}/bin/ipfs-cluster-service init --consensus ${cfg.consensus} ${initFlags}"
         ];
         Type = "oneshot";
         RemainAfterExit = true;
@@ -111,7 +117,7 @@ in {
 
       serviceConfig = {
         ExecStart =
-          [ "" "${pkgs.ipfs-cluster}/bin/ipfs-cluster-service daemon" ];
+          [ "" "${cfg.package}/bin/ipfs-cluster-service daemon" ];
         User = cfg.user;
         Group = cfg.group;
       };
