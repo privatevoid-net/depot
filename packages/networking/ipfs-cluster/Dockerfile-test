@@ -1,0 +1,68 @@
+FROM golang:1.18-buster AS builder
+MAINTAINER Hector Sanjuan <hector@protocol.ai>
+
+# This build state just builds the cluster binaries
+
+ENV GOPATH      /go
+ENV SRC_PATH    $GOPATH/src/github.com/ipfs-cluster/ipfs-cluster
+ENV GO111MODULE on
+ENV GOPROXY     https://proxy.golang.org
+
+RUN cd /tmp && \
+    wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && \
+    chmod +x jq-linux64
+
+COPY --chown=1000:users go.* $SRC_PATH/
+WORKDIR $SRC_PATH
+RUN go mod download
+
+COPY --chown=1000:users . $SRC_PATH
+RUN make install
+
+#------------------------------------------------------
+FROM ipfs/go-ipfs:master
+MAINTAINER Hector Sanjuan <hector@protocol.ai>
+
+# This is the container which just puts the previously
+# built binaries on the go-ipfs-container.
+
+ENV GOPATH                                      /go
+ENV SRC_PATH                                    /go/src/github.com/ipfs-cluster/ipfs-cluster
+ENV IPFS_CLUSTER_PATH                           /data/ipfs-cluster
+ENV IPFS_CLUSTER_CONSENSUS                      crdt
+ENV IPFS_CLUSTER_DATASTORE                      leveldb
+ENV IPFS_CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS /ip4/0.0.0.0/tcp/9094
+ENV IPFS_CLUSTER_IPFSPROXY_LISTENMULTIADDRESS   /ip4/0.0.0.0/tcp/9095
+
+EXPOSE 9094
+EXPOSE 9095
+EXPOSE 9096
+
+COPY --from=builder $GOPATH/bin/ipfs-cluster-service /usr/local/bin/ipfs-cluster-service
+COPY --from=builder $GOPATH/bin/ipfs-cluster-ctl /usr/local/bin/ipfs-cluster-ctl
+COPY --from=builder $GOPATH/bin/ipfs-cluster-follow /usr/local/bin/ipfs-cluster-follow
+COPY --from=builder $SRC_PATH/docker/test-entrypoint.sh /usr/local/bin/test-entrypoint.sh
+COPY --from=builder $SRC_PATH/docker/random-stopper.sh /usr/local/bin/random-stopper.sh
+COPY --from=builder $SRC_PATH/docker/random-killer.sh /usr/local/bin/random-killer.sh
+COPY --from=builder $SRC_PATH/docker/wait-killer-stopper.sh /usr/local/bin/wait-killer-stopper.sh
+COPY --from=builder $SRC_PATH/docker/cluster-restart.sh /usr/local/bin/cluster-restart.sh
+
+# Add jq
+COPY --from=builder /tmp/jq-linux64 /usr/local/bin/jq
+
+# Add bash
+COPY --from=builder /bin/bash /bin/bash
+COPY --from=builder /lib/*-linux-gnu*/libtinfo.so* /lib64/
+
+USER root
+
+RUN mkdir -p $IPFS_CLUSTER_PATH && \
+    chown 1000:100 $IPFS_CLUSTER_PATH
+
+USER ipfs
+
+VOLUME $IPFS_CLUSTER_PATH
+ENTRYPOINT ["/usr/local/bin/test-entrypoint.sh"]
+
+# Defaults would go here
+CMD ["daemon"]

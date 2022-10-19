@@ -1,0 +1,49 @@
+FROM golang:1.18-buster AS builder
+MAINTAINER Hector Sanjuan <hector@protocol.ai>
+
+# This dockerfile builds cluster and runs it along with go-ipfs.
+# It re-uses the latest go-ipfs:release container.
+
+# This builder just builds the cluster binaries
+ENV GOPATH      /go
+ENV SRC_PATH    $GOPATH/src/github.com/ipfs-cluster/ipfs-cluster
+ENV GO111MODULE on
+ENV GOPROXY     https://proxy.golang.org
+
+COPY --chown=1000:users go.* $SRC_PATH/
+WORKDIR $SRC_PATH
+RUN go mod download
+
+COPY --chown=1000:users . $SRC_PATH
+RUN make install
+
+#------------------------------------------------------
+FROM ipfs/go-ipfs:release
+MAINTAINER Hector Sanjuan <hector@protocol.ai>
+
+# This is the container which just puts the previously
+# built binaries on the go-ipfs-container.
+
+ENV GOPATH                 /go
+ENV SRC_PATH               /go/src/github.com/ipfs-cluster/ipfs-cluster
+ENV IPFS_CLUSTER_PATH      /data/ipfs-cluster
+ENV IPFS_CLUSTER_CONSENSUS crdt
+ENV IPFS_CLUSTER_DATASTORE leveldb
+
+EXPOSE 9094
+EXPOSE 9095
+EXPOSE 9096
+
+COPY --from=builder $GOPATH/bin/ipfs-cluster-service /usr/local/bin/ipfs-cluster-service
+COPY --from=builder $GOPATH/bin/ipfs-cluster-ctl /usr/local/bin/ipfs-cluster-ctl
+COPY --from=builder $GOPATH/bin/ipfs-cluster-follow /usr/local/bin/ipfs-cluster-follow
+COPY --from=builder $SRC_PATH/docker/start-daemons.sh /usr/local/bin/start-daemons.sh
+
+RUN mkdir -p $IPFS_CLUSTER_PATH && \
+    chown 1000:100 $IPFS_CLUSTER_PATH
+
+VOLUME $IPFS_CLUSTER_PATH
+ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/start-daemons.sh"]
+
+# Defaults for ipfs-cluster-service go here
+CMD ["daemon"]

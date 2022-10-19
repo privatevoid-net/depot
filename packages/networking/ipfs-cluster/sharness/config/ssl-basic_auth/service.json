@@ -1,0 +1,93 @@
+{
+  "cluster": {
+    "peername": "testname",
+    "secret": "84399cd0be811c2ca372d6ca473ffd73c09034f991c5e306fe9ada6c5fcfb641",
+    "leave_on_shutdown": false,
+    "listen_multiaddress": [
+      "/ip4/0.0.0.0/tcp/9096",
+      "/ip6/::/tcp/9096"
+    ],
+    "state_sync_interval": "1m0s",
+    "replication_factor": -1,
+    "monitor_ping_interval": "15s"
+  },
+  "consensus": {
+    "raft": {
+      "heartbeat_timeout": "1s",
+      "election_timeout": "1s",
+      "commit_timeout": "50ms",
+      "max_append_entries": 64,
+      "trailing_logs": 10240,
+      "snapshot_interval": "2m0s",
+      "snapshot_threshold": 8192,
+      "leader_lease_timeout": "500ms"
+    }
+  },
+  "api": {
+    "ipfsproxy": {
+      "listen_multiaddress": "/ip4/127.0.0.1/tcp/9095",
+      "node_multiaddress": "/ip4/127.0.0.1/tcp/5001",
+      "read_timeout": "10m0s",
+      "read_header_timeout": "5s",
+      "write_timeout": "10m0s",
+      "idle_timeout": "1m0s"
+    },
+    "restapi": {
+      "ssl_cert_file": "server.crt",
+      "ssl_key_file": "server.key",
+      "http_listen_multiaddress": "/ip4/127.0.0.1/tcp/9094",
+      "read_timeout": "30s",
+      "read_header_timeout": "5s",
+      "write_timeout": "1m0s",
+      "idle_timeout": "2m0s",
+      "basic_auth_credentials": {
+        "testuser": "testpass",
+        "userwithoutpass": ""
+      },
+      "cors_allowed_origins": [
+        "*"
+      ],
+      "cors_allowed_methods": [
+        "GET"
+      ],
+      "cors_allowed_headers": [],
+      "cors_exposed_headers": [
+        "Content-Type",
+        "X-Stream-Output",
+        "X-Chunked-Output",
+        "X-Content-Length"
+      ],
+      "cors_allow_credentials": true,
+      "cors_max_age": "0s"
+    }
+  },
+  "ipfs_connector": {
+    "ipfshttp": {
+      "node_multiaddress": "/ip4/127.0.0.1/tcp/5001",
+      "connect_swarms_delay": "30s",
+      "ipfs_request_timeout": "5m0s",
+      "pin_timeout": "0h2m0s",
+      "unpin_timeout": "3h0m0s"
+    }
+  },
+  "pin_tracker": {
+    "stateless": {
+      "max_pin_queue_size": 50000,
+      "concurrent_pins": 10
+    }
+  },
+  "monitor": {
+    "pubsubmon": {
+      "check_interval": "15s"
+    }
+  },
+  "informer": {
+    "disk": {
+      "metric_ttl": "30s",
+      "metric_type": "reposize"
+    },
+    "numpin": {
+      "metric_ttl": "10s"
+    }
+  }
+}

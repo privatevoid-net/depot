@@ -1,0 +1,38 @@
+ratings:
+  paths: 
+  - "**/*.go"
+
+checks:
+  file-lines:
+    config:
+      threshold: 500
+  method-complexity:
+    config:
+      threshold: 15
+  method-lines:
+    config:
+      threshold: 80
+  similar-code:
+    enabled: false
+  return-statements:
+    config:
+      threshold: 10
+  argument-count:
+    config:
+      threshold: 6
+  
+engines:
+  fixme:
+    enabled: true
+    config:
+      strings:
+      - FIXME
+      - HACK
+      - XXX
+      - BUG
+  golint:
+    enabled: true
+  govet:
+    enabled: true
+  gofmt:
+    enabled: true

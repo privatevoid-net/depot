@@ -28,6 +28,7 @@
       ./build-support
 
       ./networking/hyprspace/project.nix
+      ./networking/ipfs-cluster/project.nix
       ./websites/landing/project.nix
       ./websites/stop-using-nix-env/project.nix
     ];
