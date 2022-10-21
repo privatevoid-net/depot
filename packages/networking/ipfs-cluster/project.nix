@@ -43,7 +43,7 @@
       ]);
     };
 
-    vendorSha256 = "sha256-4pCJnQ/X5bvlgyHcRVZ8LyOexaKmz+1xAntMpZCpvd0=";
+    vendorSha256 = "sha256-/fy46kF9XN0nrkmgPjFCxHGsqbxabTKFNGKUIoDBDjI=";
 
     doCheck = false;
 

@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/coreos/go-systemd/v22/daemon"
 	"github.com/ipfs-cluster/ipfs-cluster/adder"
 	"github.com/ipfs-cluster/ipfs-cluster/adder/sharding"
 	"github.com/ipfs-cluster/ipfs-cluster/adder/single"
@@ -746,6 +747,7 @@ This might be due to one or several causes:
 	c.readyB = true
 	c.shutdownLock.Unlock()
 	logger.Info("** IPFS Cluster is READY **")
+	daemon.SdNotify(false, daemon.SdNotifyReady)
 }
 
 // Ready returns a channel which signals when this peer is

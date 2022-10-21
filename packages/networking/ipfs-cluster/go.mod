@@ -4,6 +4,7 @@ require (
 	contrib.go.opencensus.io/exporter/jaeger v0.2.1
 	contrib.go.opencensus.io/exporter/prometheus v0.4.1
 	github.com/blang/semver v3.5.1+incompatible
+	github.com/coreos/go-systemd/v22 v22.3.2
 	github.com/dgraph-io/badger v1.6.2
 	github.com/dustin/go-humanize v1.0.0
 	github.com/golang-jwt/jwt/v4 v4.4.2
@@ -86,7 +87,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cheekybits/genny v1.0.0 // indirect
 	github.com/containerd/cgroups v1.0.3 // indirect
-	github.com/coreos/go-systemd/v22 v22.3.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/crackcomm/go-gitignore v0.0.0-20170627025303-887ab5e44cc3 // indirect
 	github.com/cskr/pubsub v1.0.2 // indirect
