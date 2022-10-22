@@ -9,7 +9,7 @@ let
   linkSecure = cluster.config.hostLinks.${vars.hostName}.ircSecure;
   otherServers = map mkServer cluster.config.services.irc.otherNodes.host;
   otherServerFiles = map (builtins.toFile "ngircd-peer.conf") otherServers;
-  opers = map mkOper [ "max" "num" "ark" ];
+  opers = map mkOper vars.ircOpers;
 
   mkServer = name: let
     peerLink = cluster.config.hostLinks.${name}.ircSecure;

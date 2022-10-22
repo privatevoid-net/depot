@@ -14,6 +14,7 @@ in
       owner = "ngircd";
       group = "ngircd";
     };
+    ircOpers = [ "max" "num" "ark" ];
   };
   hostLinks = lib.genAttrs config.services.irc.nodes.host (name: {
     irc = {
