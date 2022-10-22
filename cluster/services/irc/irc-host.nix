@@ -1,21 +1,23 @@
 { cluster, config, pkgs, tools, ... }:
 
 let
-  inherit (tools.meta) domain adminEmail;
+  inherit (tools.meta) adminEmail;
   inherit (cluster) vars;
-  inherit (vars.ircServers.${vars.hostName}) subDomain;
 
-  link = cluster.config.links.irc;
-  linkSecure = cluster.config.links.ircSecure;
+  linkGlobalSecure = cluster.config.links.ircSecure;
+  link = cluster.config.hostLinks.${vars.hostName}.irc;
+  linkSecure = cluster.config.hostLinks.${vars.hostName}.ircSecure;
   otherServers = map mkServer cluster.config.services.irc.otherNodes.host;
   otherServerFiles = map (builtins.toFile "ngircd-peer.conf") otherServers;
   opers = map mkOper [ "max" "num" "ark" ];
 
-  mkServer = name: ''
+  mkServer = name: let
+    peerLink = cluster.config.hostLinks.${name}.ircSecure;
+  in ''
     [Server]
-    Name = ${vars.ircServers.${name}.subDomain}.irc.${domain}
-    Host = ${vars.ircServers.${name}.subDomain}.irc.${domain}
-    Port = ${linkSecure.portStr}
+    Name = ${peerLink.ipv4}
+    Host = ${peerLink.ipv4}
+    Port = ${peerLink.portStr}
     MyPassword = @PEER_PASSWORD@
     PeerPassword = @PEER_PASSWORD@
     SSLConnect = yes
@@ -30,7 +32,7 @@ let
     Mask = *!${name}@*
   '';
 
-  serverName = "${subDomain}.irc.${domain}";
+  serverName = linkSecure.ipv4;
   cert = config.security.acme.certs."${serverName}";
   dh = config.security.dhparams.params.ngircd;
 in {
@@ -82,7 +84,7 @@ in {
     dnsProvider = "pdns";
     group = "ngircd";
     reloadServices = [ "ngircd" ];
-    extraDomainNames = [ "irc.${domain}" ];
+    extraDomainNames = [ linkGlobalSecure.ipv4 ];
   };
   security.pam.services.ngircd = {
     text = ''

@@ -1,24 +1,37 @@
-{ tools, ... }:
+{ config, lib, tools, ... }:
 
+let
+  inherit (tools.meta) domain;
+  subDomains = {
+    VEGAS = "eu1";
+    prophet = "eu2";
+  };
+in
 {
   vars = {
-    ircServers = {
-      VEGAS.subDomain = "eu1";
-      prophet.subDomain = "eu2";
-    };
     ircPeerKey = {
       file = ./irc-peer-key.age;
       owner = "ngircd";
       group = "ngircd";
     };
   };
+  hostLinks = lib.genAttrs config.services.irc.nodes.host (name: {
+    irc = {
+      ipv4 = "${subDomains.${name}}.irc.${domain}";
+      inherit (config.links.irc) port;
+    };
+    ircSecure = {
+      ipv4 = "${subDomains.${name}}.irc.${domain}";
+      inherit (config.links.ircSecure) port;
+    };
+  });
   links = {
     irc = {
-      ipv4 = "irc.${tools.meta.domain}";
+      ipv4 = "irc.${domain}";
       port = 6667;
     };
     ircSecure = {
-      ipv4 = "irc.${tools.meta.domain}";
+      ipv4 = "irc.${domain}";
       port = 6697;
     };
   };
