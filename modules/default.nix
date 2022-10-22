@@ -9,6 +9,7 @@ let
     hercules-ci-agent = import ./hercules-ci-agent;
     hydra = import ./hydra;
     hyprspace = import ./hyprspace;
+    ipfs = import ./ipfs;
     ipfs-cluster = import ./ipfs-cluster;
     maintenance = import ./maintenance;
     minimal = import ./minimal;
