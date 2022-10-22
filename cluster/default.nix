@@ -13,6 +13,7 @@ lib.evalModules {
     ./lib/load-hosts.nix
     ./lib/services.nix
     ./lib/inject-nixos-config.nix
+    ./lib/port-magic-multi.nix
 
     ./import-services.nix
   ];
