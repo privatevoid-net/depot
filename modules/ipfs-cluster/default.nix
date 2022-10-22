@@ -11,6 +11,11 @@ let
   ];
 
   serviceJson = builtins.toFile "ipfs-cluster-service.json" (builtins.toJSON cfg.settings);
+
+  pinSvcBasicAuthFile = if cfg.pinSvcBasicAuthFile != null then
+    cfg.pinSvcBasicAuthFile
+  else
+    "/dev/null";
 in {
 
   ###### interface
@@ -83,6 +88,22 @@ in {
         default = {};
         description = "Configuration to be merged into service.json";
       };
+
+      pinSvcBasicAuthFile = mkOption {
+        type = types.nullOr types.path;
+        default = null;
+        description = ''
+          JSON file containing basic auth credentials for the pinning service API.
+
+          Use the following format:
+          <programlisting>
+          {
+            "username1": "password1",
+            "username2": "password2"
+          }
+          </programlisting>
+        '';
+      };
     };
   };
 
@@ -124,7 +145,8 @@ in {
       after = [ "ipfs-cluster-init.service" ];
 
       preStart = ''
-        ${pkgs.jq}/bin/jq --slurp '.[0] * .[1]' '${cfg.dataDir}/service.json' ${serviceJson} \
+        ${pkgs.jq}/bin/jq --slurp '.[0] * .[1] * { api: { pinsvcapi: { basic_auth_credentials: .[2] } } }' \
+          '${cfg.dataDir}/service.json' ${serviceJson} '${pinSvcBasicAuthFile}' \
           | install -D -m 600 -o '${cfg.user}' -g '${cfg.group}' /dev/stdin '${cfg.dataDir}/.service.json.new'
         mv '${cfg.dataDir}/.service.json.new' '${cfg.dataDir}/service.json'
       '';
