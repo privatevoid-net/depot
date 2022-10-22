@@ -1,4 +1,4 @@
-{ config, inputs, lib, pkgs, tools, ... }:
+{ aspect, config, inputs, lib, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
   cfg = config.services.ipfs;
@@ -8,6 +8,10 @@ let
   ipfsPort = 110;
 in
 {
+  imports = [
+    aspect.modules.ipfs
+  ];
+
   age.secrets.ipfs-swarm-key = {
     file = ../../../secrets/ipfs-swarm-key.age;
     mode = "0400";
