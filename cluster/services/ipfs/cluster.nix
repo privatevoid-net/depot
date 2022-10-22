@@ -1,6 +1,9 @@
-{ aspect, config, inputs, pkgs, ... }:
+{ aspect, config, inputs, lib, pkgs, tools, ... }:
 
 let
+  inherit (tools.meta) domain;
+  inherit (tools.nginx) vhosts;
+  cfg = config.services.ipfs-cluster;
   ipfsCfg = config.services.ipfs;
 
   apiSocket = "/run/ipfs-cluster/ipfs-cluster-api.sock";
@@ -11,8 +14,12 @@ in {
     aspect.modules.ipfs-cluster
   ];
 
-  age.secrets.ipfs-cluster-secret = {
-    file = ./cluster-secret.age;
+  age.secrets = {
+    ipfs-cluster-secret.file = ./cluster-secret.age;
+    ipfs-cluster-pinsvc-credentials = {
+      file = ./cluster-pinsvc-credentials.age;
+      owner = cfg.user;
+    };
   };
 
   services.ipfs-cluster = {
@@ -21,6 +28,7 @@ in {
     consensus = "crdt";
     dataDir = "/srv/storage/ipfs/cluster";
     secretFile = config.age.secrets.ipfs-cluster-secret.path;
+    pinSvcBasicAuthFile = config.age.secrets.ipfs-cluster-pinsvc-credentials.path;
     openSwarmPort = true;
     settings = {
       cluster = {
@@ -67,5 +75,12 @@ in {
         "fe80::/10"
       ];
     };
+  };
+
+  services.nginx.virtualHosts."pin.${domain}" = vhosts.proxy "http://unix:${pinSvcSocket}";
+  users.users.nginx.extraGroups = [ cfg.group ];
+  security.acme.certs."pin.${domain}" = {
+    dnsProvider = "pdns";
+    webroot = lib.mkForce null;
   };
 }

@@ -10,6 +10,7 @@ in with hosts;
   "cluster/services/dns/pdns-api-key.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/dns/pdns-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/ipfs/cluster-secret.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
+  "cluster/services/ipfs/cluster-pinsvc-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/irc/irc-peer-key.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/patroni/passwords/replication.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/patroni/passwords/rewind.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
