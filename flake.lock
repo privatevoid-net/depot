@@ -103,7 +103,9 @@
         "flake-utils-pre-commit": [
           "blank"
         ],
-        "ghc-utils": "ghc-utils",
+        "ghc-utils": [
+          "blank"
+        ],
         "gomod2nix": [
           "blank"
         ],
@@ -167,22 +169,6 @@
         "owner": "numtide",
         "repo": "flake-utils",
         "type": "github"
-      }
-    },
-    "ghc-utils": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1662774800,
-        "narHash": "sha256-1Rd2eohGUw/s1tfvkepeYpg8kCEXiIot0RijapUjAkE=",
-        "ref": "refs/heads/master",
-        "rev": "bb3a2d3dc52ff0253fb9c2812bd7aa2da03e0fea",
-        "revCount": 1072,
-        "type": "git",
-        "url": "https://gitlab.haskell.org/bgamari/ghc-utils"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://gitlab.haskell.org/bgamari/ghc-utils"
       }
     },
     "hercules-ci-agent": {
