@@ -134,6 +134,7 @@
         crane.follows = "blank";
         devshell.follows = "blank";
         flake-utils-pre-commit.follows = "blank";
+        ghc-utils.follows = "blank";
         gomod2nix.follows = "blank";
         mach-nix.follows = "blank";
         poetry2nix.follows = "poetry2nix";
