@@ -21,7 +21,6 @@
       ./services/bitwarden
       ./services/fbi
       ./services/gitlab
-      ./services/hydra
       ./services/jokes
       ./services/nextcloud
       ./services/nfs
