@@ -1,0 +1,917 @@
+definitions:
+  models.GroupID:
+    properties:
+      gid:
+        type: integer
+    type: object
+  models.GroupInfo:
+    properties:
+      description:
+        type: string
+      gid:
+        type: integer
+      guac_config_parameters:
+        type: string
+      guac_config_protocol:
+        type: string
+      members:
+        items:
+          $ref: '#/definitions/models.UserInfo'
+        type: array
+      name:
+        type: string
+    type: object
+  models.GroupMembers:
+    properties:
+      members:
+        type: string
+    type: object
+  models.JSONGroupBody:
+    properties:
+      description:
+        type: string
+      guac_config_parameters:
+        type: string
+      guac_config_protocol:
+        type: string
+      members:
+        type: string
+      name:
+        type: string
+      replace:
+        type: boolean
+    type: object
+  models.JSONPasswdBody:
+    properties:
+      old_password:
+        type: string
+      password:
+        type: string
+    type: object
+  models.JSONUserBody:
+    properties:
+      email:
+        type: string
+      firstname:
+        type: string
+      jpeg_photo:
+        type: string
+      lastname:
+        type: string
+      locked:
+        type: boolean
+      manager:
+        type: boolean
+      members:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      readonly:
+        type: boolean
+      remove:
+        type: boolean
+      replace:
+        type: boolean
+      ssh_public_key:
+        type: string
+      username:
+        type: string
+    type: object
+  models.UserID:
+    properties:
+      uid:
+        type: integer
+    type: object
+  models.UserInfo:
+    properties:
+      email:
+        type: string
+      firstname:
+        type: string
+      jpeg_photo:
+        type: string
+      lastname:
+        type: string
+      locked:
+        type: boolean
+      manager:
+        type: boolean
+      memberOf:
+        items:
+          $ref: '#/definitions/models.GroupInfo'
+        type: array
+      name:
+        type: string
+      readonly:
+        type: boolean
+      ssh_public_key:
+        type: string
+      uid:
+        type: integer
+      username:
+        type: string
+    type: object
+  types.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.GuacamoleSupport:
+    properties:
+      guac_enabled:
+        type: boolean
+    type: object
+  types.LoginBody:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  types.TokenAuthentication:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: number
+      expires_on:
+        type: integer
+      refresh_token:
+        type: string
+      token_type:
+        type: string
+    type: object
+  types.Tokens:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /groups:
+    get:
+      consumes:
+      - application/json
+      description: Find all groups
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GroupInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Find all groups
+      tags:
+      - groups
+    post:
+      consumes:
+      - application/json
+      description: Create a new group
+      parameters:
+      - description: Group body. Name is required. The members property expect a comma-separated
+          list of usernames e.g 'bob,sally'. The replace property is not used in this
+          command.
+        in: body
+        name: group
+        required: true
+        schema:
+          $ref: '#/definitions/models.JSONGroupBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GroupInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Create a new group
+      tags:
+      - groups
+  /groups/{group}/gid:
+    get:
+      consumes:
+      - application/json
+      description: Find user by group
+      parameters:
+      - description: group
+        in: path
+        name: group
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GroupID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Find user by group
+      tags:
+      - users
+  /groups/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a group
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Delete a group
+      tags:
+      - groups
+    get:
+      consumes:
+      - application/json
+      description: Find group by id
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GroupInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Find group by id
+      tags:
+      - groups
+    put:
+      consumes:
+      - application/json
+      description: Update group
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Group body. All properties are optional. The members property
+          expect a comma-separated list of usernames e.g 'bob,sally'. The replace
+          property if true will replace all members by those selected by the members
+          property, if replace is false the member will be added to current members.
+        in: body
+        name: group
+        required: true
+        schema:
+          $ref: '#/definitions/models.JSONGroupBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Update group
+      tags:
+      - groups
+  /groups/{id}/members:
+    delete:
+      consumes:
+      - application/json
+      description: Remove members from a group
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Group members body. The members property expect a comma-separated
+          list of usernames e.g 'bob,sally' to be removed from the group
+        in: body
+        name: members
+        required: true
+        schema:
+          $ref: '#/definitions/models.GroupMembers'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Remove members from a group
+      tags:
+      - groups
+    post:
+      consumes:
+      - application/json
+      description: Add members to a group
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Group members body. The members property expect a comma-separated
+          list of usernames e.g 'bob,sally' to be added to the group
+        in: body
+        name: members
+        required: true
+        schema:
+          $ref: '#/definitions/models.GroupMembers'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GroupInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Add members to a group
+      tags:
+      - groups
+  /guacamole:
+    get:
+      description: Get a boolean showing if Apache Guacamole support is enabled
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GuacamoleSupport'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Check if Apache Guacamole support is enabled
+  /healthz:
+    get:
+      description: Get a boolean showing if Apache Guacamole support is enabled
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Check if Glim is running
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Log in to the API and get JWT access and refresh tokens
+      parameters:
+      - description: Username and password
+        in: body
+        name: authentication
+        required: true
+        schema:
+          $ref: '#/definitions/types.LoginBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.TokenAuthentication'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Log in to the API
+      tags:
+      - authentication
+  /login/refresh_token:
+    delete:
+      consumes:
+      - application/json
+      description: Log out from the API
+      parameters:
+      - description: Access and Refresh JWT tokens
+        in: body
+        name: tokens
+        required: true
+        schema:
+          $ref: '#/definitions/types.Tokens'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Delete authentication tokens
+      tags:
+      - authentication
+    post:
+      consumes:
+      - application/json
+      description: Get new JWT access and refresh tokens
+      parameters:
+      - description: Access and Refresh JWT tokens
+        in: body
+        name: tokens
+        required: true
+        schema:
+          $ref: '#/definitions/types.Tokens'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.TokenAuthentication'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Refresh authentication tokens
+      tags:
+      - authentication
+  /readyz:
+    get:
+      description: Get a boolean showing if Apache Guacamole support is enabled
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: Check if Glim is running
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Find all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserInfo'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Find all users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create a new user in our database
+      parameters:
+      - description: User account body. Username is required. The members property
+          expect a comma-separated list of group names e.g 'admin,devel' that you
+          want the user be member of. Password property is optional, if set it will
+          be the password for that user, if no password is sent the user account will
+          be locked (user can not log in). Manager property if true will assign the
+          Manager role. Readonly property if true will set this user for read-only
+          usage (queries). Locked property if true will disable log in for that user.
+          Remove and replace properties are not currently used.
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.JSONUserBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Create a new user
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user account
+      parameters:
+      - description: User Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Delete user account
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Find user by id
+      parameters:
+      - description: User Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Find user by id
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update user account information
+      parameters:
+      - description: User Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User account body. Username is required. The members property
+          expect a comma-separated list of group names e.g 'admin,devel'. Password
+          property is optional, if set it will be the password for that user, if no
+          password is sent the user account will be locked (user can not log in).
+          Manager property if true will assign the Manager role. Readonly property
+          if true will set this user for read-only usage (queries). Locked property
+          if true will disable log in for that user. Remove property if true will
+          remove group membership from those specified in the members property. Remove
+          property if true will replace group membership from those specified in the
+          members property. Name property is not used
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.JSONUserBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Update user account information
+      tags:
+      - users
+  /users/{id}/passwd:
+    post:
+      consumes:
+      - application/json
+      description: Change user account password
+      parameters:
+      - description: User Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Password body
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/models.JSONPasswdBody'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Change user account password
+      tags:
+      - users
+  /users/{username}/uid:
+    get:
+      consumes:
+      - application/json
+      description: Find user by username
+      parameters:
+      - description: username
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Find user by username
+      tags:
+      - users
+swagger: "2.0"

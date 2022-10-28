@@ -27,6 +27,7 @@
       ./modules/devshell.nix
       ./build-support
 
+      ./idm/glim/project.nix
       ./networking/hyprspace/project.nix
       ./networking/ipfs-cluster/project.nix
       ./websites/landing/project.nix

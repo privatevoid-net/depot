@@ -1,0 +1,11 @@
+.env
+/server/kv/*.vlog
+/server/kv/LOCK
+/server/kv/MANIFEST
+/server/kv/*.sst
+/server/db/glim.db
+*.key
+*.pem
+glim
+*.db
+.vscode/**/*
