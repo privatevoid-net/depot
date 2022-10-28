@@ -43,7 +43,7 @@ ${tpurple}and we have${treset} ${tbold}$online_now${treset} ${tpurple}online use
     fi
 
     printf "\n${tbold}Who's been around?${treset}\n"
-    last | sed -r "/(^$|^wtmp|^reboot)/d" | head -n 5
+    last -R | sed -r "/(^$|^wtmp|^reboot)/d" | head -n 5
 
     dickswing=$(last | sed -r "/^$/d;/^(wtmp|reboot)/d;/\(00:0[0-1]\)/d" | awk '{print $1}' | sort | uniq -c | sort -nr | sed -r "s/^\s+//")
     as_of=$(last | grep "wtmp" | awk '{print "from", $4, $5, $7}')
