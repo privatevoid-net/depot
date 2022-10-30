@@ -28,9 +28,7 @@ in
       distRoot=$out/share/www
       dist=$distRoot/excalidraw
       mkdir -p $distRoot
-      mv $out/lib/node_modules/excalidraw/build $dist
-      chmod +w -R $out/lib
-      rm -rf $out/lib
+      mv $nodeModules/excalidraw/build $dist
       find $dist -type f -name "*.map" -delete
     '';
 
