@@ -6,7 +6,6 @@
       # Hardware
       ./hardware-configuration.nix
 
-      ./modules/nginx
       inputs.agenix.nixosModules.age
 
       ./services/cdn-shield

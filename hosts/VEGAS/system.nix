@@ -8,7 +8,6 @@
 
       # Plumbing
       ./modules/database
-      ./modules/nginx
       ./modules/oauth2-proxy
       ./modules/redis
       ./modules/virtualisation
