@@ -52,3 +52,5 @@ ${tpurple}and we have${treset} ${tbold}$online_now${treset} ${tpurple}online use
 }
 
 bootup
+
+test -e /motd.txt && cat /motd.txt
