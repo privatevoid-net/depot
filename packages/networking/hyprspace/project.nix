@@ -5,7 +5,7 @@
     tools = [
       pkgs.go_1_18
     ];
-    env.GOPATH.eval = "$PRJ_DATA_DIR/go";
+    env.GOPATH.eval = "$REPO_DATA_DIR/go";
   };
   packages.hyprspace = with pkgs; buildGo118Module {
     pname = "hyprspace";

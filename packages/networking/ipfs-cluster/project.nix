@@ -7,7 +7,7 @@
       pkgs.gnumake
       pkgs.gcc
     ];
-    env.GOPATH.eval = "$PRJ_DATA_DIR/go";
+    env.GOPATH.eval = "$REPO_DATA_DIR/go";
   };
   packages.ipfs-cluster = with pkgs; buildGo118Module {
     pname = "ipfs-cluster";
