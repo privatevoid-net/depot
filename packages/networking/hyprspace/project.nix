@@ -9,7 +9,7 @@
   };
   packages.hyprspace = with pkgs; buildGo118Module {
     pname = "hyprspace";
-    version = "0.2.2";
+    version = "0.3.0";
 
     src = with inputs.nix-filter.lib; let
       dirs = map inDirectory;
