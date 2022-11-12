@@ -38,7 +38,6 @@ in with hosts;
   "secrets/hydra-s3.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/hyprspace-key-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/hyprspace-key-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
-  "secrets/ipfs-swarm-key.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "secrets/keycloak-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/matrix-appservice-discord-token.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/minio-root-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
