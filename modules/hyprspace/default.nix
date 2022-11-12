@@ -43,7 +43,6 @@ in {
       ${pkgs.replace-secret}/bin/replace-secret '@HYPRSPACEPRIVATEKEY@' "${privateKeyFile}" ${runConfig}
       chmod 0400 ${runConfig}
     '';
-    environment.HYPRSPACE_SWARM_KEY = config.age.secrets.ipfs-swarm-key.path;
     serviceConfig = {
       Restart = "on-failure";
       RestartSec = "5s";
