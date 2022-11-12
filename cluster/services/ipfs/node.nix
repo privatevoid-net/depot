@@ -12,13 +12,6 @@ in
     aspect.modules.ipfs
   ];
 
-  age.secrets.ipfs-swarm-key = {
-    file = ../../../secrets/ipfs-swarm-key.age;
-    mode = "0400";
-    owner = cfg.user;
-    inherit (cfg) group;
-  };
-
   links.ipfsGateway.protocol = "http";
 
   networking.firewall = {
@@ -85,12 +78,10 @@ in
 
   systemd.tmpfiles.rules = [
     "d '/run/ipfs' 0750 ${cfg.user} ${cfg.group} - -"
-    "L+ '${cfg.dataDir}/swarm.key' - - - - ${config.age.secrets.ipfs-swarm-key.path}"
   ];
 
 
   systemd.services.ipfs = {
-    environment.LIBP2P_FORCE_PNET = "1";
     serviceConfig = {
       Slice = "remotefshost.slice";
       AmbientCapabilities = [ "CAP_NET_BIND_SERVICE" ];
