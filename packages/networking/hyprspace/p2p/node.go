@@ -20,6 +20,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/pnet"
 	"github.com/libp2p/go-libp2p/p2p/discovery/backoff"
 	"github.com/libp2p/go-libp2p/p2p/host/autorelay"
+	libp2pquic "github.com/libp2p/go-libp2p/p2p/transport/quic"
 	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	ma "github.com/multiformats/go-multiaddr"
 )
@@ -83,6 +84,9 @@ func CreateNode(ctx context.Context, inputKey []byte, port int, handler network.
 		maybePrivateNet = libp2p.PrivateNetwork(key)
 	}
 
+	ip6quic := fmt.Sprintf("/ip6/::/udp/%d/quic", port)
+	ip4quic := fmt.Sprintf("/ip4/0.0.0.0/udp/%d/quic", port)
+
 	ip6tcp := fmt.Sprintf("/ip6/::/tcp/%d", port)
 	ip4tcp := fmt.Sprintf("/ip4/0.0.0.0/tcp/%d", port)
 
@@ -91,11 +95,12 @@ func CreateNode(ctx context.Context, inputKey []byte, port int, handler network.
 	// Create libp2p node
 	node, err = libp2p.New(
 		maybePrivateNet,
-		libp2p.ListenAddrStrings(ip6tcp, ip4tcp),
+		libp2p.ListenAddrStrings(ip6tcp, ip4tcp, ip4quic, ip6quic),
 		libp2p.Identity(privateKey),
 		libp2p.DefaultSecurity,
 		libp2p.NATPortMap(),
 		libp2p.DefaultMuxers,
+		libp2p.Transport(libp2pquic.NewTransport),
 		libp2p.Transport(tcp.NewTCPTransport),
 		libp2p.EnableHolePunching(),
 		libp2p.EnableRelayService(),
