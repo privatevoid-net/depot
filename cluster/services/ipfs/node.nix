@@ -57,7 +57,10 @@ in
         Access-Control-Allow-Methods = [ "PUT" "POST" ];
       };
       Peering.Peers = map
-        (name: cluster.config.hostLinks.${name}.ipfs.extra.multiaddrQuic)
+        (name: let inherit (cluster.config.hostLinks.${name}.ipfs) extra; in {
+          ID = extra.peerId;
+          Addrs = extra.multiaddrs;
+        })
         cluster.config.services.ipfs.otherNodes.node;
       Gateway = {
         Writable = false;
