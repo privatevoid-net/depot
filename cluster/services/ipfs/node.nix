@@ -29,6 +29,8 @@ in
     swarmAddress = [
       "/ip4/0.0.0.0/tcp/${toString ipfsPort}"
       "/ip4/0.0.0.0/tcp/4001"
+      "/ip4/0.0.0.0/udp/${toString ipfsPort}/quic"
+      "/ip4/0.0.0.0/udp/4001/quic"
     ];
     inherit apiAddress;
     gatewayAddress = "/ip4/${gw.ipv4}/tcp/${gw.portStr}";
