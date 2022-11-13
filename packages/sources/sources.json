@@ -22,9 +22,9 @@
         "repo": "excalidraw"
       },
       "branch": "master",
-      "revision": "938ce241ffeceb50c4fb32b09be1c16c2ce3a195",
-      "url": "https://github.com/excalidraw/excalidraw/archive/938ce241ffeceb50c4fb32b09be1c16c2ce3a195.tar.gz",
-      "hash": "1nmv8ngrghkkxvdnz3v0c0q33yq513gj190bslpzf6fqarwsznjm"
+      "revision": "640affe7c06fc20cf93787b67cc8dea7aa50c51b",
+      "url": "https://github.com/excalidraw/excalidraw/archive/640affe7c06fc20cf93787b67cc8dea7aa50c51b.tar.gz",
+      "hash": "0yfx3s6hb0mqci6agr6cm8g7dc4yzc4yn0gcwn8fpl6931k26y49"
     },
     "searxng": {
       "type": "Git",
@@ -34,9 +34,9 @@
         "repo": "searxng"
       },
       "branch": "master",
-      "revision": "2dc5c0e1d61ea2d86f14af2cb6e1edfc4bfea20d",
-      "url": "https://github.com/searxng/searxng/archive/2dc5c0e1d61ea2d86f14af2cb6e1edfc4bfea20d.tar.gz",
-      "hash": "15g8zij524wfnkfwi60vm44yajrqg0n9aqddk90gq22nz1xc1zz3"
+      "revision": "3a765113eefc7ac0b1ee94e9a0ac0db8069ec336",
+      "url": "https://github.com/searxng/searxng/archive/3a765113eefc7ac0b1ee94e9a0ac0db8069ec336.tar.gz",
+      "hash": "0i22np3kvwwmzxg1h5xw5vslgq3d0x69a6qy93xy4n4b708drwf0"
     },
     "stevenblack-hosts": {
       "type": "GitRelease",
@@ -47,10 +47,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "3.11.27",
-      "revision": "dbc4d2c1b5e94f317f531e54605bc27d928507e4",
-      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.11.27",
-      "hash": "0r9fscq4qdxx5123j702w3jibwd63i6hn8hgdrxxai3yq7n4j3d2"
+      "version": "3.11.29",
+      "revision": "cfddf556709f28efc4a958200d3fb4e6e6b4119a",
+      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.11.29",
+      "hash": "1whv0qrcq2i59i6lhb72alaapcsm3pkw065v7nlg2vi9g5y7jziq"
     },
     "tempo": {
       "type": "GitRelease",

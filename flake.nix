@@ -172,6 +172,8 @@
       url = "github:hercules-ci/hercules-ci-effects";
       inputs = {
         nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        hercules-ci-agent.follows = "hercules-ci-agent";
       };
     };
 
