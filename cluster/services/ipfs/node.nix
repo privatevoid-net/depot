@@ -1,4 +1,4 @@
-{ aspect, config, inputs, lib, hosts, pkgs, tools, ... }:
+{ aspect, cluster, config, inputs, lib, hosts, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
   cfg = config.services.ipfs;
@@ -56,6 +56,9 @@ in
         ];
         Access-Control-Allow-Methods = [ "PUT" "POST" ];
       };
+      Peering.Peers = map
+        (name: cluster.config.hostLinks.${name}.ipfs.extra.multiaddrQuic)
+        cluster.config.services.ipfs.otherNodes.node;
       Gateway = {
         Writable = false;
         APICommands = [];
