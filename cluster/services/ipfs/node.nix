@@ -79,6 +79,47 @@ in
           ];
         };
       };
+      Experimental.AcceleratedDHTClient = true;
+      Routing = {
+        Type = "custom";
+        Routers = {
+          WanDHT = {
+            Type = "dht";
+            Parameters = {
+              Mode = "uato";
+              PublicIPNetwork = true;
+              AcceleratedDHTClient = true;
+            };
+          };
+          CidContact = {
+            Type = "reframe";
+            Parameters.Endpoint = "https://cid.contact/reframe";
+          };
+          Parallel = {
+            Type = "parallel";
+            Parameters.Routers = [
+              {
+                RouterName = "WanDHT";
+                IgnoreErrors = false;
+                Timeout = "5m";
+              }
+              {
+                RouterName = "CidContact";
+                IgnoreErrors = true;
+                Timeout = "3s";
+                ExecuteAfter = "1s";
+              }
+            ];
+          };
+        };
+        Methods = {
+          find-peers.RouterName = "Parallel";
+          find-providers.RouterName = "Parallel";
+          get-ipns.RouterName = "Parallel";
+          put-ipns.RouterName = "Parallel";
+          provide.RouterName = "WanDHT";
+        };
+      };
     };
   };
 
