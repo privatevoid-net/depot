@@ -1,8 +1,8 @@
-{ lib, buildGoModule, fetchurl, nixosTests, openssl, pkg-config }:
+{ lib, buildGo118Module, fetchurl, nixosTests, openssl, pkg-config }:
 
-buildGoModule rec {
+buildGo118Module rec {
   pname = "ipfs";
-  version = "0.15.0"; # When updating, also check if the repo version changed and adjust repoVersion below
+  version = "0.16.0"; # When updating, also check if the repo version changed and adjust repoVersion below
   rev = "v${version}";
 
   repoVersion = "12"; # Also update ipfs-migrator when changing the repo version
@@ -10,7 +10,7 @@ buildGoModule rec {
   # go-ipfs makes changes to it's source tarball that don't match the git source.
   src = fetchurl {
     url = "https://github.com/ipfs/kubo/releases/download/${rev}/kubo-source.tar.gz";
-    sha256 = "sha256-GkOY1G2CKXbMbHXkw5v27HmfkJIl2nZOmjjZbzuaRWs=";
+    sha256 = "sha256-FS7lwQS7ybyoIKPkcUtPIe3srO1O/cZN+x1nzWUlF20=";
   };
 
   # tarball contains multiple files/directories
@@ -39,7 +39,6 @@ buildGoModule rec {
     ./ipfs-allow-publish-with-ipns-mounted.patch
     ./ipfs-fuse-nuke-getxattr.patch
     ./ipfs-unsafe-allow-all-paths-for-filestore.patch
-    ./lain-webui-0.14.0.patch
   ];
 
   postPatch = ''
