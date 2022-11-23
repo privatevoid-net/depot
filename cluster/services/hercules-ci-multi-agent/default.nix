@@ -4,7 +4,8 @@
   services.hercules-ci-multi-agent = {
     nodes = {
       private-void = [ "VEGAS" "prophet" ];
-      nixpak = [ "VEGAS" ];
+      nixpak = [ "VEGAS" "prophet" ];
+      max = [ "VEGAS" "prophet" ];
     };
     nixos = {
       private-void = [
@@ -14,6 +15,10 @@
       nixpak = [
         ./common.nix
         ./orgs/nixpak.nix
+      ];
+      max = [
+        ./common.nix
+        ./orgs/max.nix
       ];
     };
   };
