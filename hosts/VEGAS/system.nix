@@ -37,7 +37,6 @@
       ./services/warehouse
       ./services/websites
       ./services/wireguard-server
-      aspect.modules.hercules-ci-agent
       aspect.modules.hyprspace
       aspect.modules.nix-builder
     ]
