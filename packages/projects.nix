@@ -36,7 +36,7 @@
       cinny = pkgs.callPackage ./web-apps/cinny { inherit pins; };
 
       excalidraw = let
-        dream = dream2nix.makeOutputs {
+        dream = dream2nix.dream2nix-interface.makeOutputs {
           source = pins.excalidraw;
         };
         inherit (dream.packages) excalidraw;
@@ -44,7 +44,7 @@
         excalidraw // { webroot = "${excalidraw}/${excalidraw.webPath}"; };
 
       uptime-kuma = let
-        dream = dream2nix.makeOutputs {
+        dream = dream2nix.dream2nix-interface.makeOutputs {
           source = pins.uptime-kuma;
         };
         inherit (dream.packages) uptime-kuma;
