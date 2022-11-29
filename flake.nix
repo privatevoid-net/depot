@@ -133,9 +133,11 @@
         crane.follows = "blank";
         devshell.follows = "blank";
         flake-utils-pre-commit.follows = "blank";
+        flake-parts.follows = "flake-parts";
         ghc-utils.follows = "blank";
         gomod2nix.follows = "blank";
         mach-nix.follows = "blank";
+        nix-pypi-fetcher.follows = "blank";
         poetry2nix.follows = "poetry2nix";
         pre-commit-hooks.follows = "blank";
       };
