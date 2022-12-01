@@ -92,7 +92,7 @@
     };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05-small";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11-small";
 
     nix-super = {
       url = "gitlab:max/nix-super?host=git.privatevoid.net";
