@@ -16,6 +16,8 @@ super: rec {
     ];
   })) "patches/base/dvc";
 
+  dvc-data = patch super.python3Packages.dvc-data "patches/base/dvc-data";
+
   sssd = (super.sssd.override { withSudo = true; }).overrideAttrs (old: {
     postFixup = (old.postFixup or "") + ''
       ${super.removeReferencesTo}/bin/remove-references-to -t ${super.stdenv.cc.cc} $out/modules/ldb/memberof.so
