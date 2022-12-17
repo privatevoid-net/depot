@@ -9,7 +9,7 @@
       runAs = "root";
     }
   ];
-  nix.trustedUsers = [ "deploy" ];
+  nix.settings.trusted-users = [ "deploy" ];
   users.users.deploy = {
     isNormalUser = true;
     uid = 1999;
