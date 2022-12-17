@@ -73,18 +73,17 @@ in
     };
     provision = {
       enable = true;
-      datasources = [
+      datasources.settings.datasources = [
         {
           name = "Prometheus";
-          # wait for https://github.com/NixOS/nixpkgs/pull/175330
-          # uid = "PBFA97CFB590B2093";
+          uid = "PBFA97CFB590B2093";
           inherit (links.prometheus) url;
           type = "prometheus";
           isDefault = true;
         }
         {
           name = "Loki";
-          # uid = "P8E80F9AEF21F6940";
+          uid = "P8E80F9AEF21F6940";
           inherit (loki-ingest) url;
           type = "loki";
         }
