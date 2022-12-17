@@ -19,6 +19,7 @@ in
   };
   services.nextcloud = {
     package = pkgs.nextcloud24;
+    enableBrokenCiphersForSSE = false;
     enable = true;
     https = true;
     hostName = "storage.${tools.meta.domain}";
