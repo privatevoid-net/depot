@@ -46,7 +46,7 @@ let
 in
 {
   disabledModules = [
-    "services/network-filesystems/ipfs.nix"
+    "services/network-filesystems/kubo.nix"
   ];
 
   ###### interface
