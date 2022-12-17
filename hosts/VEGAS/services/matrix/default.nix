@@ -154,7 +154,7 @@ in {
     }))
     {
       matrix-synapse.preStart = ''
-        ${pkgs.jq}/bin/jq -c --slurp '.[0] * .[1]' ${dbConfigJSON} '${dbPasswordFile}' | install -Dm400 -o matrix-synapse -g matrix-synapse /dev/stdin '${dbConfigOut}'
+        ${pkgs.jq}/bin/jq -c --slurp '.[0] * .[1]' ${dbConfigJSON} '${dbPasswordFile}' | install -Dm400 /dev/stdin '${dbConfigOut}'
       '';
     }
   ];
