@@ -13,7 +13,7 @@ nixosTest {
   };
   testScript = ''
     machine.wait_for_unit("keycloak.service")
-    machine.wait_for_open_port("80")
+    machine.wait_for_open_port(80)
     machine.succeed("curl --fail http://127.0.0.1:80")
   '';
 }
