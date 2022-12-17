@@ -1,0 +1,71 @@
+commit 2065fc148ce77be68c95a81a05391e1bb35da79d
+Author: Max <max@privatevoid.net>
+Date:   Sat Dec 17 14:35:20 2022 +0100
+
+    md5 to sha256 for 2.17.0
+
+diff --git a/src/dvc_objects/db.py b/src/dvc_objects/db.py
+index 0f0ab16..3b87fdb 100644
+--- a/src/dvc_objects/db.py
++++ b/src/dvc_objects/db.py
+@@ -229,7 +229,7 @@ class ObjectDB:
+         returned.
+ 
+         NOTE: For large remotes the list of oids will be very
+-        big(e.g. 100M entries, md5 for each is 32 bytes, so ~3200Mb list)
++        big(e.g. 100M entries, sha256 for each is 32 bytes, so ~3200Mb list)
+         and we don't really need all of it at the same time, so it makes
+         sense to use a generator to gradually iterate over it, without
+         keeping all of it in memory.
+diff --git a/src/dvc_objects/fs/__init__.py b/src/dvc_objects/fs/__init__.py
+index d236fdc..74db3fe 100644
+--- a/src/dvc_objects/fs/__init__.py
++++ b/src/dvc_objects/fs/__init__.py
+@@ -62,7 +62,7 @@ def get_fs_cls(remote_conf, cls=None, scheme=None):
+ 
+ def as_filesystem(
+     fs: "AbstractFileSystem",
+-    checksum: str = "md5",
++    checksum: str = "sha256",
+     object_based: bool = False,
+     **fs_args,
+ ) -> "FileSystem":
+diff --git a/src/dvc_objects/fs/implementations/local.py b/src/dvc_objects/fs/implementations/local.py
+index 7f888ec..3e1a61a 100644
+--- a/src/dvc_objects/fs/implementations/local.py
++++ b/src/dvc_objects/fs/implementations/local.py
+@@ -167,7 +167,7 @@ class LocalFileSystem(FileSystem):
+     sep = os.sep
+ 
+     protocol = "local"
+-    PARAM_CHECKSUM = "md5"
++    PARAM_CHECKSUM = "sha256"
+     PARAM_PATH = "path"
+     TRAVERSE_PREFIX_LEN = 2
+ 
+diff --git a/src/dvc_objects/fs/implementations/memory.py b/src/dvc_objects/fs/implementations/memory.py
+index 97702cb..c5b5ad7 100644
+--- a/src/dvc_objects/fs/implementations/memory.py
++++ b/src/dvc_objects/fs/implementations/memory.py
+@@ -3,7 +3,7 @@ from ..base import FileSystem
+ 
+ class MemoryFileSystem(FileSystem):  # pylint:disable=abstract-method
+     protocol = "memory"
+-    PARAM_CHECKSUM = "md5"
++    PARAM_CHECKSUM = "sha256"
+ 
+     def __init__(self, global_store=True, trie_based=False, fs=None, **kwargs):
+         super().__init__(fs=fs, **kwargs)
+diff --git a/src/dvc_objects/fs/implementations/ssh.py b/src/dvc_objects/fs/implementations/ssh.py
+index 8b93faf..8aed5e4 100644
+--- a/src/dvc_objects/fs/implementations/ssh.py
++++ b/src/dvc_objects/fs/implementations/ssh.py
+@@ -24,7 +24,7 @@ def ask_password(host, user, port):
+ class SSHFileSystem(FileSystem):
+     protocol = "ssh"
+     REQUIRES = {"sshfs": "sshfs"}
+-    PARAM_CHECKSUM = "md5"
++    PARAM_CHECKSUM = "sha256"
+ 
+     @classmethod
+     def _strip_protocol(cls, path: str) -> str:

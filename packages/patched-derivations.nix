@@ -24,7 +24,11 @@ super: rec {
     ];
   })) "patches/base/dvc";
 
-  dvc-data = patch super.python3Packages.dvc-data "patches/base/dvc-data";
+  dvc-data = patch (super.python3Packages.dvc-data.override {
+    inherit dvc-objects;
+  }) "patches/base/dvc-data";
+
+  dvc-objects = patch super.python3Packages.dvc-objects "patches/base/dvc-objects";
 
   sssd = (super.sssd.override { withSudo = true; }).overrideAttrs (old: {
     postFixup = (old.postFixup or "") + ''
