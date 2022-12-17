@@ -30,11 +30,13 @@ in
   services.grafana = {
     enable = true;
     package = inputs.self.packages.${pkgs.system}.grafana;
-    inherit (links.grafana) port;
-    rootUrl = "https://monitoring.${domain}/";
     dataDir = "/srv/storage/private/grafana";
-    analytics.reporting.enable = false;
     settings = {
+      server = {
+        root_url = "https://monitoring.${domain}/";
+        http_port = links.grafana.port;
+      };
+      analytics.reporting_enabled = false;
       "auth.generic_oauth" = {
         enabled = true;
         allow_sign_up = true;
