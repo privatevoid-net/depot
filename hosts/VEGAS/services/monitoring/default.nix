@@ -8,22 +8,7 @@ let
 
   cfg = { inherit (config.services) loki; };
 
-  toString' = v:
-    if v == true then "true" else
-    if v == false then "false" else
-    toString v;
-
-  mapPaths = lib.mapAttrsRecursive (
-    path: value: lib.nameValuePair
-      (lib.toUpper (lib.concatStringsSep "_" path))
-      (toString' value)
-  );
-
-  translateConfig = config: lib.listToAttrs (
-    lib.collect
-      (x: x ? name && x ? value)
-      (mapPaths config)
-  );
+  iniList = lib.concatStringsSep " ";
 
   login = x: "https://login.${domain}/auth/realms/master/protocol/openid-connect/${x}";
 in
@@ -49,15 +34,15 @@ in
     rootUrl = "https://monitoring.${domain}/";
     dataDir = "/srv/storage/private/grafana";
     analytics.reporting.enable = false;
-    extraOptions = translateConfig {
-      auth.generic_oauth = {
+    settings = {
+      "auth.generic_oauth" = {
         enabled = true;
         allow_sign_up = true;
         client_id = "net.privatevoid.monitoring1";
         auth_url = login "auth";
         token_url = login "token";
         api_url = login "userinfo";
-        scopes = [ "openid" "profile" "email" "roles" ];
+        scopes = iniList [ "openid" "profile" "email" "roles" ];
         role_attribute_strict = true;
         role_attribute_path = "resource_access.monitoring.roles[0]";
       };
@@ -65,7 +50,7 @@ in
         cookie_secure = true;
         disable_gravatar = true;
       };
-      feature_toggles.enable = [
+      feature_toggles.enable = iniList [
         "tempoSearch"
         "tempoBackendSearch"
         "tempoServiceGraph"
