@@ -17,6 +17,10 @@ let
   configFile = format.generate "patroni.yml" cfg.settings;
 in
 {
+  disabledModules = [
+    "services/cluster/patroni/default.nix"
+  ];
+
   options.services.patroni = {
 
     enable = mkEnableOption "Whether to enable Patroni";
