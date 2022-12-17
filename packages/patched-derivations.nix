@@ -3,8 +3,16 @@ let
   pins = import ./sources;
 in with tools;
 super: rec {
-  dvc = patch (super.dvc.overrideAttrs (old: {
-    propagatedBuildInputs = with super.python3Packages; old.propagatedBuildInputs ++ [
+  dvc = patch (super.dvc.overrideAttrs (old: let
+    filteredBaseDeps = super.lib.subtractLists [
+      super.python3Packages.dvc-data
+    ] old.propagatedBuildInputs;
+
+    baseDeps = filteredBaseDeps ++ [
+      dvc-data
+    ];
+  in {
+    propagatedBuildInputs = with super.python3Packages; baseDeps ++ [
       aiobotocore
       boto3
       (s3fs.overrideAttrs (_: { postPatch = ''
