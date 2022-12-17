@@ -1,0 +1,36 @@
+From 18eab2ef9a6e5fa1d9d7e93ea96710ad3949ccec Mon Sep 17 00:00:00 2001
+From: hiroto7 <32275337+hiroto7@users.noreply.github.com>
+Date: Tue, 6 Dec 2022 10:43:20 +0000
+Subject: [PATCH] ignore: solve re.error on group name redefinition in pathspec
+ 0.10.x
+
+Remove regex concatenation that causes re.error
+Fixes #8217
+---
+ dvc/ignore.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/dvc/ignore.py b/dvc/ignore.py
+index 2177768c29..2696e2678b 100644
+--- a/dvc/ignore.py
++++ b/dvc/ignore.py
+@@ -40,7 +40,7 @@ def __init__(self, pattern_list, dirname, sep):
+         ]
+ 
+         self.ignore_spec = [
+-            (ignore, re.compile("|".join(item[0] for item in group)))
++            (ignore, [re.compile(item[0]) for item in group])
+             for ignore, group in groupby(
+                 self.regex_pattern_list, lambda x: x[1]
+             )
+@@ -107,8 +107,8 @@ def matches(pattern, path, is_dir) -> bool:
+ 
+         result = False
+ 
+-        for ignore, pattern in self.ignore_spec[::-1]:
+-            if matches(pattern, path, is_dir):
++        for ignore, patterns in self.ignore_spec[::-1]:
++            if any(matches(pattern, path, is_dir) for pattern in patterns):
+                 result = ignore
+                 break
+         return result
