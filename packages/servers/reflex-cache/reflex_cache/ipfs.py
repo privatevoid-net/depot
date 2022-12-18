@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from urllib.parse import quote_plus
 
 import requests
@@ -5,8 +6,9 @@ import requests_unixsocket
 
 
 class IPFSController:
-    def __init__(self, apiAddress, nixCache, db):
-        self.__addr = f'http+unix://{quote_plus(apiAddress.get("unix"))}'
+    def __init__(self, nodeApiAddress, clusterApiAddress, nixCache, db):
+        self.__nodeAddr = f'http+unix://{quote_plus(nodeApiAddress.get("unix"))}'
+        self.__clusterAddr = f'http+unix://{quote_plus(clusterApiAddress.get("unix"))}'
         self.__nix = nixCache
         self.__db = db
 
@@ -17,11 +19,17 @@ class IPFSController:
             upload = {"file": ("FILE", content, "application/octet-stream")}
             try:
                 rIpfs = requests_unixsocket.post(
-                    f"{self.__addr}/api/v0/add?pin=false&quieter=true", files=upload
+                    f"{self.__nodeAddr}/api/v0/add?pin=false&quieter=true", files=upload
                 )
                 hash = rIpfs.json()["Hash"]
                 print(f"Mapped: {nar} -> /ipfs/{hash}")
                 self.__db.set_path(nar, hash)
+                expireAt = datetime.now(timezone.utc) + timedelta(hours=24)
+                rClusterPin = requests_unixsocket.post(
+                    f"{self.__clusterAddr}/pins/ipfs/{hash}?expire-at={quote_plus(expireAt.isoformat())}&mode=recursive&name=reflex-{quote_plus(nar)}&replication-max=2&replication-min=1", files=upload
+                )
+                if rClusterPin.status_code != 200:
+                    print(f"Warning: failed to pin {hash} on IPFS cluster")
                 callback()
                 return (nar, 200, hash)
             except requests.ConnectionError as e:

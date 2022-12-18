@@ -22,7 +22,11 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
         util.envOr("NIX_CACHES", "https://cache.nixos.org").split(" ")
     )
 
-    _ipfs = ipfs.IPFSController(Multiaddr(util.envOrRaise("IPFS_API")), _nix, _db)
+    _ipfs = ipfs.IPFSController(
+        Multiaddr(util.envOrRaise("IPFS_API")),
+        Multiaddr(util.envOrRaise("IPFS_CLUSTER_API")),
+        _nix,
+        _db)
 
     def do_HEAD(self):
         if self.path.endswith(".narinfo"):
@@ -124,8 +128,15 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
 
                             if not found and len(self._workSet) < 8:
                                 print(f"Pre-flight: creating IPFS fetch task for {nar}")
+                                def cb():
+                                    with self._workSetLock:
+                                        try:
+                                            self._workSet.remove((nar, f))
+                                        except KeyError:
+                                            # already removed
+                                            pass
                                 f = self._executor_nar.submit(
-                                    self._ipfs.ipfs_fetch_task, nar
+                                    self._ipfs.ipfs_fetch_task, cb, nar
                                 )
                                 self._workSet.add((nar, f))
             return
