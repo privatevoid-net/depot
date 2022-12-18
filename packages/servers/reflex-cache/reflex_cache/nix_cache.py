@@ -10,7 +10,7 @@ class NixCacheFetcher:
         self.__caches = caches
 
     @lru_cache(maxsize=32768)
-    def __try_all_cached(self, method, path):
+    def __try_all_cached(self, method, path, hint):
         fn = (
             requests.get
             if method == "get"
@@ -22,7 +22,13 @@ class NixCacheFetcher:
         bestState = 404
 
         print(f"  fetching [{method}] from any cache {path}")
-        for cache in self.__caches:
+        if hint != None:
+            caches = []
+            caches.append(hint)
+            caches.extend(self.__caches)
+        else:
+            caches = self.__caches
+        for cache in caches:
             try:
                 rCache = fn(f"{cache}{path}")
                 if rCache.status_code < bestState:
@@ -30,7 +36,7 @@ class NixCacheFetcher:
 
                 print(f"  {rCache.status_code} - [{method}] {cache}{path}")
                 if bestState == 200:
-                    r = (bestState, rCache.content if method != "head" else False)
+                    r = (bestState, cache, rCache.content if method != "head" else False)
                     if path.endswith(".narinfo"):
                         return r
                     else:
@@ -40,10 +46,10 @@ class NixCacheFetcher:
 
         # HACK: lru_cache does not cache results if an exception occurs
         # since we don't want to cache empty query results, we make use of this behavior
-        raise Uncached((bestState, False))
+        raise Uncached((bestState, None, False))
 
-    def try_all(self, method, path):
+    def try_all(self, method, path, hint=None):
         try:
-            return self.__try_all_cached(method, path)
+            return self.__try_all_cached(method, path, hint)
         except Uncached as r:
             return r.args[0]

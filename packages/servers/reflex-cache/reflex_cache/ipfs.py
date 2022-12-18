@@ -10,9 +10,9 @@ class IPFSController:
         self.__nix = nixCache
         self.__db = db
 
-    def ipfs_fetch_task(self, nar):
+    def ipfs_fetch_task(self, callback, nar, hint=None):
         print(f"Downloading NAR: {nar}")
-        code, content = self.__nix.try_all("get", nar)
+        code, _, content = self.__nix.try_all("get", nar, hint)
         if code == 200:
             upload = {"file": ("FILE", content, "application/octet-stream")}
             try:
@@ -22,9 +22,12 @@ class IPFSController:
                 hash = rIpfs.json()["Hash"]
                 print(f"Mapped: {nar} -> /ipfs/{hash}")
                 self.__db.set_path(nar, hash)
+                callback()
                 return (nar, 200, hash)
             except requests.ConnectionError as e:
                 print(e)
+                callback()
                 return (nar, 502, False)
         else:
+            callback()
             return (nar, code, False)

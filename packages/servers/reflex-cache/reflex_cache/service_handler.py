@@ -27,7 +27,7 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
     def do_HEAD(self):
         if self.path.endswith(".narinfo"):
             print(f"NAR info request: {self.path}")
-            code, content = self._nix.try_all("head", self.path)
+            code, _, content = self._nix.try_all("head", self.path)
             self.send_response(code)
             self.end_headers()
         else:
@@ -45,6 +45,15 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
             resultHash = self._db.get_path(self.path)
 
             if resultHash == None:
+                code, cache, _ = self._nix.try_all("head", self.path)
+                if code == 200:
+                    self.send_response(302)
+                    self.send_header("Location", f"{cache}{self.path}")
+                    self.end_headers()
+                else:
+                    self.send_response(404)
+                    self.end_headers()
+                    return
                 with self._workSetLock:
                     found = False
                     for (itemNar, itemFuture) in self._workSet:
@@ -58,25 +67,17 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
 
                     if not found:
                         print(f"Creating new IPFS fetch task for {self.path}")
+                        def cb():
+                            with self._workSetLock:
+                                try:
+                                    self._workSet.remove((self.path, f))
+                                except KeyError:
+                                    # already removed
+                                    pass
                         f = self._executor_nar.submit(
-                            self._ipfs.ipfs_fetch_task, self.path
+                            self._ipfs.ipfs_fetch_task, cb, self.path, cache
                         )
                         self._workSet.add((self.path, f))
-
-                resultNar, code, resultHash = f.result()
-
-                with self._workSetLock:
-                    try:
-                        self._workSet.remove((self.path, f))
-                    except KeyError:
-                        # already removed
-                        pass
-            else:
-                code = 200
-
-            if code != 200:
-                self.send_response(code)
-                self.end_headers()
                 return
 
             self.send_response(302)
@@ -104,7 +105,7 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
 
         elif self.path.endswith(".narinfo"):
             print(f"NAR info request: {self.path}")
-            code, content = self._nix.try_all("get", self.path)
+            code, _, content = self._nix.try_all("get", self.path)
             self.send_response(code)
             self.end_headers()
             if code == 200:
