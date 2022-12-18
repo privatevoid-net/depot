@@ -87,6 +87,7 @@
         effects = { branch, ... }: mkDeployEffects branch deployableNixosHosts;
       };
       imports = [
+        inputs.drv-parts.flakeModule
         ./packages/part.nix
       ];
     };
@@ -203,6 +204,14 @@
         flake-utils.follows = "repin-flake-utils";
         nixpkgs.follows = "nixpkgs";
         poetry2nix.follows = "poetry2nix";
+      };
+    };
+
+    drv-parts = {
+      url = "github:DavHau/drv-parts";
+      inputs = {
+        flake-parts.follows = "flake-parts";
+        nixpkgs.follows = "nixpkgs";
       };
     };
   };
