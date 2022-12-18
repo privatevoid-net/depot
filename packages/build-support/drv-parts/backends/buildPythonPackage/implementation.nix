@@ -9,9 +9,19 @@ let
     "flit"
     "wheel"
   ];
+
+  hasPyproject = config.format == "pyproject" && config.pyprojectToml != null;
+
+  pyproject = if hasPyproject then
+    lib.importTOML config.pyprojectToml
+  else
+    null;
 in
 
 {
+  pname = lib.mkIf hasPyproject (lib.mkDefault pyproject.tool.poetry.name);
+  version = lib.mkIf hasPyproject (lib.mkDefault pyproject.tool.poetry.version);
+
   deps = { pkgs, python3Packages, ... }: {
     inherit (python3Packages)
       python
