@@ -9,7 +9,10 @@ toPythonModule (buildPythonApplication {
   src = npins.mkSource pins.searxng;
 
   postPatch = ''
-    sed -i 's/==.*$//' requirements.txt
+    sed -i \
+      -e 's/==.*$//' \
+      -e 's/fasttext-wheel/fasttext/g' \
+      requirements.txt
   '';
 
   preBuild = ''
@@ -35,6 +38,8 @@ toPythonModule (buildPythonApplication {
     httpx
     httpx-socks
     markdown-it-py
+    fasttext
+    pybind11
   ];
 
   # tests try to connect to network
