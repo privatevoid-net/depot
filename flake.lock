@@ -142,6 +142,29 @@
         "type": "github"
       }
     },
+    "drv-parts": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1671279624,
+        "narHash": "sha256-zY+ZFkIftR/ygx59L6jK50OgJLAIcUdYljoLPMnzm7w=",
+        "owner": "DavHau",
+        "repo": "drv-parts",
+        "rev": "f8bdb04964ef64e74bd227937cf6f4306478001b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "DavHau",
+        "repo": "drv-parts",
+        "type": "github"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": [
@@ -449,6 +472,7 @@
         "deploy-rs": "deploy-rs",
         "devshell": "devshell",
         "dream2nix": "dream2nix",
+        "drv-parts": "drv-parts",
         "flake-parts": "flake-parts",
         "hercules-ci-agent": "hercules-ci-agent",
         "hercules-ci-effects": "hercules-ci-effects",
