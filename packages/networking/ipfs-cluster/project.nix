@@ -3,13 +3,13 @@
 {
   projectShells.ipfs-cluster = {
     tools = [
-      pkgs.go_1_18
+      pkgs.go_1_19
       pkgs.gnumake
       pkgs.gcc
     ];
     env.GOPATH.eval = "$REPO_DATA_DIR/go";
   };
-  packages.ipfs-cluster = with pkgs; buildGo118Module {
+  packages.ipfs-cluster = with pkgs; buildGo119Module {
     pname = "ipfs-cluster";
     version = "1.0.2";
 
@@ -43,7 +43,7 @@
       ]);
     };
 
-    vendorSha256 = "sha256-/fy46kF9XN0nrkmgPjFCxHGsqbxabTKFNGKUIoDBDjI=";
+    vendorSha256 = "sha256-zc0p7CQP+cTl9+q8rm6SzXFIHe0278R1sgytye2U1tM=";
 
     doCheck = false;
 
