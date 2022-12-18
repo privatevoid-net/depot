@@ -1,5 +1,7 @@
 {
   imports = [
     ./options.nix
+
+    ./buildPythonPackage
   ];
 }
