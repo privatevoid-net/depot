@@ -3,6 +3,8 @@
 {
   imports = [
     ./options.nix
+
+    ./drv-parts
   ];
 
   builders = rec {
