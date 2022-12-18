@@ -205,5 +205,13 @@
         poetry2nix.follows = "poetry2nix";
       };
     };
+
+    drv-parts = {
+      url = "github:DavHau/drv-parts";
+      inputs = {
+        flake-parts.follows = "flake-parts";
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
   };
 }
