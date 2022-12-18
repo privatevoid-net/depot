@@ -29,6 +29,7 @@
 
       ./networking/hyprspace/project.nix
       ./networking/ipfs-cluster/project.nix
+      ./servers/reflex-cache/project.nix
       ./websites/landing/project.nix
       ./websites/stop-using-nix-env/project.nix
     ];
@@ -71,11 +72,6 @@
 
       privatevoid-smart-card-ca-bundle = pkgs.callPackage ./data/privatevoid-smart-card-certificate-authority-bundle.nix { };
 
-      reflex-cache = poetry2nix.mkPoetryApplication {
-        projectDir = ./servers/reflex-cache;
-        meta.mainProgram = "reflex";
-      };
-
       searxng = pkgs.callPackage ./web-apps/searxng { inherit pins; };
 
       sips = pkgs.callPackage ./servers/sips { };
@@ -98,19 +94,6 @@
         ];
 
         env.NPINS_DIRECTORY.eval = "$REPO_ROOT/packages/sources";
-      };
-      reflex-cache = let
-        inherit (self'.packages) reflex-cache;
-      in {
-        packages = [
-          reflex-cache.dependencyEnv
-        ];
-      
-        tools = [
-          pkgs.poetry
-        ];
-
-        env.PYTHON = reflex-cache.dependencyEnv.interpreter;
       };
     };
   };
