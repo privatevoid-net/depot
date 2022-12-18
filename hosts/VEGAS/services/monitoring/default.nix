@@ -8,22 +8,7 @@ let
 
   cfg = { inherit (config.services) loki; };
 
-  toString' = v:
-    if v == true then "true" else
-    if v == false then "false" else
-    toString v;
-
-  mapPaths = lib.mapAttrsRecursive (
-    path: value: lib.nameValuePair
-      (lib.toUpper (lib.concatStringsSep "_" path))
-      (toString' value)
-  );
-
-  translateConfig = config: lib.listToAttrs (
-    lib.collect
-      (x: x ? name && x ? value)
-      (mapPaths config)
-  );
+  iniList = lib.concatStringsSep " ";
 
   login = x: "https://login.${domain}/auth/realms/master/protocol/openid-connect/${x}";
 in
@@ -45,19 +30,21 @@ in
   services.grafana = {
     enable = true;
     package = inputs.self.packages.${pkgs.system}.grafana;
-    inherit (links.grafana) port;
-    rootUrl = "https://monitoring.${domain}/";
     dataDir = "/srv/storage/private/grafana";
-    analytics.reporting.enable = false;
-    extraOptions = translateConfig {
-      auth.generic_oauth = {
+    settings = {
+      server = {
+        root_url = "https://monitoring.${domain}/";
+        http_port = links.grafana.port;
+      };
+      analytics.reporting_enabled = false;
+      "auth.generic_oauth" = {
         enabled = true;
         allow_sign_up = true;
         client_id = "net.privatevoid.monitoring1";
         auth_url = login "auth";
         token_url = login "token";
         api_url = login "userinfo";
-        scopes = [ "openid" "profile" "email" "roles" ];
+        scopes = iniList [ "openid" "profile" "email" "roles" ];
         role_attribute_strict = true;
         role_attribute_path = "resource_access.monitoring.roles[0]";
       };
@@ -65,7 +52,7 @@ in
         cookie_secure = true;
         disable_gravatar = true;
       };
-      feature_toggles.enable = [
+      feature_toggles.enable = iniList [
         "tempoSearch"
         "tempoBackendSearch"
         "tempoServiceGraph"
@@ -73,18 +60,17 @@ in
     };
     provision = {
       enable = true;
-      datasources = [
+      datasources.settings.datasources = [
         {
           name = "Prometheus";
-          # wait for https://github.com/NixOS/nixpkgs/pull/175330
-          # uid = "PBFA97CFB590B2093";
+          uid = "PBFA97CFB590B2093";
           inherit (links.prometheus) url;
           type = "prometheus";
           isDefault = true;
         }
         {
           name = "Loki";
-          # uid = "P8E80F9AEF21F6940";
+          uid = "P8E80F9AEF21F6940";
           inherit (loki-ingest) url;
           type = "loki";
         }

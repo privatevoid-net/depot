@@ -91,11 +91,10 @@ in {
       PrivateTmp = true;
     };
   };
-  services.grafana.provision.datasources = [
+  services.grafana.provision.datasources.settings.datasources = [
     {
       name = "Tempo";
-      # wait for https://github.com/NixOS/nixpkgs/pull/175330
-      # uid = "P214B5B846CF3925F";
+      uid = "P214B5B846CF3925F";
       inherit (links.tempo) url;
       type = "tempo";
       jsonData = {

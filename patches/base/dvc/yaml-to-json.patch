@@ -1,5 +1,11 @@
+commit eceb8d19ba9da3c7d07fc5a12636027d499a3a06
+Author: Max <max@privatevoid.net>
+Date:   Sat Dec 17 13:57:49 2022 +0100
+
+    yaml to json for 2.17.0
+
 diff --git a/dvc/dvcfile.py b/dvc/dvcfile.py
-index e542ba98..40d13a40 100644
+index 04db6d5f..4eb40e90 100644
 --- a/dvc/dvcfile.py
 +++ b/dvc/dvcfile.py
 @@ -14,7 +14,7 @@ from dvc.stage.exceptions import (
@@ -41,7 +47,7 @@ index e542ba98..40d13a40 100644
 @@ -198,7 +198,7 @@ class SingleStageFile(FileMixin):
          if self.verify:
              check_dvcfile_path(self.repo, self.path)
-         logger.debug(f"Saving information to '{relpath(self.path)}'.")
+         logger.debug("Saving information to '%s'.", relpath(self.path))
 -        dump_yaml(self.path, serialize.to_single_stage_file(stage))
 +        dump_json(self.path, serialize.to_single_stage_file(stage))
          self.repo.scm_context.track_file(self.relpath)

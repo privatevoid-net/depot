@@ -92,8 +92,7 @@
     };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05-small";
-    nixpkgs-lib.url = "github:NixOS/nixpkgs/nixos-22.05-small?dir=lib";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11-small";
 
     nix-super = {
       url = "gitlab:max/nix-super?host=git.privatevoid.net";
@@ -134,9 +133,11 @@
         crane.follows = "blank";
         devshell.follows = "blank";
         flake-utils-pre-commit.follows = "blank";
+        flake-parts.follows = "flake-parts";
         ghc-utils.follows = "blank";
         gomod2nix.follows = "blank";
         mach-nix.follows = "blank";
+        nix-pypi-fetcher.follows = "blank";
         poetry2nix.follows = "poetry2nix";
         pre-commit-hooks.follows = "blank";
       };
@@ -179,7 +180,7 @@
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs-lib.follows = "nixpkgs-lib";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
     nix-filter.url = "github:numtide/nix-filter";

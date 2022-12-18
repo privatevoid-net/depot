@@ -1,5 +1,5 @@
 {
-  nix.trustedUsers = [ "nix" ];
+  nix.settings.trusted-users = [ "nix" ];
   users.users.nix = {
     isSystemUser = true;
     description = "Nix Remote Build";

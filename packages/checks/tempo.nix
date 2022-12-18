@@ -72,7 +72,7 @@ nixosTest {
   };
   testScript = ''
     machine.wait_for_unit("tempo.service")
-    machine.wait_for_open_port("8888")
+    machine.wait_for_open_port(8888)
     machine.succeed("curl --fail http://127.0.0.1:8888/status/version")
   '';
 }
