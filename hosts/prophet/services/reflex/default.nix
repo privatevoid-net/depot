@@ -14,6 +14,7 @@
     environment = {
       REFLEX_PORT = config.links.nixIpfs.portStr;
       IPFS_API = config.services.ipfs.apiAddress;
+      IPFS_CLUSTER_API = config.services.ipfs-cluster.settings.api.restapi.http_listen_multiaddress;
       NIX_CACHES = toString [
         "https://cache.nixos.org"
         "https://cache.${tools.meta.domain}"
