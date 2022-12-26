@@ -83,7 +83,6 @@ in
   ];
 
   env = {
-    strictDeps = if config.strictDeps == null then false else config.strictDeps;
     LANG = "${if deps.python.stdenv.isDarwin then "en_US" else "C"}.UTF-8";
   };
 
