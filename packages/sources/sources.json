@@ -47,10 +47,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "3.11.42",
-      "revision": "5a7df99b1125e789c28a03fe5b87de32c112ffa0",
-      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.11.42",
-      "hash": "02qbmpwkfyb0xaf9f85v4rwhmwhdwb6iswk28jydvmfr3yhzkz83"
+      "version": "3.11.45",
+      "revision": "5ad27300a3c2dbd267b4593226b9c35680e2204f",
+      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.11.45",
+      "hash": "0rsflfp1wm8c7h8jpywvrh3gbqivzjjj7d9nakfjsa2ipvfg8clj"
     },
     "tempo": {
       "type": "GitRelease",
