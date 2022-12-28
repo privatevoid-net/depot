@@ -49,7 +49,7 @@ with tools.nginx;
   systemd.services.radarr.serviceConfig.Slice = "mediamanagement.slice";
   systemd.services.sonarr.serviceConfig.Slice = "mediamanagement.slice";
   systemd.services.prowlarr = {
-    after = [ "wireguard-wgmv-es1.service" "network-addresses-wgmv-es1.service" ];
+    after = [ "wireguard-wgmv.service" "network-addresses-wgmv.service" ];
     serviceConfig = {
       Slice = "mediamanagement.slice";
       IPAddressDeny = [ "any" ];

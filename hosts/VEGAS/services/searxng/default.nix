@@ -59,5 +59,5 @@ in
   services.nginx.virtualHosts."search.${tools.meta.domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy links.searxng.url) {
     extraConfig = "access_log off;";
   };
-  systemd.services.uwsgi.after = [ "wireguard-wgmv-es1.service" "network-addresses-wgmv-es1.service" ];
+  systemd.services.uwsgi.after = [ "wireguard-wgmv.service" "network-addresses-wgmv.service" ];
 }
