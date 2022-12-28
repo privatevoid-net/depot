@@ -26,24 +26,20 @@ in
       ui.theme_args.simple_style = "dark";
       outgoing.proxies = rec {
         http = [
-            "socks5://es1-wg.socks5.mullvad.net:1080"
-            "socks5://ch10-wg.socks5.mullvad.net:1080"
+            "socks5://es-mad-wg-socks5-102.relays.mullvad.net:1080"
+            "socks5://ch-zrh-wg-socks5-403.relays.mullvad.net:1080"
+            "socks5://ro-buh-wg-socks5-001.relays.mullvad.net:1080"
+            "socks5://es-mad-wg-socks5-101.relays.mullvad.net:1080"
+            "socks5://ro-buh-wg-socks5-002.relays.mullvad.net:1080"
+            "socks5://rs-beg-wg-socks5-001.relays.mullvad.net:1080"
+            "socks5://ch5-wg.socks5.mullvad.net:1080"
+            "socks5://ch-zrh-wg-socks5-501.relays.mullvad.net:1080"
             "socks5://rs4-wg.socks5.mullvad.net:1080"
-            "socks5://ro4-wg.socks5.mullvad.net:1080"
-            "socks5://ch13-wg.socks5.mullvad.net:1080"
-            "socks5://es2-wg.socks5.mullvad.net:1080"
-            "socks5://ro5-wg.socks5.mullvad.net:1080"
-            "socks5://rs3-wg.socks5.mullvad.net:1080"
-            "socks5://ch21-wg.socks5.mullvad.net:1080"
-            "socks5://es4-wg.socks5.mullvad.net:1080"
-            "socks5://ch2-wg.socks5.mullvad.net:1080"
-            "socks5://ro6-wg.socks5.mullvad.net:1080"
-            "socks5://es5-wg.socks5.mullvad.net:1080"
-            "socks5://ch16-wg.socks5.mullvad.net:1080"
-            "socks5://ch6-wg.socks5.mullvad.net:1080"
-            "socks5://es6-wg.socks5.mullvad.net:1080"
-            "socks5://ro7-wg.socks5.mullvad.net:1080"
-            "socks5://es7-wg.socks5.mullvad.net:1080"
+            "socks5://ch-zrh-wg-socks5-404.relays.mullvad.net:1080"
+            "socks5://es-mad-wg-socks5-201.relays.mullvad.net:1080"
+            "socks5://ch-zrh-wg-socks5-502.relays.mullvad.net:1080"
+            "socks5://ch-zrh-wg-socks5-506.relays.mullvad.net:1080"
+            "socks5://es-mad-wg-socks5-202.relays.mullvad.net:1080"
         ];
         https = http;
       };
