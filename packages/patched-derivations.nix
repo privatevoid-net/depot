@@ -59,6 +59,8 @@ super: rec {
     jre = jre17_standard;
   };
 
+  powerdns-admin = patch super.powerdns-admin "patches/base/powerdns-admin";
+
   prometheus-jitsi-exporter = patch super.prometheus-jitsi-exporter "patches/base/prometheus-jitsi-exporter";
 
   tempo = (super.tempo.override { buildGoModule = super.buildGo118Module; }).overrideAttrs (_: {

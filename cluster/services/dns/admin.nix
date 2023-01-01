@@ -22,7 +22,6 @@ let
     configList = lib.mapAttrsToList (n: v: "${n}=${quote v}") cfg;
   in lib.concatStringsSep "\n" configList;
 
-  login = x: "https://login.${domain}/auth/realms/master/protocol/openid-connect/${x}";
 in {
   age.secrets = {
     pdns-admin-oidc-secrets = {
@@ -83,10 +82,7 @@ in {
       OIDC_OAUTH_SECRET.env = "OIDC_OAUTH_SECRET";
       OIDC_OAUTH_SCOPE = "openid profile email roles";
 
-      OIDC_OAUTH_API_URL = login "";
-      OIDC_OAUTH_TOKEN_URL = login "token";
-      OIDC_OAUTH_AUTHORIZE_URL = login "auth";
-      OIDC_OAUTH_LOGOUT_URL = login "logout";
+      OIDC_OAUTH_SERVER_METADATA_URL = "https://login.${domain}/auth/realms/master/.well-known/openid-configuration";
     };
   };
 

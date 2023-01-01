@@ -1,0 +1,108 @@
+diff --git a/powerdnsadmin/models/setting.py b/powerdnsadmin/models/setting.py
+index 51e78e5..a66b7d3 100644
+--- a/powerdnsadmin/models/setting.py
++++ b/powerdnsadmin/models/setting.py
+@@ -100,10 +100,7 @@ class Setting(db.Model):
+         'oidc_oauth_key': '',
+         'oidc_oauth_secret': '',
+         'oidc_oauth_scope': 'email',
+-        'oidc_oauth_api_url': '',
+-        'oidc_oauth_token_url': '',
+-        'oidc_oauth_authorize_url': '',
+-        'oidc_oauth_logout_url': '',
++        'oidc_oauth_server_metadata_url': '',
+         'oidc_oauth_username': 'preferred_username',
+         'oidc_oauth_firstname': 'given_name',
+         'oidc_oauth_last_name': 'family_name',
+diff --git a/powerdnsadmin/routes/index.py b/powerdnsadmin/routes/index.py
+index 3a6f55c..417e05f 100644
+--- a/powerdnsadmin/routes/index.py
++++ b/powerdnsadmin/routes/index.py
+@@ -366,7 +366,7 @@ def login():
+         return authenticate_user(user, 'Azure OAuth')
+ 
+     if 'oidc_token' in session:
+-        me = json.loads(oidc.get('userinfo').text)
++        me = oidc.userinfo()
+         oidc_username = me[Setting().get('oidc_oauth_username')]
+         oidc_givenname = me[Setting().get('oidc_oauth_firstname')]
+         oidc_familyname = me[Setting().get('oidc_oauth_last_name')]
+diff --git a/powerdnsadmin/services/oidc.py b/powerdnsadmin/services/oidc.py
+index 7e8172b..dfaaf54 100644
+--- a/powerdnsadmin/services/oidc.py
++++ b/powerdnsadmin/services/oidc.py
+@@ -19,10 +19,8 @@ def oidc_oauth():
+         'oidc',
+         client_id=Setting().get('oidc_oauth_key'),
+         client_secret=Setting().get('oidc_oauth_secret'),
+-        api_base_url=Setting().get('oidc_oauth_api_url'),
+         request_token_url=None,
+-        access_token_url=Setting().get('oidc_oauth_token_url'),
+-        authorize_url=Setting().get('oidc_oauth_authorize_url'),
++        server_metadata_url=Setting().get('oidc_oauth_server_metadata_url'),
+         client_kwargs={'scope': Setting().get('oidc_oauth_scope')},
+         fetch_token=fetch_oidc_token,
+         update_token=update_token)
+diff --git a/powerdnsadmin/templates/admin_setting_authentication.html b/powerdnsadmin/templates/admin_setting_authentication.html
+index ba82c2e..ccd1743 100644
+--- a/powerdnsadmin/templates/admin_setting_authentication.html
++++ b/powerdnsadmin/templates/admin_setting_authentication.html
+@@ -610,23 +610,8 @@
+                                                     <span class="help-block with-errors"></span>
+                                                 </div>
+                                                 <div class="form-group">
+-                                                    <label for="oidc_oauth_api_url">API URL</label>
+-                                                    <input type="text" class="form-control" name="oidc_oauth_api_url" id="oidc_oauth_api_url" placeholder="e.g. https://api.oidc.com/user" data-error="Please input API URL" value="{{ SETTING.get('oidc_oauth_api_url') }}">
+-                                                    <span class="help-block with-errors"></span>
+-                                                </div>
+-                                                <div class="form-group">
+-                                                    <label for="oidc_oauth_token_url">Token URL</label>
+-                                                    <input type="text" class="form-control" name="oidc_oauth_token_url" id="oidc_oauth_token_url" placeholder="e.g. https://oidc.com/login/oauth/access_token" data-error="Please input Token URL" value="{{ SETTING.get('oidc_oauth_token_url') }}">
+-                                                    <span class="help-block with-errors"></span>
+-                                                </div>
+-                                                <div class="form-group">
+-                                                    <label for="oidc_oauth_authorize_url">Authorize URL</label>
+-                                                    <input type="text" class="form-control" name="oidc_oauth_authorize_url" id="oidc_oauth_authorize_url" placeholder="e.g. https://oidc.com/login/oauth/authorize" data-error="Plesae input Authorize URL" value="{{ SETTING.get('oidc_oauth_authorize_url') }}">
+-                                                    <span class="help-block with-errors"></span>
+-                                                </div>
+-                                                <div class="form-group">
+-                                                    <label for="oidc_oauth_logout_url">Logout URL</label>
+-                                                    <input type="text" class="form-control" name="oidc_oauth_logout_url" id="oidc_oauth_logout_url" placeholder="e.g. https://oidc.com/login/oauth/logout" data-error="Please input Logout URL" value="{{ SETTING.get('oidc_oauth_logout_url') }}">
++                                                    <label for="oidc_oauth_server_metadata_url">Metadata URL</label>
++                                                    <input type="text" class="form-control" name="oidc_oauth_server_metadata_url" id="oidc_oauth_server_metadata_url" placeholder="e.g. https://oidc.com/login/.well-known/configuration" data-error="Plesae input Metadata URL" value="{{ SETTING.get('oidc_oauth_server_metadata_url') }}">
+                                                     <span class="help-block with-errors"></span>
+                                                 </div>
+                                             </fieldset>
+@@ -1015,9 +1000,7 @@
+             $('#oidc_oauth_key').prop('required', true);
+             $('#oidc_oauth_secret').prop('required', true);
+             $('#oidc_oauth_scope').prop('required', true);
+-            $('#oidc_oauth_api_url').prop('required', true);
+-            $('#oidc_oauth_token_url').prop('required', true);
+-            $('#oidc_oauth_authorize_url').prop('required', true);
++            $('#oidc_oauth_server_metadata_url').prop('required', true);
+             $('#oidc_oauth_username').prop('required', true);
+             $('#oidc_oauth_firstname').prop('required', true);
+             $('#oidc_oauth_last_name').prop('required', true);
+@@ -1026,9 +1009,7 @@
+             $('#oidc_oauth_key').prop('required', false);
+             $('#oidc_oauth_secret').prop('required', false);
+             $('#oidc_oauth_scope').prop('required', false);
+-            $('#oidc_oauth_api_url').prop('required', false);
+-            $('#oidc_oauth_token_url').prop('required', false);
+-            $('#oidc_oauth_authorize_url').prop('required', false);
++            $('#oidc_oauth_server_metadata_url').prop('required', false);
+             $('#oidc_oauth_username').prop('required', false);
+             $('#oidc_oauth_firstname').prop('required', false);
+             $('#oidc_oauth_last_name').prop('required', false);
+@@ -1040,9 +1021,7 @@
+         $('#oidc_oauth_key').prop('required', true);
+         $('#oidc_oauth_secret').prop('required', true);
+         $('#oidc_oauth_scope').prop('required', true);
+-        $('#oidc_oauth_api_url').prop('required', true);
+-        $('#oidc_oauth_token_url').prop('required', true);
+-        $('#oidc_oauth_authorize_url').prop('required', true);
++        $('#oidc_oauth_server_metadata_url').prop('required', true);
+         $('#oidc_oauth_username').prop('required', true);
+         $('#oidc_oauth_firstname').prop('required', true);
+         $('#oidc_oauth_last_name').prop('required', true);
