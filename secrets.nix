@@ -50,7 +50,6 @@ in with hosts;
   "secrets/oauth2_proxy-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/postfix-ldap-mailboxes.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/searxng-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
-  "secrets/sips-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/synapse-db.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/synapse-keys.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/synapse-ldap.age".publicKeys = max ++ map systemKeys [ VEGAS ];

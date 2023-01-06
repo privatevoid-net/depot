@@ -74,8 +74,6 @@
 
       searxng = pkgs.callPackage ./web-apps/searxng { inherit pins; };
 
-      sips = pkgs.callPackage ./servers/sips { };
-
       stevenblack-hosts = pkgs.callPackage ./data/stevenblack { inherit pins; };
     };
 
