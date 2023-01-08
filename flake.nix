@@ -139,7 +139,6 @@
         gomod2nix.follows = "blank";
         mach-nix.follows = "blank";
         nix-pypi-fetcher.follows = "blank";
-        poetry2nix.follows = "poetry2nix";
         pre-commit-hooks.follows = "blank";
       };
     };
@@ -189,23 +188,6 @@
     repin-flake-utils.url = "github:numtide/flake-utils";
 
     blank.url = "github:divnix/blank";
-
-    poetry2nix = {
-      url = "github:nix-community/poetry2nix";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "repin-flake-utils";
-      };
-    };
-
-    nixos-command = {
-      url = "github:max-privatevoid/nixos-command";
-      inputs = {
-        flake-utils.follows = "repin-flake-utils";
-        nixpkgs.follows = "nixpkgs";
-        poetry2nix.follows = "poetry2nix";
-      };
-    };
 
     drv-parts = {
       url = "github:DavHau/drv-parts";
