@@ -1,10 +1,13 @@
 { lib, nixosTests, python3, python3Packages, npins, pins }:
 
-with python3Packages;
+let
+  pin = pins.searxng;
+  repo = pin.repository;
+in with python3Packages;
 
-toPythonModule (buildPythonApplication {
+toPythonModule (buildPythonApplication rec {
   pname = "searxng";
-  version = "1.0.0pre_${builtins.substring 0 7 pins.searxng.revision}";
+  version = "1.0.0pre_${builtins.substring 0 7 pin.revision}";
 
   src = npins.mkSource pins.searxng;
 
@@ -13,6 +16,12 @@ toPythonModule (buildPythonApplication {
       -e 's/==.*$//' \
       -e 's/fasttext-predict/fasttext/g' \
       requirements.txt
+    cat >searx/version_frozen.py <<EOF
+    VERSION_STRING="${version}"
+    VERSION_TAG="${pin.revision}"
+    GIT_URL="https://github.com/${repo.owner}/${repo.repo}"
+    GIT_BRANCH="${pin.branch}"
+    EOF
   '';
 
   preBuild = ''
