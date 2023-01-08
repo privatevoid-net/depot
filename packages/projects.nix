@@ -14,10 +14,6 @@
         overridesDirs = [ ./dream2nix-overrides ];
       };
     };
-    poetry2nix = pkgs.poetry2nix.overrideScope' (final: prev: {
-      defaultPoetryOverrides = prev.defaultPoetryOverrides.extend (import ./poetry2nix-overrides);
-    });
-
   in
   {
     _module.args = { inherit inputs self; };
