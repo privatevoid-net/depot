@@ -3,7 +3,6 @@
 let
   mapAgents = lib.flip lib.mapAttrs config.services.hercules-ci-agents;
 
-  #lib.foldl' (a: b: a // b) {} (lib.attrValues (lib.mapAttrs (basename: basevalue: lib.mapAttrs' (n: v: lib.nameValuePair "${n}-${basename}" v) basevalue) x));
   mergeMap = f: let
     outputs = mapAgents f;
   in  lib.pipe outputs [
@@ -38,12 +37,6 @@ in
       group = "hci-${name}";
     };
   });
-  services.hercules-ci-agents.private-void = {
-    settings = {
-      clusterJoinTokenPath = config.age.secrets.hci-token-private-void.path;
-      binaryCachesPath = config.age.secrets.hci-cache-config-private-void.path;
-    };
-  };
   systemd.services = mergeMap (name: _: {
     hercules-ci-agent = {
       # hercules-ci-agent-restarter should take care of this
