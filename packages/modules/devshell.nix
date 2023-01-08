@@ -1,67 +1,70 @@
-{ lib, config, inputs', system, ... }:
-with lib;
-let
-  inherit (inputs'.devshell.legacyPackages) mkShell;
+{ lib, ... }:
 
-  wrapInAttrs = value: if builtins.isAttrs value then value else { inherit value; };
+{
+  perSystem = { config, inputs', system, ... }:
+  with lib;
+  let
+    inherit (inputs'.devshell.legacyPackages) mkShell;
 
-  wrapPackage = package: { inherit package; };
+    wrapInAttrs = value: if builtins.isAttrs value then value else { inherit value; };
 
-  injectAttrName = name: value: { inherit name; } // wrapInAttrs value;
+    wrapPackage = package: { inherit package; };
 
-  mkNamedAttrs = builtins.mapAttrs injectAttrName;
+    injectAttrName = name: value: { inherit name; } // wrapInAttrs value;
 
-  attrsToNamedList = attrs: builtins.attrValues (mkNamedAttrs attrs);
+    mkNamedAttrs = builtins.mapAttrs injectAttrName;
 
-  mkProjectShell = 
-  {
-    packages ? [],
-    tools ? [],
-    commands ? {},
-    env ? {},
-    config ? {}
-  }:
-  mkShell {
-    imports = [
-      config
-      {
-        commands = map wrapPackage tools;
-      }
-      {
-        inherit packages;
-        commands = attrsToNamedList commands;
-        env = attrsToNamedList env;
-      }
-    ];
+    attrsToNamedList = attrs: builtins.attrValues (mkNamedAttrs attrs);
+
+    mkProjectShell = 
+    {
+      packages ? [],
+      tools ? [],
+      commands ? {},
+      env ? {},
+      config ? {}
+    }:
+    mkShell {
+      imports = [
+        config
+        {
+          commands = map wrapPackage tools;
+        }
+        {
+          inherit packages;
+          commands = attrsToNamedList commands;
+          env = attrsToNamedList env;
+        }
+      ];
+    };
+  in {
+    options.projectShells = mkOption {
+      default = {};
+      type = types.attrsOf (types.submodule {
+        options = {
+          packages = mkOption {
+            default = [];
+            type = types.listOf types.package;
+          };
+          tools = mkOption {
+            default = [];
+            type = types.listOf types.package;
+          };
+          commands = mkOption {
+            default = {};
+            type = types.attrsOf types.attrs;
+          };
+          env = mkOption {
+            default = {};
+            type = with types; attrsOf (oneOf [ attrs str ] );
+          };
+          config = mkOption {
+            default = {};
+            type = types.anything;
+          };
+        };
+      });
+    };
+    config.devShells = lib.mkIf (system == "x86_64-linux") (mapAttrs (_: mkProjectShell) config.projectShells);
   };
-in {
-  options.projectShells = mkOption {
-    default = {};
-    type = types.attrsOf (types.submodule {
-      options = {
-        packages = mkOption {
-          default = [];
-          type = types.listOf types.package;
-        };
-        tools = mkOption {
-          default = [];
-          type = types.listOf types.package;
-        };
-        commands = mkOption {
-          default = {};
-          type = types.attrsOf types.attrs;
-        };
-        env = mkOption {
-          default = {};
-          type = with types; attrsOf (oneOf [ attrs str ] );
-        };
-        config = mkOption {
-          default = {};
-          type = types.anything;
-        };
-      };
-    });
-  };
-  config.devShells = lib.mkIf (system == "x86_64-linux") (mapAttrs (_: mkProjectShell) config.projectShells);
 }
-

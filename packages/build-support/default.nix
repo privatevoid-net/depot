@@ -1,17 +1,18 @@
-{ pkgs, ... }:
-
 {
   imports = [
-    ./options.nix
-
     ./drv-parts
   ];
+  perSystem = { pkgs, ... }: {
+    imports = [
+      ./options.nix
+    ];
 
-  builders = rec {
-    fetchAsset = pkgs.callPackage ./fetch-asset { };
+    builders = rec {
+      fetchAsset = pkgs.callPackage ./fetch-asset { };
 
-    hydrateAssetDirectory = pkgs.callPackage ./hydrate-asset-directory {
-      inherit fetchAsset;
+      hydrateAssetDirectory = pkgs.callPackage ./hydrate-asset-directory {
+        inherit fetchAsset;
+      };
     };
   };
 }

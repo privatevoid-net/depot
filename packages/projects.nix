@@ -1,6 +1,17 @@
 { inputs, self, ... }:
 
 {
+  imports = [
+    ./checks
+    ./modules/devshell.nix
+    ./build-support
+
+    ./networking/hyprspace/project.nix
+    ./networking/ipfs-cluster/project.nix
+    ./servers/reflex-cache/project.nix
+    ./websites/landing/project.nix
+    ./websites/stop-using-nix-env/project.nix
+  ];
   perSystem = { filters, pkgs, self', ... }:
   let
     inherit (self'.packages) nix-super;
@@ -16,19 +27,6 @@
     };
   in
   {
-    _module.args = { inherit inputs self; };
-
-    imports = [
-      ./checks
-      ./modules/devshell.nix
-      ./build-support
-
-      ./networking/hyprspace/project.nix
-      ./networking/ipfs-cluster/project.nix
-      ./servers/reflex-cache/project.nix
-      ./websites/landing/project.nix
-      ./websites/stop-using-nix-env/project.nix
-    ];
     packages = filters.doFilter filters.packages rec {
       cinny = pkgs.callPackage ./web-apps/cinny { inherit pins; };
 
