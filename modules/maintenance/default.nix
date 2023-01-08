@@ -1,9 +1,6 @@
 { inputs, pkgs, ... }:
 
 {
-  environment.systemPackages = [
-    inputs.nixos-command.packages.${pkgs.system}.nixos-command
-  ];
   systemd.targets.maintenance = {
     unitConfig.AllowIsolate = true;
     wants = [
