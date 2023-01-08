@@ -11,7 +11,7 @@ toPythonModule (buildPythonApplication {
   postPatch = ''
     sed -i \
       -e 's/==.*$//' \
-      -e 's/fasttext-wheel/fasttext/g' \
+      -e 's/fasttext-predict/fasttext/g' \
       requirements.txt
   '';
 
