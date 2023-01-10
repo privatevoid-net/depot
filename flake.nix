@@ -88,6 +88,7 @@
       };
       imports = [
         inputs.drv-parts.flakeModule
+        inputs.dream2nix.flakeModuleBeta
         ./packages/part.nix
       ];
     };
