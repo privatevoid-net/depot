@@ -1,4 +1,4 @@
-{ inputs, self, ... }:
+{ lib, inputs, self, ... }:
 
 {
   imports = [
@@ -12,39 +12,43 @@
     ./websites/landing/project.nix
     ./websites/stop-using-nix-env/project.nix
   ];
-  perSystem = { filters, pkgs, self', ... }:
+  dream2nix.config = {
+    projectRoot = ./.;
+    overridesDirs = [ ./dream2nix-overrides ];
+  };
+  perSystem = { config, filters, pkgs, self', ... }:
   let
     inherit (self'.packages) nix-super;
 
     pins = import ./sources;
-
-    dream2nix = inputs.dream2nix.lib2.init {
-      inherit pkgs;
-      config = {
-        projectRoot = ./.;
-        overridesDirs = [ ./dream2nix-overrides ];
-      };
-    };
   in
   {
+    dream2nix = {
+      inputs = filters.doFilter filters.packages {
+        uptime-kuma = {
+          source = pins.uptime-kuma;
+          projects.uptime-kuma = {
+            subsystem = "nodejs";
+            translator = "package-lock";
+          };
+        };
+        excalidraw = {
+          source = pins.excalidraw;
+          projects.excalidraw = {
+            subsystem = "nodejs";
+            translator = "yarn-lock";
+          };
+        };
+      };
+    };
+
     packages = filters.doFilter filters.packages rec {
+
       cinny = pkgs.callPackage ./web-apps/cinny { inherit pins; };
 
       excalidraw = let
-        dream = dream2nix.dream2nix-interface.makeOutputs {
-          source = pins.excalidraw;
-        };
-        inherit (dream.packages) excalidraw;
-      in
-        excalidraw // { webroot = "${excalidraw}/${excalidraw.webPath}"; };
-
-      uptime-kuma = let
-        dream = dream2nix.dream2nix-interface.makeOutputs {
-          source = pins.uptime-kuma;
-        };
-        inherit (dream.packages) uptime-kuma;
-      in
-        uptime-kuma;
+        inherit (config.dream2nix.outputs.excalidraw.packages) excalidraw;
+      in excalidraw // { webroot = "${excalidraw}/${excalidraw.webPath}"; };
 
       grafana = pkgs.callPackage ./monitoring/grafana { };
 
@@ -69,6 +73,8 @@
       searxng = pkgs.callPackage ./web-apps/searxng { inherit pins; };
 
       stevenblack-hosts = pkgs.callPackage ./data/stevenblack { inherit pins; };
+
+      inherit (config.dream2nix.outputs.uptime-kuma.packages) uptime-kuma;
     };
 
     projectShells = {
