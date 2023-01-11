@@ -127,15 +127,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1672661134,
-        "narHash": "sha256-WqBUyKeiv+jI11ug+qP0OnZ4nngK6eBRVTGHgdzEGvc=",
-        "owner": "nix-community",
+        "lastModified": 1673399964,
+        "narHash": "sha256-v6SrE4rcDAX78VxPZPfPSRXygJ08AfoESL+HcF5VPBQ=",
+        "owner": "max-privatevoid",
         "repo": "dream2nix",
-        "rev": "9f6911c78dcb0832f7fcc955e847db1a5a9ce29a",
+        "rev": "67087477ada8f9309c3616ce06132c296225cdee",
         "type": "github"
       },
       "original": {
-        "owner": "nix-community",
+        "owner": "max-privatevoid",
+        "ref": "reduced-strictness",
         "repo": "dream2nix",
         "type": "github"
       }
