@@ -127,7 +127,7 @@
     };
 
     dream2nix = {
-      url = "github:nix-community/dream2nix";
+      url = "github:max-privatevoid/dream2nix/reduced-strictness";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         alejandra.follows = "blank";
