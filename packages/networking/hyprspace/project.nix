@@ -24,6 +24,7 @@
           "cli"
           "config"
           "p2p"
+          "rpc"
           "tun"
         ]);
       };
