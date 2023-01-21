@@ -16,6 +16,7 @@
 
       # Services
       ./services/api
+      ./services/ark-hosting
       ./services/backbone-routing
       ./services/bitwarden
       ./services/fbi
