@@ -3,14 +3,14 @@ let
   inherit (config.networking) hostName;
   inherit (inputs.self.packages.${pkgs.system}) hyprspace;
   hyprspaceCapableNodes = lib.filterAttrs (_: host: host ? hypr) hosts;
-  peersFormatted = builtins.mapAttrs (_: x: { "${x.hypr.addr}".id = x.hypr.id; }) hyprspaceCapableNodes;
+  peersFormatted = builtins.mapAttrs (_: x: {
+    inherit (x.hypr) id;
+    routes = map (net: { inherit net; }) ((x.hypr.routes or []) ++ [ "${x.hypr.addr}/32" ]);
+  }) hyprspaceCapableNodes;
   peersFiltered = lib.filterAttrs (name: _: name != hostName) peersFormatted;
-  peerList = lib.foldAttrs (n: _: n) null (builtins.attrValues peersFiltered);
+  peerList = builtins.attrValues peersFiltered;
   myNode = hosts.${hostName};
   listenPort = myNode.hypr.listenPort or 8001;
-
-  routes' = map (x: lib.genAttrs (x.hypr.routes or []) (_: { ip = x.hypr.addr; })) (builtins.attrValues hyprspaceCapableNodes);
-  routes = builtins.foldl' (x: y: x // y) {} (lib.flatten routes');
 
   interfaceConfig = pkgs.writeText "hyprspace.yml" (builtins.toJSON {
     interface = {
@@ -21,7 +21,6 @@ let
       private_key = "@HYPRSPACEPRIVATEKEY@";
     };
     peers = peerList;
-    inherit routes;
   });
 
   privateKeyFile = config.age.secrets.hyprspace-key.path;
