@@ -1,0 +1,228 @@
+diff --git a/doc/manual/local.mk b/doc/manual/local.mk
+index 190f0258a16..f43510b6d64 100644
+--- a/doc/manual/local.mk
++++ b/doc/manual/local.mk
+@@ -51,13 +51,13 @@ $(d)/src/SUMMARY.md: $(d)/src/SUMMARY.md.in $(d)/src/command-ref/new-cli
+ $(d)/src/command-ref/new-cli: $(d)/nix.json $(d)/generate-manpage.nix $(bindir)/nix
+ 	@rm -rf $@
+ 	$(trace-gen) $(nix-eval) --write-to $@.tmp --expr 'import doc/manual/generate-manpage.nix { toplevel = builtins.readFile $<; }'
+-	# @docroot@: https://nixos.org/manual/nix/unstable/contributing/hacking.html#docroot-variable
++	@# @docroot@: https://nixos.org/manual/nix/unstable/contributing/hacking.html#docroot-variable
+ 	$(trace-gen) sed -i $@.tmp/*.md -e 's^@docroot@^../..^g'
+ 	@mv $@.tmp $@
+ 
+ $(d)/src/command-ref/conf-file.md: $(d)/conf-file.json $(d)/generate-options.nix $(d)/src/command-ref/conf-file-prefix.md $(bindir)/nix
+ 	@cat doc/manual/src/command-ref/conf-file-prefix.md > $@.tmp
+-	# @docroot@: https://nixos.org/manual/nix/unstable/contributing/hacking.html#docroot-variable
++	@# @docroot@: https://nixos.org/manual/nix/unstable/contributing/hacking.html#docroot-variable
+ 	$(trace-gen) $(nix-eval) --expr 'import doc/manual/generate-options.nix (builtins.fromJSON (builtins.readFile $<))' \
+ 	  | sed -e 's^@docroot@^..^g'>> $@.tmp
+ 	@mv $@.tmp $@
+@@ -72,7 +72,7 @@ $(d)/conf-file.json: $(bindir)/nix
+ 
+ $(d)/src/language/builtins.md: $(d)/builtins.json $(d)/generate-builtins.nix $(d)/src/language/builtins-prefix.md $(bindir)/nix
+ 	@cat doc/manual/src/language/builtins-prefix.md > $@.tmp
+-	# @docroot@: https://nixos.org/manual/nix/unstable/contributing/hacking.html#docroot-variable
++	@# @docroot@: https://nixos.org/manual/nix/unstable/contributing/hacking.html#docroot-variable
+ 	$(trace-gen) $(nix-eval) --expr 'import doc/manual/generate-builtins.nix (builtins.fromJSON (builtins.readFile $<))' \
+ 	  | sed -e 's^@docroot@^..^g' >> $@.tmp
+ 	@cat doc/manual/src/language/builtins-suffix.md >> $@.tmp
+diff --git a/src/libstore/http-binary-cache-store.cc b/src/libstore/http-binary-cache-store.cc
+index 73bcd6e817d..1479822a9f7 100644
+--- a/src/libstore/http-binary-cache-store.cc
++++ b/src/libstore/http-binary-cache-store.cc
+@@ -56,7 +56,7 @@ class HttpBinaryCacheStore : public virtual HttpBinaryCacheStoreConfig, public v
+     void init() override
+     {
+         // FIXME: do this lazily?
+-        if (auto cacheInfo = diskCache->cacheExists(cacheUri)) {
++        if (auto cacheInfo = diskCache->upToDateCacheExists(cacheUri)) {
+             wantMassQuery.setDefault(cacheInfo->wantMassQuery);
+             priority.setDefault(cacheInfo->priority);
+         } else {
+diff --git a/src/libstore/nar-info-disk-cache.cc b/src/libstore/nar-info-disk-cache.cc
+index 3e0689534b6..8c7d8126f3c 100644
+--- a/src/libstore/nar-info-disk-cache.cc
++++ b/src/libstore/nar-info-disk-cache.cc
+@@ -68,15 +68,25 @@ class NarInfoDiskCacheImpl : public NarInfoDiskCache
+     struct Cache
+     {
+         int id;
++        // column: timestamp
++        time_t lastCacheInfoFetch;
+         Path storeDir;
+         bool wantMassQuery;
+         int priority;
++
++        bool dbRowUpToDate(const Cache &other) {
++            assert(id == other.id);
++            return lastCacheInfoFetch == other.lastCacheInfoFetch
++                && storeDir == other.storeDir
++                && wantMassQuery == other.wantMassQuery
++                && priority == other.priority;
++        }
+     };
+ 
+     struct State
+     {
+         SQLite db;
+-        SQLiteStmt insertCache, queryCache, insertNAR, insertMissingNAR,
++        SQLiteStmt insertCache, updateCache, queryCache, insertNAR, insertMissingNAR,
+             queryNAR, insertRealisation, insertMissingRealisation,
+             queryRealisation, purgeCache;
+         std::map<std::string, Cache> caches;
+@@ -98,10 +108,13 @@ class NarInfoDiskCacheImpl : public NarInfoDiskCache
+         state->db.exec(schema);
+ 
+         state->insertCache.create(state->db,
+-            "insert or replace into BinaryCaches(url, timestamp, storeDir, wantMassQuery, priority) values (?, ?, ?, ?, ?)");
++            "insert into BinaryCaches(url, timestamp, storeDir, wantMassQuery, priority) values (?, ?, ?, ?, ?)");
++
++        state->updateCache.create(state->db,
++            "update BinaryCaches set url = ?, timestamp = ?, storeDir = ?, wantMassQuery = ?, priority = ? WHERE id = ?");
+ 
+         state->queryCache.create(state->db,
+-            "select id, storeDir, wantMassQuery, priority from BinaryCaches where url = ? and timestamp > ?");
++            "select id, timestamp, storeDir, wantMassQuery, priority from BinaryCaches where url = ?");
+ 
+         state->insertNAR.create(state->db,
+             "insert or replace into NARs(cache, hashPart, namePart, url, compression, fileHash, fileSize, narHash, "
+@@ -166,19 +179,33 @@ class NarInfoDiskCacheImpl : public NarInfoDiskCache
+         return i->second;
+     }
+ 
++private:
++
++    bool cacheIsUpToDate(const Cache &cache) {
++        return cache.lastCacheInfoFetch > (time(0) - cacheInfoTtl);
++    }
++
++    // May return an outdated record; check cacheIsUpToDate()!
+     std::optional<Cache> queryCacheRaw(State & state, const std::string & uri)
+     {
+         auto i = state.caches.find(uri);
+         if (i == state.caches.end()) {
+-            auto queryCache(state.queryCache.use()(uri)(time(0) - cacheInfoTtl));
++            auto queryCache(state.queryCache.use()(uri));
+             if (!queryCache.next())
+                 return std::nullopt;
+-            state.caches.emplace(uri,
+-                Cache{(int) queryCache.getInt(0), queryCache.getStr(1), queryCache.getInt(2) != 0, (int) queryCache.getInt(3)});
++            auto cache = Cache {
++                .id = (int) queryCache.getInt(0),
++                .lastCacheInfoFetch = (time_t) queryCache.getInt(1),
++                .storeDir = queryCache.getStr(2),
++                .wantMassQuery = queryCache.getInt(3) != 0,
++                .priority = (int) queryCache.getInt(4),
++            };
++            state.caches.emplace(uri, cache);
+         }
+         return getCache(state, uri);
+     }
+ 
++public:
+     void createCache(const std::string & uri, const Path & storeDir, bool wantMassQuery, int priority) override
+     {
+         retrySQLite<void>([&]() {
+@@ -189,23 +216,42 @@ class NarInfoDiskCacheImpl : public NarInfoDiskCache
+             // the cache for this URI in the meantime.
+             auto cache(queryCacheRaw(*state, uri));
+ 
+-            if (cache)
++            if (cache && cacheIsUpToDate(*cache))
+                 return;
+ 
+-            state->insertCache.use()(uri)(time(0))(storeDir)(wantMassQuery)(priority).exec();
+-            assert(sqlite3_changes(state->db) == 1);
+-            state->caches[uri] = Cache{(int) sqlite3_last_insert_rowid(state->db), storeDir, wantMassQuery, priority};
++            Cache ret {
++                // id: to be set in the conditional below
++                .id = -1,
++                // lastCacheInfoFetch: always the current time, because this is
++                // only called when a cached Cache wasn't available, so the parameters
++                // are always fresh.
++                .lastCacheInfoFetch = time(0),
++                .storeDir = storeDir,
++                .wantMassQuery = wantMassQuery,
++                .priority = priority,
++            };
++            if (cache) {
++                ret.id = cache->id;
++                state->updateCache.use()(uri)(ret.lastCacheInfoFetch)(storeDir)(wantMassQuery)(priority)(ret.id).exec();
++                assert(sqlite3_changes(state->db) == 1);
++            } else {
++                state->insertCache.use()(uri)(ret.lastCacheInfoFetch)(storeDir)(wantMassQuery)(priority).exec();
++                assert(sqlite3_changes(state->db) == 1);
++                ret.id = (int) state->db.getLastInsertedRowId();
++            }
++
++            state->caches[uri] = ret;
+ 
+             txn.commit();
+         });
+     }
+ 
+-    std::optional<CacheInfo> cacheExists(const std::string & uri) override
++    std::optional<CacheInfo> upToDateCacheExists(const std::string & uri) override
+     {
+         return retrySQLite<std::optional<CacheInfo>>([&]() -> std::optional<CacheInfo> {
+             auto state(_state.lock());
+             auto cache(queryCacheRaw(*state, uri));
+-            if (!cache)
++            if (!cache || !cacheIsUpToDate(*cache))
+                 return std::nullopt;
+             return CacheInfo {
+                 .wantMassQuery = cache->wantMassQuery,
+diff --git a/src/libstore/nar-info-disk-cache.hh b/src/libstore/nar-info-disk-cache.hh
+index 2dcaa76a490..c185ca5e4f0 100644
+--- a/src/libstore/nar-info-disk-cache.hh
++++ b/src/libstore/nar-info-disk-cache.hh
+@@ -22,7 +22,7 @@ public:
+         int priority;
+     };
+ 
+-    virtual std::optional<CacheInfo> cacheExists(const std::string & uri) = 0;
++    virtual std::optional<CacheInfo> upToDateCacheExists(const std::string & uri) = 0;
+ 
+     virtual std::pair<Outcome, std::shared_ptr<NarInfo>> lookupNarInfo(
+         const std::string & uri, const std::string & hashPart) = 0;
+diff --git a/src/libstore/s3-binary-cache-store.cc b/src/libstore/s3-binary-cache-store.cc
+index 844553ad309..8d76eee9977 100644
+--- a/src/libstore/s3-binary-cache-store.cc
++++ b/src/libstore/s3-binary-cache-store.cc
+@@ -238,7 +238,7 @@ struct S3BinaryCacheStoreImpl : virtual S3BinaryCacheStoreConfig, public virtual
+ 
+     void init() override
+     {
+-        if (auto cacheInfo = diskCache->cacheExists(getUri())) {
++        if (auto cacheInfo = diskCache->upToDateCacheExists(getUri())) {
+             wantMassQuery.setDefault(cacheInfo->wantMassQuery);
+             priority.setDefault(cacheInfo->priority);
+         } else {
+diff --git a/src/libstore/sqlite.cc b/src/libstore/sqlite.cc
+index 353dff9fa02..a6fb53b1d0c 100644
+--- a/src/libstore/sqlite.cc
++++ b/src/libstore/sqlite.cc
+@@ -41,6 +41,10 @@ SQLiteError::SQLiteError(const char *path, const char *errMsg, int errNo, int ex
+         throw SQLiteError(path, errMsg, err, exterr, offset, std::move(hf));
+ }
+ 
++static void traceSQL (void *x, const char *sql){
++    fprintf(stderr, "SQL<[%s]>\n", sql);
++};
++
+ SQLite::SQLite(const Path & path, bool create)
+ {
+     // useSQLiteWAL also indicates what virtual file system we need.  Using
+@@ -58,6 +62,11 @@ SQLite::SQLite(const Path & path, bool create)
+     if (sqlite3_busy_timeout(db, 60 * 60 * 1000) != SQLITE_OK)
+         SQLiteError::throw_(db, "setting timeout");
+ 
++    if (getEnv("NIX_DEBUG_SQLITE_TRACES") == "1") {
++        // To debug sqlite statements; trace all of them
++        sqlite3_trace(db, &traceSQL, nullptr);
++    }
++
+     exec("pragma foreign_keys = 1");
+ }
+ 

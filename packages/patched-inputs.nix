@@ -17,7 +17,7 @@
       # hci-agent's build code does some funny shenanigans
       hercules-ci-agent = let
         original = packages.hercules-ci-agent.hercules-ci-agent;
-        patchedNix = patch-rename-direct original.nix ({ version, ...}: "nix-${version}_hci1") "patches/extra/hercules-ci-agent/nix";
+        patchedNix = patch-rename-direct original.nix ({ version, ...}: "nix-${version}_hci2") "patches/extra/hercules-ci-agent/nix";
       in (original.override {
         # for hercules-ci-cnix-expr, hercules-ci-cnix-store
         nix = patchedNix;
