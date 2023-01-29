@@ -17,16 +17,34 @@
       # hci-agent's build code does some funny shenanigans
       hercules-ci-agent = let
         original = packages.hercules-ci-agent.hercules-ci-agent;
-        patchedNix = patch-rename-direct original.nix ({ version, ...}: "nix-${version}_hci2") "patches/extra/hercules-ci-agent/nix";
-      in (original.override {
-        # for hercules-ci-cnix-expr, hercules-ci-cnix-store
-        nix = patchedNix;
-        # for cachix
-        pkgs = pkgs // { nix = patchedNix; };
-      }).overrideAttrs (old: {
-        # for hercules-ci-agent
-        buildInputs = (lib.remove original.nix old.buildInputs) ++ [ patchedNix ];
-      });
+        patchedNix = (patch original.nix "patches/extra/hercules-ci-agent/nix").overrideAttrs (old: rec {
+          name = "nix-${version}";
+          version = "${original.nix.version}_hci2";
+          postUnpack = ''
+            ${old.postUnpack or ""}
+            echo -n "${version}" > .version
+          '';
+        });
+        forcePatchNix = old: {
+          buildInputs = (lib.remove original.nix old.buildInputs) ++ [ patchedNix ];
+          passthru = old.passthru // {
+            nix = patchedNix;
+          };
+        };
+        patchDeps = lib.const rec {
+          hercules-ci-cnix-store = packages.hercules-ci-agent.internal-hercules-ci-cnix-store.override (lib.const {
+            nix = patchedNix;
+          });
+          hercules-ci-cnix-expr = packages.hercules-ci-agent.internal-hercules-ci-cnix-expr.override (lib.const {
+            nix = patchedNix;
+            inherit hercules-ci-cnix-store;
+          });
+          cachix = pkgs.haskellPackages.cachix.override (lib.const {
+            nix = patchedNix;
+            inherit hercules-ci-cnix-store;
+          });
+        };
+      in (original.override patchDeps).overrideAttrs forcePatchNix;
 
       hci = packages.hercules-ci-agent.hercules-ci-cli;
     };
