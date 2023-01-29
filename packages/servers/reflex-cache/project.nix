@@ -2,7 +2,7 @@
 
 {
   perSystem = { config, drv-backends, lib, pkgs, ... }: let
-    deps = with config.dependencySets.python3Packages; [
+    deps = with config.drv-parts.dependencySets.python3Packages; [
       poetry-core
       requests-unixsocket
       py-multibase
