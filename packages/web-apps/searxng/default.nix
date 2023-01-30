@@ -21,6 +21,7 @@ toPythonModule (buildPythonApplication rec {
     VERSION_TAG="${pin.revision}"
     GIT_URL="https://github.com/${repo.owner}/${repo.repo}"
     GIT_BRANCH="${pin.branch}"
+    DOCKER_TAG="none"
     EOF
   '';
 
