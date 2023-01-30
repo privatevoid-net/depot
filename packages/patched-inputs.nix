@@ -39,9 +39,22 @@
             nix = patchedNix;
             inherit hercules-ci-cnix-store;
           });
-          cachix = pkgs.haskellPackages.cachix.override (lib.const {
+          cachix = (pkgs.haskellPackages.cachix.override (lib.const {
             nix = patchedNix;
             inherit hercules-ci-cnix-store;
+          })).overrideAttrs (o: {
+            postPatch = ''
+              ${o.postPatch or ""}
+              # jailbreak pkgconfig deps
+              cp cachix.cabal cachix.cabal.backup
+              sed -i cachix.cabal -e 's/\(nix-[a-z]*\) *(==[0-9.]* *|| *>[0-9.]*) *&& *<[0-9.]*/\1/g'
+              sed -i cachix.cabal -e 's/pkgconfig-depends:.*/pkgconfig-depends: nix-main, nix-store/'
+              echo
+              echo Applied:
+              diff -U5 cachix.cabal.backup cachix.cabal ||:
+              echo
+              rm cachix.cabal.backup
+            '';
           });
         };
       in (original.override patchDeps).overrideAttrs forcePatchNix;
