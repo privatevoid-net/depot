@@ -23,7 +23,6 @@
       ./services/gitlab
       ./services/jokes
       ./services/nextcloud
-      ./services/nfs
       ./services/mail
       ./services/matrix
       ./services/minecraft
