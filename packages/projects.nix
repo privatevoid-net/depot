@@ -68,8 +68,6 @@
         nix = nix-super;
       };
 
-      privatevoid-smart-card-ca-bundle = pkgs.callPackage ./data/privatevoid-smart-card-certificate-authority-bundle.nix { };
-
       searxng = pkgs.callPackage ./web-apps/searxng { inherit pins; };
 
       stevenblack-hosts = pkgs.callPackage ./data/stevenblack { inherit pins; };
