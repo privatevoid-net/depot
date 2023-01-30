@@ -11,6 +11,11 @@ toPythonModule (buildPythonApplication rec {
 
   src = npins.mkSource pins.searxng;
 
+  patches = [
+    # wait for https://github.com/NixOS/nixpkgs/pull/211654
+    ./revert-flask-babel-3.0.0.patch
+  ];
+
   postPatch = ''
     sed -i \
       -e 's/==.*$//' \
