@@ -15,6 +15,7 @@
   checks = {
     keycloak = [ "x86_64-linux" ];
     patroni = [ "x86_64-linux" ];
+    searxng = [ "x86_64-linux" ];
     tempo = [ "x86_64-linux" ];
   };
 }
