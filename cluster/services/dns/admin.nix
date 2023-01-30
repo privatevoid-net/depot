@@ -91,6 +91,7 @@ in {
       dataDirUI
       config.age.secrets.pdns-api-key.path
     ];
+    TimeoutStartSec = "300s";
     EnvironmentFile = config.age.secrets.pdns-admin-oidc-secrets.path;
   };
 
