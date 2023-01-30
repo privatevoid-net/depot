@@ -75,7 +75,7 @@
         (host: mkDeploy host // (overrides.${host} or {}) );
 
       effects = inputs.hercules-ci-effects.lib.withPkgs nixpkgsFor.x86_64-linux;
-    in flake-parts.lib.mkFlake { inherit self; } {
+    in flake-parts.lib.mkFlake { inherit inputs; } {
       inherit systems;
       flake = {
         nixosModules = aspect.modules;
