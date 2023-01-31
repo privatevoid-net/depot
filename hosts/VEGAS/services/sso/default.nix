@@ -19,7 +19,14 @@ in
   };
   services.nginx.virtualHosts = { 
     "${login}" = lib.recursiveUpdate (vhosts.proxy kc.url) {
-      locations."= /".return = "302 /auth/realms/master/account/";
+      locations = {
+        "= /".return = "302 /auth/realms/master/account/";
+        "/".extraConfig = ''
+          proxy_busy_buffers_size 512k;
+          proxy_buffers 4 512k;
+          proxy_buffer_size 256k;
+        '';
+      };
     };
     "account.${domain}" = vhosts.redirect "https://${login}/auth/realms/master/account/";
   };
