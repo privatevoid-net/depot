@@ -1,12 +1,12 @@
-{ aspect, hosts, ... }:
+{ depot, hosts, ... }:
 
 {
-  imports = with aspect; [
-    modules.fail2ban
-    modules.nix-config-server
-    modules.sss
+  imports = with depot.nixosModules; [
+    containerBase
+    fail2ban
+    sss
     ./soda.nix
-  ] ++ sets.base ++ sets.networking;
+  ];
 
   boot.isContainer = true;
 

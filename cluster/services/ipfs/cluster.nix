@@ -1,4 +1,4 @@
-{ aspect, config, inputs, lib, pkgs, tools, ... }:
+{ config, depot, inputs, lib, pkgs, tools, ... }:
 
 let
   inherit (tools.meta) domain;
@@ -11,7 +11,7 @@ let
   proxySocket = "/run/ipfs-cluster/ipfs-api-proxy.sock";
 in {
   imports = [
-    aspect.modules.ipfs-cluster
+    depot.nixosModules.ipfs-cluster
   ];
 
   age.secrets = {

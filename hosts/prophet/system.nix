@@ -1,4 +1,4 @@
-{ aspect, inputs, hosts, ... }:
+{ inputs, depot, hosts, ... }:
 
 {
   imports =
@@ -8,13 +8,12 @@
 
       inputs.agenix.nixosModules.age
 
-      aspect.modules.hyprspace
-      aspect.modules.nix-builder
-      aspect.modules.sss
+      depot.nixosModules.hyprspace
+      depot.nixosModules.nix-builder
+      depot.nixosModules.sss
 
-
-    ]
-    ++ aspect.sets.server;
+      depot.nixosModules.serverBase
+    ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;

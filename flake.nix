@@ -14,7 +14,6 @@
 
       inherit (nixpkgs) lib;
 
-      aspect = import ./modules inputs;
       hosts = import ./hosts;
 
       nixosHosts' = lib.filterAttrs (_: host: host ? nixos) hosts;
@@ -28,7 +27,8 @@
       meta = import ./tools/meta.nix;
 
       specialArgs = {
-        inherit inputs hosts aspect;
+        inherit inputs hosts;
+        depot = inputs.self;
         toolsets = import ./tools;
       };
       mkNixOS' = lib: name: let host = hosts.${name}; in lib.nixosSystem {
@@ -78,8 +78,6 @@
     in flake-parts.lib.mkFlake { inherit inputs; } {
       inherit systems;
       flake = {
-        nixosModules = aspect.modules;
-
         nixosConfigurations = lib.genAttrs nixosHosts mkNixOS;
 
         deploy.nodes = mkDeployments deployableNixosHosts {};
@@ -89,6 +87,7 @@
       imports = [
         inputs.drv-parts.flakeModule
         inputs.dream2nix.flakeModuleBeta
+        ./modules/part.nix
         ./packages/part.nix
       ];
     };

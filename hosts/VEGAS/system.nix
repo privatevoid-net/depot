@@ -1,4 +1,4 @@
-{ aspect, config, hosts, inputs, tools, ... }:
+{ config, depot, hosts, inputs, tools, ... }:
 
 {
   imports =
@@ -40,12 +40,13 @@
       ./services/warehouse
       ./services/websites
       ./services/wireguard-server
-      aspect.modules.hyprspace
-      aspect.modules.nix-builder
-    ]
+      depot.nixosModules.hyprspace
+      depot.nixosModules.nix-builder
+
+      depot.nixosModules.backboneBase
+    ];
     # TODO: fix users
     # ++ (import ../../users "server").groups.admin
-    ++ aspect.sets.backbone;
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;

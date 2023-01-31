@@ -1,4 +1,4 @@
-{ aspect, cluster, config, inputs, lib, hosts, pkgs, tools, ... }:
+{ cluster, config, depot, inputs, lib, hosts, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
   cfg = config.services.ipfs;
@@ -9,7 +9,7 @@ let
 in
 {
   imports = [
-    aspect.modules.ipfs
+    depot.nixosModules.ipfs
   ];
 
   links.ipfsGateway.protocol = "http";
