@@ -1,4 +1,4 @@
-{ aspect, inputs, hosts, ... }:
+{ depot, ... }:
 
 {
   imports =
@@ -6,19 +6,19 @@
       # Hardware
       ./hardware-configuration.nix
 
-      inputs.agenix.nixosModules.age
+      depot.inputs.agenix.nixosModules.age
 
-      aspect.modules.hyprspace
-      aspect.modules.sss
-    ]
-    ++ aspect.sets.server;
+      depot.nixosModules.hyprspace
+      depot.nixosModules.sss
+      depot.nixosModules.serverBase
+    ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "checkmate";
-  networking.nameservers = [ hosts.VEGAS.interfaces.vstub.addr ];
+  networking.nameservers = [ depot.config.hours.VEGAS.interfaces.vstub.addr ];
 
   time.timeZone = "Europe/Zurich";
 

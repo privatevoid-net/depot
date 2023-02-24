@@ -1,4 +1,4 @@
-{ config, inputs, pkgs, tools, ... }:
+{ config, depot, tools, ... }:
 
 {
   links.nixIpfs.protocol = "http";
@@ -6,7 +6,7 @@
   systemd.services.nix-ipfs-cache = {
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
-      ExecStart = "${inputs.self.packages.${pkgs.system}.reflex-cache}/bin/reflex";
+      ExecStart = "${depot.packages.reflex-cache}/bin/reflex";
       DynamicUser = true;
       SupplementaryGroups = [ "ipfs" ];
       CacheDirectory = "nix-ipfs-cache";

@@ -1,4 +1,4 @@
-{ config, inputs, pkgs, tools, ... }:
+{ config, depot, tools, ... }:
 
   let
     mkNarServe = NAR_CACHE_URL: PORT: {
@@ -6,7 +6,7 @@
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         DynamicUser = true;
-        ExecStart = "${inputs.nar-serve.defaultPackage."${pkgs.system}"}/bin/nar-serve";
+        ExecStart = "${depot.inputs.nar-serve.packages.nar-serve}/bin/nar-serve";
       };
       environment = { inherit NAR_CACHE_URL PORT; };
     };

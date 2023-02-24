@@ -1,4 +1,4 @@
-{ cluster, config, inputs, lib, pkgs, tools, ... }:
+{ cluster, config, depot, lib, tools, ... }:
 with tools.nginx;
 let
   login = "login.${tools.meta.domain}";
@@ -32,7 +32,7 @@ in
   };
   services.keycloak = {
     enable = true;
-    package = inputs.self.packages.${pkgs.system}.keycloak;
+    package = depot.packages.keycloak;
     database = {
       createLocally = false;
       type = "postgresql";
@@ -52,7 +52,7 @@ in
   };
   systemd.services.keycloak.environment = {
     JAVA_OPTS = builtins.concatStringsSep " " [
-      "-javaagent:${inputs.self.packages.${pkgs.system}.opentelemetry-java-agent-bin}"
+      "-javaagent:${depot.packages.opentelemetry-java-agent-bin}"
       "-Dotel.resource.attributes=service.name=keycloak"
       "-Dotel.traces.exporter=otlp"
     ];

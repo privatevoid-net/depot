@@ -1,4 +1,4 @@
-{ depot, hosts, ... }:
+{ depot, ... }:
 
 {
   imports = with depot.nixosModules; [
@@ -14,9 +14,9 @@
 
   networking.interfaces.eth0.useDHCP = true;
 
-  networking.nameservers = [ hosts.VEGAS.interfaces.vstub.addr ];
+  networking.nameservers = [ depot.config.hours.VEGAS.interfaces.vstub.addr ];
 
-  networking.resolvconf.extraConfig = "local_nameservers='${hosts.VEGAS.interfaces.vstub.addr}'";
+  networking.resolvconf.extraConfig = "local_nameservers='${depot.config.hours.VEGAS.interfaces.vstub.addr}'";
 
   networking.hostName = "soda";
 

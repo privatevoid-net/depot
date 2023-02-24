@@ -1,4 +1,4 @@
-{ config, depot, hosts, inputs, tools, ... }:
+{ config, depot, tools, ... }:
 
 {
   imports =
@@ -11,8 +11,8 @@
       ./modules/oauth2-proxy
       ./modules/redis
       ./modules/virtualisation
-      inputs.agenix.nixosModules.age
-      inputs.mms.module
+      depot.inputs.agenix.nixosModules.age
+      depot.inputs.mms.module
 
       # Services
       ./services/api
@@ -91,7 +91,7 @@
         "fe80::/10"
       ];
 
-      mkRules = ipt: ranges: map (x: "${ipt} -I nixos-fw 1 -d ${x} -o ${hosts.${config.networking.hostName}.interfaces.primary.link} -j DROP") ranges;
+      mkRules = ipt: ranges: map (x: "${ipt} -I nixos-fw 1 -d ${x} -o ${depot.reflection.interfaces.primary.link} -j DROP") ranges;
 
       rules4 = mkRules "iptables" privateIp4Ranges;
 
@@ -103,10 +103,10 @@
   services.openssh.passwordAuthentication = false;
 
   containers.soda = {
-    path = inputs.self.nixosConfigurations.soda.config.system.build.toplevel;
+    path = depot.nixosConfigurations.soda.config.system.build.toplevel;
     privateNetwork = true;
     hostBridge = "vmdefault";
-    localAddress = "${hosts.soda.interfaces.primary.addr}/24";
+    localAddress = "${depot.config.hours.soda.interfaces.primary.addr}/24";
     autoStart = true;
     bindMounts.sodaDir = {
       hostPath = "/srv/storage/www/soda";

@@ -1,4 +1,4 @@
-{ inputs, depot, hosts, ... }:
+{ depot, ... }:
 
 {
   imports =
@@ -6,7 +6,7 @@
       # Hardware
       ./hardware-configuration.nix
 
-      inputs.agenix.nixosModules.age
+      depot.inputs.agenix.nixosModules.age
 
       depot.nixosModules.hyprspace
       depot.nixosModules.nix-builder
@@ -20,7 +20,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "prophet";
-  networking.nameservers = [ hosts.VEGAS.interfaces.vstub.addr ];
+  networking.nameservers = [ depot.config.hours.VEGAS.interfaces.vstub.addr ];
 
   time.timeZone = "Europe/Zurich";
 

@@ -7,86 +7,14 @@
   };
 
   outputs = { self, nixpkgs, flake-parts, ... }@inputs:
-    let
+    flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" "aarch64-linux" ];
 
-      nixpkgsFor = nixpkgs.legacyPackages;
-
-      inherit (nixpkgs) lib;
-
-      hosts = import ./hosts;
-
-      nixosHosts' = lib.filterAttrs (_: host: host ? nixos) hosts;
-
-      nixosHosts = lib.attrNames nixosHosts';
-
-      deployableNixosHosts' = lib.filterAttrs (_: host: host ? container -> !host.container) nixosHosts';
-
-      deployableNixosHosts = lib.attrNames deployableNixosHosts';
-
-      meta = import ./tools/meta.nix;
-
-      specialArgs = {
-        inherit inputs hosts;
-        depot = inputs.self;
-        toolsets = import ./tools;
-      };
-      mkNixOS' = lib: name: let host = hosts.${name}; in lib.nixosSystem {
-        inherit specialArgs;
-        system = "${host.arch}-linux";
-        modules = [ host.nixos ./tools/inject.nix (import ./cluster/inject.nix name) ];
-      };
-      mkNixOS = mkNixOS' lib;  
-
-      mkDeployEffect = branch: name: host: let
-        subdomain = host.enterprise.subdomain or "services";
-        hostname = "${lib.toLower name}.${subdomain}.${meta.domain}";
-      in effects.runIf (branch == "master" || branch == "staging") (effects.runNixOS {
-        requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
-        inherit (self.nixosConfigurations.${name}) config;
-        secretsMap.ssh = "deploy-ssh";
-
-        userSetupScript = ''
-          writeSSHKey ssh
-          cat >>~/.ssh/known_hosts <<EOF
-          ${hostname} ${host.ssh.id.publicKey}
-          EOF
-        '';
-        ssh.destination = "root@${hostname}";
-      });
-
-      mkDeployEffects = branch: hostnames: lib.genAttrs hostnames
-        (name: mkDeployEffect branch name hosts.${name});
-
-      mkDeploy = name: let
-        host = hosts.${name};
-        subdomain = host.enterprise.subdomain or "services";
-        deploy-rs = inputs.deploy-rs.lib."${host.arch}-linux";
-      in {
-        hostname = "${lib.toLower name}.${subdomain}.${meta.domain}";
-        profiles.system = {
-          user = "root";
-          sshUser = "deploy";
-          path = deploy-rs.activate.nixos self.nixosConfigurations.${name};
-        };
-      };
-
-      mkDeployments = hosts: overrides: lib.genAttrs hosts
-        (host: mkDeploy host // (overrides.${host} or {}) );
-
-      effects = inputs.hercules-ci-effects.lib.withPkgs nixpkgsFor.x86_64-linux;
-    in flake-parts.lib.mkFlake { inherit inputs; } {
-      inherit systems;
-      flake = {
-        nixosConfigurations = lib.genAttrs nixosHosts mkNixOS;
-
-        deploy.nodes = mkDeployments deployableNixosHosts {};
-
-        effects = { branch, ... }: mkDeployEffects branch deployableNixosHosts;
-      };
       imports = [
+        inputs.hercules-ci-effects.flakeModule
         inputs.drv-parts.flakeModule
         inputs.dream2nix.flakeModuleBeta
+        ./hosts/part.nix
         ./modules/part.nix
         ./packages/part.nix
       ];
