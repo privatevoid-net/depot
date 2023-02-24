@@ -87,7 +87,7 @@
         effects = { branch, ... }: mkDeployEffects branch deployableNixosHosts;
       };
       imports = [
-        inputs.drv-parts.flakeModule
+        inputs.drv-parts.modules.flake-parts.drv-parts
         inputs.dream2nix.flakeModuleBeta
         ./packages/part.nix
       ];
