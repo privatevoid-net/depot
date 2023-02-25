@@ -42,6 +42,7 @@ in
     ;
     inherit (pkgs)
       ensureNewerSourcesForZipFilesHook
+      stdenv
     ;
   };
 

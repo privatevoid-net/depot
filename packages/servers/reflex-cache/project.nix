@@ -24,7 +24,6 @@
         drv-backends.buildPythonPackage
       ];
       pyprojectToml = ./pyproject.toml;
-      inherit (pkgs) stdenv;
 
       propagatedBuildInputs = deps;
 
