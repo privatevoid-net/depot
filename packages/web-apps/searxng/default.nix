@@ -13,7 +13,7 @@ toPythonModule (buildPythonApplication rec {
 
   patches = [
     # wait for https://github.com/NixOS/nixpkgs/pull/211654
-    ./revert-flask-babel-3.0.0.patch
+    ./revert-flask-babel-3.0.1.patch
   ];
 
   postPatch = ''
