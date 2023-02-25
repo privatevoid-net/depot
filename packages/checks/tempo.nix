@@ -5,8 +5,6 @@ nixosTest {
   nodes.machine = let
     dataDir = "/var/lib/tempo";
     tempoConfig = {
-      search_enabled = true;
-      metrics_generator_enabled = true;
       server = {
         http_listen_address = "127.0.0.1";
         http_listen_port = 8888;
@@ -25,13 +23,8 @@ nixosTest {
       };
       storage.trace = {
         backend = "local";
-        block = {
-          bloom_filter_false_positive = 0.05;
-          index_downsample_bytes = 1000;
-          encoding = "zstd";
-        };
+        block.bloom_filter_false_positive = 0.05;
         wal.path = "${dataDir}/wal";
-        wal.encoding = "snappy";
         local.path = "${dataDir}/blocks";
         pool = {
           max_workers = 16;
@@ -73,6 +66,6 @@ nixosTest {
   testScript = ''
     machine.wait_for_unit("tempo.service")
     machine.wait_for_open_port(8888)
-    machine.succeed("curl --fail http://127.0.0.1:8888/status/version")
+    machine.succeed("curl -s --fail http://127.0.0.1:8888/status/version")
   '';
 }
