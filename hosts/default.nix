@@ -6,6 +6,7 @@ in with tools.dns; {
   VEGAS = import ./VEGAS tools;
   prophet = import ./prophet tools;
   soda = import ./soda tools;
+  checkmate = import ./checkmate tools;
 
   # Non-NixOS machine metadata
   AnimusAlpha = let hostNames = [ "alpha.animus.com" "animus.com" ]; in {
