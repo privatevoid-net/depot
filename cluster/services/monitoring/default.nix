@@ -9,7 +9,7 @@
   };
   services.monitoring = {
     nodes = {
-      client = [ "VEGAS" "prophet" ];
+      client = [ "checkmate" "VEGAS" "prophet" ];
     };
     nixos = {
       client = ./client.nix;
