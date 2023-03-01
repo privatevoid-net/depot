@@ -24,6 +24,7 @@ in with hosts;
   "cluster/services/patroni/passwords/replication.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/patroni/passwords/rewind.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/patroni/passwords/superuser.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
+  "cluster/services/wireguard/mesh-keys/checkmate.age".publicKeys = max ++ map systemKeys [ checkmate ];
   "cluster/services/wireguard/mesh-keys/VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/wireguard/mesh-keys/prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "secrets/coturn-static-auth.age".publicKeys = max ++ map systemKeys [ VEGAS ];

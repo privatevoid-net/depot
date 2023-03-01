@@ -14,12 +14,23 @@ in
 {
   vars = {
     mesh = {
+      checkmate = config.links.mesh-node-checkmate.extra;
       VEGAS = config.links.mesh-node-VEGAS.extra;
       prophet = config.links.mesh-node-prophet.extra;
     };
     inherit meshNet;
   };
   links = {
+    mesh-node-checkmate = {
+      ipv4 = getExtAddr hosts.checkmate;
+      extra = {
+        meshIp = "10.1.1.32";
+        inherit meshNet;
+        pubKey = "fZMB9CDCWyBxPnsugo3Uxm/TIDP3VX54uFoaoC0bP3U=";
+        privKeyFile = ./mesh-keys/checkmate.age;
+        extraRoutes = [];
+      };
+    };
     mesh-node-VEGAS = {
       ipv4 = getExtAddr hosts.VEGAS;
       extra = {
@@ -43,7 +54,7 @@ in
   };
   services.wireguard = {
     nodes = {
-      mesh = [ "VEGAS" "prophet" ];
+      mesh = [ "checkmate" "VEGAS" "prophet" ];
     };
     nixos = {
       mesh = ./mesh.nix;
