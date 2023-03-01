@@ -20,6 +20,7 @@ in
     # run on any architecture
     environment.ETCD_UNSUPPORTED_ARCH = pkgs.go.GOARCH;
     serviceConfig = {
+      TimeoutStartSec = "900s";
       RestartSec = "5s";
       Restart = "on-failure";
     };
