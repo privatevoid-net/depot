@@ -8,6 +8,7 @@
 
       inputs.agenix.nixosModules.age
 
+      aspect.modules.hyprspace
       aspect.modules.sss
     ]
     ++ aspect.sets.server;

@@ -12,6 +12,12 @@ tools: {
     };
   };
 
+  hypr = {
+    id = "12D3KooWL84sAtq1QTYwb7gVbhSNX5ZUfVt4kgYKz8pdif1zpGUh";
+    addr = "10.100.3.32";
+    listenPort = 995;
+  };
+
   enterprise = {
     subdomain = "node";
   };
