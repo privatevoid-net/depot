@@ -12,7 +12,7 @@ in
   services.etcd = {
     enable = true;
     dataDir = "/srv/storage/private/etcd";
-    initialCluster = (map mkMember cluster.config.services.patroni.nodes.etcd) ++ vars.patroni.etcdExtraNodes;
+    initialCluster = map mkMember cluster.config.services.patroni.nodes.etcd;
     listenPeerUrls = lib.singleton vars.patroni.etcdNodes.${vars.hostName}.url;
     listenClientUrls = lib.singleton vars.patroni.etcdNodesClient.${vars.hostName}.url;
   };
@@ -20,6 +20,7 @@ in
     # run on any architecture
     environment.ETCD_UNSUPPORTED_ARCH = pkgs.go.GOARCH;
     serviceConfig = {
+      TimeoutStartSec = "900s";
       RestartSec = "5s";
       Restart = "on-failure";
     };

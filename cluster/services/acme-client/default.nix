@@ -1,6 +1,6 @@
 {
   services.acme-client = {
-    nodes.client = [ "VEGAS" "prophet" ];
+    nodes.client = [ "checkmate" "VEGAS" "prophet" ];
     nixos.client = ./client.nix;
   };
 }

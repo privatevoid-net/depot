@@ -18,7 +18,6 @@ in
   vars.patroni = {
     etcdNodes = lib.genAttrs cfg.nodes.etcd (name: config.links."patroni-etcd-node-peer-${name}");
     etcdNodesClient = lib.genAttrs cfg.nodes.etcd (name: config.links."patroni-etcd-node-client-${name}");
-    etcdExtraNodes = [ "fly=http://10.1.1.151:2380" ];
     passwords = {
       PATRONI_REPLICATION_PASSWORD = ./passwords/replication.age;
       PATRONI_SUPERUSER_PASSWORD = ./passwords/superuser.age;
@@ -35,7 +34,7 @@ in
   services.patroni = {
     nodes = {
       worker = [ "VEGAS" "prophet" ];
-      etcd = [ "VEGAS" "prophet" ];
+      etcd = [ "checkmate" "VEGAS" "prophet" ];
       haproxy = [ "VEGAS" "prophet" ];
     };
     nixos = {
