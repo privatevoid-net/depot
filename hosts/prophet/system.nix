@@ -8,7 +8,6 @@
 
       inputs.agenix.nixosModules.age
 
-      ./services/cdn-shield
       aspect.modules.hyprspace
       aspect.modules.nix-builder
       aspect.modules.sss
