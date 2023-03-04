@@ -3,7 +3,7 @@
 let
   tools = toolsets.nginx {
     inherit lib config;
-    domain = "cdn-shield.imagine-using-oca.ml";
+    domain = "cdn-shield.privatevoid.net";
   };
 in
 {
