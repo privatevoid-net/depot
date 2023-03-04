@@ -25,6 +25,7 @@
       ./services/nextcloud
       ./services/mail
       ./services/matrix
+      ./services/meet
       ./services/minecraft
       ./services/monitoring
       ./services/nix/binary-cache.nix
