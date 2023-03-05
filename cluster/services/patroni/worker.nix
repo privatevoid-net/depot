@@ -72,4 +72,17 @@ in
     };
     environmentFiles = lib.mapAttrs (n: _: config.age.secrets.${n}.path) vars.patroni.passwords;
   };
+
+  consul.services.patroni = {
+    mode = "external";
+    definition.service = rec {
+      name = "patroni";
+      address = getMeshIp vars.hostName;
+      port = cluster.config.links.patroni-pg-internal.port;
+      checks = lib.singleton {
+        interval = "5s";
+        http = "http://${address}:${cluster.config.links.patroni-api.portStr}";
+      };
+    };
+  };
 }
