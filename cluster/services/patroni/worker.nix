@@ -40,7 +40,7 @@ in
     raft = false;
     softwareWatchdog = true;
     settings = {
-      etcd3.hosts = map (x: x.tuple) (lib.attrValues vars.patroni.etcdNodesClient);
+      consul.host = "127.0.0.1:8500";
       bootstrap.dcs = {
         ttl = 30;
         loop_wait = 10;
