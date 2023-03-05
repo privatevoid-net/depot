@@ -1,6 +1,7 @@
-{ config, cluster, lib, ... }:
+{ config, cluster, lib, tools, ... }:
 
 let
+  inherit (tools.meta) domain;
   inherit (config.networking) hostName;
   inherit (cluster.config) hostLinks;
   cfg = cluster.config.services.consul;
@@ -14,6 +15,7 @@ in
     webUi = true;
     extraConfig = {
       datacenter = "eu-central";
+      domain = "sd-magic.${domain}.";
       server = true;
       node_name = config.networking.hostName;
       bind_addr = hl.ipv4;
