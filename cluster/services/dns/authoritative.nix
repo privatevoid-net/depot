@@ -61,4 +61,17 @@ in {
   systemd.services.coredns = {
     after = [ "pdns.service" ];
   };
+
+  consul.services.pdns = {
+    mode = "external";
+    definition.service = {
+      name = "authoritative-dns-backend";
+      address = config.links.localAuthoritativeDNS.ipv4;
+      port = config.links.localAuthoritativeDNS.port;
+      checks = lib.singleton {
+        interval = "60s";
+        tcp = config.links.localAuthoritativeDNS.tuple;
+      };
+    };
+  };
 }
