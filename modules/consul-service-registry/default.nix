@@ -37,7 +37,7 @@ let
       direct = {
         serviceConfig = {
           ExecStartPost = "${consul} services register ${serviceJson}";
-          ExecStopPre = "${consul} services deregister ${serviceJson}";
+          ExecStopPost = "${consul} services deregister ${serviceJson}";
         };
       };
       external = {
