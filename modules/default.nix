@@ -3,6 +3,7 @@ with builtins;
 let
   aspects = {
     autopatch = import ./autopatch;
+    consul-service-registry = import ./consul-service-registry;
     deploy-rs-receiver = import ./deploy-rs-receiver;
     enterprise = import ./enterprise;
     fail2ban = import ./fail2ban;
@@ -41,6 +42,7 @@ in rec {
     ];
 
     server = [
+      consul-service-registry
       deploy-rs-receiver
       fail2ban
       motd
