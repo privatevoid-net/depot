@@ -1,7 +1,8 @@
-{ cluster, config, hosts, lib, ... }:
+{ cluster, config, hosts, lib, tools, ... }:
 
 let
   inherit (hosts.${config.networking.hostName}) interfaces;
+  inherit (tools.meta) domain;
 
   patroni = cluster.config.links.patroni-pg-access;
 
@@ -9,6 +10,8 @@ let
     configList = lib.mapAttrsToList (n: v: "${n}=${v}") cfg;
   in lib.concatStringsSep "\n" configList;
 in {
+  links.localAuthoritativeDNS = {};
+
   age.secrets = {
     pdns-db-credentials = {
       file = ./pdns-db-credentials.age;
@@ -27,7 +30,7 @@ in {
     enable = true;
     extraConfig = translateConfig {
       launch = "gpgsql";
-      local-address = interfaces.primary.addr;
+      local-address = config.links.localAuthoritativeDNS.tuple;
       gpgsql-host = patroni.ipv4;
       gpgsql-port = patroni.portStr;
       gpgsql-dbname = "powerdns";
@@ -35,5 +38,26 @@ in {
       gpgsql-extra-connection-parameters = "passfile=${config.age.secrets.pdns-db-credentials.path}";
       version-string = "Private Void DNS";
     };
+  };
+
+  services.coredns = {
+    enable = true;
+    config = ''
+      . {
+        bind ${interfaces.primary.addr}
+        chaos "Private Void DNS" info@privatevoid.net
+        cache {
+          success 4000 86400
+          denial 0
+          prefetch 3
+          serve_stale 86400s
+        }
+        forward . ${config.links.localAuthoritativeDNS.tuple}
+      }
+    '';
+  };
+
+  systemd.services.coredns = {
+    after = [ "pdns.service" ];
   };
 }
