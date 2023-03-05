@@ -13,7 +13,7 @@ in
     enable = true;
     webUi = true;
     extraConfig = {
-      datacenter = "pve1";
+      datacenter = "eu-central";
       server = true;
       node_name = config.networking.hostName;
       bind_addr = hl.ipv4;
