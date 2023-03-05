@@ -53,6 +53,7 @@ in {
           serve_stale 86400s
         }
         forward service.eu-central.sd-magic.${domain} 127.0.0.1:8600
+        forward addr.eu-central.sd-magic.${domain} 127.0.0.1:8600
         forward . ${config.links.localAuthoritativeDNS.tuple}
       }
     '';
