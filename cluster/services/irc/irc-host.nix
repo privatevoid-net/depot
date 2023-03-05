@@ -1,4 +1,4 @@
-{ cluster, config, pkgs, tools, ... }:
+{ cluster, config, lib, pkgs, tools, ... }:
 
 let
   inherit (tools.meta) adminEmail;
@@ -105,5 +105,17 @@ in {
         ${pkgs.replace-secret}/bin/replace-secret '@PEER_PASSWORD@' '${config.age.secrets.ircPeerKey.path}' /run/ngircd/secrets/$(basename $cfg)
       done
     '';
+  };
+
+  consul.services.ngircd = {
+    definition.service = {
+      name = "irc";
+      address = linkSecure.ipv4;
+      port = linkSecure.port;
+      checks = lib.singleton {
+        interval = "60s";
+        tcp = link.tuple;
+      };
+    };
   };
 }
