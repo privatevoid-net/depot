@@ -1,4 +1,4 @@
-{ config, hosts, inputs, pkgs, tools, ... }:
+{ config, hosts, inputs, lib, pkgs, tools, ... }:
 
 let
   inherit (hosts.${config.networking.hostName}) interfaces;
@@ -17,7 +17,7 @@ in
   };
 
   systemd.services.coredns = {
-    after = [ "network-addresses-vstub.service" ];
+    after = lib.optional (interfaces ? vstub) "network-addresses-vstub.service";
     serviceConfig.LoadCredential = [
       "dot-cert.pem:${dot.directory}/fullchain.pem"
       "dot-key.pem:${dot.directory}/key.pem"
@@ -38,7 +38,7 @@ in
     enable = true;
     config = ''
       . {
-        bind ${interfaces.vstub.addr}
+        ${lib.optionalString (interfaces ? vstub) "bind ${interfaces.vstub.addr}"}
         bind 127.0.0.1
         hosts ${stevenblack-hosts} {
           fallthrough
