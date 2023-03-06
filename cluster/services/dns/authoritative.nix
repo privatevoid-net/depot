@@ -39,7 +39,7 @@ in {
       version-string = "Private Void DNS";
       enable-lua-records = "yes";
       expand-alias = "yes";
-      resolver = "127.0.0.1:53";
+      resolver = "127.0.0.1:8600";
     };
   };
 
