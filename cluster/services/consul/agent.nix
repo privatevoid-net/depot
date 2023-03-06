@@ -16,6 +16,7 @@ in
     extraConfig = {
       datacenter = "eu-central";
       domain = "sd-magic.${domain}.";
+      recursors = [ "127.0.0.1" cluster.config.links.dnsResolver.ipv4 ];
       server = true;
       node_name = config.networking.hostName;
       bind_addr = hl.ipv4;
