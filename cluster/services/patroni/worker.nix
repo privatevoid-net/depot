@@ -81,12 +81,20 @@ in
       port = cluster.config.links.patroni-pg-internal.port;
       checks = [
         {
-          name = "service:patroni";
+          name = "Patroni API";
+          id = "service:patroni";
           interval = "5s";
-          http = "http://${address}:${cluster.config.links.patroni-api.portStr}";
+          http = "http://${address}:${cluster.config.links.patroni-api.portStr}/liveness";
         }
         {
-          name = "service:patroni:postgres";
+          name = "Patroni Leader";
+          id = "service:patroni:leader";
+          interval = "5s";
+          http = "http://${address}:${cluster.config.links.patroni-api.portStr}/leader";
+        }
+        {
+          name = "PostgreSQL";
+          id = "service:patroni:postgres";
           interval = "120s";
           tcp = "${address}:${cluster.config.links.patroni-pg-internal.portStr}";
         }
