@@ -51,6 +51,8 @@ let
           RemainAfterExit = true;
           ExecStart = "${consul} services register ${servicesJson}";
           ExecStop = "${consul} services deregister ${servicesJson}";
+          Restart = "on-failure";
+          RestartSec = "1s";
         };
       };
     }.${mode};
