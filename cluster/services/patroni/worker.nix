@@ -79,10 +79,18 @@ in
       name = "patroni";
       address = getMeshIp vars.hostName;
       port = cluster.config.links.patroni-pg-internal.port;
-      checks = lib.singleton {
-        interval = "5s";
-        http = "http://${address}:${cluster.config.links.patroni-api.portStr}";
-      };
+      checks = [
+        {
+          name = "service:patroni";
+          interval = "5s";
+          http = "http://${address}:${cluster.config.links.patroni-api.portStr}";
+        }
+        {
+          name = "service:patroni:postgres";
+          interval = "120s";
+          tcp = "${address}:${cluster.config.links.patroni-pg-internal.portStr}";
+        }
+      ];
     };
   };
 }
