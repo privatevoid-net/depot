@@ -12,6 +12,9 @@ in
   });
   services.consul = {
     nodes.agent = [ "checkmate" "VEGAS" ];
-    nixos.agent = ./agent.nix;
+    nixos.agent = [
+      ./agent.nix
+      ./remote-api.nix
+    ];
   };
 }
