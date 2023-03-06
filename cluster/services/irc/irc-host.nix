@@ -108,7 +108,7 @@ in {
   };
 
   consul.services.ngircd = {
-    definition.service = {
+    definition = {
       name = "irc";
       address = linkSecure.ipv4;
       port = linkSecure.port;

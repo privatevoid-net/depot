@@ -75,7 +75,7 @@ in
 
   consul.services.patroni = {
     mode = "external";
-    definition.service = rec {
+    definition = rec {
       name = "patroni";
       address = getMeshIp vars.hostName;
       port = cluster.config.links.patroni-pg-internal.port;

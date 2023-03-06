@@ -65,7 +65,7 @@ in {
 
   consul.services.pdns = {
     mode = "external";
-    definition.service = {
+    definition = {
       name = "authoritative-dns-backend";
       address = config.links.localAuthoritativeDNS.ipv4;
       port = config.links.localAuthoritativeDNS.port;

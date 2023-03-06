@@ -26,32 +26,34 @@ let
     };
   });
 
-  attachToService = name: conf: let
-    serviceJson = pkgs.writeText "consul-service-${name}.json" (builtins.toJSON conf.definition);
+  attachToService = unit: servicesRaw: let
+    services = map (getAttr "definition") servicesRaw;
+    servicesJson = pkgs.writeText "consul-services-${unit}.json" (builtins.toJSON { inherit services; });
+    mode = if any (x: x.mode == "external") servicesRaw then "external" else "direct";
   in {
     name = {
-      direct = conf.unit;
-      external = "register-consul-svc-${conf.unit}";
-    }.${conf.mode};
+      direct = unit;
+      external = "register-consul-svc-${unit}";
+    }.${mode};
     value = {
       direct = {
         serviceConfig = {
-          ExecStartPost = "${consul} services register ${serviceJson}";
-          ExecStopPost = "${consul} services deregister ${serviceJson}";
+          ExecStartPost = "${consul} services register ${servicesJson}";
+          ExecStopPost = "${consul} services deregister ${servicesJson}";
         };
       };
       external = {
-        after = [ "${conf.unit}.service" ];
-        wantedBy = [ "${conf.unit}.service" ];
-        unitConfig.BindsTo = "${conf.unit}.service";
+        after = [ "${unit}.service" ];
+        wantedBy = [ "${unit}.service" ];
+        unitConfig.BindsTo = "${unit}.service";
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
-          ExecStart = "${consul} services register ${serviceJson}";
-          ExecStop = "${consul} services deregister ${serviceJson}";
+          ExecStart = "${consul} services register ${servicesJson}";
+          ExecStop = "${consul} services deregister ${servicesJson}";
         };
       };
-    }.${conf.mode};
+    }.${mode};
   };
 in
 
@@ -64,7 +66,7 @@ in
   };
 
   config = lib.mkIf (cfg.services != {}) {
-    systemd.services = mapAttrs' attachToService cfg.services;
+    systemd.services = mapAttrs' attachToService (groupBy (getAttr "unit") (attrValues cfg.services));
     warnings = optional (!config.services.consul.enable) "Consul service registrations found, but Consul agent is not enabled on this machine.";
   };
 }

@@ -23,7 +23,7 @@ in {
 
   consul.services.nginx = {
     mode = "external";
-    definition.service = {
+    definition = {
       name = "static-lb";
       address = lib.toLower "${config.networking.hostName}.${config.networking.domain}";
       port = 443;
