@@ -37,6 +37,7 @@ in {
       gpgsql-user = "powerdns";
       gpgsql-extra-connection-parameters = "passfile=${config.age.secrets.pdns-db-credentials.path}";
       version-string = "Private Void DNS";
+      enable-lua-records = "yes";
     };
   };
 
