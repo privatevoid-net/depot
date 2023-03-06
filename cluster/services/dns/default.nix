@@ -21,7 +21,7 @@ in
   services.dns = {
     nodes = {
       master = [ "VEGAS" ];
-      slave = [ "prophet" ];
+      slave = [ "checkmate" "prophet" ];
       coredns = [ "VEGAS" ];
       client = [ "VEGAS" "prophet" ];
     };
