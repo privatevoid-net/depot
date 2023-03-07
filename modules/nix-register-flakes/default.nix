@@ -1,6 +1,6 @@
-{ inputs, ... }:
+{ depot, ... }:
 
-with inputs;
+with depot.inputs;
 {
   nix.nixPath = [
     "repl=/etc/nixos/flake-channels/system/repl.nix"
@@ -8,13 +8,13 @@ with inputs;
   ];
 
   nix.registry = {
-    system.flake = self;
+    system.flake = depot;
     nixpkgs.flake = nixpkgs;
     default.flake = nixpkgs;
   };
 
   environment.etc = {
-    "nixos/flake-channels/system".source = inputs.self;
+    "nixos/flake-channels/system".source = depot;
     "nixos/flake-channels/nixpkgs".source = nixpkgs;
   };
 }

@@ -1,8 +1,8 @@
-{ pkgs, lib, config, inputs, tools, ... }:
+{ pkgs, lib, config, depot, tools, ... }:
 
 {
   nix = {
-    package = inputs.nix-super.packages.${pkgs.system}.default;
+    package = depot.inputs.nix-super.packages.default;
 
     settings = {
       trusted-users = [ "root" "@wheel" "@admins" ];

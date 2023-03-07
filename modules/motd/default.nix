@@ -1,4 +1,4 @@
-{ config, inputs, pkgs, ... }:
+{ config, depot, pkgs, ... }:
 {
   users.motd = builtins.readFile ./motd.txt;
   environment.interactiveShellInit = let
@@ -40,7 +40,7 @@
     echo -e " █ ''${BGREEN}(✓)''${CO} ''${BWHITE}You are using a genuine Private Void™ system.''${CO}"
     echo    " █"
     echo -e " █ ''${BWHITE}OS Version....:''${CO} NixOS ''${CAB}${config.system.nixos.version}''${CO}" 
-    echo -e " █ ''${BWHITE}Configuration.:''${CO} ''${CAB}${inputs.self.rev or "\${BRED}(✘)\${CO}\${BWHITE} Dirty"}''${CO}" 
+    echo -e " █ ''${BWHITE}Configuration.:''${CO} ''${CAB}${depot.rev or "\${BRED}(✘)\${CO}\${BWHITE} Dirty"}''${CO}" 
     echo -e " █ ''${BWHITE}Uptime........:''${CO} $(${uptime} -p | ${util "cut"} -d ' ' -f2- | GREP_COLORS='mt=01;35' ${grep} --color=always '[0-9]*')"
     echo -e " █ ''${BWHITE}SSH Logins....:''${CO} There are currently ''${CAB}$(${countUsers})''${CO} users logged in on ''${CAB}$(${countSessions})''${CO} sessions"
     )
