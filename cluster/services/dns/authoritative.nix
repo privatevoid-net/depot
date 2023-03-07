@@ -1,7 +1,7 @@
-{ cluster, config, hosts, lib, tools, ... }:
+{ cluster, config, depot, lib, tools, ... }:
 
 let
-  inherit (hosts.${config.networking.hostName}) interfaces;
+  inherit (depot.reflection) interfaces;
   inherit (tools.meta) domain;
 
   patroni = cluster.config.links.patroni-pg-access;

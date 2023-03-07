@@ -1,4 +1,4 @@
-{ config, inputs, lib, pkgs, ... }:
+{ config, depot, lib, pkgs, ... }:
 
 let
   mapAgents = lib.flip lib.mapAttrs config.services.hercules-ci-agents;
@@ -17,7 +17,7 @@ let
 in
 {
   imports = [
-    inputs.hercules-ci-agent.nixosModules.multi-agent-service
+    depot.inputs.hercules-ci-agent.nixosModules.multi-agent-service
   ];
 
   age.secrets = mergeMap (name: _: {

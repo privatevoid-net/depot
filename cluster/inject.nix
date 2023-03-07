@@ -1,8 +1,8 @@
 hostName:
-{ lib, ... }:
+{ depot, lib, ... }:
 
 let
-  cluster = import ./. { inherit lib hostName; };
+  cluster = import ./. { inherit lib depot hostName; };
 in
 
 {

@@ -1,4 +1,4 @@
-{ config, hosts, tools, ... }:
+{ config, depot, tools, ... }:
 with tools.nginx;
 let
   inherit (tools.meta) domain;
@@ -64,7 +64,7 @@ in
         extraConfig = ''
           access_log off;
           auth_request off;
-          allow ${hosts.VEGAS.interfaces.primary.addr};
+          allow ${depot.config.hours.VEGAS.interfaces.primary.addr};
           deny all;
         '';
       };

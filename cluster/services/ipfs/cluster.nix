@@ -1,4 +1,4 @@
-{ config, depot, inputs, lib, pkgs, tools, ... }:
+{ config, depot, lib, pkgs, tools, ... }:
 
 let
   inherit (tools.meta) domain;
@@ -24,7 +24,7 @@ in {
 
   services.ipfs-cluster = {
     enable = true;
-    package = inputs.self.packages.${pkgs.system}.ipfs-cluster;
+    package = depot.packages.ipfs-cluster;
     consensus = "crdt";
     dataDir = "/srv/storage/ipfs/cluster";
     secretFile = config.age.secrets.ipfs-cluster-secret.path;

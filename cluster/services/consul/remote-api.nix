@@ -1,16 +1,14 @@
-{ config, cluster, hosts, lib, tools, ... }:
+{ config, cluster, depot, lib, tools, ... }:
 
 let
   inherit (tools.meta) domain;
-  inherit (config.networking) hostName;
-
-  hyprspaceConfig = hosts.${hostName}.hypr;
+  inherit (depot.reflection) hyprspace;
   frontendDomain = "consul-remote.internal.${domain}";
 in
 
 {
   services.nginx.virtualHosts.${frontendDomain} = tools.nginx.vhosts.proxy "http://127.0.0.1:8500" // {
-    listenAddresses = lib.singleton hyprspaceConfig.addr;
+    listenAddresses = lib.singleton hyprspace.addr;
     enableACME = false;
     useACMEHost = "internal.${domain}";
   };
@@ -20,13 +18,13 @@ in
     mode = "external";
     definition = {
       name = "consul-remote";
-      address = hyprspaceConfig.addr;
+      address = hyprspace.addr;
       port = 443;
       checks = [
         {
           name = "Frontend";
           id = "service:consul-remote:frontend";
-          http = "https://${hyprspaceConfig.addr}/v1/status/leader";
+          http = "https://${hyprspace.addr}/v1/status/leader";
           tls_server_name = frontendDomain;
           interval = "60s";
         }

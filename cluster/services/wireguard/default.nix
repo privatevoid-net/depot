@@ -1,7 +1,7 @@
-{ config, ... }:
+{ config, depot, ... }:
 
 let
-  inherit (config.vars) hosts;
+  inherit (depot.config) hours;
 
   meshNet = rec {
     netAddr = "10.1.1.0";
@@ -9,7 +9,7 @@ let
     cidr = "${netAddr}/${toString prefix}";
   };
 
-  getExtAddr = host: host.interfaces.primary.addrPublic or host.interfaces.primary.addr;
+  getExtAddr = host: host.interfaces.primary.addrPublic;
 in
 {
   vars = {
@@ -22,7 +22,7 @@ in
   };
   links = {
     mesh-node-checkmate = {
-      ipv4 = getExtAddr hosts.checkmate;
+      ipv4 = getExtAddr hours.checkmate;
       extra = {
         meshIp = "10.1.1.32";
         inherit meshNet;
@@ -32,17 +32,17 @@ in
       };
     };
     mesh-node-VEGAS = {
-      ipv4 = getExtAddr hosts.VEGAS;
+      ipv4 = getExtAddr hours.VEGAS;
       extra = {
         meshIp = "10.1.1.5";
         inherit meshNet;
         pubKey = "NpeB8O4erGTas1pz6Pt7qtY9k45YV6tcZmvvA4qXoFk=";
         privKeyFile = ./mesh-keys/VEGAS.age;
-        extraRoutes = [ "${hosts.VEGAS.interfaces.vstub.addr}/32" "10.10.0.0/16" ];
+        extraRoutes = [ "${hours.VEGAS.interfaces.vstub.addr}/32" "10.10.0.0/16" ];
       };
     };
     mesh-node-prophet = {
-      ipv4 = getExtAddr hosts.prophet;
+      ipv4 = getExtAddr hours.prophet;
       extra = {
         meshIp = "10.1.1.9";
         inherit meshNet;

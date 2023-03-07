@@ -1,10 +1,10 @@
-{ config, hosts, inputs, lib, pkgs, tools, ... }:
+{ config, depot, lib, pkgs, tools, ... }:
 
 let
-  inherit (hosts.${config.networking.hostName}) interfaces;
+  inherit (depot.reflection) interfaces;
   inherit (tools.meta) domain;
   inherit (config.links) localRecursor;
-  inherit (inputs.self.packages.${pkgs.system}) stevenblack-hosts;
+  inherit (depot.packages) stevenblack-hosts;
   dot = config.security.acme.certs."securedns.${domain}";
 in
 
