@@ -1,5 +1,5 @@
-{ inputs, ... }:
+{ depot, ... }:
 
 {
-  system.configurationRevision = inputs.self.rev or null;
+  system.configurationRevision = depot.rev or null;
 }

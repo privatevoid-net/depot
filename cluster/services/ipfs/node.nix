@@ -1,4 +1,4 @@
-{ aspect, cluster, config, inputs, lib, hosts, pkgs, tools, ... }:
+{ cluster, config, depot, lib, pkgs, tools, ... }:
 let
   inherit (tools.meta) domain;
   cfg = config.services.ipfs;
@@ -9,7 +9,7 @@ let
 in
 {
   imports = [
-    aspect.modules.ipfs
+    depot.nixosModules.ipfs
   ];
 
   links.ipfsGateway.protocol = "http";
@@ -21,7 +21,7 @@ in
 
   services.ipfs = {
     enable = true;
-    package = inputs.self.packages.${pkgs.system}.ipfs;
+    package = depot.packages.ipfs;
     startWhenNeeded = false;
     autoMount = true;
     autoMigrate = false;
@@ -40,7 +40,7 @@ in
     extraFlags = [ "--migrate" ];
     extraConfig = {
       Bootstrap = [
-        "/ip4/${hosts.VEGAS.interfaces.primary.addr}/tcp/${toString ipfsPort}/p2p/Qmd7QHZU8UjfYdwmjmq1SBh9pvER9AwHpfwQvnvNo3HBBo"
+        "/ip4/${depot.config.hours.VEGAS.interfaces.primary.addr}/tcp/${toString ipfsPort}/p2p/Qmd7QHZU8UjfYdwmjmq1SBh9pvER9AwHpfwQvnvNo3HBBo"
         "/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa"
         "/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb"
         "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"

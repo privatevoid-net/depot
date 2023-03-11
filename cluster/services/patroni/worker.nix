@@ -1,4 +1,4 @@
-{ aspect, cluster, config, lib, pkgs, ... }:
+{ cluster, config, depot, lib, pkgs, ... }:
 
 let
   inherit (cluster.config) vars;
@@ -14,7 +14,7 @@ in
 
 {
   imports = [
-    aspect.modules.patroni
+    depot.nixosModules.patroni
   ];
 
   age.secrets = lib.mapAttrs (_: file: {

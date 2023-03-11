@@ -1,9 +1,6 @@
-{ config, lib, hosts, tools, ... }:
+{ config, lib, depot, tools, ... }:
 let
-  host = hosts.${config.networking.hostName};
-  inherit (host) interfaces;
-
-  isNAT = interfaces.primary ? addrPublic;
+  inherit (depot.reflection) interfaces;
 in
 {
   services.jitsi-meet = {
@@ -30,7 +27,7 @@ in
         { type = "colibri"; }
       ];
     };
-    nat = lib.optionalAttrs isNAT {
+    nat = lib.optionalAttrs interfaces.primary.isNat {
       localAddress = interfaces.primary.addr;
       publicAddress = interfaces.primary.addrPublic;
     };

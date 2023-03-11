@@ -1,6 +1,6 @@
-{ config, hosts, ... }:
+{ config, depot, ... }:
 let
-  inherit (hosts.${config.networking.hostName}) interfaces;
+  inherit (depot.reflection) interfaces;
 in
 {
   imports = [

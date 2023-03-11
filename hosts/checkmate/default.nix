@@ -1,4 +1,5 @@
 tools: {
+  ssh.enable = true;
   ssh.id = with tools.dns; {
     publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINImnMfEzUBU5qiuu05DMPrddTGypOtr+cL1/yQN2GFn";
     hostNames = subResolve "checkmate" "node";
@@ -12,7 +13,8 @@ tools: {
     };
   };
 
-  hypr = {
+  hyprspace = {
+    enable = true;
     id = "12D3KooWL84sAtq1QTYwb7gVbhSNX5ZUfVt4kgYKz8pdif1zpGUh";
     addr = "10.100.3.32";
     listenPort = 995;
@@ -22,6 +24,6 @@ tools: {
     subdomain = "node";
   };
 
-  arch = "x86_64";
-  nixos = import ./system.nix;
+  system = "x86_64-linux";
+  nixos = ./system.nix;
 }

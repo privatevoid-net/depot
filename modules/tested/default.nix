@@ -1,4 +1,4 @@
-{ config, inputs, lib, pkgs, ... }:
+{ config, depot, lib, pkgs, ... }:
 with lib;
 
 {
@@ -9,5 +9,5 @@ with lib;
       default = [];
     };
   };
-  config.system.extraDependencies = map (name: inputs.self.checks.${pkgs.system}.${name}) config.tested.requiredChecks;
+  config.system.extraDependencies = map (name: depot.checks.${name}) config.tested.requiredChecks;
 }

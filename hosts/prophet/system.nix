@@ -1,4 +1,4 @@
-{ aspect, inputs, hosts, ... }:
+{ depot, ... }:
 
 {
   imports =
@@ -6,22 +6,21 @@
       # Hardware
       ./hardware-configuration.nix
 
-      inputs.agenix.nixosModules.age
+      depot.inputs.agenix.nixosModules.age
 
-      aspect.modules.hyprspace
-      aspect.modules.nix-builder
-      aspect.modules.sss
+      depot.nixosModules.hyprspace
+      depot.nixosModules.nix-builder
+      depot.nixosModules.sss
 
-
-    ]
-    ++ aspect.sets.server;
+      depot.nixosModules.serverBase
+    ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "prophet";
-  networking.nameservers = [ hosts.VEGAS.interfaces.vstub.addr ];
+  networking.nameservers = [ depot.config.hours.VEGAS.interfaces.vstub.addr ];
 
   time.timeZone = "Europe/Zurich";
 

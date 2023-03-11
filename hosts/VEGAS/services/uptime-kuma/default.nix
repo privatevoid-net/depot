@@ -1,9 +1,7 @@
-{ config, inputs, lib, pkgs, tools, ... }:
+{ config, depot, lib, tools, ... }:
 
 let
   inherit (tools.meta) domain;
-
-  flakePkgs = inputs.self.packages.${pkgs.system};
 
   link = config.links.uptime-kuma;
 
@@ -55,7 +53,7 @@ in
       ProtectKernelModules = true;
       ProtectKernelTunables = true;
 
-      ExecStart = flakePkgs.uptime-kuma + /bin/uptime-kuma;
+      ExecStart = depot.packages.uptime-kuma + /bin/uptime-kuma;
     };
 
 

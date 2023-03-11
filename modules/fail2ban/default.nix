@@ -1,4 +1,4 @@
-{ config, hosts, ... }:
+{ config, depot, ... }:
 {
   services.fail2ban = {
     enable = true;
@@ -10,7 +10,7 @@
     '';
     ignoreIP = [
       "10.0.0.0/8"
-      hosts.${config.networking.hostName}.interfaces.primary.addr
+      depot.reflection.interfaces.primary.addr
     ];
     bantime-increment = {
       enable = true;

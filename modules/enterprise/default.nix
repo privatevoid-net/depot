@@ -1,8 +1,8 @@
-{ config, hosts, lib, tools, ... }:
+{ config, depot, lib, tools, ... }:
 let
   orgDomain = tools.meta.domain;
   orgRealm = lib.toUpper orgDomain;
-  host = hosts.${config.networking.hostName} or null;
+  host = depot.reflection;
 in {
   krb5 = {
     enable = true;

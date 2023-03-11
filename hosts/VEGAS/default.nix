@@ -1,4 +1,5 @@
 tools: {
+  ssh.enable = true;
   ssh.id = with tools.dns; {
     publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICz2nGA+Y4OxhMKsV6vKIns3hOoBkK557712h7FfWXcE";
     hostNames = subResolve "vegas" "backbone";
@@ -15,7 +16,8 @@ tools: {
     };
   };
 
-  hypr = {
+  hyprspace = {
+    enable = true;
     id = "QmYs4xNBby2fTs8RnzfXEk161KD4mftBfCiR8yXtgGPj4J";
     addr = "10.100.3.5";
     listenPort = 995;
@@ -29,6 +31,6 @@ tools: {
     subdomain = "backbone";
   };
 
-  arch = "x86_64";
-  nixos = import ./system.nix;
+  system = "x86_64-linux";
+  nixos = ./system.nix;
 }

@@ -1,23 +1,23 @@
-{ pkgs, inputs, lib, hosts, config, ... }:
+{ pkgs, depot, lib, config, ... }:
 let
   inherit (config.networking) hostName;
-  inherit (inputs.self.packages.${pkgs.system}) hyprspace;
-  hyprspaceCapableNodes = lib.filterAttrs (_: host: host ? hypr) hosts;
+  inherit (depot.packages) hyprspace;
+  hyprspaceCapableNodes = lib.filterAttrs (_: host: host.hyprspace.enable) depot.config.hours;
   peersFormatted = builtins.mapAttrs (_: x: {
-    inherit (x.hypr) id;
-    routes = map (net: { inherit net; }) ((x.hypr.routes or []) ++ [ "${x.hypr.addr}/32" ]);
+    inherit (x.hyprspace) id;
+    routes = map (net: { inherit net; }) ((x.hyprspace.routes or []) ++ [ "${x.hyprspace.addr}/32" ]);
   }) hyprspaceCapableNodes;
   peersFiltered = lib.filterAttrs (name: _: name != hostName) peersFormatted;
   peerList = builtins.attrValues peersFiltered;
-  myNode = hosts.${hostName};
-  listenPort = myNode.hypr.listenPort or 8001;
+  myNode = depot.reflection;
+  listenPort = myNode.hyprspace.listenPort or 8001;
 
   interfaceConfig = pkgs.writeText "hyprspace.yml" (builtins.toJSON {
     interface = {
       name = "hyprspace";
       listen_port = listenPort;
-      inherit (myNode.hypr) id;
-      address = "${myNode.hypr.addr}/24";
+      inherit (myNode.hyprspace) id;
+      address = "${myNode.hyprspace.addr}/24";
       private_key = "@HYPRSPACEPRIVATEKEY@";
     };
     peers = peerList;
@@ -26,7 +26,7 @@ let
   privateKeyFile = config.age.secrets.hyprspace-key.path;
   runConfig = "/run/hyprspace.yml";
 in {
-  networking.hosts = lib.mapAttrs' (k: v: lib.nameValuePair v.hypr.addr [k "${k}.hypr"]) hyprspaceCapableNodes;
+  networking.hosts = lib.mapAttrs' (k: v: lib.nameValuePair v.hyprspace.addr [k "${k}.hypr"]) hyprspaceCapableNodes;
   age.secrets.hyprspace-key = {
     file = ../../secrets/hyprspace-key- + "${hostName}.age";
     mode = "0400";

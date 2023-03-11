@@ -1,9 +1,9 @@
-{ config, lib, hosts, tools, utils, ... }:
+{ config, lib, depot, tools, utils, ... }:
 let
   inherit (tools.meta) domain;
   inherit (tools) identity;
   inherit (config.networking) hostName;
-  inherit (hosts.${hostName}) enterprise interfaces;
+  inherit (depot.reflection) enterprise interfaces;
 
   toINI = content: lib.generators.toINI {} (iniFilter content);
 

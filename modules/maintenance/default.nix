@@ -1,5 +1,3 @@
-{ inputs, pkgs, ... }:
-
 {
   systemd.targets.maintenance = {
     unitConfig.AllowIsolate = true;

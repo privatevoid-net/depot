@@ -1,9 +1,9 @@
-{ config, inputs, lib, pkgs, tools, ... }:
+{ config, depot, lib, pkgs, tools, ... }:
 
 let
   importWebsites = expr: import expr {
     tools = tools.nginx;
-    packages = inputs.self.packages.${pkgs.system};
+    inherit (depot) packages;
   };
 
   websites = tools.nginx.mappers.mapSubdomains (importWebsites ./websites.nix);

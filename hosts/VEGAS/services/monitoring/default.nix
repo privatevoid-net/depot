@@ -1,4 +1,4 @@
-{ cluster, config, inputs, lib, pkgs, tools, ... }:
+{ cluster, config, depot, lib, tools, ... }:
 let
   inherit (tools.meta) domain;
 
@@ -29,7 +29,7 @@ in
   };
   services.grafana = {
     enable = true;
-    package = inputs.self.packages.${pkgs.system}.grafana;
+    package = depot.packages.grafana;
     dataDir = "/srv/storage/private/grafana";
     settings = {
       server = {

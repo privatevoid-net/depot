@@ -1,7 +1,7 @@
-{ config, ... }:
+{ config, depot, ... }:
 
 let
-  inherit (config.vars) hosts;
+  inherit (depot.config) hours;
 in
 {
   vars.pdns-api-key-secret = {
@@ -10,7 +10,7 @@ in
   };
   links = {
     dnsResolver = {
-      ipv4 = hosts.VEGAS.interfaces.vstub.addr;
+      ipv4 = hours.VEGAS.interfaces.vstub.addr;
       port = 53;
     };
     powerdns-api = {

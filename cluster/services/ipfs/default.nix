@@ -1,8 +1,8 @@
-{ config, lib, tools, ... }:
+{ config, depot, lib, tools, ... }:
 
 {
   hostLinks = lib.genAttrs config.services.ipfs.nodes.node (name: let
-    host = config.vars.hosts.${name};
+    host = depot.reflection;
     intf = host.interfaces.primary;
     self = config.hostLinks.${name}.ipfs;
   in {

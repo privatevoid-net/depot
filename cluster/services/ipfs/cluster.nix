@@ -1,4 +1,4 @@
-{ aspect, config, inputs, lib, pkgs, tools, ... }:
+{ config, depot, lib, pkgs, tools, ... }:
 
 let
   inherit (tools.meta) domain;
@@ -11,7 +11,7 @@ let
   proxySocket = "/run/ipfs-cluster/ipfs-api-proxy.sock";
 in {
   imports = [
-    aspect.modules.ipfs-cluster
+    depot.nixosModules.ipfs-cluster
   ];
 
   age.secrets = {
@@ -24,7 +24,7 @@ in {
 
   services.ipfs-cluster = {
     enable = true;
-    package = inputs.self.packages.${pkgs.system}.ipfs-cluster;
+    package = depot.packages.ipfs-cluster;
     consensus = "crdt";
     dataDir = "/srv/storage/ipfs/cluster";
     secretFile = config.age.secrets.ipfs-cluster-secret.path;

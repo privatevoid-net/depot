@@ -1,4 +1,4 @@
-{ config, inputs, lib, pkgs, tools, ... }:
+{ config, depot, lib, tools, ... }:
 let
   inherit (config) links;
 in
@@ -9,7 +9,7 @@ in
   services.searx = {
     enable = true;
     runInUwsgi = true;
-    package = inputs.self.packages.${pkgs.system}.searxng;
+    package = depot.packages.searxng;
     environmentFile = config.age.secrets.searxng-secrets.path;
     settings = {
       server = {

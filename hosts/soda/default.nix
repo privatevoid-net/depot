@@ -1,4 +1,5 @@
 tools: {
+  ssh.enable = true;
   ssh.id = with tools.dns; {
     publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDShq3dbZy9SARsH8aSjfMQ+/eTW44eZuHVCLvgtDNKw";
     hostNames = subResolve "soda" "int";
@@ -16,7 +17,6 @@ tools: {
     subdomain = "int";
   };
 
-  arch = "x86_64";
-  nixos = import ./system.nix;
-  container = true;
+  system = "x86_64-linux";
+  nixos = ./system.nix;
 }

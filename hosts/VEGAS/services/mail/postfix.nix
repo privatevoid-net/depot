@@ -1,4 +1,4 @@
-{ config, hosts, tools, ... }:
+{ config, depot, tools, ... }:
 let
   inherit (tools.meta) domain;
   certDir = config.security.acme.certs."mail.${domain}".directory;
@@ -10,7 +10,7 @@ let
   lmtpSocket = "lmtp:unix:/run/dovecot2/lmtp";
   postfixLdapMailboxes = "ldap:${config.age.secrets."postfix-ldap-mailboxes.cf".path}";
 
-  inherit (hosts.${config.networking.hostName}) interfaces;
+  inherit (depot.reflection) interfaces;
 in
 {
   age.secrets."postfix-ldap-mailboxes.cf" = {
