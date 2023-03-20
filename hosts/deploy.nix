@@ -2,9 +2,11 @@
 
 let
   inherit (lib) elem mapAttrs toLower;
-  inherit (config) gods cluster defaultEffectSystem;
+  inherit (config) gods defaultEffectSystem;
   inherit (config.herculesCI) branch;
   inherit (self) nixosConfigurations;
+
+  meta = import ../tools/meta.nix;
 
   chosenHours = gods.fromLight;
 
@@ -14,7 +16,7 @@ let
     inherit (hci-effects) runIf runNixOS;
     inherit (host.enterprise) subdomain;
 
-    hostname = "${toLower name}.${subdomain}.${cluster.domain}";
+    hostname = "${toLower name}.${subdomain}.${meta.domain}";
 
     deploy-rs = inputs.deploy-rs.lib."${host.system}";
   in {
