@@ -1,6 +1,7 @@
 let
   max = (import ./users/max/userinfo.nix null).sshKeys;
-  hosts = import ./hosts;
+  hosts = builtins.mapAttrs (_: v: v._module.specialArgs.depot.reflection)
+    (builtins.getFlake "git+file:.").nixosConfigurations;
   systemKeys = x: x.ssh.id.publicKey or null;
 in with hosts;
 {
@@ -25,6 +26,7 @@ in with hosts;
   "cluster/services/patroni/passwords/rewind.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/patroni/passwords/superuser.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/wireguard/mesh-keys/checkmate.age".publicKeys = max ++ map systemKeys [ checkmate ];
+  "cluster/services/wireguard/mesh-keys/thunderskin.age".publicKeys = max ++ map systemKeys [ thunderskin ];
   "cluster/services/wireguard/mesh-keys/VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/wireguard/mesh-keys/prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "secrets/coturn-static-auth.age".publicKeys = max ++ map systemKeys [ VEGAS ];
@@ -42,6 +44,7 @@ in with hosts;
   "secrets/hydra-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/hydra-s3.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/hyprspace-key-checkmate.age".publicKeys = max ++ map systemKeys [ checkmate ];
+  "secrets/hyprspace-key-thunderskin.age".publicKeys = max ++ map systemKeys [ thunderskin ];
   "secrets/hyprspace-key-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/hyprspace-key-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "secrets/keycloak-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];

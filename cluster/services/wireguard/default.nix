@@ -31,6 +31,16 @@ in
         extraRoutes = [];
       };
     };
+    mesh-node-thunderskin = {
+      ipv4 = getExtAddr hours.thunderskin;
+      extra = {
+        meshIp = "10.1.1.4";
+        inherit meshNet;
+        pubKey = "xvSsFvCVK8h2wThZJ7E5K0fniTBIEIYOblkKIf3Cwy0=";
+        privKeyFile = ./mesh-keys/thunderskin.age;
+        extraRoutes = [];
+      };
+    };
     mesh-node-VEGAS = {
       ipv4 = getExtAddr hours.VEGAS;
       extra = {
@@ -54,7 +64,7 @@ in
   };
   services.wireguard = {
     nodes = {
-      mesh = [ "checkmate" "VEGAS" "prophet" ];
+      mesh = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
     };
     nixos = {
       mesh = ./mesh.nix;

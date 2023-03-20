@@ -11,6 +11,8 @@ in with tools.dns;
     fromLight = {
       checkmate = import ./checkmate tools;
 
+      thunderskin = import ./thunderskin tools;
+
       VEGAS = import ./VEGAS tools;
 
       prophet = import ./prophet tools;
