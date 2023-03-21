@@ -1,7 +1,7 @@
 {
   services.certificates = {
     nodes = {
-      internal-wildcard = [ "checkmate" "VEGAS" ];
+      internal-wildcard = [ "checkmate" "thunderskin" "VEGAS" ];
     };
     nixos = {
       internal-wildcard = [
