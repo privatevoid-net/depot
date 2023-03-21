@@ -25,14 +25,16 @@
       ];
       pyprojectToml = ./pyproject.toml;
 
-      propagatedBuildInputs = deps;
+      mkDerivation = {
+        propagatedBuildInputs = deps;
 
-      src = with inputs.nix-filter.lib; filter {
-        root = ./.;
-        include = [
-          "pyproject.toml"
-          (inDirectory "reflex_cache")
-        ];
+        src = with inputs.nix-filter.lib; filter {
+          root = ./.;
+          include = [
+            "pyproject.toml"
+            (inDirectory "reflex_cache")
+          ];
+        };
       };
     };
   };
