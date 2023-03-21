@@ -1,7 +1,7 @@
 {
   services.websites = {
     nodes = {
-      host = [ "checkmate" "VEGAS" "prophet" ];
+      host = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
     };
     nixos = {
       host = ./host.nix;
