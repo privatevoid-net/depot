@@ -3,7 +3,6 @@
 let
   inherit (lib) elem mapAttrs toLower;
   inherit (config) gods defaultEffectSystem;
-  inherit (config.herculesCI) branch;
   inherit (self) nixosConfigurations;
 
   meta = import ../tools/meta.nix;
@@ -12,7 +11,7 @@ let
 
   withEffectSystem = withSystem defaultEffectSystem;
 
-  callUpon = name: host: withEffectSystem ({ hci-effects, ... }: let
+  callUpon = name: host: withEffectSystem ({ config, hci-effects, ... }: let
     inherit (hci-effects) runIf runNixOS;
     inherit (host.enterprise) subdomain;
 
@@ -20,7 +19,8 @@ let
 
     deploy-rs = inputs.deploy-rs.lib."${host.system}";
   in {
-    effect = runIf (elem branch [ "master" "staging" ]) (runNixOS {
+    effect = { branch, ... }: runIf (elem branch [ "master" "staging" ])
+    (runNixOS {
       requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
 
       inherit (nixosConfigurations.${name}) config;
@@ -53,7 +53,12 @@ let
 in
 
 {
-  flake.effects = mapAttrs (pick "effect") calledUponHours;
+  herculesCI = { config, ... }: let
+    powers = mapAttrs (pick "effect") calledUponHours;
+    wield = mapAttrs (_: wieldPowerWith: wieldPowerWith config.repo);
+  in {
+    onPush.default.outputs.effects = wield powers;
+  };
 
   flake.deploy.nodes = mapAttrs (pick "deploy") calledUponHours;
 }
