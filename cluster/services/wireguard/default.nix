@@ -15,6 +15,7 @@ in
   vars = {
     mesh = {
       checkmate = config.links.mesh-node-checkmate.extra;
+      thunderskin = config.links.mesh-node-thunderskin.extra;
       VEGAS = config.links.mesh-node-VEGAS.extra;
       prophet = config.links.mesh-node-prophet.extra;
     };
