@@ -6,7 +6,7 @@
       ./dependency-sets
     ];
     _module.args = {
-      drv-backends = inputs.drv-parts.drv-backends // config.drv-backends;
+      drv-backends = inputs.drv-parts.modules.drv-parts // config.drv-backends;
     };
   };
 }

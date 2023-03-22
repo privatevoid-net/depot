@@ -4,8 +4,6 @@ let
   inherit (config) links;
   dataDir = "/srv/storage/private/tempo";
   tempoConfig = {
-    search_enabled = true;
-    metrics_generator_enabled = true;
     server = {
       http_listen_address = links.tempo.ipv4;
       http_listen_port = links.tempo.port;
@@ -32,13 +30,8 @@ let
     };
     storage.trace = {
       backend = "local";
-      block = {
-        bloom_filter_false_positive = 0.05;
-        index_downsample_bytes = 1000;
-        encoding = "zstd";
-      };
+      block.bloom_filter_false_positive = 0.05;
       wal.path = "${dataDir}/wal";
-      wal.encoding = "snappy";
       local.path = "${dataDir}/blocks";
       pool = {
         max_workers = 16;

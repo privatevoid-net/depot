@@ -9,10 +9,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "v2.2.3",
-      "revision": "4ea14c853ee7b9c1a211a08e386fb323870e2ec2",
-      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v2.2.3",
-      "hash": "1h470vbdlayncg5525991bmf2iyzzs9nncz1w6hlfhkmyl2d0wwy"
+      "version": "v2.2.4",
+      "revision": "a6fb44e1abe9ad48136dee8e7d053e639f37bedc",
+      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v2.2.4",
+      "hash": "0m7y1hzsdmlhp39hdv2fazhm07kskgb5qf2khhyxrs8nlas4fbha"
     },
     "excalidraw": {
       "type": "Git",
@@ -22,9 +22,9 @@
         "repo": "excalidraw"
       },
       "branch": "master",
-      "revision": "5ae39c9292bb69853b69a67ff1889380a651d6ca",
-      "url": "https://github.com/excalidraw/excalidraw/archive/5ae39c9292bb69853b69a67ff1889380a651d6ca.tar.gz",
-      "hash": "1h0frqzkvsk5p4x1g4yxfb460wj8bb699l7x4lhpb2rmd9qgxp90"
+      "revision": "ac4c8b3ca798c486a3c86ad71eb4d16352a486be",
+      "url": "https://github.com/excalidraw/excalidraw/archive/ac4c8b3ca798c486a3c86ad71eb4d16352a486be.tar.gz",
+      "hash": "03gyrg9ykm6cw2bhw1a8f30yhazr4bsfahmi03fpbcb80v3q2vvz"
     },
     "searxng": {
       "type": "Git",
@@ -34,9 +34,9 @@
         "repo": "searxng"
       },
       "branch": "master",
-      "revision": "9d102fb08ff4a7dc04d093561adde60436e3f69e",
-      "url": "https://github.com/searxng/searxng/archive/9d102fb08ff4a7dc04d093561adde60436e3f69e.tar.gz",
-      "hash": "17ay25ipybs46khycsjgy1qf6q5127gn8v9vw7fv9p2drswmhzj0"
+      "revision": "9dc36965bbb118db64c0bf2d3f54389d4d484670",
+      "url": "https://github.com/searxng/searxng/archive/9dc36965bbb118db64c0bf2d3f54389d4d484670.tar.gz",
+      "hash": "0h5dvnrp3v88mgv9snccsrqsvy20mi3sga7s408fmid2n248ws8k"
     },
     "stevenblack-hosts": {
       "type": "GitRelease",
@@ -47,10 +47,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "3.12.1",
-      "revision": "a5b36aac7afc39d46af5324769fab5cbfc1c5bab",
-      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.12.1",
-      "hash": "09wrz3ydlw0yx2pw18vn1dl8v7914h4nnjg0fna0lacc0wyhdmj3"
+      "version": "3.12.15",
+      "revision": "0cfed81116bf22d3719fffe5b08b72eab115b3e1",
+      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.12.15",
+      "hash": "10b0y5wpbylpl4snczfg0dw9cr6dkb5iryqzx3vqm822p7kmg0qy"
     },
     "tempo": {
       "type": "GitRelease",
@@ -61,10 +61,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "v1.5.0",
-      "revision": "1a97bea16259be7863dda77e1a6df09eb048b202",
-      "url": "https://api.github.com/repos/grafana/tempo/tarball/v1.5.0",
-      "hash": "0hvpp4kd59p22p25ngp2lrm6f2va36q0j8xx4k223n3hnhawkmf3"
+      "version": "v2.0.1",
+      "revision": "989486f82a1d69160e9096fcdab57b8e63294d4b",
+      "url": "https://api.github.com/repos/grafana/tempo/tarball/v2.0.1",
+      "hash": "02am43gv7yx6fa0asc5msyjppqvhksfwpr8ha013cfr518p0qs82"
     },
     "uptime-kuma": {
       "type": "GitRelease",
@@ -75,10 +75,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "1.19.6",
-      "revision": "2b57b3e863954c9d9cf7911b76f600bb8de4c41b",
-      "url": "https://api.github.com/repos/louislam/uptime-kuma/tarball/1.19.6",
-      "hash": "0kwljvnjd0wqxk6pjj66c82kc4wflc1cs8c2lz5cngsghmxjck8y"
+      "version": "1.21.0",
+      "revision": "72317633d982a111f74c23c6b675bdba93e8f6aa",
+      "url": "https://api.github.com/repos/louislam/uptime-kuma/tarball/1.21.0",
+      "hash": "0hghh8h4zcxaxlb42cbj84d3m0nwg40k5v3sba05px1iz4y7637k"
     }
   },
   "version": 2
