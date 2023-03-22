@@ -304,5 +304,9 @@ in
     environment.sessionVariables = {
       PATRONICTL_CONFIG_FILE = "${configFile}";
     };
+
+    systemd.tmpfiles.rules = mkIf (cfg.postgresqlDataDir != "/var/lib/postgresql/${postgresql.psqlSchema}" || cfg.dataDir != "/var/lib/patroni") [
+      "d '${cfg.dataDir}' 0700 ${cfg.user} ${cfg.group} - -"
+    ];
   };
 }
