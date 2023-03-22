@@ -1,9 +1,24 @@
-{ config, depot, lib, pkgs, tools, ... }:
+{ cluster, config, depot, lib, pkgs, tools, ... }:
 
 let
-  inherit (depot.reflection) interfaces;
+  inherit (depot.reflection) interfaces hyprspace;
   inherit (tools.meta) domain;
   inherit (config.links) localRecursor;
+  inherit (config.networking) hostName;
+
+  link = cluster.config.hostLinks.${hostName}.dnsResolver;
+  backend = cluster.config.hostLinks.${hostName}.dnsResolverBackend;
+
+  otherRecursors = lib.pipe (cluster.config.services.dns.otherNodes.coredns) [
+    (map (node: cluster.config.hostLinks.${node}.dnsResolverBackend.tuple))
+    (lib.concatStringsSep " ")
+  ];
+
+  authoritativeServers = lib.pipe (with cluster.config.services.dns.nodes; master ++ slave) [
+    (map (node: cluster.config.hostLinks.${node}.dnsAuthoritative.tuple))
+    (lib.concatStringsSep ";")
+  ];
+
   inherit (depot.packages) stevenblack-hosts;
   dot = config.security.acme.certs."securedns.${domain}";
 in
@@ -17,7 +32,11 @@ in
   };
 
   systemd.services.coredns = {
-    after = lib.optional (interfaces ? vstub) "network-addresses-vstub.service";
+    after = (lib.optional (interfaces ? vstub) "network-addresses-vstub.service") ++ [
+      "acme-selfsigned-securedns.${domain}.service"
+    ];
+    before = [ "acme-securedns.${domain}.service" ];
+    wants = [ "acme-finished-securedns.${domain}.target" ];
     serviceConfig.LoadCredential = [
       "dot-cert.pem:${dot.directory}/fullchain.pem"
       "dot-key.pem:${dot.directory}/key.pem"
@@ -25,8 +44,7 @@ in
   };
 
   security.acme.certs."securedns.${domain}" = {
-    group = "nginx";
-    webroot = "/var/lib/acme/acme-challenge";
+    dnsProvider = "pdns";
     # using a different ACME provider because Android Private DNS is fucky
     server = "https://api.buypass.com/acme/directory";
     reloadServices = [
@@ -37,14 +55,18 @@ in
   services.coredns = {
     enable = true;
     config = ''
-      . {
+      .:${link.portStr} {
         ${lib.optionalString (interfaces ? vstub) "bind ${interfaces.vstub.addr}"}
         bind 127.0.0.1
+        bind ${link.ipv4}
+        ${lib.optionalString hyprspace.enable "bind ${hyprspace.addr}"}
         hosts ${stevenblack-hosts} {
           fallthrough
         }
         chaos "Private Void DNS" info@privatevoid.net
-        forward . ${localRecursor.tuple}
+        forward . ${backend.tuple} ${otherRecursors} {
+          policy sequential
+        }
       }
       tls://.:853 {
         bind ${interfaces.primary.addr}
@@ -53,7 +75,9 @@ in
           fallthrough
         }
         chaos "Private Void DNS" info@privatevoid.net
-        forward . ${localRecursor.tuple}
+        forward . ${backend.tuple} ${otherRecursors} {
+          policy sequential
+        }
       }
     '';
   };
@@ -63,12 +87,27 @@ in
     dnssecValidation = "process";
     forwardZones = {
       # optimize queries against our own domain
-      "${domain}" = interfaces.primary.addr;
+      "${domain}" = authoritativeServers;
     };
     dns = {
-      inherit (localRecursor) port;
-      address = localRecursor.ipv4;
-      allowFrom = [ "127.0.0.1" ];
+      inherit (backend) port;
+      address = backend.ipv4;
+      allowFrom = [ "127.0.0.1" cluster.config.vars.meshNet.cidr "10.100.3.0/24" ];
+    };
+  };
+
+  consul.services.securedns = {
+    unit = "coredns";
+    mode = "external";
+    definition = rec {
+      name = "securedns";
+      address = interfaces.primary.addrPublic;
+      port = 853;
+      checks = lib.singleton {
+        name = "SecureDNS";
+        tcp = "${address}:${toString port}";
+        interval = "30s";
+      };
     };
   };
 }

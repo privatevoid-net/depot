@@ -1,7 +1,8 @@
-{ config, depot, ... }:
+{ config, depot, lib, ... }:
 
 let
   inherit (depot.config) hours;
+  cfg = config.services.dns;
 in
 {
   vars.pdns-api-key-secret = {
@@ -18,11 +19,30 @@ in
       protocol = "http";
     };
   };
+  hostLinks = lib.mkMerge [
+    (lib.genAttrs (with cfg.nodes; master ++ slave) (node: {
+      dnsAuthoritative = {
+        ipv4 = hours.${node}.interfaces.primary.addrPublic;
+        port = 53;
+      };
+    }))
+    (lib.genAttrs cfg.nodes.coredns (node: {
+      dnsResolver = {
+        ipv4 = config.vars.mesh.${node}.meshIp;
+        port = 53;
+      };
+    }))
+    (lib.genAttrs cfg.nodes.coredns (node: {
+      dnsResolverBackend = {
+        ipv4 = config.vars.mesh.${node}.meshIp;
+      };
+    }))
+  ];
   services.dns = {
     nodes = {
       master = [ "VEGAS" ];
       slave = [ "checkmate" "prophet" ];
-      coredns = [ "VEGAS" ];
+      coredns = [ "checkmate" "VEGAS" ];
       client = [ "VEGAS" "prophet" ];
     };
     nixos = {

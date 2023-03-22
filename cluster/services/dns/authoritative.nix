@@ -3,8 +3,15 @@
 let
   inherit (depot.reflection) interfaces;
   inherit (tools.meta) domain;
+  inherit (config.networking) hostName;
 
+  link = cluster.config.hostLinks.${hostName}.dnsAuthoritative;
   patroni = cluster.config.links.patroni-pg-access;
+
+  otherDnsServers = lib.pipe (with cluster.config.services.dns.otherNodes; master ++ slave) [
+    (map (node: cluster.config.hostLinks.${node}.dnsAuthoritative.tuple))
+    (lib.concatStringsSep " ")
+  ];
 
   translateConfig = cfg: let
     configList = lib.mapAttrsToList (n: v: "${n}=${v}") cfg;
@@ -46,7 +53,7 @@ in {
   services.coredns = {
     enable = true;
     config = ''
-      . {
+      .:${link.portStr} {
         bind ${interfaces.primary.addr}
         chaos "Private Void DNS" info@privatevoid.net
         cache {
@@ -57,7 +64,9 @@ in {
         }
         forward service.eu-central.sd-magic.${domain} 127.0.0.1:8600
         forward addr.eu-central.sd-magic.${domain} 127.0.0.1:8600
-        forward . ${config.links.localAuthoritativeDNS.tuple}
+        forward . ${config.links.localAuthoritativeDNS.tuple} ${otherDnsServers} {
+          policy sequential
+        }
       }
     '';
   };
