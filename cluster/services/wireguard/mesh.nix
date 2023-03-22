@@ -11,13 +11,6 @@ let
     allowedIPs = [ "${peerLink.extra.meshIp}/32" ] ++ peerLink.extra.extraRoutes;
     endpoint = peerLink.tuple;
   };
-  extraPeers = [
-    {
-      publicKey = "Veol/Yw5Nf3eZVSGynLZIuR2kvnyGynexzQ8GhdDQWo=";
-      allowedIPs = [ "10.1.1.151/32" ];
-      endpoint = "pve-etcd-node-fb2465761cf3ce658e6b410bbcf1f2db.fly.dev:51280";
-    }
-  ];
 in
 {
   age.secrets.wireguard-key-core = {
@@ -37,7 +30,7 @@ in
         ips = [ "${link.extra.meshIp}/24" ];
         listenPort = link.port;
         privateKeyFile = config.age.secrets.wireguard-key-core.path;
-        peers = map mkPeer cluster.config.services.wireguard.otherNodes.mesh ++ extraPeers;
+        peers = map mkPeer cluster.config.services.wireguard.otherNodes.mesh;
       };
     };
   };
