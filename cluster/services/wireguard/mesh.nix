@@ -2,10 +2,10 @@
 let
   inherit (config.networking) hostName;
 
-  link = cluster.config.links."mesh-node-${hostName}";
+  link = cluster.config.hostLinks.${hostName}.mesh;
 
   mkPeer = peerName: let
-    peerLink = cluster.config.links."mesh-node-${peerName}";
+    peerLink = cluster.config.hostLinks.${peerName}.mesh;
   in {
     publicKey = peerLink.extra.pubKey;
     allowedIPs = [ "${peerLink.extra.meshIp}/32" ] ++ peerLink.extra.extraRoutes;

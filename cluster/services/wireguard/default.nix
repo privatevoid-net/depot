@@ -1,4 +1,4 @@
-{ config, depot, ... }:
+{ config, depot, lib, ... }:
 
 let
   inherit (depot.config) hours;
@@ -13,16 +13,11 @@ let
 in
 {
   vars = {
-    mesh = {
-      checkmate = config.links.mesh-node-checkmate.extra;
-      thunderskin = config.links.mesh-node-thunderskin.extra;
-      VEGAS = config.links.mesh-node-VEGAS.extra;
-      prophet = config.links.mesh-node-prophet.extra;
-    };
+    mesh = lib.genAttrs config.services.wireguard.nodes.mesh (node: config.hostLinks.${node}.mesh.extra);
     inherit meshNet;
   };
-  links = {
-    mesh-node-checkmate = {
+  hostLinks = {
+    checkmate.mesh = {
       ipv4 = getExtAddr hours.checkmate;
       extra = {
         meshIp = "10.1.1.32";
@@ -32,7 +27,7 @@ in
         extraRoutes = [];
       };
     };
-    mesh-node-thunderskin = {
+    thunderskin.mesh = {
       ipv4 = getExtAddr hours.thunderskin;
       extra = {
         meshIp = "10.1.1.4";
@@ -42,7 +37,7 @@ in
         extraRoutes = [];
       };
     };
-    mesh-node-VEGAS = {
+    VEGAS.mesh = {
       ipv4 = getExtAddr hours.VEGAS;
       extra = {
         meshIp = "10.1.1.5";
@@ -52,7 +47,7 @@ in
         extraRoutes = [ "${hours.VEGAS.interfaces.vstub.addr}/32" "10.10.0.0/16" ];
       };
     };
-    mesh-node-prophet = {
+    prophet.mesh = {
       ipv4 = getExtAddr hours.prophet;
       extra = {
         meshIp = "10.1.1.9";
