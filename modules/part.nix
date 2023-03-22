@@ -9,6 +9,7 @@ in
     autopatch = ./autopatch;
     consul-service-registry = ./consul-service-registry;
     deploy-rs-receiver = ./deploy-rs-receiver;
+    effect-receiver = ./effect-receiver;
     enterprise = ./enterprise;
     fail2ban = ./fail2ban;
     hydra = ./hydra;
@@ -43,6 +44,7 @@ in
       machineBase
       consul-service-registry
       deploy-rs-receiver
+      effect-receiver
       fail2ban
       motd
       nix-config-server
