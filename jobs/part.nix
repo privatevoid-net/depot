@@ -1,0 +1,5 @@
+{
+  imports = [
+    ./update-flake-lock
+  ];
+}
