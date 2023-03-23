@@ -4,13 +4,13 @@
   perSystem = { pkgs, ... }: {
     projectShells.hyprspace = {
       tools = [
-        pkgs.go_1_18
+        pkgs.go_1_19
       ];
       env.GOPATH.eval = "$REPO_DATA_DIR/go";
     };
-    packages.hyprspace = with pkgs; buildGo118Module {
+    packages.hyprspace = with pkgs; buildGo119Module {
       pname = "hyprspace";
-      version = "0.5.2";
+      version = "0.6.0";
 
       src = with inputs.nix-filter.lib; let
         dirs = map inDirectory;
@@ -29,7 +29,7 @@
         ]);
       };
 
-      vendorSha256 = "sha256-Eg2tY5Zdn6g1OKrYDE7jQGuFtgrbPrz/3EPFK48K1Qk=";
+      vendorSha256 = "sha256-zGaTOJfm3XoCWAK0jQd2GDOTE+8Zn3XgSRhxXEefqAM=";
 
       meta = with lib; {
         description = "A Lightweight VPN Built on top of Libp2p for Truly Distributed Networks.";
