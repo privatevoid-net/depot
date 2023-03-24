@@ -50,6 +50,7 @@ in
         retry_timeout = 10;
         maximum_lag_on_failover = 1024 * 1024;
       };
+      failsafe_mode = true;
       postgresql = {
         use_pg_rewind = true;
         use_slots = true;
