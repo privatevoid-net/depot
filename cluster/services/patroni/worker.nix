@@ -40,7 +40,10 @@ in
     raft = false;
     softwareWatchdog = true;
     settings = {
-      consul.host = "127.0.0.1:8500";
+      consul = {
+        host = "127.0.0.1:8500";
+        register_service = true;
+      };
       bootstrap.dcs = {
         ttl = 30;
         loop_wait = 10;
@@ -71,34 +74,5 @@ in
       };
     };
     environmentFiles = lib.mapAttrs (n: _: config.age.secrets.${n}.path) vars.patroni.passwords;
-  };
-
-  consul.services.patroni = {
-    mode = "external";
-    definition = rec {
-      name = "patroni";
-      address = getMeshIp vars.hostName;
-      port = cluster.config.links.patroni-pg-internal.port;
-      checks = [
-        {
-          name = "Patroni API";
-          id = "service:patroni";
-          interval = "5s";
-          http = "http://${address}:${cluster.config.links.patroni-api.portStr}/liveness";
-        }
-        {
-          name = "Patroni Leader";
-          id = "service:patroni:leader";
-          interval = "5s";
-          http = "http://${address}:${cluster.config.links.patroni-api.portStr}/leader";
-        }
-        {
-          name = "PostgreSQL";
-          id = "service:patroni:postgres";
-          interval = "120s";
-          tcp = "${address}:${cluster.config.links.patroni-pg-internal.portStr}";
-        }
-      ];
-    };
   };
 }
