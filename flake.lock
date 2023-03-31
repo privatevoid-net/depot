@@ -302,9 +302,7 @@
         "nix-darwin": [
           "blank"
         ],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
+        "nixpkgs": "nixpkgs",
         "pre-commit-hooks-nix": "pre-commit-hooks-nix"
       },
       "locked": {
@@ -459,16 +457,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1680183455,
-        "narHash": "sha256-lhlRyEZE1CZ2B5h4goEbS3Env7G6ORojj0/+AAGOooM=",
+        "lastModified": 1680125544,
+        "narHash": "sha256-mlqo1r+TZUOuypWdrZHluxWL+E5WzXlUXNZ9Y0WLDFU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "646930ff24273c6d91fb3ea37531261553043b50",
+        "rev": "9a6aabc4740790ef3bbb246b86d029ccf6759658",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-22.11-small",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -485,6 +483,22 @@
       "original": {
         "owner": "NixOS",
         "ref": "nixos-22.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1680183455,
+        "narHash": "sha256-lhlRyEZE1CZ2B5h4goEbS3Env7G6ORojj0/+AAGOooM=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "646930ff24273c6d91fb3ea37531261553043b50",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-22.11-small",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -561,7 +575,7 @@
         "nar-serve": "nar-serve",
         "nix-filter": "nix-filter",
         "nix-super": "nix-super",
-        "nixpkgs": "nixpkgs",
+        "nixpkgs": "nixpkgs_2",
         "repin-flake-utils": "repin-flake-utils"
       }
     }
