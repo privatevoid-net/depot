@@ -2,7 +2,7 @@
 
 {
   perSystem = { config, drv-backends, lib, pkgs, ... }: let
-    deps = with config.drv-parts.dependencySets.python3Packages; [
+    deps = with config.drv-parts.packageSets.python3Packages; [
       poetry-core
       requests-unixsocket
       py-multibase
@@ -19,7 +19,7 @@
       env.PYTHON = pythonForDev.interpreter;
       commands.reflex.command = "${pythonForDev.interpreter} -m reflex_cache.main";
     };
-    drvs.reflex-cache = { dependencySets, ... }: {
+    drvs.reflex-cache = { packageSets, ... }: {
       imports = [
         drv-backends.buildPythonPackage
       ];

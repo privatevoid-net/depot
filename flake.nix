@@ -94,7 +94,6 @@
     hercules-ci-agent = {
       url = "github:hercules-ci/hercules-ci-agent";
       inputs = {
-        nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
         nix-darwin.follows = "blank";
       };

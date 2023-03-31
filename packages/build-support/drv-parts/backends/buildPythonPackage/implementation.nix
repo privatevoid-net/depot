@@ -1,4 +1,4 @@
-{ config, dependencySets, drv-parts, lib, ... }:
+{ config, packageSets, drv-parts, lib, ... }:
 
 let
   inherit (config) deps;
