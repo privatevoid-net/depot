@@ -1,7 +1,7 @@
 { pkgs, inputs', self', ... }:
 
 {
-  drv-parts.dependencySets = {
+  drv-parts.packageSets = {
     inherit pkgs inputs' self';
     inherit (pkgs) python3Packages;
   };
