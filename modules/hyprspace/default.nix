@@ -43,6 +43,7 @@ in {
       chmod 0400 ${runConfig}
     '';
     serviceConfig = {
+      Group = "wheel";
       Restart = "on-failure";
       RestartSec = "5s";
       ExecStart = "${hyprspace}/bin/hyprspace up hyprspace -f -c ${runConfig}";
@@ -72,4 +73,7 @@ in {
     allowedUDPPorts = [ listenPort ];
     trustedInterfaces = [ "hyprspace" ];
   };
+  environment.systemPackages = [
+    hyprspace
+  ];
 }
