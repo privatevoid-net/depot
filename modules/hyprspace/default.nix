@@ -25,6 +25,7 @@ let
 
   privateKeyFile = config.age.secrets.hyprspace-key.path;
   runConfig = "/run/hyprspace.yml";
+  nameservers = lib.unique config.networking.nameservers;
 in {
   networking.hosts = lib.mapAttrs' (k: v: lib.nameValuePair v.hyprspace.addr [k "${k}.hypr"]) hyprspaceCapableNodes;
   age.secrets.hyprspace-key = {
@@ -66,6 +67,7 @@ in {
         "fc00::/7"
         "fe80::/10"
       ];
+      IPAddressAllow = nameservers;
     };
   };
   networking.firewall = {
