@@ -14,11 +14,11 @@ in with tools.dns;
       thunderskin = import ./thunderskin tools;
 
       VEGAS = import ./VEGAS tools;
+
+      prophet = import ./prophet tools;
     };
 
     fromFlesh = {
-      prophet = import ./prophet tools;
-
       soda = import ./soda tools;
     };
 
