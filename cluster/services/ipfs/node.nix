@@ -6,6 +6,7 @@ let
   ipfsApi = pkgs.writeTextDir "api" apiAddress;
   gw = config.links.ipfsGateway;
   ipfsPort = 110;
+  nameservers = lib.unique config.networking.nameservers;
 in
 {
   imports = [
@@ -155,6 +156,7 @@ in
         "fc00::/7"
         "fe80::/10"
       ];
+      IPAddressAllow = nameservers;
     };
     postStart = "chmod 660 /run/ipfs/ipfs-api.sock";
   };
