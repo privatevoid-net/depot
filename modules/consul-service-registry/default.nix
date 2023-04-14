@@ -7,6 +7,20 @@ let
 
   consul = "${config.services.consul.package}/bin/consul";
 
+  writeLoopScript = name: cmd: pkgs.writeShellScript name ''
+    while ! ${cmd}; do
+      sleep 1
+    done
+  '';
+
+  consulRegisterScript = writeLoopScript "consul-register" ''${consul} services register "$1"'';
+
+  consulDeregisterScript = writeLoopScript "consul-deregister" ''${consul} services deregister "$1"'';
+
+  register = servicesJson: "${consulRegisterScript} ${servicesJson}";
+
+  deregister = servicesJson: "${consulDeregisterScript} ${servicesJson}";
+
   consulServiceDefinition = types.submodule ({ name, ... }: {
     options = {
       unit = mkOption {
@@ -38,8 +52,8 @@ let
     value = {
       direct = {
         serviceConfig = {
-          ExecStartPost = "${consul} services register ${servicesJson}";
-          ExecStopPost = "${consul} services deregister ${servicesJson}";
+          ExecStartPost = register servicesJson;
+          ExecStopPost = deregister servicesJson;
         };
       };
       external = {
@@ -49,10 +63,10 @@ let
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
-          ExecStart = "${consul} services register ${servicesJson}";
-          ExecStop = "${consul} services deregister ${servicesJson}";
+          ExecStart = register servicesJson;
+          ExecStop = deregister servicesJson;
           Restart = "on-failure";
-          RestartSec = "1s";
+          RestartSec = "30s";
         };
       };
     }.${mode};
