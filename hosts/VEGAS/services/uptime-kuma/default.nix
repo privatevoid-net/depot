@@ -59,7 +59,8 @@ in
 
     environment = {
       NODE_ENV = "production";
-      DATA_DIR = dataDir;
+      # immense stupidity: uptime-kuma expects this path to end in a slash
+      DATA_DIR = "${dataDir}/";
       UPTIME_KUMA_HOST = link.ipv4;
       UPTIME_KUMA_PORT = link.portStr;
       UPTIME_KUMA_HIDE_LOG = lib.concatStringsSep "," [

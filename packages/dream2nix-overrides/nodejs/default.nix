@@ -52,7 +52,6 @@ in
   uptime-kuma.runtime-bugfixes = {
     patches = [
       ./uptime-kuma/chmod-database.patch
-      ./uptime-kuma/data-dir-concat-with-slash.patch
     ];
   };
 
