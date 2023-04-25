@@ -4,7 +4,6 @@ with tools.vhosts;
   "fonts-googleapis-com" = proxyGhost "https" "fonts.googleapis.com";
   "fonts-gstatic-com" = proxyGhost "https" "fonts.gstatic.com";
   "cdnjs-cloudflare-com" = proxyGhost "https" "cdnjs.cloudflare.com";
-  "bidhhjb5tfchhhgx-lambda" = proxyGhost "https" "bidhhjb5tfchhhgxatvudfvxma0nfujn.lambda-url.eu-central-1.on.aws";
   "wttr-in" = let
     proxy = proxyGhost "https" "wttr.in";
   in proxy // {
