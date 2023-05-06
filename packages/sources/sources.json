@@ -22,9 +22,9 @@
         "repo": "excalidraw"
       },
       "branch": "master",
-      "revision": "9d5cfbbfb73c9abcf9ae534eb61548a9aa6fe225",
-      "url": "https://github.com/excalidraw/excalidraw/archive/9d5cfbbfb73c9abcf9ae534eb61548a9aa6fe225.tar.gz",
-      "hash": "0vck73kv73dj0m6r85pr9lwigpa3xg92hwj543dy8yl7m6yw77ad"
+      "revision": "1184a8c0e953312ff4a2b5beae467a1e11897477",
+      "url": "https://github.com/excalidraw/excalidraw/archive/1184a8c0e953312ff4a2b5beae467a1e11897477.tar.gz",
+      "hash": "1a8yf8iclmr36npc31z5sj3jlmxvcnzg80z7axpg387wig8zjrnc"
     },
     "searxng": {
       "type": "Git",
@@ -34,9 +34,9 @@
         "repo": "searxng"
       },
       "branch": "master",
-      "revision": "98387e291059d662dfb1da0ba131ca25da8b8d3c",
-      "url": "https://github.com/searxng/searxng/archive/98387e291059d662dfb1da0ba131ca25da8b8d3c.tar.gz",
-      "hash": "1cf69w1fsy25jgipvczc9pa0cyj6asb1k3ycbjralvbk2hq5ajds"
+      "revision": "6f0f9baa38cb92e3d6d141580924a9e7420860a0",
+      "url": "https://github.com/searxng/searxng/archive/6f0f9baa38cb92e3d6d141580924a9e7420860a0.tar.gz",
+      "hash": "1lijqxv4sjad14m9gipw4jpf4wmj9i66n64inmd33jq8kpqc8vix"
     },
     "stevenblack-hosts": {
       "type": "GitRelease",
@@ -47,10 +47,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "3.12.24",
-      "revision": "90a3ab7626b70456a0c4a9504b65dbb37daabe2f",
-      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.12.24",
-      "hash": "1acd65yn64ky4n1saaylhx5n65g502n7srwzxyp5dif9b5yd8ja2"
+      "version": "3.12.29",
+      "revision": "b9562097aa4a8393fbadbb0df79be5b98a1af9a1",
+      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.12.29",
+      "hash": "089lf7n2ibd1121w5hdinhj7nlpqkpwrk48hc4577v6xy9xv9bf4"
     },
     "tempo": {
       "type": "GitRelease",
@@ -61,10 +61,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "v2.0.1",
-      "revision": "989486f82a1d69160e9096fcdab57b8e63294d4b",
-      "url": "https://api.github.com/repos/grafana/tempo/tarball/v2.0.1",
-      "hash": "02am43gv7yx6fa0asc5msyjppqvhksfwpr8ha013cfr518p0qs82"
+      "version": "v2.1.1",
+      "revision": "41aa497c72b64bb236771ff0cac0d92c7bf9c119",
+      "url": "https://api.github.com/repos/grafana/tempo/tarball/v2.1.1",
+      "hash": "1hxziwaj9cr14v3f5xxm99v66w4025zx6j6yw8zs2kgk1v14d9rw"
     },
     "uptime-kuma": {
       "type": "GitRelease",
