@@ -20,7 +20,7 @@ let
     deploy-rs = inputs.deploy-rs.lib."${host.system}";
   in {
     effect = { branch, ... }: runIf (elem branch [ "master" "staging" ])
-    (runNixOS {
+    (runNixOS rec {
       requiredSystemFeatures = [ "hci-deploy-agent-nixos" ];
 
       inherit (nixosConfigurations.${name}) config;
@@ -35,6 +35,37 @@ let
       '';
 
       ssh.destination = "root@${hostname}";
+
+      postEffect = let
+        scheduleReboot = builtins.toFile "schedule-reboot.sh" /*bash*/ ''
+          currentTime=$(date +%s)
+          lastScheduledTime=$(consul kv get system/coordinated-reboot/last)
+          if [[ $? -ne 0 ]]; then
+            lastScheduledTime=$((currentTime - 300))
+          fi
+          nextScheduledTime=$((lastScheduledTime + 900))
+          if [[ $nextScheduledTime -lt $((currentTime + 300)) ]]; then
+            nextScheduledTime=$((currentTime + 300))
+          fi
+          consul kv put system/coordinated-reboot/last $nextScheduledTime
+          echo "Scheduling reboot for $nextScheduledTime"
+          systemd-analyze timestamp @$nextScheduledTime
+          busctl call \
+            org.freedesktop.login1 \
+            /org/freedesktop/login1 \
+            org.freedesktop.login1.Manager \
+            ScheduleShutdown st reboot ''${nextScheduledTime}000000
+        '';
+      in hci-effects.ssh ssh /*bash*/ ''
+        if [[ "$(realpath /run/booted-system/kernel)" != "$(realpath /run/current-system/kernel)" ]]; then
+          echo "Scheduling reboot for kernel upgrade"
+          if ! consul members >/dev/null; then
+            echo "Consul not active, skipping reboot"
+            exit 0
+          fi
+          consul lock --timeout=3m system/coordinated-reboot bash ${scheduleReboot}
+        fi
+      '';
     });
 
     deploy = {
