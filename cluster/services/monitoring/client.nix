@@ -17,6 +17,9 @@ in {
     node = {
       enable = true;
       listenAddress = myNode.meshIp;
+      enabledCollectors = [
+        "systemd"
+      ];
     };
 
     jitsi = hasJitsi {
