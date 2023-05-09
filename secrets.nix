@@ -23,6 +23,7 @@ in with hosts;
   "cluster/services/ipfs/cluster-secret.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/ipfs/cluster-pinsvc-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/irc/irc-peer-key.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
+  "cluster/services/monitoring/secrets/grafana-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/monitoring/secrets/grafana-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/patroni/passwords/replication.age".publicKeys = max ++ map systemKeys [ thunderskin VEGAS prophet ];
   "cluster/services/patroni/passwords/rewind.age".publicKeys = max ++ map systemKeys [ thunderskin VEGAS prophet ];

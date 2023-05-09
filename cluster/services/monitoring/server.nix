@@ -11,8 +11,12 @@ let
   login = x: "https://login.${domain}/auth/realms/master/protocol/openid-connect/${x}";
 in
 {
-  age.secrets.grafana-secrets = {
-    file = ./secrets/grafana-secrets.age;
+  age.secrets = {
+    grafana-db-credentials = {
+      file = ./secrets/grafana-db-credentials.age;
+      owner = "grafana";
+    };
+    grafana-secrets.file = ./secrets/grafana-secrets.age;
   };
 
   links = {
@@ -27,6 +31,12 @@ in
       server = {
         root_url = "https://monitoring.${domain}/";
         http_port = links.grafana.port;
+      };
+      database = {
+        type = "postgres";
+        host = cluster.config.links.patroni-pg-access.tuple;
+        user = "grafana";
+        password = "$__file{${config.age.secrets.grafana-db-credentials.path}}";
       };
       analytics.reporting_enabled = false;
       "auth.generic_oauth" = {
