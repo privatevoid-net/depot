@@ -26,7 +26,6 @@
       ./services/mail
       ./services/matrix
       ./services/minecraft
-      ./services/monitoring
       ./services/nix/binary-cache.nix
       ./services/nix/nar-serve.nix
       ./services/object-storage
