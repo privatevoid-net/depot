@@ -23,6 +23,8 @@
     };
 
   inputs = {
+    systems.url = "github:privatevoid-net/nix-systems-default-linux";
+
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11-small";
 
     nix-super = {
@@ -77,7 +79,7 @@
       url = "github:numtide/devshell";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "repin-flake-utils";
+        systems.follows = "systems";
       };
     };
     
@@ -114,7 +116,10 @@
 
     nix-filter.url = "github:numtide/nix-filter";
     
-    repin-flake-utils.url = "github:numtide/flake-utils";
+    repin-flake-utils = {
+      url = "github:numtide/flake-utils";
+      inputs.systems.follows = "systems";
+    };
 
     blank.url = "github:divnix/blank";
 
