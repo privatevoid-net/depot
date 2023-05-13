@@ -7,7 +7,7 @@
       OTEL_EXPORTER_OTLP_PROTOCOL = "grpc";
       OTEL_EXPORTER_OTLP_ENDPOINT = config.links.tempo-otlp-grpc.url;
       OTEL_TRACES_SAMPLER = "parentbased_traceidratio";
-      OTEL_TRACES_SAMPLER_ARG = "0.01";
+      OTEL_TRACES_SAMPLER_ARG = "0.50";
     };
   };
 }
