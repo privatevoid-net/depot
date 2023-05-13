@@ -3,6 +3,9 @@ let
   inherit (config) links;
 in
 {
+  imports = [
+    ./proxy-shuffle.nix
+  ];
   links.searxng.protocol = "http";
 
   age.secrets.searxng-secrets.file = ../../../../secrets/searxng-secrets.age;
