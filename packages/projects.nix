@@ -83,6 +83,7 @@
           agenix
           deploy-rs
           dvc
+          hci
           npins
           pin
           pkgs.deadnix
