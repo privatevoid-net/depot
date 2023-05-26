@@ -9,26 +9,18 @@ let
 in {
   services.journald.extraConfig = "Storage=volatile";
 
-  services.prometheus.exporters = {
-    node = {
-      enable = true;
-      listenAddress = myNode.meshIp;
-      enabledCollectors = [
-        "systemd"
-      ];
-    };
-  };
-
-  systemd.services.prometheus-node-exporter = {
-    after = [ "wireguard-wgmesh.service" ];
-    serviceConfig.RestartSec = "10s";
-  };
-
   services.grafana-agent = {
     enable = true;
     settings = {
       metrics.global.remote_write = lib.singleton {
         url = "${cluster.config.links.prometheus-ingest.url}/api/v1/write";
+      };
+      integrations.node_exporter = {
+        enabled = true;
+        instance = cluster.config.vars.hostName;
+        enable_collectors = [
+          "systemd"
+        ];
       };
       logs.configs = lib.singleton {
         name = "logging";

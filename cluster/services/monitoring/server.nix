@@ -96,13 +96,6 @@ in
       scrape_interval = "60s";
     };
     scrapeConfigs = [
-      {
-        job_name = "node";
-        static_configs = lib.flip lib.mapAttrsToList cluster.config.vars.mesh (name: host: {
-          targets = [ "${host.meshIp}:9100" ];
-          labels.instance = name;
-        });
-      }
         {
           job_name = "ipfs";
           scheme = "https";
