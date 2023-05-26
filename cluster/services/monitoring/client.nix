@@ -1,4 +1,4 @@
-{ cluster, config, lib, ... }:
+{ cluster, lib, ... }:
 let
   myNode = cluster.config.vars.mesh.${cluster.config.vars.hostName};
 
@@ -6,8 +6,6 @@ let
     source_labels = [ from ];
     target_label = to;
   };
-
-  hasJitsi = lib.mkIf config.services.jitsi-meet.enable;
 in {
   services.journald.extraConfig = "Storage=volatile";
 
@@ -19,19 +17,9 @@ in {
         "systemd"
       ];
     };
-
-    jitsi = hasJitsi {
-      enable = true;
-      listenAddress = myNode.meshIp;
-      interval = "60s";
-    };
   };
 
   systemd.services.prometheus-node-exporter = {
-    after = [ "wireguard-wgmesh.service" ];
-    serviceConfig.RestartSec = "10s";
-  };
-  systemd.services.prometheus-jitsi-exporter = hasJitsi {
     after = [ "wireguard-wgmesh.service" ];
     serviceConfig.RestartSec = "10s";
   };

@@ -104,15 +104,6 @@ in
           labels.instance = name;
         });
       }
-      {
-        job_name = "jitsi";
-        static_configs = [
-          {
-            targets = [ "${cluster.config.vars.mesh.prophet.meshIp}:9700" ];
-            labels.instance = "meet.${domain}";
-          }
-        ];
-      }
         {
           job_name = "ipfs";
           scheme = "https";
