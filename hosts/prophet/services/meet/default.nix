@@ -1,8 +1,14 @@
 { config, lib, depot, tools, ... }:
 let
+  inherit (config) links;
+
   inherit (depot.reflection) interfaces;
 in
 {
+  links = {
+    jitsi-exporter.protocol = "http";
+  };
+
   services.jitsi-meet = {
     enable = true;
     hostName = "meet.${tools.meta.domain}";
@@ -45,4 +51,22 @@ in
     };
   });
   boot.kernel.sysctl."net.core.rmem_max" = lib.mkForce 10485760;
+
+  services.prometheus.exporters.jitsi = {
+    enable = true;
+    interval = "60s";
+    listenAddress = links.jitsi-exporter.ipv4;
+    inherit (links.jitsi-exporter) port;
+  };
+
+  services.grafana-agent.settings.metrics.configs = lib.singleton {
+    name = "metrics-jitsi";
+    scrape_configs = lib.singleton {
+      job_name = "jitsi";
+      static_configs = lib.singleton {
+        targets = lib.singleton links.jitsi-exporter.tuple;
+        labels.instance = config.services.jitsi-meet.hostName;
+      };
+    };
+  };
 }
