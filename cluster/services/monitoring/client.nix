@@ -1,8 +1,6 @@
-{ cluster, config, lib, pkgs, ... }:
+{ cluster, config, lib, ... }:
 let
   myNode = cluster.config.vars.mesh.${cluster.config.vars.hostName};
-
-  writeJSON = filename: data: pkgs.writeText filename (builtins.toJSON data);
 
   relabel = from: to: {
     source_labels = [ from ];
@@ -38,13 +36,12 @@ in {
     serviceConfig.RestartSec = "10s";
   };
 
-  systemd.services.promtail = {
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      ExecStart = "${pkgs.grafana-loki}/bin/promtail --config.expand-env=true --config.file ${writeJSON "promtail.yaml" {
-        server.disable = true;
-        positions.filename = "\${STATE_DIRECTORY:/tmp}/promtail-positions.yaml";
+  services.grafana-agent = {
+    enable = true;
+    settings = {
+      logs.configs = lib.singleton {
+        name = "logging";
+        positions.filename = "\${STATE_DIRECTORY:/tmp}/logging-positions.yaml";
         clients = [
           { url = "${cluster.config.links.loki-ingest.url}/loki/api/v1/push"; }
         ];
@@ -66,8 +63,7 @@ in {
               ];
           }
         ];
-      }}";
-      StateDirectory = "promtail";
+      };
     };
   };
 }
