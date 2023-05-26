@@ -16,6 +16,10 @@ in
       protocol = "http";
       ipv4 = meshIpFor "logging";
     };
+    prometheus-ingest = {
+      protocol = "http";
+      ipv4 = meshIpFor "server";
+    };
   };
   services.monitoring = {
     nodes = {

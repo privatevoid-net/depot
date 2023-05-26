@@ -1,7 +1,8 @@
-{ config, pkgs, ... }:
+{ cluster, config, pkgs, ... }:
 
 let
   inherit (config) links;
+  inherit (cluster.config.links) prometheus-ingest;
   dataDir = "/srv/storage/private/tempo";
   tempoConfig = {
     server = {
@@ -47,7 +48,7 @@ let
         path = "${dataDir}/generator/wal";
         remote_write = [
           {
-            url = "${links.prometheus.url}/api/v1/write";
+            url = "${prometheus-ingest.url}/api/v1/write";
             send_exemplars = true;
           }
         ];

@@ -4,7 +4,7 @@ let
 
   inherit (config) links;
 
-  inherit (cluster.config.links) loki-ingest;
+  inherit (cluster.config.links) loki-ingest prometheus-ingest;
 
   iniList = lib.concatStringsSep " ";
 
@@ -21,7 +21,6 @@ in
 
   links = {
     grafana.protocol = "http";
-    prometheus.protocol = "http";
   };
   services.grafana = {
     enable = true;
@@ -66,7 +65,7 @@ in
         {
           name = "Prometheus";
           uid = "PBFA97CFB590B2093";
-          inherit (links.prometheus) url;
+          inherit (prometheus-ingest) url;
           type = "prometheus";
           isDefault = true;
         }
@@ -90,8 +89,8 @@ in
 
   services.prometheus = {
     enable = true;
-    listenAddress = links.prometheus.ipv4;
-    inherit (links.prometheus) port;
+    listenAddress = prometheus-ingest.ipv4;
+    inherit (prometheus-ingest) port;
     extraFlags = [ "--enable-feature=remote-write-receiver" ];
     globalConfig = {
       scrape_interval = "60s";
