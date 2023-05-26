@@ -27,6 +27,9 @@ in {
   services.grafana-agent = {
     enable = true;
     settings = {
+      metrics.global.remote_write = lib.singleton {
+        url = "${cluster.config.links.prometheus-ingest.url}/api/v1/write";
+      };
       logs.configs = lib.singleton {
         name = "logging";
         positions.filename = "\${STATE_DIRECTORY:/tmp}/logging-positions.yaml";
