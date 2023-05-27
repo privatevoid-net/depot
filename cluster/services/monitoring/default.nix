@@ -24,11 +24,13 @@ in
   services.monitoring = {
     nodes = {
       client = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
+      blackbox = [ "checkmate" "VEGAS" "prophet" ];
       logging = [ "VEGAS" ];
       server = [ "VEGAS" ];
     };
     nixos = {
       client = ./client.nix;
+      blackbox = ./blackbox.nix;
       logging = ./logging.nix;
       server = [
         ./server.nix
