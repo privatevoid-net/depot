@@ -50,6 +50,8 @@
         inherit (config.dream2nix.outputs.excalidraw.packages) excalidraw;
       in excalidraw // { webroot = "${excalidraw}/${excalidraw.webPath}"; };
 
+      graf = pkgs.callPackage ./tools/graf { };
+
       grafana = pkgs.callPackage ./monitoring/grafana { };
 
       ipfs = pkgs.callPackage ./networking/ipfs { };
