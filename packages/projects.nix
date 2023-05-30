@@ -85,6 +85,7 @@
           agenix
           deploy-rs
           dvc
+          graf
           hci
           npins
           pin
