@@ -35,6 +35,7 @@ in
       server = [
         ./server.nix
         ./tracing.nix
+        ./provisioning/dashboards.nix
       ];
     };
   };
