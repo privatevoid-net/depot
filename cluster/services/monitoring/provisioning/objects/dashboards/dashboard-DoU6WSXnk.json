@@ -1,0 +1,624 @@
+{
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        },
+        {
+          "datasource": "Loki",
+          "enable": false,
+          "expr": "{syslog_identifier=~\"fail2ban.observer\",systemd_unit=\"fail2ban.service\"} |= \"incr\" | pattern \"<_> IP <f2b_target_ip> is bad: <_> - incr <_> to <f2b_bantime_post_h>:<_>\" | f2b_bantime_post_h > 5",
+          "iconColor": "red",
+          "name": "Large ban annotations",
+          "target": {},
+          "titleFormat": ""
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 3,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "dthms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 9,
+        "options": {
+          "displayMode": "lcd",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [],
+            "fields": "",
+            "values": true
+          },
+          "showUnfilled": false
+        },
+        "pluginVersion": "8.4.7",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "expr": "topk (8,\n   max by (banned_ip_addr) (\n    max_over_time (\n      {syslog_identifier=~\"fail2ban.observer\",systemd_unit=\"fail2ban.service\"}\n      | pattern \"<_> IP <banned_ip_addr> is bad: <_> - incr <_> to <f2b_bt_h>:<f2b_bt_m>:<f2b_bt_s>\"\n      | label_format f2b_bt=\"{{ add (mul .f2b_bt_h 3600) (mul .f2b_bt_m 60) .f2b_bt_s }}\"\n      | unwrap f2b_bt [$__range]\n    )\n  )\n)",
+            "legendFormat": "{{ banned_ip_addr }}",
+            "queryType": "instant",
+            "refId": "A"
+          }
+        ],
+        "title": "Top offenders by max bantime",
+        "type": "bargauge"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 6,
+          "x": 12,
+          "y": 0
+        },
+        "id": 3,
+        "options": {
+          "displayMode": "lcd",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [],
+            "fields": "",
+            "values": true
+          },
+          "showUnfilled": true
+        },
+        "pluginVersion": "8.4.7",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "expr": "topk(10,sum by (host) (count_over_time({syslog_identifier=\"fail2ban.actions\"} | pattern \"<_> [<f2b_jail>] <f2b_action> <banned_ip_addr>\" | f2b_action=\"Ban\" [$__range])))",
+            "legendFormat": "{{host}}",
+            "queryType": "instant",
+            "refId": "A"
+          }
+        ],
+        "title": "Top bans per host",
+        "type": "bargauge"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 6,
+          "x": 18,
+          "y": 0
+        },
+        "id": 4,
+        "options": {
+          "displayMode": "lcd",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [],
+            "fields": "",
+            "values": true
+          },
+          "showUnfilled": true,
+          "text": {}
+        },
+        "pluginVersion": "8.4.7",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "expr": "topk(10,sum by (f2b_jail) (count_over_time({syslog_identifier=\"fail2ban.actions\"} | pattern \"<_> [<f2b_jail>] <f2b_action> <banned_ip_addr>\" | f2b_action=\"Ban\" [$__range])))",
+            "legendFormat": "{{f2b_jail}}",
+            "queryType": "instant",
+            "refId": "A"
+          }
+        ],
+        "title": "Top bans per jail",
+        "type": "bargauge"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 13,
+          "w": 12,
+          "x": 12,
+          "y": 5
+        },
+        "id": 6,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "expr": "topk(10,sum by (f2b_jail) (count_over_time({syslog_identifier=\"fail2ban.actions\"} | pattern \"<_> [<f2b_jail>] <f2b_action> <banned_ip_addr>\" | f2b_action=\"Ban\" [1h])))",
+            "legendFormat": "{{f2b_jail}}",
+            "refId": "A"
+          }
+        ],
+        "title": "Hourly ban rate per jail",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 0,
+          "y": 6
+        },
+        "id": 2,
+        "options": {
+          "displayMode": "lcd",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [],
+            "fields": "",
+            "values": true
+          },
+          "showUnfilled": false
+        },
+        "pluginVersion": "8.4.7",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "expr": "topk(8,sum by (banned_ip_addr) (count_over_time({syslog_identifier=\"fail2ban.actions\"} | pattern \"<_> [<f2b_jail>] <f2b_action> <banned_ip_addr>\" | f2b_action=\"Ban\" [$__range])))",
+            "legendFormat": "{{banned_ip_addr}}",
+            "queryType": "instant",
+            "refId": "A"
+          }
+        ],
+        "title": "Top Banned IP Addresses in range",
+        "type": "bargauge"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 0,
+          "y": 12
+        },
+        "id": 10,
+        "options": {
+          "displayMode": "lcd",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [],
+            "fields": "",
+            "values": true
+          },
+          "showUnfilled": false
+        },
+        "pluginVersion": "8.4.7",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "expr": "topk(8,\n  sum by (banned_ip_addr) (\n    count_over_time (\n      {syslog_identifier=\"fail2ban.filter\",systemd_unit=\"fail2ban.service\"}\n      | pattern \"<_> [<f2b_jail>] <f2b_action> <banned_ip_addr> - <_>\"\n      | f2b_action = \"Found\"\n      [$__range]\n    )\n  )\n)",
+            "legendFormat": "{{banned_ip_addr}}",
+            "queryType": "instant",
+            "refId": "A"
+          }
+        ],
+        "title": "Top Found IP Addresses in range",
+        "type": "bargauge"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 13,
+          "w": 12,
+          "x": 0,
+          "y": 18
+        },
+        "id": 8,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "expr": "topk(10,sum by (host) (count_over_time({syslog_identifier=\"fail2ban.actions\"} | pattern \"<_> [<f2b_jail>] <f2b_action> <banned_ip_addr>\" | f2b_action=\"Ban\" [1h])))",
+            "legendFormat": "{{host}}",
+            "refId": "A"
+          }
+        ],
+        "title": "Hourly ban rate per host",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 13,
+          "w": 12,
+          "x": 12,
+          "y": 18
+        },
+        "id": 7,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "expr": "topk(10,sum by (f2b_jail, host) (count_over_time({syslog_identifier=\"fail2ban.actions\"} | pattern \"<_> [<f2b_jail>] <f2b_action> <banned_ip_addr>\" | f2b_action=\"Ban\" [1h])))",
+            "legendFormat": "{{f2b_jail}} @ {{host}}",
+            "refId": "A"
+          }
+        ],
+        "title": "Hourly ban rate per jail per host",
+        "type": "timeseries"
+      }
+    ],
+    "refresh": "5m",
+    "schemaVersion": 35,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-7d",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "fail2ban",
+    "uid": "DoU6WSXnk",
+    "version": 13,
+    "weekStart": ""
+  },
+  "folderId": 0,
+  "overwrite": true
+}
