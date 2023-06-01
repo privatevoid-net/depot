@@ -24,4 +24,9 @@ in
       retry_join = map (hostName: hostLinks.${hostName}.consul.tuple) cfg.otherNodes.agent;
     };
   };
+
+  services.grafana-agent.settings.integrations.consul_exporter = {
+    enabled = true;
+    instance = hostName;
+  };
 }
