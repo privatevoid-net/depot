@@ -19,7 +19,10 @@
       haproxy = [ "checkmate" "VEGAS" "prophet" ];
     };
     nixos = {
-      worker = ./worker.nix;
+      worker = [
+        ./worker.nix
+        ./metrics.nix
+      ];
       haproxy = ./haproxy.nix;
     };
   };
