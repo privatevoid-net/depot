@@ -56,4 +56,19 @@ in
       };
     };
   };
+
+  consul.services.ipfs-gateway = {
+    mode = "external";
+    unit = "ipfs";
+    definition = {
+      name = "ipfs-gateway";
+      address = gw.ipv4;
+      inherit (gw) port;
+      checks = lib.singleton {
+        interval = "60s";
+        http = "${gw.url}/ipfs/QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn/"; # empty directory
+        method = "HEAD";
+      };
+    };
+  };
 }
