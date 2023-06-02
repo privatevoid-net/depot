@@ -1,4 +1,4 @@
-{ config, depot, lib, tools, ... }:
+{ config, depot, lib, ... }:
 
 {
   hostLinks = lib.genAttrs config.services.ipfs.nodes.node (name: let
@@ -25,8 +25,9 @@
     nodes = {
       node = [ "VEGAS" "prophet" ];
       clusterPeer = [ "VEGAS" "prophet" ];
-      gateway = [ "VEGAS" ];
+      gateway = [ "VEGAS" "prophet" ];
       io-tweaks = [ "VEGAS" ];
+      remote-api = [ "VEGAS" ];
     };
     nixos = {
       node = [
@@ -40,6 +41,7 @@
         ./cluster.nix
       ];
       io-tweaks = ./io-tweaks.nix;
+      remote-api = ./remote-api.nix;
     };
   };
 }

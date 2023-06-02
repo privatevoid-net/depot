@@ -1,12 +1,18 @@
-{ config, depot, tools, ... }:
+{ config, lib, tools, ... }:
 with tools.nginx;
 let
   inherit (tools.meta) domain;
-  cfg = config.services.ipfs;
   gw = config.links.ipfsGateway;
+  cfg = config.services.ipfs;
+  metrics = config.links.ipfsMetrics;
 in
 {
   users.users.nginx.extraGroups = [ cfg.group ];
+
+  links.ipfsMetrics = {
+    protocol = "http";
+    path = "/debug/metrics/prometheus";
+  };
 
   services.nginx.virtualHosts = {
     "top-level.${domain}".locations = {
@@ -18,37 +24,17 @@ in
         '';
       };
     };
-
-    "lain-ipfs.${domain}" = vhosts.basic // {
-      locations = {
-        "= /".return = "404";
-        "~ ^/ip[fn]s" = {
-          proxyPass = gw.url;
-          extraConfig = ''
-            add_header X-Content-Type-Options "";
-            add_header Access-Control-Allow-Origin *;
-          '';
-        };
-        "/ipfs".extraConfig = "expires max;";
+    ipfs-metrics = {
+      serverName = null;
+      listen = lib.singleton {
+        addr = metrics.ipv4;
+        inherit (metrics) port;
       };
-    };
-    "ipfs.admin.${domain}" = vhosts.basic // {
-      locations."/api".proxyPass = "http://unix:/run/ipfs/ipfs-api.sock:";
-      locations."/ipns/webui.ipfs.${domain}".proxyPass = "${gw.url}/ipns/webui.ipfs.${domain}";
-      locations."= /".return = "302 /ipns/webui.ipfs.${domain}";
-      locations."/debug/metrics/prometheus" = {
-        proxyPass = "http://unix:/run/ipfs/ipfs-api.sock:";
-        extraConfig = ''
-          access_log off;
-          auth_request off;
-          allow ${depot.config.hours.VEGAS.interfaces.primary.addr};
-          deny all;
-        '';
-      };
+      extraConfig = "access_log off;";
+      locations."/".return = "204";
+      locations."${metrics.path}".proxyPass = "http://unix:/run/ipfs/ipfs-api.sock:";
     };
   };
-  services.oauth2_proxy.nginx.virtualHosts = [ "ipfs.admin.${domain}" ];
-
   security.acme.certs."ipfs.${domain}" = {
     domain = "*.ipfs.${domain}";
     extraDomainNames = [ "*.ipns.${domain}" ];
