@@ -23,7 +23,7 @@ in
   };
   services.jitsi-videobridge = {
     openFirewall = true;
-    apis = [ "colibri" "rest" ];
+    colibriRestApi = true;
     config.videobridge = {
       ice = {
         tcp.port = 7777;
