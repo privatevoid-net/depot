@@ -6,7 +6,7 @@ with tools.nginx;
     enable = true;
     package = pkgs.jellyfin.override {
       ffmpeg = pkgs.ffmpeg.override {
-        libmfxSupport = true;
+        withMfx = true;
       };
     };
   };
