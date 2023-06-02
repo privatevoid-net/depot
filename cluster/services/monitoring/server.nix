@@ -95,19 +95,7 @@ in
     globalConfig = {
       scrape_interval = "60s";
     };
-    scrapeConfigs = [
-        {
-          job_name = "ipfs";
-          scheme = "https";
-          metrics_path = "/debug/metrics/prometheus";
-          static_configs = [
-            {
-              targets = [ "ipfs.admin.${domain}" ];
-              labels.instance = "VEGAS";
-            }
-          ];
-        }
-    ];
+    scrapeConfigs = [ ];
   };
 
 }
