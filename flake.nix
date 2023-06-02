@@ -25,7 +25,7 @@
   inputs = {
     systems.url = "github:privatevoid-net/nix-systems-default-linux";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11-small";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05-small";
 
     nix-super = {
       url = "gitlab:max/nix-super?host=git.privatevoid.net";
