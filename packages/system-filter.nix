@@ -2,7 +2,6 @@
   packages = {
     cinny = [ "x86_64-linux" ];
     dvc = [ "x86_64-linux" ];
-    grafana = [ "x86_64-linux" ];
     hci = [ "x86_64-linux" ];
     hydra = [ "x86_64-linux" ];
     keycloak = [ "x86_64-linux" ];
