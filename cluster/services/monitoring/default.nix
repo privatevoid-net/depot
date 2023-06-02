@@ -1,9 +1,11 @@
-{ config, ... }:
+{ config, lib, ... }:
 
 let
   nodeFor = nodeType: builtins.head config.services.monitoring.nodes.${nodeType};
 
   meshIpFor = nodeType: config.vars.mesh.${nodeFor nodeType}.meshIp;
+
+  meshIpForNode = name: config.vars.mesh.${name}.meshIp;
 in
 
 {
@@ -37,16 +39,24 @@ in
       ipv4 = meshIpFor "server";
     };
   };
+  hostLinks = lib.genAttrs config.services.monitoring.nodes.grafana (name: {
+    grafana = {
+      protocol = "http";
+      ipv4 = meshIpForNode name;
+    };
+  });
   services.monitoring = {
     nodes = {
       client = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
       blackbox = [ "checkmate" "VEGAS" "prophet" ];
+      grafana = [ "VEGAS" "prophet" ];
       logging = [ "VEGAS" ];
       server = [ "VEGAS" ];
     };
     nixos = {
       client = ./client.nix;
       blackbox = ./blackbox.nix;
+      grafana = ./grafana-ha.nix;
       logging = ./logging.nix;
       server = [
         ./server.nix
