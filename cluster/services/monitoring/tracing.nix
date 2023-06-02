@@ -1,8 +1,7 @@
 { cluster, config, pkgs, ... }:
 
 let
-  inherit (config) links;
-  inherit (cluster.config.links) prometheus-ingest tempo-otlp-http tempo-otlp-grpc;
+  inherit (cluster.config) links;
   dataDir = "/srv/storage/private/tempo";
   tempoConfig = {
     server = {
@@ -13,8 +12,8 @@ let
     };
     distributor.receivers.otlp = {
       protocols = {
-        http.endpoint = tempo-otlp-http.tuple;
-        grpc.endpoint = tempo-otlp-grpc.tuple;
+        http.endpoint = links.tempo-otlp-http.tuple;
+        grpc.endpoint = links.tempo-otlp-grpc.tuple;
       };
     };
     ingester = {
@@ -48,7 +47,7 @@ let
         path = "${dataDir}/generator/wal";
         remote_write = [
           {
-            url = "${prometheus-ingest.url}/api/v1/write";
+            url = "${links.prometheus-ingest.url}/api/v1/write";
             send_exemplars = true;
           }
         ];
@@ -60,11 +59,6 @@ let
     ];
   };
 in {
-  links = {
-    tempo.protocol = "http";
-    tempo-grpc.protocol = "http";
-  };
-
   users.users.tempo = {
     isSystemUser = true;
     group = "tempo";

@@ -20,6 +20,14 @@ in
       protocol = "http";
       ipv4 = meshIpFor "server";
     };
+    tempo = {
+      protocol = "http";
+      ipv4 = meshIpFor "server";
+    };
+    tempo-grpc = {
+      protocol = "http";
+      ipv4 = meshIpFor "server";
+    };
     tempo-otlp-http = {
       protocol = "http";
       ipv4 = meshIpFor "server";
