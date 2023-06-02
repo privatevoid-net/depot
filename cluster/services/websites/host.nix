@@ -1,4 +1,4 @@
-{ config, depot, lib, pkgs, tools, ... }:
+{ depot, lib, tools, ... }:
 
 let
   importWebsites = expr: import expr {
@@ -25,7 +25,7 @@ in {
     mode = "external";
     definition = {
       name = "static-lb";
-      address = lib.toLower "${config.networking.hostName}.${config.networking.domain}";
+      address = depot.reflection.interfaces.primary.addrPublic;
       port = 443;
       checks = lib.singleton {
         interval = "60s";
