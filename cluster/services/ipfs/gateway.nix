@@ -57,6 +57,14 @@ in
     };
   };
 
+  services.ipfs.extraConfig.Gateway.PublicGateways = {
+    "${domain}" = {
+      Paths = [ "/ipfs" "/ipns" ];
+      NoDNSLink = false;
+      UseSubdomains = true;
+    };
+  };
+
   consul.services.ipfs-gateway = {
     mode = "external";
     unit = "ipfs";
