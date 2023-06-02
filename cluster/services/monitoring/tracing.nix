@@ -2,7 +2,7 @@
 
 let
   inherit (config) links;
-  inherit (cluster.config.links) prometheus-ingest;
+  inherit (cluster.config.links) prometheus-ingest tempo-otlp-http tempo-otlp-grpc;
   dataDir = "/srv/storage/private/tempo";
   tempoConfig = {
     server = {
@@ -13,8 +13,8 @@ let
     };
     distributor.receivers.otlp = {
       protocols = {
-        http.endpoint = links.tempo-otlp-http.tuple;
-        grpc.endpoint = links.tempo-otlp-grpc.tuple;
+        http.endpoint = tempo-otlp-http.tuple;
+        grpc.endpoint = tempo-otlp-grpc.tuple;
       };
     };
     ingester = {
@@ -63,8 +63,6 @@ in {
   links = {
     tempo.protocol = "http";
     tempo-grpc.protocol = "http";
-    tempo-otlp-http.protocol = "http";
-    tempo-otlp-grpc.protocol = "http";
   };
 
   users.users.tempo = {
