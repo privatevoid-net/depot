@@ -15,7 +15,7 @@ let
     peerLink = cluster.config.hostLinks.${name}.ircSecure;
   in ''
     [Server]
-    Name = ${peerLink.ipv4}
+    Name = ${peerLink.hostname}
     Host = ${peerLink.ipv4}
     Port = ${peerLink.portStr}
     MyPassword = @PEER_PASSWORD@
@@ -32,7 +32,7 @@ let
     Mask = *!${name}@*
   '';
 
-  serverName = linkSecure.ipv4;
+  serverName = linkSecure.hostname;
   cert = config.security.acme.certs."${serverName}";
   dh = config.security.dhparams.params.ngircd;
 in {
@@ -114,7 +114,7 @@ in {
       port = linkSecure.port;
       checks = lib.singleton {
         interval = "60s";
-        tcp = link.tuple;
+        tcp = "${linkSecure.ipv4}:${linkSecure.portStr}";
       };
     };
   };

@@ -1,7 +1,10 @@
-{ config, lib, tools, ... }:
+{ config, depot, lib, tools, ... }:
 
 let
+  inherit (depot.config) hours;
+
   inherit (tools.meta) domain;
+
   subDomains = {
     VEGAS = "eu1";
     prophet = "eu2";
@@ -18,11 +21,13 @@ in
   };
   hostLinks = lib.genAttrs config.services.irc.nodes.host (name: {
     irc = {
-      ipv4 = "${subDomains.${name}}.irc.${domain}";
+      hostname = "${subDomains.${name}}.irc.${domain}";
+      ipv4 = hours.${name}.interfaces.primary.addrPublic;
       inherit (config.links.irc) port;
     };
     ircSecure = {
-      ipv4 = "${subDomains.${name}}.irc.${domain}";
+      hostname = "${subDomains.${name}}.irc.${domain}";
+      ipv4 = hours.${name}.interfaces.primary.addrPublic;
       inherit (config.links.ircSecure) port;
     };
   });
