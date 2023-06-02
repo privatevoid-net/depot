@@ -1,4 +1,4 @@
-{ config, lib, tools, ... }:
+{ config, depot, lib, tools, ... }:
 with tools.nginx;
 let
   inherit (tools.meta) domain;
@@ -60,15 +60,27 @@ in
   consul.services.ipfs-gateway = {
     mode = "external";
     unit = "ipfs";
-    definition = {
+    definition = rec {
       name = "ipfs-gateway";
-      address = gw.ipv4;
-      inherit (gw) port;
-      checks = lib.singleton {
-        interval = "60s";
-        http = "${gw.url}/ipfs/QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn/"; # empty directory
-        method = "HEAD";
-      };
+      address = depot.reflection.interfaces.primary.addrPublic;
+      port = 443;
+      checks = [
+        {
+          name = "Frontend";
+          id = "service:ipfs-gateway:frontend";
+          interval = "60s";
+          http = "https://${address}/";
+          tls_server_name = "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354.ipfs.${domain}"; # empty directory
+          method = "HEAD";
+        }
+        {
+          name = "IPFS Node";
+          id = "service:ipfs-gateway:ipfs";
+          interval = "60s";
+          http = "${gw.url}/ipfs/QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn/"; # empty directory
+          method = "HEAD";
+        }
+      ];
     };
   };
 }
