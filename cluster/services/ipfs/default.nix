@@ -26,6 +26,7 @@
       node = [ "VEGAS" "prophet" ];
       clusterPeer = [ "VEGAS" "prophet" ];
       gateway = [ "VEGAS" ];
+      io-tweaks = [ "VEGAS" ];
     };
     nixos = {
       node = [
@@ -38,6 +39,7 @@
       clusterPeer = [
         ./cluster.nix
       ];
+      io-tweaks = ./io-tweaks.nix;
     };
   };
 }
