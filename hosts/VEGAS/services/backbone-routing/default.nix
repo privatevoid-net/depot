@@ -6,6 +6,7 @@ in
   imports = [
     ./port-forward.nix
     ./peering.nix
+    ./monitoring.nix
   ];
 
   networking.nat = {
