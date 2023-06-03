@@ -60,6 +60,12 @@ in
       https2xx = recursiveUpdate http2xx {
         http.fail_if_not_ssl = true;
       };
+      tcpConnect = {
+        prober = "tcp";
+        tcp = {
+          preferred_ip_protocol = "ip4";
+        };
+      };
     };
     blackbox_targets = let
       regularTargets = mapTargets {
