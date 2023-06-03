@@ -21,7 +21,9 @@ let
 
   deregister = servicesJson: "${consulDeregisterScript} ${servicesJson}";
 
-  consulServiceDefinition = types.submodule ({ name, ... }: {
+  writeServicesJson = name: services: pkgs.writeText "consul-services-${name}.json" (builtins.toJSON { inherit services; });
+
+  consulServiceDefinition = types.submodule ({ config, name, ... }: {
     options = {
       unit = mkOption {
         description = "Which systemd service to attach to.";
@@ -30,19 +32,37 @@ let
       };
       mode = mkOption {
         description = "How to attach command executions to the service.";
-        type = types.enum [ "direct" "external" ];
+        type = types.enum [ "direct" "external" "manual" ];
         default = "direct";
       };
       definition = mkOption {
         description = "Consul service definition.";
         type = types.attrs;
       };
+      commands = {
+        register = mkOption {
+          description = "Command used to register this service.";
+          type = types.str;
+          readOnly = true;
+        };
+        deregister = mkOption {
+          description = "Command used to deregister this service.";
+          type = types.str;
+          readOnly = true;
+        };
+      };
+    };
+    config.commands = let
+      servicesJson = writeServicesJson name [ config.definition ];
+    in {
+      register = register servicesJson;
+      deregister = deregister servicesJson;
     };
   });
 
   attachToService = unit: servicesRaw: let
     services = map (getAttr "definition") servicesRaw;
-    servicesJson = pkgs.writeText "consul-services-${unit}.json" (builtins.toJSON { inherit services; });
+    servicesJson = writeServicesJson unit services;
     mode = if any (x: x.mode == "external") servicesRaw then "external" else "direct";
   in {
     name = {
@@ -81,8 +101,11 @@ in
     };
   };
 
-  config = lib.mkIf (cfg.services != {}) {
-    systemd.services = mapAttrs' attachToService (groupBy (getAttr "unit") (attrValues cfg.services));
+  config = lib.mkIf (cfg.services != {}) (let
+    servicesRaw = filter (x: x.mode != "manual") (attrValues cfg.services);
+  in {
+    systemd.services = mapAttrs' attachToService (groupBy (getAttr "unit") servicesRaw);
+
     warnings = optional (!config.services.consul.enable) "Consul service registrations found, but Consul agent is not enabled on this machine.";
-  };
+  });
 }
