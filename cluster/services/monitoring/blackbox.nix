@@ -78,6 +78,14 @@ in
       ircsConnect = recursiveUpdate ircConnect {
         tcp.tls = true;
       };
+      nextcloudStatus = recursiveUpdate https2xx {
+        http = {
+          fail_if_body_not_matches_regexp = [
+            ''"installed":true''
+            ''"maintenance":false''
+          ];
+        };
+      };
     };
     blackbox_targets = let
       regularTargets = mapTargets cluster.config.monitoring.blackbox.targets;
