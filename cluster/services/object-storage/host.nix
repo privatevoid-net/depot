@@ -22,7 +22,7 @@ in
   };
 
   age.secrets.minio-root-credentials = {
-    file = ../../../../secrets/minio-root-credentials.age;
+    file = ../../../secrets/minio-root-credentials.age;
     owner = "root";
     group = "root";
     mode = "0400";
