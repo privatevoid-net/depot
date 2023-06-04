@@ -66,6 +66,18 @@ in
           preferred_ip_protocol = "ip4";
         };
       };
+      ircConnect = recursiveUpdate tcpConnect {
+        tcp.query_response = [
+          { send = "NICK probe"; }
+          { send = "USER probe probe probe :${probeUserAgent}"; }
+          { send = "PING probe${probeId}"; }
+          { expect = "PONG .* :probe${probeId}"; }
+          { send = "QUIT"; }
+        ];
+      };
+      ircsConnect = recursiveUpdate ircConnect {
+        tcp.tls = true;
+      };
     };
     blackbox_targets = let
       regularTargets = mapTargets cluster.config.monitoring.blackbox.targets;
