@@ -5,13 +5,13 @@ in
 {
   age.secrets = {
     nextcloud-adminpass = {
-      file = ../../../../secrets/nextcloud-adminpass.age;
+      file = ../../../secrets/nextcloud-adminpass.age;
       owner = "nextcloud";
       group = "nextcloud";
       mode = "0400";
     };
     nextcloud-dbpass = {
-      file = ../../../../secrets/nextcloud-dbpass.age;
+      file = ../../../secrets/nextcloud-dbpass.age;
       owner = "nextcloud";
       group = "nextcloud";
       mode = "0400";

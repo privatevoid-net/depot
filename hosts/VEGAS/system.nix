@@ -22,7 +22,6 @@
       ./services/fbi
       ./services/gitlab
       ./services/jokes
-      ./services/nextcloud
       ./services/mail
       ./services/matrix
       ./services/minecraft
