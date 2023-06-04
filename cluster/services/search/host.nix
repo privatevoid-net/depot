@@ -8,7 +8,7 @@ in
   ];
   links.searxng.protocol = "http";
 
-  age.secrets.searxng-secrets.file = ../../../../secrets/searxng-secrets.age;
+  age.secrets.searxng-secrets.file = ../../../secrets/searxng-secrets.age;
   services.searx = {
     enable = true;
     runInUwsgi = true;
