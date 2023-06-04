@@ -9,6 +9,10 @@ let
 in
 
 {
+  imports = [
+    ./options.nix
+  ];
+
   links = {
     loki-ingest = {
       protocol = "http";

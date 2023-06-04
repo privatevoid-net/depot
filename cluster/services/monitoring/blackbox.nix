@@ -68,12 +68,7 @@ in
       };
     };
     blackbox_targets = let
-      regularTargets = mapTargets {
-        web = {
-          module = "https2xx";
-          address = "https://www.${domain}";
-        };
-      };
+      regularTargets = mapTargets cluster.config.monitoring.blackbox.targets;
       secretTargets = mkSecretTargets 1;
     in regularTargets ++ secretTargets;
   };
