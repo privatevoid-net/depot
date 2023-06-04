@@ -1,10 +1,51 @@
+{ depot, lib, tools, ... }:
+
+let
+  inherit (tools.meta) domain;
+
+  importWebsites = expr: import expr {
+    tools = tools.nginx;
+    inherit (depot) packages;
+  };
+
+  websites = tools.nginx.mappers.mapSubdomains (importWebsites ./websites.nix);
+
+  acmeUseDNS = name: conf: {
+    name = conf.useACMEHost or conf.serverName or name;
+    value = {
+      dnsProvider = "pdns";
+      webroot = null;
+    };
+  };
+
+  isACME = _: conf: conf ? enableACME && conf.enableACME;
+in
+
 {
   services.websites = {
-    nodes = {
-      host = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
+    nodes.host = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
+    nixos.host = {
+      services.nginx.virtualHosts = websites;
+      security.acme.certs = lib.mapAttrs' acmeUseDNS (lib.filterAttrs isACME websites);
+      consul.services.nginx = {
+        mode = "external";
+        definition = {
+          name = "static-lb";
+          address = depot.reflection.interfaces.primary.addrPublic;
+          port = 443;
+          checks = lib.singleton {
+            interval = "60s";
+            tcp = "127.0.0.1:80";
+          };
+        };
+      };
     };
-    nixos = {
-      host = ./host.nix;
+  };
+
+  monitoring.blackbox.targets = {
+    web = {
+      address = "https://www.${domain}";
+      module = "https2xx";
     };
   };
 }
