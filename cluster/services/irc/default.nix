@@ -51,4 +51,11 @@ in
       ];
     };
   };
+
+  monitoring.blackbox.targets = {
+    irc = {
+      address = "irc.${domain}";
+      module = "ircsConnect";
+    };
+  };
 }
