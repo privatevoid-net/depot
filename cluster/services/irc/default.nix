@@ -54,7 +54,7 @@ in
 
   monitoring.blackbox.targets = {
     irc = {
-      address = "irc.${domain}";
+      address = config.links.ircSecure.tuple;
       module = "ircsConnect";
     };
   };
