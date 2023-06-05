@@ -6,7 +6,6 @@
       in {
 
         inherit (patched)
-          powerdns-admin
           prometheus-jitsi-exporter
           sssd
           tempo
