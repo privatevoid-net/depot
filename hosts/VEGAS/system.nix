@@ -28,7 +28,6 @@
       ./services/nix/nar-serve.nix
       ./services/reflex
       ./services/sso
-      ./services/uptime-kuma
       ./services/vault
       ./services/warehouse
       ./services/websites
