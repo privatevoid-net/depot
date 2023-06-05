@@ -23,7 +23,7 @@ toPythonModule (buildPythonApplication rec {
       requirements.txt
     cat >searx/version_frozen.py <<EOF
     VERSION_STRING="${version}"
-    VERSION_TAG="${pin.revision}"
+    VERSION_TAG="1.0.0"
     GIT_URL="https://github.com/${repo.owner}/${repo.repo}"
     GIT_BRANCH="${pin.branch}"
     DOCKER_TAG="none"
