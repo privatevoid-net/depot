@@ -25,13 +25,6 @@
   {
     dream2nix = {
       inputs = filters.doFilter filters.packages {
-        uptime-kuma = {
-          source = pins.uptime-kuma;
-          projects.uptime-kuma = {
-            subsystem = "nodejs";
-            translator = "package-lock";
-          };
-        };
         excalidraw = {
           source = pins.excalidraw;
           projects.excalidraw = {
@@ -73,8 +66,6 @@
       searxng = pkgs.callPackage ./web-apps/searxng { inherit pins; };
 
       stevenblack-hosts = pkgs.callPackage ./data/stevenblack { inherit pins; };
-
-      inherit (config.dream2nix.outputs.uptime-kuma.packages) uptime-kuma;
     };
 
     projectShells = {

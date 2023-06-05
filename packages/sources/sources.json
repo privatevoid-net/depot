@@ -65,20 +65,6 @@
       "revision": "41aa497c72b64bb236771ff0cac0d92c7bf9c119",
       "url": "https://api.github.com/repos/grafana/tempo/tarball/v2.1.1",
       "hash": "1hxziwaj9cr14v3f5xxm99v66w4025zx6j6yw8zs2kgk1v14d9rw"
-    },
-    "uptime-kuma": {
-      "type": "GitRelease",
-      "repository": {
-        "type": "GitHub",
-        "owner": "louislam",
-        "repo": "uptime-kuma"
-      },
-      "pre_releases": false,
-      "version_upper_bound": null,
-      "version": "1.21.0",
-      "revision": "72317633d982a111f74c23c6b675bdba93e8f6aa",
-      "url": "https://api.github.com/repos/louislam/uptime-kuma/tarball/1.21.0",
-      "hash": "0hghh8h4zcxaxlb42cbj84d3m0nwg40k5v3sba05px1iz4y7637k"
     }
   },
   "version": 2
