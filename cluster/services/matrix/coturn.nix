@@ -2,7 +2,7 @@
 {
   age.secrets = {
     coturn-static-auth = {
-      file = ../../../../secrets/coturn-static-auth.age;
+      file = ../../../secrets/coturn-static-auth.age;
       owner = "turnserver";
       group = "root";
       mode = "0400";

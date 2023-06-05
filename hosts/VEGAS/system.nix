@@ -23,7 +23,6 @@
       ./services/gitlab
       ./services/jokes
       ./services/mail
-      ./services/matrix
       ./services/minecraft
       ./services/nix/binary-cache.nix
       ./services/nix/nar-serve.nix

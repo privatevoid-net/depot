@@ -5,7 +5,7 @@ in
 {
   age.secrets = {
     matrix-appservice-discord-token = {
-      file = ../../../../../secrets/matrix-appservice-discord-token.age;
+      file = ../../../../secrets/matrix-appservice-discord-token.age;
       owner = "root";
       group = "root";
       mode = "0400";

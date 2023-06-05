@@ -55,34 +55,27 @@ let
   dbConfigOut = "${cfg.dataDir}/synapse-db-config-generated.yml";
   cfg = config.services.matrix-synapse;
 in {
-  imports = [
-    ./coturn.nix
-    ./bridges/discord.nix
-    ./federation.nix
-    ./web-client.nix
-  ];
-
   age.secrets = {
     synapse-ldap = {
-      file = ../../../../secrets/synapse-ldap.age;
+      file = ../../../secrets/synapse-ldap.age;
       owner = "matrix-synapse";
       group = "matrix-synapse";
       mode = "0400";
     };
     synapse-db = {
-      file = ../../../../secrets/synapse-db.age;
+      file = ../../../secrets/synapse-db.age;
       owner = "matrix-synapse";
       group = "matrix-synapse";
       mode = "0400";
     };
     synapse-turn = {
-      file = ../../../../secrets/synapse-turn.age;
+      file = ../../../secrets/synapse-turn.age;
       owner = "matrix-synapse";
       group = "matrix-synapse";
       mode = "0400";
     };
     synapse-keys = {
-      file = ../../../../secrets/synapse-keys.age;
+      file = ../../../secrets/synapse-keys.age;
       owner = "matrix-synapse";
       group = "matrix-synapse";
       mode = "0400";
