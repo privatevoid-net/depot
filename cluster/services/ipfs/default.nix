@@ -1,4 +1,4 @@
-{ config, depot, lib, ... }:
+{ config, depot, lib, tools, ... }:
 
 {
   hostLinks = lib.genAttrs config.services.ipfs.nodes.node (name: let
@@ -43,5 +43,10 @@
       io-tweaks = ./io-tweaks.nix;
       remote-api = ./remote-api.nix;
     };
+  };
+
+  monitoring.blackbox.targets.ipfs-gateway = {
+    address = "https://bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354.ipfs.${tools.meta.domain}/";
+    module = "https2xx";
   };
 }
