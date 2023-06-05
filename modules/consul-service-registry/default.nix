@@ -87,6 +87,7 @@ let
           ExecStop = deregister servicesJson;
           Restart = "on-failure";
           RestartSec = "30s";
+          TimeoutStartSec = "3m";
         };
       };
     }.${mode};
