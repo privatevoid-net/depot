@@ -73,12 +73,13 @@ in
       address = depot.reflection.interfaces.primary.addrPublic;
       port = 443;
       checks = [
-        {
+        rec {
           name = "Frontend";
           id = "service:ipfs-gateway:frontend";
           interval = "60s";
           http = "https://${address}/";
           tls_server_name = "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354.ipfs.${domain}"; # empty directory
+          header.Host = lib.singleton tls_server_name;
           method = "HEAD";
         }
         {
