@@ -86,6 +86,12 @@ in
           ];
         };
       };
+      sshConnect = recursiveUpdate tcpConnect {
+        tcp.query_response = [
+          { expect = "^SSH-2.0"; }
+          { send = "SSH-2.0-PrivateVoidProbe_${probeId}"; }
+        ];
+      };
     };
     blackbox_targets = let
       regularTargets = mapTargets cluster.config.monitoring.blackbox.targets;
