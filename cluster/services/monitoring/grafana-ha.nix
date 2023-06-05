@@ -132,13 +132,13 @@ in
       address = depot.reflection.interfaces.primary.addrPublic;
       port = 443;
       checks = [
-        {
+        rec {
           name = "Frontend";
           id = "service:grafana:frontend";
           interval = "30s";
-          http = "https://${address}";
+          http = "https://${address}/healthz";
           tls_server_name = "monitoring.${domain}";
-          method = "HEAD";
+          header.Host = lib.singleton tls_server_name;
         }
         {
           name = "Backend";
