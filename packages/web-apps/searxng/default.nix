@@ -11,15 +11,9 @@ toPythonModule (buildPythonApplication rec {
 
   src = npins.mkSource pins.searxng;
 
-  patches = [
-    # wait for https://github.com/NixOS/nixpkgs/pull/211654
-    ./revert-flask-babel-3.0.1.patch
-  ];
-
   postPatch = ''
     sed -i \
       -e 's/==.*$//' \
-      -e 's/fasttext-predict/fasttext/g' \
       requirements.txt
     cat >searx/version_frozen.py <<EOF
     VERSION_STRING="${version}"
@@ -53,7 +47,7 @@ toPythonModule (buildPythonApplication rec {
     httpx
     httpx-socks
     markdown-it-py
-    fasttext
+    fasttext-predict
     pybind11
   ];
 
