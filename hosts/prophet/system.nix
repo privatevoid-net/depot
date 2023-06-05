@@ -8,8 +8,6 @@
 
       depot.inputs.agenix.nixosModules.age
 
-      ./services/meet
-
       depot.nixosModules.hyprspace
       depot.nixosModules.nix-builder
       depot.nixosModules.sss
