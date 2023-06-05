@@ -26,6 +26,7 @@ in
           id = "service:consul-remote:frontend";
           http = "https://${hyprspace.addr}/v1/status/leader";
           tls_server_name = frontendDomain;
+          header.Host = lib.singleton frontendDomain;
           interval = "60s";
         }
         {
