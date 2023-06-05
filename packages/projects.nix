@@ -30,6 +30,7 @@
           projects.excalidraw = {
             subsystem = "nodejs";
             translator = "yarn-lock";
+            subsystemInfo.nodejs = "18";
           };
         };
       };
