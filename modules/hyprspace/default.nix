@@ -49,6 +49,7 @@ in {
       RestartSec = "5s";
       ExecStart = "${hyprspace}/bin/hyprspace up hyprspace -f -c ${runConfig}";
       ExecStop = "${hyprspace}/bin/hyprspace down hyprspace";
+      ExecStopPost = "${pkgs.coreutils}/bin/rm -f /run/hyprspace-rpc.hyprspace.sock";
       IPAddressDeny = [
         "10.0.0.0/8"
         "100.64.0.0/10"
