@@ -1,14 +1,9 @@
-commit de4f3a29629628c24ca9b69533c83b571c92c73f
-Author: Max <max@privatevoid.net>
-Date:   Sat Dec 17 13:47:49 2022 +0100
-
-    no analytics for 2.17.0
-
 diff --git a/dvc/analytics.py b/dvc/analytics.py
-index af4823ea..7effc0b8 100644
+deleted file mode 100644
+index 6e3dc91..0000000
 --- a/dvc/analytics.py
-+++ b/dvc/analytics.py
-@@ -1,12 +1,3 @@
++++ /dev/null
+@@ -1,156 +0,0 @@
 -import json
 -import logging
 -import os
@@ -18,13 +13,18 @@ index af4823ea..7effc0b8 100644
 -logger = logging.getLogger(__name__)
 -
 -
- def collect_and_send_report(args=None, return_code=None):
-     """
-     Collect information from the runtime/environment and the command
-@@ -19,40 +10,11 @@ def collect_and_send_report(args=None, return_code=None):
-     report as a JSON, where the _collector_ generates it and the _sender_
-     removes it after sending it.
-     """
+-def collect_and_send_report(args=None, return_code=None):
+-    """
+-    Collect information from the runtime/environment and the command
+-    being executed into a report and send it over the network.
+-
+-    To prevent analytics from blocking the execution of the main thread,
+-    sending the report is done in a separate process.
+-
+-    The inter-process communication happens through a file containing the
+-    report as a JSON, where the _collector_ generates it and the _sender_
+-    removes it after sending it.
+-    """
 -    import tempfile
 -
 -    from dvc.daemon import daemon
@@ -41,10 +41,9 @@ index af4823ea..7effc0b8 100644
 -    with tempfile.NamedTemporaryFile(delete=False, mode="w") as fobj:
 -        json.dump(report, fobj)
 -    daemon(["analytics", fobj.name])
-+    raise NotImplementedError
- 
- 
- def is_enabled():
+-
+-
+-def is_enabled():
 -    from dvc.config import Config, to_bool
 -    from dvc.utils import env2bool
 -
@@ -54,20 +53,22 @@ index af4823ea..7effc0b8 100644
 -    enabled = not os.getenv(DVC_NO_ANALYTICS)
 -    if enabled:
 -        enabled = to_bool(
--            Config(validate=False).get("core", {}).get("analytics", "true")
+-            Config.from_cwd(validate=False).get("core", {}).get("analytics", "true")
 -        )
 -
 -    logger.debug("Analytics is %sabled.", "en" if enabled else "dis")
 -
 -    return enabled
-+    return False
- 
- 
- def send(path):
-@@ -63,88 +25,22 @@ def send(path):
-     `collect_and_send_report`. Sending happens on another process,
-     thus, the need of removing such file afterwards.
-     """
+-
+-
+-def send(path):
+-    """
+-    Side effect: Removes the report after sending it.
+-
+-    The report is generated and stored in a temporary file, see:
+-    `collect_and_send_report`. Sending happens on another process,
+-    thus, the need of removing such file afterwards.
+-    """
 -    import requests
 -
 -    url = "https://analytics.dvc.org"
@@ -84,14 +85,12 @@ index af4823ea..7effc0b8 100644
 -        logger.debug("failed to send analytics report", exc_info=True)
 -
 -    os.remove(path)
-+    raise NotImplementedError
- 
- 
- def _scm_in_use():
--    from scmrepo.noscm import NoSCM
 -
+-
+-def _scm_in_use():
 -    from dvc.exceptions import NotDvcRepoError
 -    from dvc.repo import Repo
+-    from dvc.scm import NoSCM
 -
 -    from .scm import SCM, SCMError
 -
@@ -102,27 +101,34 @@ index af4823ea..7effc0b8 100644
 -        return NoSCM.__name__
 -    except NotDvcRepoError:
 -        pass
-+    raise NotImplementedError
- 
- 
- def _runtime_info():
-     """
-     Gather information from the environment where DVC runs to fill a report.
-     """
+-
+-
+-def _runtime_info():
+-    """
+-    Gather information from the environment where DVC runs to fill a report.
+-    """
+-    from iterative_telemetry import _generate_ci_id, find_or_create_user_id
+-
 -    from dvc import __version__
 -    from dvc.utils import is_binary
+-
+-    ci_id = _generate_ci_id()
+-    if ci_id:
+-        group_id, user_id = ci_id
+-    else:
+-        group_id, user_id = None, find_or_create_user_id()
 -
 -    return {
 -        "dvc_version": __version__,
 -        "is_binary": is_binary(),
 -        "scm_class": _scm_in_use(),
 -        "system_info": _system_info(),
--        "user_id": _find_or_create_user_id(),
+-        "user_id": user_id,
+-        "group_id": group_id,
 -    }
-+    raise NotImplementedError
- 
- 
- def _system_info():
+-
+-
+-def _system_info():
 -    import platform
 -    import sys
 -
@@ -131,7 +137,7 @@ index af4823ea..7effc0b8 100644
 -    system = platform.system()
 -
 -    if system == "Windows":
--        version = sys.getwindowsversion()
+-        version = sys.getwindowsversion()  # type: ignore[attr-defined]
 -
 -        return {
 -            "os": "windows",
@@ -153,50 +159,12 @@ index af4823ea..7effc0b8 100644
 -        }
 -
 -    # We don't collect data for any other system.
-+    # We don't collect data :)
-     raise NotImplementedError
- 
- 
-@@ -158,33 +54,4 @@ def _find_or_create_user_id():
- 
-     IDs are generated randomly with UUID.
-     """
--    import uuid
--
--    from dvc.config import Config
--    from dvc.lock import Lock, LockError
--    from dvc.utils.fs import makedirs
--
--    config_dir = Config.get_dir("global")
--    fname = os.path.join(config_dir, "user_id")
--    lockfile = os.path.join(config_dir, "user_id.lock")
--
--    # Since the `fname` and `lockfile` are under the global config,
--    # we need to make sure such directory exist already.
--    makedirs(config_dir, exist_ok=True)
--
--    try:
--        with Lock(lockfile):
--            try:
--                with open(fname, encoding="utf-8") as fobj:
--                    user_id = json.load(fobj)["user_id"]
--
--            except (FileNotFoundError, ValueError, KeyError):
--                user_id = str(uuid.uuid4())
--
--                with open(fname, "w", encoding="utf-8") as fobj:
--                    json.dump({"user_id": user_id}, fobj)
--
--            return user_id
--
--    except LockError:
--        logger.debug("Failed to acquire '%s'", lockfile)
-+    raise NotImplementedError
+-    raise NotImplementedError
 diff --git a/dvc/cli/__init__.py b/dvc/cli/__init__.py
-index e206befd..590b0790 100644
+index 274b564..b601d84 100644
 --- a/dvc/cli/__init__.py
 +++ b/dvc/cli/__init__.py
-@@ -211,11 +211,6 @@ def main(argv=None):  # noqa: C901
+@@ -236,11 +236,6 @@ def main(argv=None):  # noqa: C901, PLR0912, PLR0915
          ret = _log_exceptions(exc) or 255
  
      try:
@@ -207,9 +175,9 @@ index e206befd..590b0790 100644
 -
          return ret
      finally:
-         logger.setLevel(outerLogLevel)
+         logger.setLevel(outer_log_level)
 diff --git a/dvc/commands/daemon.py b/dvc/commands/daemon.py
-index 2a22de3d..d64a6404 100644
+index 35d6e90..d5a7b6e 100644
 --- a/dvc/commands/daemon.py
 +++ b/dvc/commands/daemon.py
 @@ -26,15 +26,6 @@ class CmdDaemonUpdater(CmdDaemonBase):
@@ -245,7 +213,7 @@ index 2a22de3d..d64a6404 100644
 -    ).complete = completion.FILE
 -    daemon_analytics_parser.set_defaults(func=CmdDaemonAnalytics)
 diff --git a/dvc/commands/init.py b/dvc/commands/init.py
-index 3d0c774b..19b86b50 100644
+index ca44919..05730aa 100644
 --- a/dvc/commands/init.py
 +++ b/dvc/commands/init.py
 @@ -3,7 +3,6 @@ import logging
@@ -274,10 +242,10 @@ index 3d0c774b..19b86b50 100644
          "{yellow}What's next?{nc}\n"
          "{yellow}------------{nc}\n"
 diff --git a/dvc/config_schema.py b/dvc/config_schema.py
-index bd514c61..e358b949 100644
+index 2e36e90..3d9e402 100644
 --- a/dvc/config_schema.py
 +++ b/dvc/config_schema.py
-@@ -114,7 +114,6 @@ SCHEMA = {
+@@ -144,7 +144,6 @@ SCHEMA = {
          "remote": Lower,
          "checksum_jobs": All(Coerce(int), Range(1)),
          Optional("interactive", default=False): Bool,
@@ -285,3 +253,15 @@ index bd514c61..e358b949 100644
          Optional("hardlink_lock", default=False): Bool,
          Optional("no_scm", default=False): Bool,
          Optional("autostage", default=False): Bool,
+diff --git a/dvc/env.py b/dvc/env.py
+index 081ec9d..06c1332 100644
+--- a/dvc/env.py
++++ b/dvc/env.py
+@@ -7,7 +7,6 @@ DVC_EXP_GIT_REMOTE = "DVC_EXP_GIT_REMOTE"
+ DVC_EXP_NAME = "DVC_EXP_NAME"
+ DVC_GLOBAL_CONFIG_DIR = "DVC_GLOBAL_CONFIG_DIR"
+ DVC_IGNORE_ISATTY = "DVC_IGNORE_ISATTY"
+-DVC_NO_ANALYTICS = "DVC_NO_ANALYTICS"
+ DVC_PAGER = "DVC_PAGER"
+ DVC_ROOT = "DVC_ROOT"
+ DVC_SHOW_TRACEBACK = "DVC_SHOW_TRACEBACK"

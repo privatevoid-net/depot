@@ -82,7 +82,7 @@ in {
       OIDC_OAUTH_SECRET.env = "OIDC_OAUTH_SECRET";
       OIDC_OAUTH_SCOPE = "openid profile email roles";
 
-      OIDC_OAUTH_SERVER_METADATA_URL = "https://login.${domain}/auth/realms/master/.well-known/openid-configuration";
+      OIDC_OAUTH_METADATA_URL = "https://login.${domain}/auth/realms/master/.well-known/openid-configuration";
     };
   };
 

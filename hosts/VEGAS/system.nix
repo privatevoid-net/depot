@@ -42,7 +42,6 @@
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
   boot.loader.grub.device = "/dev/sda";
 
 
@@ -92,7 +91,7 @@
   };
 
   system.stateVersion = "21.05";
-  services.openssh.passwordAuthentication = false;
+  services.openssh.settings.PasswordAuthentication = false;
 
   containers.soda = {
     path = depot.nixosConfigurations.soda.config.system.build.toplevel;
