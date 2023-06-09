@@ -1,7 +1,10 @@
-{ tools, ... }:
+{ config, lib, pkgs, tools, ... }:
 
 let
   inherit (tools.meta) domain;
+
+  extraGroups = [ "nginx" ]
+    ++ lib.optional config.services.kanidm.enableServer "kanidm";
 in
 
 {
@@ -10,5 +13,11 @@ in
     extraDomainNames = [ "*.internal.${domain}" ];
     dnsProvider = "pdns";
     group = "nginx";
+    postRun = ''
+      ${pkgs.acl}/bin/setfacl -Rb out/
+      ${lib.concatStringsSep "\n" (
+        map (group: "${pkgs.acl}/bin/setfacl -Rm g:${group}:rX out/") extraGroups
+      )}
+    '';
   };
 }
