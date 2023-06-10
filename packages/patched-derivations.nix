@@ -76,6 +76,8 @@ super: rec {
     };
   in jre // { meta = jre.meta // { inherit (super.jdk17_headless.meta) platforms; }; };
 
+  kanidm = patch super.kanidm "patches/base/kanidm";
+
   keycloak = super.keycloak.override {
     jre = jre17_standard;
   };
