@@ -1,0 +1,106 @@
+diff --git a/unix_integration/src/cache.rs b/unix_integration/src/cache.rs
+index d2d442ab8..6c8de0309 100644
+--- a/unix_integration/src/cache.rs
++++ b/unix_integration/src/cache.rs
+@@ -34,6 +34,8 @@ enum CacheState {
+ pub struct CacheLayer {
+     db: Db,
+     client: RwLock<KanidmClient>,
++    auth_name: Option<String>,
++    auth_password: Option<String>,
+     state: Mutex<CacheState>,
+     pam_allow_groups: BTreeSet<String>,
+     timeout_seconds: u64,
+@@ -65,6 +67,8 @@ impl CacheLayer {
+         timeout_seconds: u64,
+         //
+         client: KanidmClient,
++        auth_name: Option<String>,
++        auth_password: Option<String>,
+         pam_allow_groups: Vec<String>,
+         default_shell: String,
+         home_prefix: String,
+@@ -91,6 +95,8 @@ impl CacheLayer {
+         Ok(CacheLayer {
+             db,
+             client: RwLock::new(client),
++            auth_name,
++            auth_password,
+             state: Mutex::new(CacheState::OfflineNextCheck(SystemTime::now())),
+             timeout_seconds,
+             pam_allow_groups: pam_allow_groups.into_iter().collect(),
+@@ -945,7 +951,11 @@ impl CacheLayer {
+                 false
+             }
+             CacheState::OfflineNextCheck(_time) => {
+-                match self.client.write().await.auth_anonymous().await {
++                let auth_method = match (&self.auth_name, &self.auth_password) {
++                    (Some(name), Some(password)) => self.client.write().await.auth_simple_password(name, password).await,
++                    _ => self.client.write().await.auth_anonymous().await
++                };
++                match auth_method {
+                     Ok(_uat) => {
+                         debug!("OfflineNextCheck -> authenticated");
+                         self.set_cachestate(CacheState::Online).await;
+diff --git a/unix_integration/src/daemon.rs b/unix_integration/src/daemon.rs
+index e4bf558c6..d6916d851 100644
+--- a/unix_integration/src/daemon.rs
++++ b/unix_integration/src/daemon.rs
+@@ -415,6 +415,24 @@ async fn main() -> ExitCode {
+                 .env("KANIDM_CLIENT_CONFIG")
+                 .action(ArgAction::StoreValue),
+         )
++        .arg(
++            Arg::new("name")
++                .takes_value(true)
++                .help("Set the name to use to authenticate")
++                .short('D')
++                .long("name")
++                .env("KANIDM_NAME")
++                .action(ArgAction::StoreValue),
++        )
++        .arg(
++            Arg::new("password")
++                .hide(true)
++                .takes_value(true)
++                .help("Set the password to use to authenticate")
++                .long("password")
++                .env("KANIDM_PASSWORD")
++                .action(ArgAction::StoreValue),
++        )
+         .get_matches();
+ 
+     if clap_args.get_flag("debug") {
+@@ -510,6 +528,10 @@ async fn main() -> ExitCode {
+                 }
+             }
+ 
++            let auth_username = clap_args.get_one::<String>("name");
++
++            let auth_password = clap_args.get_one::<String>("password");
++
+             // setup
+             let cb = match KanidmClientBuilder::new().read_options_from_optional_config(&cfg_path) {
+                 Ok(v) => v,
+@@ -637,6 +659,8 @@ async fn main() -> ExitCode {
+                 cfg.db_path.as_str(), // The sqlite db path
+                 cfg.cache_timeout,
+                 rsclient,
++                auth_username.as_deref().cloned(),
++                auth_password.as_deref().cloned(),
+                 cfg.pam_allowed_login_groups.clone(),
+                 cfg.default_shell.clone(),
+                 cfg.home_prefix.clone(),
+diff --git a/unix_integration/tests/cache_layer_test.rs b/unix_integration/tests/cache_layer_test.rs
+index cff5e8ba8..a68b35be2 100644
+--- a/unix_integration/tests/cache_layer_test.rs
++++ b/unix_integration/tests/cache_layer_test.rs
+@@ -103,6 +103,8 @@ async fn setup_test(fix_fn: Fixture) -> (CacheLayer, KanidmClient) {
+         "", // The sqlite db path, this is in memory.
+         300,
+         rsclient,
++        None,
++        None,
+         vec!["allowed_group".to_string()],
+         DEFAULT_SHELL.to_string(),
+         DEFAULT_HOME_PREFIX.to_string(),
