@@ -9,7 +9,6 @@
       depot.inputs.agenix.nixosModules.age
 
       depot.nixosModules.hyprspace
-      depot.nixosModules.sss
       depot.nixosModules.serverBase
     ];
 

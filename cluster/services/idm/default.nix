@@ -14,7 +14,10 @@
     };
     nixos = {
       server = ./server.nix;
-      client = ./client.nix;
+      client = [
+        ./client.nix
+        ./policies/infra-admins.nix
+      ];
     };
   };
 }

@@ -10,7 +10,6 @@
 
       depot.nixosModules.hyprspace
       depot.nixosModules.nix-builder
-      depot.nixosModules.sss
 
       depot.nixosModules.serverBase
     ];
