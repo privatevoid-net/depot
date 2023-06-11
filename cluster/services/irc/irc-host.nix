@@ -88,8 +88,8 @@ in {
   };
   security.pam.services.ngircd = {
     text = ''
-      # verify IRC users via SSSD
-      auth required ${pkgs.sssd}/lib/security/pam_sss.so
+      # verify IRC users via IDM
+      auth required ${pkgs.kanidm}/lib/pam_kanidm.so 
     '';
   };
   age.secrets = { inherit (vars) ircPeerKey; };
