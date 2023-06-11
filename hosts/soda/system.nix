@@ -4,7 +4,7 @@
   imports = with depot.nixosModules; [
     containerBase
     fail2ban
-    sss
+    depot.inputs.agenix.nixosModules.age
     ./soda.nix
   ];
 
