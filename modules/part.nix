@@ -26,7 +26,6 @@ in
     port-magic = ./port-magic;
     shell-config = ./shell-config;
     ssh = ./ssh;
-    sss = ./sss;
     system-info = ./system-info;
     system-recovery = ./system-recovery;
     tested = ./tested;
