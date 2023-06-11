@@ -7,6 +7,8 @@ let
 
   backendLink = config.links.idmBackend;
 
+  ldapLink = cluster.config.links.ldap;
+
   certDir = config.security.acme.certs."internal.${domain}".directory;
 in
 
@@ -28,6 +30,7 @@ in
       tls_key = "${certDir}/key.pem";
       role = "WriteReplicaNoUI";
       bindaddress = backendLink.tuple;
+      ldapbindaddress = "${ldapLink.ipv4}:${ldapLink.portStr}";
       origin = frontendLink.url;
       inherit domain;
     };

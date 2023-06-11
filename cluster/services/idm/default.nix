@@ -1,10 +1,18 @@
-{ tools, ... }:
+{ config, tools, ... }:
 
 {
-  links.idm = {
-    ipv4 = "idm.${tools.meta.domain}";
-    port = 443;
-    protocol = "https";
+  links = {
+    idm = {
+      ipv4 = "idm.${tools.meta.domain}";
+      port = 443;
+      protocol = "https";
+    };
+    ldap = {
+      hostname = "idm-ldap.internal.${tools.meta.domain}";
+      ipv4 = config.vars.mesh.VEGAS.meshIp;
+      port = 636;
+      protocol = "ldaps";
+    };
   };
 
   services.idm = {
