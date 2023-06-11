@@ -51,13 +51,6 @@ super: rec {
 
   dvc-objects = super.python3Packages.dvc-objects.overrideAttrs dvcMd5ToSha256;
 
-  sssd = (super.sssd.override { withSudo = true; }).overrideAttrs (old: {
-    postFixup = (old.postFixup or "") + ''
-      ${super.removeReferencesTo}/bin/remove-references-to -t ${super.stdenv.cc.cc} $out/modules/ldb/memberof.so
-    '';
-    disallowedReferences = [ super.stdenv.cc.cc ];
-  });
-
   jre17_standard = let
     jre = super.jre_minimal.override {
       jdk = super.jdk17_headless;

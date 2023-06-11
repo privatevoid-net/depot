@@ -9,7 +9,6 @@
           kanidm
           powerdns-admin
           prometheus-jitsi-exporter
-          sssd
           tempo
         ;
 
