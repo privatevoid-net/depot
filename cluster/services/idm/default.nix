@@ -11,12 +11,16 @@
     nodes = {
       server = [ "VEGAS" ];
       client = [ "checkmate" "VEGAS" "prophet" "soda" "thunderskin" ];
+      client-soda = [ "soda" ];
     };
     nixos = {
       server = ./server.nix;
       client = [
         ./client.nix
         ./policies/infra-admins.nix
+      ];
+      client-soda = [
+        ./policies/soda.nix
       ];
     };
   };
