@@ -49,6 +49,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    attic = {
+      url = "github:zhaofengli/attic";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        nixpkgs-stable.follows = "nixpkgs";
+        flake-compat.follows = "blank";
+        flake-utils.follows = "repin-flake-utils";
+      };
+    };
+
     nar-serve = {
       url = "github:numtide/nar-serve/v0.5.0";
       inputs = {
