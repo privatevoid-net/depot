@@ -18,7 +18,7 @@ in
     };
   };
   services.nextcloud = {
-    package = pkgs.nextcloud25;
+    package = pkgs.nextcloud26;
     enableBrokenCiphersForSSE = false;
     enable = true;
     https = true;
