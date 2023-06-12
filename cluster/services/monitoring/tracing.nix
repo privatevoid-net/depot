@@ -16,6 +16,7 @@ let
         grpc.endpoint = links.tempo-otlp-grpc.tuple;
       };
     };
+    querier.frontend_worker.frontend_address = links.tempo-grpc.tuple;
     ingester = {
       trace_idle_period = "30s";
       max_block_bytes = 1000000;
