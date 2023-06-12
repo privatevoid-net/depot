@@ -71,19 +71,10 @@
       url = "github:nix-community/dream2nix";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        nixpkgsV1.follows = "nixpkgs";
-        all-cabal-json.follows = "blank";
-        crane.follows = "blank";
         devshell.follows = "blank";
         drv-parts.follows = "drv-parts";
-        flake-utils-pre-commit.follows = "blank";
         flake-parts.follows = "flake-parts";
-        ghc-utils.follows = "blank";
-        gomod2nix.follows = "blank";
-        mach-nix.follows = "blank";
-        nix-pypi-fetcher.follows = "blank";
         pre-commit-hooks.follows = "blank";
-        pruned-racket-catalog.follows = "blank";
       };
     };
     
@@ -109,7 +100,6 @@
       url = "github:hercules-ci/hercules-ci-agent";
       inputs = {
         flake-parts.follows = "flake-parts";
-        nix-darwin.follows = "blank";
       };
     };
     hercules-ci-effects = {
