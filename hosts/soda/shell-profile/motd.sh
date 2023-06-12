@@ -1,54 +1,38 @@
 find -L /ascii -type f -print0 | shuf -zn1 | xargs -0 cat
 
 bootup() {
-    tbold="$(tput bold)"
-    tpurple="$(tput setaf 5)"
-    tred_bold="$(tput bold; tput setaf 1)"
-    tblue="$(tput setaf 4)"
-    treset="$(tput sgr0)"
+    esc_bold="\x1b[1m"
+    esc_reset="\x1b[0m"
+    esc_magenta="\x1b[35m"
+    esc_red_bold="\x1b[1;31m"
+    tblue="\x1b[34m"
 
     echo
-    #neofetch -L
 
     source /etc/os-release
     os_name=${PRETTY_NAME:-$NAME}
     memory_usage=$(free -m | awk '/^Mem/ { printf "%sMB / %sMB\n", $3, $2}')
     online_now=$(w -sh | wc -l)
-    server_time=$(date +'%A, %B %d, %T %z')
+
+    online_users="just you"
 
     if [[ $online_now -gt 1 ]]; then
         # Create a list of online users.
         online_users=$(w -sh | awk '{print $1}' | uniq | tr "\n" " " | sed "s| |, |g;s|, $||g")
-    else
-        online_users="just you"
     fi
 
-    printf "${tpurple}${tbold}soda${treset} ${tpurple}is currently using${treset} ${tbold}$os_name${treset} ${tpurple}as our OS${treset}
-${tpurple}we are running on${treset} ${tbold}$memory_usage${treset} ${tpurple}of RAM${treset}
-${tpurple}and we have${treset} ${tbold}$online_now${treset} ${tpurple}online user(s)!${treset} ($online_users)\n"
+    printf "${esc_magenta}${esc_bold}soda${esc_reset} ${esc_magenta}is currently using${esc_reset} ${esc_bold}$os_name${esc_reset} ${esc_magenta}as our OS${esc_reset}
+${esc_magenta}we are running on${esc_reset} ${esc_bold}$memory_usage${esc_reset} ${esc_magenta}of RAM${esc_reset}
+${esc_magenta}and we have${esc_reset} ${esc_bold}$online_now${esc_reset} ${esc_magenta}online user(s)!${esc_reset} ($online_users)\n"
 
-    current_date=$(date +'%m-%d')
-    current_year=$(date +'%Y')
-    current_month="$(date +'%b')"
-    current_day="$(date +'%e' | sed 's|^\s||')"
-    soda_bday="04-10"
-
-    if [[ $current_day -ne 10 ]] && [[ $current_day -lt 10 ]] && [[ $current_month == "Apr" ]]; then
-        printf "\n${tred_bold}[!]${treset} btw it's ${tbold}$(( 10 - current_day ))${treset} day(s) (April 10th) till Soda's ${tbold}$(( current_year - 2019 ))${treset} year anniversary!\n"
-    fi
-
-    if [[ $current_date -eq $soda_bday ]]; then
-        printf "\n${tred_bold}HEY YOU!${treset} ${tblue}Today is the${treset} ${tbold}$(( current_year - 2019 ))${treset} ${tblue}year anniversary of Soda's creation!${treset} ${tbold}Happy Birthday Soda!${treset}\n"
-        sleep 3s
-    fi
-
-    printf "\n${tbold}Who's been around?${treset}\n"
+    logins_this_month="$(last --time-format iso | sed "/reboot/d" | grep "$(date +'%Y-%m')" | wc -l)"
+    printf "\n${esc_bold}Who's been around?${esc_reset} (${logins_this_month} logins this month)\n"
     last -R | sed -r "/(^$|^wtmp|^reboot)/d" | head -n 5
 
     dickswing=$(last | sed -r "/^$/d;/^(wtmp|reboot)/d;/\(00:0[0-1]\)/d" | awk '{print $1}' | sort | uniq -c | sort -nr | sed -r "s/^\s+//")
     as_of=$(last | grep "wtmp" | awk '{print "from", $4, $5, $7}')
-    echo -e "\n${tbold}Dickswing ($as_of to now):${treset}\n$dickswing"
-    echo -e "\033[0;31mNOTE\033[0m: must be logged in for more than 1 minute to be counted."
+    echo -e "\n${esc_bold}Dickswing ($as_of to now):${esc_reset}\n$dickswing"
+    echo -e "${esc_red_bold}NOTE${esc_reset}: must be logged in for more than 1 minute to be counted."
 }
 
 bootup
