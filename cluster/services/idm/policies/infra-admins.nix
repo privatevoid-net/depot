@@ -14,4 +14,10 @@
       options = [ "SETENV" ];
     };
   };
+
+  idm.tmpfiles.rules = [
+    "a+ /run/log/journal/%m - - - - d:group:infra_admins:r-x"
+    "a+ /run/log/journal/%m - - - - group:infra_admins:r-x"
+    "a+ /run/log/journal/%m/*.journal* - - - - d:group:infra_admins:r--"
+  ];
 }

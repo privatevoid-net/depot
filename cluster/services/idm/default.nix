@@ -25,6 +25,8 @@
       server = ./server.nix;
       client = [
         ./client.nix
+        ./modules/idm-nss-ready.nix
+        ./modules/idm-tmpfiles.nix
         ./policies/infra-admins.nix
       ];
       client-soda = [
