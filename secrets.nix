@@ -5,6 +5,7 @@ let
   systemKeys = x: x.ssh.id.publicKey or null;
 in with hosts;
 {
+  "cluster/services/attic/attic-server-token.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/dns/pdns-admin-oidc-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/dns/pdns-admin-salt.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/dns/pdns-admin-secret.age".publicKeys = max ++ map systemKeys [ VEGAS ];
