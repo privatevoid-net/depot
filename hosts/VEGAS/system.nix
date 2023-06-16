@@ -24,8 +24,6 @@
       ./services/jokes
       ./services/mail
       ./services/minecraft
-      ./services/nix/binary-cache.nix
-      ./services/nix/nar-serve.nix
       ./services/reflex
       ./services/sso
       ./services/vault
