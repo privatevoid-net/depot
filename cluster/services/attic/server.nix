@@ -52,5 +52,9 @@ in
     ReadWritePaths = [ dataDir ];
   };
 
-  services.nginx.virtualHosts."cache-api.${tools.meta.domain}" = tools.nginx.vhosts.proxy config.links.atticServer.url;
+  services.nginx.virtualHosts."cache-api.${tools.meta.domain}" = tools.nginx.vhosts.proxy config.links.atticServer.url // {
+    extraConfig = ''
+      client_max_body_size 4G;
+    '';
+  };
 }
