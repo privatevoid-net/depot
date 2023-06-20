@@ -51,6 +51,12 @@ super: rec {
 
   dvc-objects = super.python3Packages.dvc-objects.overrideAttrs dvcMd5ToSha256;
 
+  jellyfin = patch (super.jellyfin.override {
+    ffmpeg = super.ffmpeg.override {
+      withMfx = true;
+    };
+  }) "patches/base/jellyfin";
+
   jre17_standard = let
     jre = super.jre_minimal.override {
       jdk = super.jdk17_headless;

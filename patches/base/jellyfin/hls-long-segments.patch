@@ -1,0 +1,17 @@
+diff --git a/Jellyfin.Api/Models/StreamingDtos/StreamState.cs b/Jellyfin.Api/Models/StreamingDtos/StreamState.cs
+index 192f33e..fd6672b 100644
+--- a/Jellyfin.Api/Models/StreamingDtos/StreamState.cs
++++ b/Jellyfin.Api/Models/StreamingDtos/StreamState.cs
+@@ -100,10 +100,10 @@ namespace Jellyfin.Api.Models.StreamingDtos
+                         return 3;
+                     }
+ 
+-                    return 6;
++                    return 9;
+                 }
+ 
+-                return 3;
++                return 6;
+             }
+         }
+ 
