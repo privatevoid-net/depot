@@ -1,14 +1,10 @@
-{ config, lib, pkgs, tools, ... }:
+{ config, depot, lib, pkgs, tools, ... }:
 with tools.nginx;
 {
   # TODO: not a whole lot to configure, maybe add some autoconfig stuff
   services.jellyfin = {
     enable = true;
-    package = pkgs.jellyfin.override {
-      ffmpeg = pkgs.ffmpeg.override {
-        withMfx = true;
-      };
-    };
+    package = depot.packages.jellyfin;
   };
   services.nginx.virtualHosts."warehouse.${tools.meta.domain}" = lib.mkMerge [
     (vhosts.proxy "http://127.0.0.1:8096")
