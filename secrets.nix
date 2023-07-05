@@ -36,6 +36,8 @@ in with hosts;
   "cluster/services/patroni/passwords/replication.age".publicKeys = max ++ map systemKeys [ thunderskin VEGAS prophet ];
   "cluster/services/patroni/passwords/rewind.age".publicKeys = max ++ map systemKeys [ thunderskin VEGAS prophet ];
   "cluster/services/patroni/passwords/superuser.age".publicKeys = max ++ map systemKeys [ thunderskin VEGAS prophet ];
+  "cluster/services/storage/secrets/heresy-encryption-key.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "cluster/services/storage/secrets/storage-box-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/wireguard/mesh-keys/checkmate.age".publicKeys = max ++ map systemKeys [ checkmate ];
   "cluster/services/wireguard/mesh-keys/thunderskin.age".publicKeys = max ++ map systemKeys [ thunderskin ];
   "cluster/services/wireguard/mesh-keys/VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
