@@ -1,7 +1,7 @@
 {
   description = "Private Void system configurations";
   nixConfig = {
-    allow-import-from-derivation = true;
+    #allow-import-from-derivation = true;
     extra-substituters = "https://cache.privatevoid.net";
     extra-trusted-public-keys = "cache.privatevoid.net:SErQ8bvNWANeAvtsOESUwVYr2VJynfuc9JRwlzTTkVg=";
   };
@@ -14,7 +14,6 @@
       imports = [
         inputs.hercules-ci-effects.flakeModule
         inputs.drv-parts.modules.flake-parts.drv-parts
-        inputs.dream2nix.flakeModuleBeta
         ./hosts/part.nix
         ./modules/part.nix
         ./packages/part.nix
@@ -67,17 +66,6 @@
       };
     };
 
-    dream2nix = {
-      url = "github:nix-community/dream2nix";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        devshell.follows = "blank";
-        drv-parts.follows = "drv-parts";
-        flake-parts.follows = "flake-parts";
-        pre-commit-hooks.follows = "blank";
-      };
-    };
-    
     devshell = {
       url = "github:numtide/devshell";
       inputs = {
