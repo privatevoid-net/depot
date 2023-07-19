@@ -23,15 +23,6 @@ in with tools.dns;
     };
 
     fromNowhere = {
-      AnimusAlpha = let hostNames = [ "alpha.animus.com" "animus.com" ]; in {
-        ssh.enable = true;
-        ssh.id = {
-          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGpFR47Ev+W+bdng6IrDVpl8rlKBBHSr1v5lwJmZcEFH";
-          hostNames = portMap 69 hostNames;
-        };
-        ssh.extraConfig = tools.ssh.extraConfig hostNames [ "Port 69" ];
-      };
-
       # peering
 
       # max
