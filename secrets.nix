@@ -72,6 +72,5 @@ in with hosts;
   "secrets/synapse-ldap.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/synapse-turn.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/wireguard-key-storm-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
-  "secrets/wireguard-key-wgautobahn.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/wireguard-key-wgmv.age".publicKeys = max ++ map systemKeys [ VEGAS ];
 }
