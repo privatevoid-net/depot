@@ -33,11 +33,4 @@ with tools.nginx;
 
     Slice = "mediaplayback.slice";
   };
-
-  fileSystems."/mnt/animus/media" = {
-    device = "10.15.0.2:/mnt/storage/media/media";
-    fsType = "nfs4";
-    noCheck = true;
-    options = [ "x-systemd.after=wireguard-wgautobahn.service" ];
-  };
 }
