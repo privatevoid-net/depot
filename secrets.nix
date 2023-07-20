@@ -6,6 +6,10 @@ let
 in with hosts;
 {
   "cluster/services/attic/attic-server-token.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "cluster/services/cachix-deploy-agent/credentials/checkmate.age".publicKeys = max ++ map systemKeys [ checkmate ];
+  "cluster/services/cachix-deploy-agent/credentials/prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
+  "cluster/services/cachix-deploy-agent/credentials/VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "cluster/services/cachix-deploy-agent/credentials/thunderskin.age".publicKeys = max ++ map systemKeys [ thunderskin ];
   "cluster/services/dns/pdns-admin-oidc-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/dns/pdns-admin-salt.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/dns/pdns-admin-secret.age".publicKeys = max ++ map systemKeys [ VEGAS ];
