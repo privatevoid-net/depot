@@ -29,7 +29,7 @@ in
                 if [[ $? -ne 0 ]]; then
                   lastScheduledTime=$((currentTime - 300))
                 fi
-                nextScheduledTime=$((lastScheduledTime + 900))
+                nextScheduledTime=$((lastScheduledTime + 3600))
                 if [[ $nextScheduledTime -lt $((currentTime + 300)) ]]; then
                   nextScheduledTime=$((currentTime + 300))
                 fi
