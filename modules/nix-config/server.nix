@@ -6,7 +6,7 @@
 
     settings = {
       trusted-users = [ "root" "@wheel" "@admins" ];
-      binary-caches = [ "https://cache.${tools.meta.domain}" ];
+      substituters = [ "https://cache.${tools.meta.domain}" ];
       trusted-public-keys = [ "cache.privatevoid.net:SErQ8bvNWANeAvtsOESUwVYr2VJynfuc9JRwlzTTkVg=" ];
     };
 
