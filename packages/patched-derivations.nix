@@ -51,6 +51,8 @@ super: rec {
 
   dvc-objects = super.python3Packages.dvc-objects.overrideAttrs dvcMd5ToSha256;
 
+  forgejo = patch super.forgejo "patches/base/forgejo";
+
   jellyfin = patch (super.jellyfin.override {
     ffmpeg = super.ffmpeg.override {
       withMfx = true;
