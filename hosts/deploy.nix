@@ -24,6 +24,7 @@ in
           rollbackScript = genAttrs systems (flip withSystem ({ pkgs, ... }:
             let
               scheduleReboot = pkgs.writeShellScript "schedule-reboot.sh" ''
+                export PATH="${pkgs.consul}/bin:${pkgs.systemd}/bin:${pkgs.coreutils}/bin"
                 currentTime=$(date +%s)
                 lastScheduledTime=$(consul kv get system/coordinated-reboot/last)
                 if [[ $? -ne 0 ]]; then
