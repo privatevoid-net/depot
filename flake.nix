@@ -1,7 +1,7 @@
 {
   description = "Private Void system configurations";
   nixConfig = {
-    allow-import-from-derivation = true;
+    #allow-import-from-derivation = true;
     extra-substituters = "https://cache.privatevoid.net";
     extra-trusted-public-keys = "cache.privatevoid.net:SErQ8bvNWANeAvtsOESUwVYr2VJynfuc9JRwlzTTkVg=";
   };
@@ -14,7 +14,6 @@
       imports = [
         inputs.hercules-ci-effects.flakeModule
         inputs.drv-parts.modules.flake-parts.drv-parts
-        inputs.dream2nix.flakeModuleBeta
         ./hosts/part.nix
         ./modules/part.nix
         ./packages/part.nix
@@ -67,26 +66,6 @@
       };
     };
 
-    dream2nix = {
-      url = "github:nix-community/dream2nix";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        nixpkgsV1.follows = "nixpkgs";
-        all-cabal-json.follows = "blank";
-        crane.follows = "blank";
-        devshell.follows = "blank";
-        drv-parts.follows = "drv-parts";
-        flake-utils-pre-commit.follows = "blank";
-        flake-parts.follows = "flake-parts";
-        ghc-utils.follows = "blank";
-        gomod2nix.follows = "blank";
-        mach-nix.follows = "blank";
-        nix-pypi-fetcher.follows = "blank";
-        pre-commit-hooks.follows = "blank";
-        pruned-racket-catalog.follows = "blank";
-      };
-    };
-    
     devshell = {
       url = "github:numtide/devshell";
       inputs = {
@@ -109,7 +88,6 @@
       url = "github:hercules-ci/hercules-ci-agent";
       inputs = {
         flake-parts.follows = "flake-parts";
-        nix-darwin.follows = "blank";
       };
     };
     hercules-ci-effects = {
