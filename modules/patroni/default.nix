@@ -6,8 +6,7 @@ let
   defaultGroup = "patroni";
   format = pkgs.formats.yaml { };
 
-  #boto doesn't support python 3.10 yet
-  patroni = pkgs.patroni.override { pythonPackages = pkgs.python39Packages; };
+  inherit (pkgs) patroni;
 
   postgresql =
     if cfg.postgresqlExtraPlugins == [ ]
