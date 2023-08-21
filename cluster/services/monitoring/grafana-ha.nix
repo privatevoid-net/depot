@@ -105,9 +105,11 @@ in
 
       serviceConfig = base.serviceConfig // {
         ExecStart = "${consul.package}/bin/consul lock --shell=false services/grafana ${run}";
+        ExecStopPost = "${svc.commands.deregister}";
         # consul uses AF_NETLINK to determine interface addresses, even when just registering a service
         RestrictAddressFamilies = base.serviceConfig.RestrictAddressFamilies ++ [ "AF_NETLINK" ];
         Restart = "on-failure";
+        RestartSec = "10s";
       };
     };
   };
