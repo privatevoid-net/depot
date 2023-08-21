@@ -49,6 +49,8 @@ toPythonModule (buildPythonApplication rec {
     markdown-it-py
     fasttext-predict
     pybind11
+    pytomlpp
+    (callPackage ./deps/chompjs.nix {})
   ];
 
   # tests try to connect to network
