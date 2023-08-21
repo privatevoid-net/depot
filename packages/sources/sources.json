@@ -61,10 +61,10 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
-      "version": "v2.1.1",
-      "revision": "41aa497c72b64bb236771ff0cac0d92c7bf9c119",
-      "url": "https://api.github.com/repos/grafana/tempo/tarball/v2.1.1",
-      "hash": "1hxziwaj9cr14v3f5xxm99v66w4025zx6j6yw8zs2kgk1v14d9rw"
+      "version": "v2.2.1",
+      "revision": "77c009c9d315d61207ff3b31c02f94d5749b4bad",
+      "url": "https://api.github.com/repos/grafana/tempo/tarball/v2.2.1",
+      "hash": "0biv47mlnsl60nh5z45d3gd4l5avv04l2scmpvyhcrj2fa3abnbh"
     }
   },
   "version": 2
