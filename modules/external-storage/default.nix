@@ -46,6 +46,9 @@ in
           "dir_mode=0700"
           "file_mode=0600"
           "seal"
+          "hard"
+          "resilienthandles"
+          "cache=loose"
           "_netdev"
           "x-systemd.automount"
         ];
