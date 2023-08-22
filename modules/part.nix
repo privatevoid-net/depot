@@ -11,6 +11,7 @@ in
     deploy-rs-receiver = ./deploy-rs-receiver;
     effect-receiver = ./effect-receiver;
     enterprise = ./enterprise;
+    external-storage = ./external-storage;
     fail2ban = ./fail2ban;
     hydra = ./hydra;
     hyprspace = ./hyprspace;
@@ -44,6 +45,7 @@ in
       consul-service-registry
       deploy-rs-receiver
       effect-receiver
+      external-storage
       fail2ban
       motd
       nix-config-server
