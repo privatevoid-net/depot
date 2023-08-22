@@ -121,6 +121,8 @@ in {
       environment.IPFS_CLUSTER_PATH = cfg.dataDir;
       wantedBy = [ "default.target" ];
 
+      unitConfig.RequiresMountsFor = cfg.dataDir;
+
       serviceConfig = {
         # "" clears exec list (man systemd.service -> execStart)
         ExecStart = [
