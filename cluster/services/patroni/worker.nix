@@ -10,6 +10,8 @@ let
   pg = pkgs.postgresql_14;
 
   baseDir = "/srv/storage/database/postgres-ha";
+
+  walDir = "/var/lib/postgres-ha/${pg.psqlSchema}/wal";
 in
 
 {
@@ -24,7 +26,10 @@ in
     group = "patroni";
   }) vars.patroni.passwords;
 
-  systemd.tmpfiles.rules = [ "d '${baseDir}' 0700 patroni patroni - -" ];
+  systemd.tmpfiles.rules = [
+    "d '${baseDir}' 0700 patroni patroni - -"
+    "d '${walDir}' 0700 patroni patroni - -"
+  ];
   services.patroni = {
     enable = true;
     name = vars.hostName;
@@ -52,6 +57,9 @@ in
       };
       failsafe_mode = true;
       postgresql = {
+        basebackup = {
+          waldir = walDir;
+        };
         use_pg_rewind = true;
         use_slots = true;
         authentication = {
