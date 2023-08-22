@@ -26,7 +26,6 @@ in
   services.grafana = {
     enable = true;
     package = depot.packages.grafana;
-    dataDir = "/srv/storage/private/grafana";
     settings = {
       server = {
         root_url = "https://monitoring.${domain}/";
