@@ -1,8 +1,12 @@
 {
   services.storage = {
-    nodes.heresy = [ "VEGAS" ];
-    nixos.heresy = [
-      ./heresy.nix
-    ];
+    nodes = {
+      external = [ "prophet" ];
+      heresy = [ "VEGAS" ];
+    };
+    nixos = {
+      external = [ ./external.nix ];
+      heresy = [ ./heresy.nix ];
+    };
   };
 }
