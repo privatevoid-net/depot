@@ -18,6 +18,7 @@
         ./modules/part.nix
         ./packages/part.nix
         ./jobs/part.nix
+        ./lib/part.nix
       ];
     };
 
