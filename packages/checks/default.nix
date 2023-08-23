@@ -9,6 +9,7 @@
 
       patroni = pkgs.callPackage ./patroni.nix {
         inherit (self) nixosModules;
+        inherit (self'.packages) postgresql;
       };
       searxng = pkgs.callPackage ./searxng.nix {
         inherit (self'.packages) searxng;

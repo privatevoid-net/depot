@@ -1,4 +1,4 @@
-{ nixosTest, nixosModules }:
+{ nixosTest, nixosModules, postgresql }:
 
 # taken from https://github.com/phfroidmont/nixpkgs/blob/patroni-module/nixos/tests/patroni.nix
 nixosTest (
@@ -31,7 +31,7 @@ nixosTest (
 
           enable = true;
 
-          postgresqlPackage = pkgs.postgresql_14.withPackages (p: [ p.pg_safeupdate ]);
+          postgresqlPackage = postgresql.withPackages (p: [ p.pg_safeupdate ]);
 
           scope = "cluster1";
           name = "node${toString(index + 1)}";
@@ -119,7 +119,7 @@ nixosTest (
       };
 
       client = { pkgs, ... }: {
-        environment.systemPackages = [ pkgs.postgresql_14 ];
+        environment.systemPackages = [ postgresql ];
 
         networking.interfaces.eth1.ipv4.addresses = pkgs.lib.mkOverride 0 [
           { address = "192.168.2.1"; prefixLength = 16; }
