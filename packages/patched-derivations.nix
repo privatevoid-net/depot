@@ -83,6 +83,8 @@ super: rec {
     jre = jre17_standard;
   };
 
+  postgresql = super.postgresql_14;
+
   powerdns-admin = patch super.powerdns-admin "patches/base/powerdns-admin";
 
   prometheus-jitsi-exporter = patch super.prometheus-jitsi-exporter "patches/base/prometheus-jitsi-exporter";
