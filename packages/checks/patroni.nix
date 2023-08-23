@@ -1,4 +1,4 @@
-{ nixosTest, patroniModule }:
+{ nixosTest, nixosModules }:
 
 # taken from https://github.com/phfroidmont/nixpkgs/blob/patroni-module/nixos/tests/patroni.nix
 nixosTest (
@@ -15,7 +15,8 @@ nixosTest (
       in
       {
         imports = [
-          patroniModule
+          nixosModules.patroni
+          nixosModules.systemd-extras
         ];
 
         networking.interfaces.eth1.ipv4.addresses = pkgs.lib.mkOverride 0 [

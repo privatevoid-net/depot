@@ -8,7 +8,7 @@
       };
 
       patroni = pkgs.callPackage ./patroni.nix {
-        patroniModule = self.nixosModules.patroni;
+        inherit (self) nixosModules;
       };
       searxng = pkgs.callPackage ./searxng.nix {
         inherit (self'.packages) searxng;
