@@ -135,7 +135,7 @@ in
 
 
   systemd.services.ipfs = {
-    unitConfig.RequiresMountsFor = cfg.dataDir;
+    strictMounts = [ cfg.dataDir ];
     serviceConfig = {
       Slice = "remotefshost.slice";
       AmbientCapabilities = [ "CAP_NET_BIND_SERVICE" ];
