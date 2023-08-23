@@ -13,6 +13,10 @@ let
 in
 
 {
+  imports = [
+    ./strict-mounts.nix
+  ];
+
   options = {
     services.external-storage = {
       fileSystems = lib.mkOption {

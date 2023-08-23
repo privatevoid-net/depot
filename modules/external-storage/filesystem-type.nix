@@ -26,5 +26,9 @@ with lib;
       type = types.str;
       default = "default";
     };
+    dependentServices = mkOption {
+      type = with types; listOf str;
+      default = [];
+    };
   };
 }
