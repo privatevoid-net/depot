@@ -121,7 +121,7 @@ in {
       environment.IPFS_CLUSTER_PATH = cfg.dataDir;
       wantedBy = [ "default.target" ];
 
-      unitConfig.RequiresMountsFor = cfg.dataDir;
+      strictMounts = [ cfg.dataDir ];
 
       serviceConfig = {
         # "" clears exec list (man systemd.service -> execStart)
@@ -142,6 +142,8 @@ in {
     systemd.services.ipfs-cluster = {
       environment.IPFS_CLUSTER_PATH = cfg.dataDir;
       wantedBy = [ "multi-user.target" ];
+
+      strictMounts = [ cfg.dataDir ];
 
       wants = [ "ipfs-cluster-init.service" ];
       after = [ "ipfs-cluster-init.service" ];
