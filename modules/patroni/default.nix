@@ -271,7 +271,7 @@ in
           systemd-notify EXTEND_TIMEOUT_USEC=300000000
         '';
 
-        unitConfig.RequiresMountsFor = [ cfg.dataDir cfg.postgresqlDataDir ];
+        strictMounts = [ cfg.dataDir cfg.postgresqlDataDir ];
 
         serviceConfig = mkMerge [{
           User = cfg.user;
