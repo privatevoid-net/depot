@@ -29,6 +29,7 @@ in
     ssh = ./ssh;
     system-info = ./system-info;
     system-recovery = ./system-recovery;
+    systemd-extras = ./systemd-extras;
     tested = ./tested;
 
     machineBase = group [
@@ -38,6 +39,7 @@ in
       minimal
       port-magic
       ssh
+      systemd-extras
     ];
 
     serverBase = group [

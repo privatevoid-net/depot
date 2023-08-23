@@ -1,0 +1,5 @@
+{
+  imports = [
+    ./strict-mounts.nix
+  ];
+}
