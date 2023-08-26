@@ -361,6 +361,7 @@ in
                 print(f"setting system identifier to {sysid}")
                 ctl.dcs.initialize(create_new=False, sysid=str(sysid))
                 pg.stop()
+                os.system("patronictl resume")
           '';
           migrationScript = pkgs.writeShellScript "patroni-migration-replicate-or-self-upgrade" ''
             if [[ "$(consul catalog nodes --service='${cfg.scope}' 2>/dev/null | wc -l)" -gt 0 ]]; then
@@ -398,6 +399,7 @@ in
                     fi
                   done
                   echo no other nodes are at the target version, performing self-upgrade
+                  patronictl pause
                   leaderHost="$(patronictl list -f json | jq -r 'map(select(.Role == "Leader" and .State == "running") | .Host) | .[0]')"
                   # this is where it gets spicy
                   rm -rf '${cfg.postgresqlDataDir}'
@@ -407,6 +409,7 @@ in
                   export PATRONIMIGRATOR_LEADER_HOST="$leaderHost"
                   # HACK: find a way to get the port
                   export PATRONIMIGRATOR_LEADER_PORT="5432"
+                  export PYTHONUNBUFFERED=1
                   exec ${upgradeScript}
                 fi
               fi
