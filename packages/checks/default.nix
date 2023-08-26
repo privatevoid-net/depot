@@ -15,6 +15,11 @@
         previous = timeTravel' "486161b78e45e94a6f314b65bb05080605f0cd01";
         inherit (self) nixosModules;
         inherit (self'.packages) postgresql;
+        exampleData = pkgs.fetchurl {
+          name = "omdb-2022-10-18.dump";
+          url = "https://github.com/credativ/omdb-postgresql/releases/download/2022-10-18/omdb.dump";
+          hash = "sha256-7ENUTHrpdrB44AyHT3aB44AFY/vFsKTzt70Fnb9ynq8=";
+        };
       };
       searxng = pkgs.callPackage ./searxng.nix {
         inherit (self'.packages) searxng;
