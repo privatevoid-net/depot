@@ -1,4 +1,4 @@
-{ pkgs, lib, config, depot, tools, ... }:
+{ depot, tools, ... }:
 
 {
   nix = {
@@ -11,7 +11,8 @@
     };
 
     extraOptions = ''
-      experimental-features = nix-command flakes
+      experimental-features = nix-command flakes cgroups
+      use-cgroups = true
       builders-use-substitutes = true
       flake-registry = https://git.${tools.meta.domain}/private-void/registry/-/raw/master/registry.json
       
