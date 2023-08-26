@@ -141,6 +141,9 @@ in
 
             Restart = "on-failure";
             RestartSec = "10s";
+
+            # see https://www.rath.org/s3ql-docs/man/fsck.html
+            SuccessExitStatus = [ 128 ];
           };
         };
       });
