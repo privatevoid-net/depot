@@ -83,7 +83,7 @@ super: rec {
     jre = jre17_standard;
   };
 
-  postgresql = super.postgresql_14;
+  postgresql = super.postgresql_15;
 
   powerdns-admin = patch super.powerdns-admin "patches/base/powerdns-admin";
 
