@@ -82,31 +82,12 @@ in
 
   systemd.services = {
     grafana = {
-      enable = false;
-      serviceConfig.EnvironmentFile = config.age.secrets.grafana-secrets.path;
-    };
-    grafana-ha = let
-      base = config.systemd.services.grafana;
-      inherit (config.services) consul;
-      svc = config.consul.services.grafana;
-      run = pkgs.writeShellScript "grafana-ha-start" ''
-        trap '${svc.commands.deregister}' EXIT
-        ${svc.commands.register}
-        ${base.serviceConfig.ExecStart}
-      '';
-    in {
-      inherit (base) wantedBy;
-      description = "Grafana | High Availability";
-      aliases = [ "grafana.service" ];
-
-      after = base.after ++ [ "consul.service" ];
-      requires = [ "consul.service" ];
-
-      serviceConfig = base.serviceConfig // {
-        ExecStart = "${consul.package}/bin/consul lock --shell=false services/grafana ${run}";
-        ExecStopPost = "${svc.commands.deregister}";
-        # consul uses AF_NETLINK to determine interface addresses, even when just registering a service
-        RestrictAddressFamilies = base.serviceConfig.RestrictAddressFamilies ++ [ "AF_NETLINK" ];
+      distributed = {
+        enable = true;
+        registerService = "grafana";
+      };
+      serviceConfig = {
+        EnvironmentFile = config.age.secrets.grafana-secrets.path;
         Restart = "on-failure";
         RestartSec = "10s";
       };
@@ -128,7 +109,6 @@ in
 
   consul.services.grafana = {
     mode = "manual";
-    unit = "grafana-ha";
     definition = rec {
       name = "grafana";
       address = depot.reflection.interfaces.primary.addrPublic;
