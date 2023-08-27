@@ -53,6 +53,8 @@ super: rec {
 
   forgejo = patch super.forgejo "patches/base/forgejo";
 
+  garage = super.garage_0_8;
+
   jellyfin = patch (super.jellyfin.override {
     ffmpeg = super.ffmpeg.override {
       withMfx = true;
