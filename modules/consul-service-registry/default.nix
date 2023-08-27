@@ -7,15 +7,20 @@ let
 
   consul = "${config.services.consul.package}/bin/consul";
 
-  writeLoopScript = name: cmd: pkgs.writeShellScript name ''
-    while ! ${cmd}; do
+  consulRegisterScript = pkgs.writeShellScript "consul-register" ''
+    while ! ${consul} services register "$1"; do
       sleep 1
     done
   '';
 
-  consulRegisterScript = writeLoopScript "consul-register" ''${consul} services register "$1"'';
-
-  consulDeregisterScript = writeLoopScript "consul-deregister" ''${consul} services deregister "$1"'';
+  consulDeregisterScript = pkgs.writeShellScript "consul-deregister" ''
+    for i in {1..5}; do
+      if ${consul} services deregister "$1"; then
+        break
+      fi
+      sleep 1
+    done
+  '';
 
   register = servicesJson: "${consulRegisterScript} ${servicesJson}";
 
