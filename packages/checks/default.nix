@@ -3,6 +3,10 @@
 {
   perSystem = { filters, pkgs, self', ... }: {
     checks = filters.doFilter filters.checks {
+      ascensions = pkgs.callPackage ./ascensions.nix {
+        inherit (self) nixosModules;
+      };
+
       jellyfin-stateless = pkgs.callPackage ./jellyfin-stateless.nix {
         inherit (self'.packages) jellyfin;
         inherit (config) cluster;

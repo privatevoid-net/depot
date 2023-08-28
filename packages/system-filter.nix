@@ -12,6 +12,7 @@
     tempo = [ "x86_64-linux" ];
   };
   checks = {
+    ascensions = [ "x86_64-linux" ];
     jellyfin-stateless = [ "x86_64-linux" ];
     keycloak = [ "x86_64-linux" ];
     patroni = [ "x86_64-linux" ];
