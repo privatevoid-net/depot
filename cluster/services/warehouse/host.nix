@@ -24,13 +24,17 @@ with tools.nginx;
     enable = true;
     package = pkgs.intel-media-driver;
   };
-  systemd.services.jellyfin.serviceConfig = {
-    # allow access to GPUs for hardware transcoding
-    DeviceAllow = lib.mkForce "char-drm";
-    BindPaths = lib.mkForce "/dev/dri";
-    # to allow restarting from web ui
-    Restart = lib.mkForce "always";
+  systemd.services.jellyfin = {
+    # if EncoderAppPath is manually set in the web UI, it can never be updated through --ffmpeg
+    preStart = "test ! -e /var/lib/jellyfin/config/encoding.xml || sed -i '/<EncoderAppPath>/d' /var/lib/jellyfin/config/encoding.xml";
+    serviceConfig = {
+      # allow access to GPUs for hardware transcoding
+      DeviceAllow = lib.mkForce "char-drm";
+      BindPaths = lib.mkForce "/dev/dri";
+      # to allow restarting from web ui
+      Restart = lib.mkForce "always";
 
-    Slice = "mediaplayback.slice";
+      Slice = "mediaplayback.slice";
+    };
   };
 }
