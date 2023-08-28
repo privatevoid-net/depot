@@ -9,6 +9,12 @@ in
     depot.inputs.attic.nixosModules.atticd
   ];
 
+  ascensions.attic-standalone = {
+    requiredBy = [ "attic.service" ];
+    before = [ "attic.service" ];
+    incantations = i: [ ];
+  };
+
   age.secrets.atticServerToken.file = ./attic-server-token.age;
 
   links.atticServer.protocol = "http";
