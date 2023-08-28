@@ -28,5 +28,13 @@ with lib;
       type = types.path;
       default = "/";
     };
+    uid = mkOption {
+      type = types.int;
+      default = 0;
+    };
+    gid = mkOption {
+      type = types.int;
+      default = 0;
+    };
   };
 }
