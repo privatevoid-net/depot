@@ -1,4 +1,4 @@
-{ config, lib, tools, ... }:
+{ config, lib, depot, ... }:
 
 {
   services.hercules-ci-multi-agent = {

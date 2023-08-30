@@ -17,7 +17,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "checkmate";
-  networking.nameservers = [ depot.config.hours.VEGAS.interfaces.vstub.addr ];
+  networking.nameservers = [ depot.hours.VEGAS.interfaces.vstub.addr ];
 
   time.timeZone = "Europe/Zurich";
 

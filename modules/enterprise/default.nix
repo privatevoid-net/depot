@@ -1,6 +1,6 @@
-{ config, depot, lib, tools, ... }:
+{ config, depot, lib, ... }:
 let
-  orgDomain = tools.meta.domain;
+  orgDomain = depot.lib.meta.domain;
   host = depot.reflection;
 in {
   networking.domain = lib.mkDefault "${host.enterprise.subdomain or "services"}.${orgDomain}";

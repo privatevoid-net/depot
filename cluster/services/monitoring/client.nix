@@ -1,4 +1,4 @@
-{ cluster, lib, ... }:
+{ cluster, config, lib, ... }:
 let
   inherit (lib) singleton;
 
@@ -17,7 +17,7 @@ in {
       };
       integrations.node_exporter = {
         enabled = true;
-        instance = cluster.config.vars.hostName;
+        instance = config.networking.hostName;
         enable_collectors = [
           "systemd"
         ];
@@ -32,7 +32,7 @@ in {
           job_name = "journal";
           journal = {
             max_age = "12h";
-            labels.host = cluster.config.vars.hostName;
+            labels.host = config.networking.hostName;
           };
           relabel_configs = [
             (relabel "__journal__systemd_unit" "systemd_unit")

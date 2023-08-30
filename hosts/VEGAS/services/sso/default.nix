@@ -1,7 +1,7 @@
-{ cluster, config, depot, lib, tools, ... }:
-with tools.nginx;
+{ cluster, config, depot, lib, ... }:
+with depot.lib.nginx;
 let
-  login = "login.${tools.meta.domain}";
+  login = "login.${depot.lib.meta.domain}";
   kc = config.links.keycloak;
   patroni = cluster.config.links.patroni-pg-access;
 in

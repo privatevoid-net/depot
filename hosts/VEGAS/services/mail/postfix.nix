@@ -1,6 +1,6 @@
-{ config, depot, tools, ... }:
+{ config, depot, ... }:
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
   certDir = config.security.acme.certs."mail.${domain}".directory;
 
   receivePolicy = [ "permit_sasl_authenticated" "permit_mynetworks" "reject_unauth_destination" ];

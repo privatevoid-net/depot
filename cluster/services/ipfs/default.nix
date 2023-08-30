@@ -1,7 +1,7 @@
-{ config, depot, lib, tools, ... }:
+{ config, depot, lib, ... }:
 
 {
-  hostLinks = lib.genAttrs config.services.ipfs.nodes.node (name: let
+  hostLinks = lib.genAttrs config.services.ipfs.nodes.node (name: depot.lib.summon name ({ depot, ... }: let
     host = depot.reflection;
     intf = host.interfaces.primary;
     self = config.hostLinks.${name}.ipfs;
@@ -20,7 +20,7 @@
         ];
       };
     };
-  });
+  }));
   services.ipfs = {
     nodes = {
       node = [ "VEGAS" "prophet" ];
@@ -46,7 +46,7 @@
   };
 
   monitoring.blackbox.targets.ipfs-gateway = {
-    address = "https://bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354.ipfs.${tools.meta.domain}/";
+    address = "https://bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354.ipfs.${depot.lib.meta.domain}/";
     module = "https2xx";
   };
 }

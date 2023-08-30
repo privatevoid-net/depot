@@ -1,6 +1,6 @@
-{ config, tools, ... }:
+{ config, depot, ... }:
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
 in
 {
   age.secrets = {

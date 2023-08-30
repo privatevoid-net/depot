@@ -1,8 +1,8 @@
-{ config, depot, lib, pkgs, tools, ... }:
+{ config, depot, lib, pkgs, ... }:
 
 let
-  inherit (tools.meta) domain;
-  inherit (tools.nginx) vhosts;
+  inherit (depot.lib.meta) domain;
+  inherit (depot.lib.nginx) vhosts;
   cfg = config.services.ipfs-cluster;
   ipfsCfg = config.services.ipfs;
 

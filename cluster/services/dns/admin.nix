@@ -1,7 +1,7 @@
-{ cluster, config, lib, pkgs, tools, ... }:
+{ cluster, config, lib, pkgs, depot, ... }:
 
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
   inherit (config.links) pdnsAdmin;
   inherit (cluster.config) vars;
 
@@ -96,7 +96,7 @@ in {
   };
 
   services.nginx.virtualHosts."dnsadmin.${domain}" = lib.recursiveUpdate
-  (tools.nginx.vhosts.proxy pdnsAdmin.url)
+  (depot.lib.nginx.vhosts.proxy pdnsAdmin.url)
   # backend sends really big headers for some reason
   # increase buffer size accordingly
   {

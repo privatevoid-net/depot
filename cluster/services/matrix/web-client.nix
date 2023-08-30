@@ -1,6 +1,6 @@
-{ depot, lib, pkgs, tools, ... }:
+{ depot, lib, pkgs, ... }:
 let
-  inherit (tools.nginx) domain vhosts;
+  inherit (depot.lib.nginx) domain vhosts;
   inherit (depot.packages) cinny;
 in
 {

@@ -1,13 +1,14 @@
-{ cluster, config, lib, pkgs, tools, ... }:
+{ cluster, config, lib, pkgs, depot, ... }:
 
 let
-  inherit (tools.meta) adminEmail;
+  inherit (depot.lib.meta) adminEmail;
   inherit (cluster) vars;
+  inherit (config.networking) hostName;
 
   linkGlobalSecure = cluster.config.links.ircSecure;
-  link = cluster.config.hostLinks.${vars.hostName}.irc;
-  linkSecure = cluster.config.hostLinks.${vars.hostName}.ircSecure;
-  otherServers = map mkServer cluster.config.services.irc.otherNodes.host;
+  link = cluster.config.hostLinks.${hostName}.irc;
+  linkSecure = cluster.config.hostLinks.${hostName}.ircSecure;
+  otherServers = map mkServer (cluster.config.services.irc.otherNodes.host hostName);
   otherServerFiles = map (builtins.toFile "ngircd-peer.conf") otherServers;
   opers = map mkOper vars.ircOpers;
 
@@ -41,7 +42,7 @@ in {
     config = ''
       [Global]
       Name = ${serverName}
-      Info = Private Void IRC - ${vars.hostName}
+      Info = Private Void IRC - ${hostName}
       Network = PrivateVoidIRC
       AdminInfo1 = Private Void Administrators
       AdminInfo2 = Contact for help

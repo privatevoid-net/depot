@@ -1,5 +1,5 @@
-{ config, tools, ... }:
-with tools.nginx;
+{ config, depot, ... }:
+with depot.lib.nginx;
 let
   addrSplit' = builtins.split ":" config.services.minio.listenAddress;
   addrSplit = builtins.filter builtins.isString addrSplit';
@@ -27,7 +27,7 @@ in
   services.nginx.appendHttpConfig = ''
     proxy_cache_path /var/cache/nginx/nixstore levels=1:2 keys_zone=nixstore:10m max_size=10g inactive=24h use_temp_path=off;
   '';
-  services.nginx.virtualHosts."cache.${tools.meta.domain}" = vhosts.basic // {
+  services.nginx.virtualHosts."cache.${depot.lib.meta.domain}" = vhosts.basic // {
     locations = {
       "= /".return = "302 /404";
       "/" = {

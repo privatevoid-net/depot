@@ -1,9 +1,9 @@
-{ tools, ... }:
-with tools.nginx.vhosts;
+{ depot, ... }:
+with depot.lib.nginx.vhosts;
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
   front = "ident.${domain}";
-  back = tools.identity.ldap.server.hostname;
+  back = depot.lib.identity.ldap.server.hostname;
 in
 {
   services.nginx.virtualHosts."${front}" = basic // {

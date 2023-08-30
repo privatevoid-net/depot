@@ -1,7 +1,7 @@
-{ config, lib, pkgs, tools, ... }:
+{ config, lib, pkgs, depot, ... }:
 
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
 
   extraGroups = [ "nginx" ]
     ++ lib.optional config.services.kanidm.enableServer "kanidm";

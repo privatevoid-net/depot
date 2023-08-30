@@ -1,7 +1,7 @@
-{ cluster, config, lib, tools, ... }:
+{ cluster, config, lib, depot, ... }:
 
 let
-  inherit (tools.meta) domain adminEmail;
+  inherit (depot.lib.meta) domain adminEmail;
 
   patroni = cluster.config.links.patroni-pg-access;
 
@@ -106,5 +106,5 @@ in
     };
   };
 
-  services.nginx.virtualHosts."${cfg.host}" = tools.nginx.vhosts.proxy "http://unix:/run/gitlab/gitlab-workhorse.socket";
+  services.nginx.virtualHosts."${cfg.host}" = depot.lib.nginx.vhosts.proxy "http://unix:/run/gitlab/gitlab-workhorse.socket";
 }

@@ -1,6 +1,6 @@
-{ cluster, config, lib, pkgs, tools, ... }:
+{ cluster, config, lib, pkgs, depot, ... }:
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
 
   patroni = cluster.config.links.patroni-pg-access;
 
@@ -121,8 +121,8 @@ in {
     ]) ++ [ dbConfigOut ];
   };
 
-  services.nginx.virtualHosts = tools.nginx.mappers.mapSubdomains {
-    matrix = tools.nginx.vhosts.basic // {
+  services.nginx.virtualHosts = depot.lib.nginx.mappers.mapSubdomains {
+    matrix = depot.lib.nginx.vhosts.basic // {
       locations."/".return = "204";
       locations."/_matrix" = {
         proxyPass = "http://127.0.0.1:8008";

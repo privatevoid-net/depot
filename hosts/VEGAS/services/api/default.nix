@@ -1,9 +1,9 @@
-{ config, lib, tools, ... }:
+{ config, lib, depot, ... }:
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
   apiAddr = "api.${domain}";
   proxyTarget = config.links.api.url;
-  proxy = tools.nginx.vhosts.proxy proxyTarget;
+  proxy = depot.lib.nginx.vhosts.proxy proxyTarget;
 in
 {
   # n8n uses "Sustainable Use License"

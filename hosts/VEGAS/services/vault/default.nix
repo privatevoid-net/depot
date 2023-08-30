@@ -1,4 +1,4 @@
-{ config, pkgs, tools, ... }:
+{ config, pkgs, depot, ... }:
 
 {
   services.vault = {
@@ -8,5 +8,5 @@
     extraConfig = "ui = true";
     package = pkgs.vault-bin;
   };
-  services.nginx.virtualHosts."vault.${tools.meta.domain}" = tools.nginx.vhosts.proxy "http://${config.services.vault.address}";
+  services.nginx.virtualHosts."vault.${depot.lib.meta.domain}" = depot.lib.nginx.vhosts.proxy "http://${config.services.vault.address}";
 }

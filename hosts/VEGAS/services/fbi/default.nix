@@ -1,5 +1,5 @@
-{ config, tools, ... }:
-with tools.nginx;
+{ config, depot, ... }:
+with depot.lib.nginx;
 {
   links = {
     ombi.protocol = "http";

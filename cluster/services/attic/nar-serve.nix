@@ -1,4 +1,4 @@
-{ config, depot, tools, ... }:
+{ config, depot, ... }:
 
   let
     mkNarServe = NAR_CACHE_URL: PORT: {
@@ -17,6 +17,6 @@
     nar-serve-nixos-org.protocol = "http";
   };
 
-  systemd.services.nar-serve-self = mkNarServe "https://cache.${tools.meta.domain}" config.links.nar-serve-self.portStr;
+  systemd.services.nar-serve-self = mkNarServe "https://cache.${depot.lib.meta.domain}" config.links.nar-serve-self.portStr;
   systemd.services.nar-serve-nixos-org = mkNarServe "https://cache.nixos.org" config.links.nar-serve-nixos-org.portStr;
 }

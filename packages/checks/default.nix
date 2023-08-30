@@ -1,17 +1,11 @@
-{ lib, self, ... }:
+{ config, self, ... }:
 
 {
-  perSystem = { filters, pkgs, self', ... }: let
-    fakeCluster = import ../../cluster {
-      inherit lib;
-      hostName = throw "not available in test environment";
-      depot = throw "not available in test environment";
-    };
-  in {
+  perSystem = { filters, pkgs, self', ... }: {
     checks = filters.doFilter filters.checks {
       jellyfin-stateless = pkgs.callPackage ./jellyfin-stateless.nix {
         inherit (self'.packages) jellyfin;
-        inherit fakeCluster;
+        inherit (config) cluster;
       };
 
       keycloak = pkgs.callPackage ./keycloak-custom-jre.nix {

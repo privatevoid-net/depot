@@ -1,4 +1,4 @@
-{ tools, ... }:
+{ depot, ... }:
 
 {
   services.nextcloud = {
@@ -7,7 +7,7 @@
   };
 
   monitoring.blackbox.targets.nextcloud = {
-    address = "https://storage.${tools.meta.domain}/status.php";
+    address = "https://storage.${depot.lib.meta.domain}/status.php";
     module = "nextcloudStatus";
   };
 }

@@ -1,7 +1,7 @@
-{ config, pkgs, tools, ... }:
+{ config, pkgs, depot, ... }:
 let
-  inherit (tools.identity) ldap;
-  inherit (tools.meta) domain;
+  inherit (depot.lib.identity) ldap;
+  inherit (depot.lib.meta) domain;
 
   postfixCfg = config.services.postfix;
 

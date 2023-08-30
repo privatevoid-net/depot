@@ -1,10 +1,10 @@
-{ lib, ... }:
+{ config, lib, ... }:
 with lib;
 
 {
-  options.out.injectedNixosConfig = mkOption {
-    description = "NixOS configuration modules to inject into the host.";
-    type = with types; listOf anything;
-    default = {};
+  options.out.injectNixosConfig = mkOption {
+    description = "NixOS configuration to inject into the given host.";
+    type = with types; functionTo raw;
+    default = const [];
   };
 }

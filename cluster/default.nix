@@ -1,4 +1,4 @@
-{ lib, depot, hostName }:
+{ lib, depot }:
 
 lib.evalModules {
   specialArgs = {
@@ -7,12 +7,10 @@ lib.evalModules {
   modules = [
     # Arbitrary variables to reference across multiple services
     ./lib/vars
-    { vars = { inherit hostName; }; }
 
     # Cluster-level port-magic
     ../modules/port-magic
 
-    ../tools/inject.nix
     ./lib/services.nix
     ./lib/inject-nixos-config.nix
     ./lib/port-magic-multi.nix

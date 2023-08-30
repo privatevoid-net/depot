@@ -1,4 +1,4 @@
-{ config, depot, lib, tools, ... }:
+{ config, depot, lib, ... }:
 let
   inherit (config) links;
 in
@@ -56,7 +56,7 @@ in
       disable-logging = true;
     };
   };
-  services.nginx.virtualHosts."search.${tools.meta.domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy links.searxng.url) {
+  services.nginx.virtualHosts."search.${depot.lib.meta.domain}" = lib.recursiveUpdate (depot.lib.nginx.vhosts.proxy links.searxng.url) {
     extraConfig = "access_log off;";
   };
   systemd.services.uwsgi.after = [ "wireguard-wgmv.service" "network-addresses-wgmv.service" ];

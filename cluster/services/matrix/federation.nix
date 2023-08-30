@@ -1,6 +1,6 @@
-{ config, pkgs, tools, ... }:
+{ config, pkgs, depot, ... }:
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
   federation = pkgs.writeText "matrix-federation.json" (builtins.toJSON {
     "m.server" = "matrix.${domain}:443";
   });

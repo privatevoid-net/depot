@@ -1,6 +1,6 @@
-{ cluster, config, depot, lib, pkgs, tools, ... }:
+{ cluster, config, depot, lib, pkgs, ... }:
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
 
   inherit (cluster.config.links) loki-ingest prometheus-ingest;
 
@@ -97,7 +97,7 @@ in
   services.nginx = {
     upstreams.grafana-ha.servers = lib.mapAttrs' (_: links: lib.nameValuePair links.grafana.tuple {}) (lib.getAttrs (svc.nodes.grafana) hostLinks);
 
-    virtualHosts."monitoring.${domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy "http://grafana-ha") {
+    virtualHosts."monitoring.${domain}" = lib.recursiveUpdate (depot.lib.nginx.vhosts.proxy "http://grafana-ha") {
       locations."/".proxyWebsockets = true;
     };
   };
