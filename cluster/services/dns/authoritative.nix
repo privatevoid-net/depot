@@ -1,14 +1,14 @@
-{ cluster, config, depot, lib, tools, ... }:
+{ cluster, config, depot, lib, ... }:
 
 let
   inherit (depot.reflection) interfaces;
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
   inherit (config.networking) hostName;
 
   link = cluster.config.hostLinks.${hostName}.dnsAuthoritative;
   patroni = cluster.config.links.patroni-pg-access;
 
-  otherDnsServers = lib.pipe (with cluster.config.services.dns.otherNodes; master ++ slave) [
+  otherDnsServers = lib.pipe (with cluster.config.services.dns.otherNodes; (master hostName) ++ (slave hostName)) [
     (map (node: cluster.config.hostLinks.${node}.dnsAuthoritative.tuple))
     (lib.concatStringsSep " ")
   ];

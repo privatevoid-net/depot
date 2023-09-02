@@ -2,6 +2,7 @@
 
 let
   inherit (cluster.config) vars;
+  inherit (config.networking) hostName;
 
   getMeshIp = name: vars.mesh.${name}.meshIp;
 
@@ -32,7 +33,7 @@ in
   ];
   services.patroni = {
     enable = true;
-    name = vars.hostName;
+    name = hostName;
     postgresqlPackage = pg;
     postgresqlDataDir ="${baseDir}/${pg.psqlSchema}";
     postgresqlPort = cluster.config.links.patroni-pg-internal.port;
@@ -40,8 +41,8 @@ in
     scope = "poseidon";
     namespace = "/patroni";
 
-    nodeIp = getMeshIp vars.hostName;
-    otherNodesIps = map getMeshIp cluster.config.services.patroni.otherNodes.worker;
+    nodeIp = getMeshIp hostName;
+    otherNodesIps = map getMeshIp (cluster.config.services.patroni.otherNodes.worker hostName);
     raft = false;
     softwareWatchdog = true;
     settings = {
@@ -68,7 +69,7 @@ in
           superuser.username = "postgres";
         };
         parameters = {
-          listen_addresses = getMeshIp vars.hostName;
+          listen_addresses = getMeshIp hostName;
           wal_level = "replica";
           hot_standby_feedback = "on";
           unix_socket_directories = "/tmp";

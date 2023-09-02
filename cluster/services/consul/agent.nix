@@ -1,7 +1,7 @@
-{ config, cluster, lib, tools, ... }:
+{ config, cluster, depot, ... }:
 
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
   inherit (config.networking) hostName;
   inherit (cluster.config) hostLinks;
   cfg = cluster.config.services.consul;
@@ -21,7 +21,7 @@ in
       node_name = config.networking.hostName;
       bind_addr = hl.ipv4;
       ports.serf_lan = hl.port;
-      retry_join = map (hostName: hostLinks.${hostName}.consul.tuple) cfg.otherNodes.agent;
+      retry_join = map (hostName: hostLinks.${hostName}.consul.tuple) (cfg.otherNodes.agent hostName);
     };
   };
 

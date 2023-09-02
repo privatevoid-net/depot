@@ -1,14 +1,7 @@
-{ depot, lib, tools, ... }:
+{ depot, lib, ... }:
 
 let
-  inherit (tools.meta) domain;
-
-  importWebsites = expr: import expr {
-    tools = tools.nginx;
-    inherit (depot) packages;
-  };
-
-  websites = tools.nginx.mappers.mapSubdomains (importWebsites ./websites.nix);
+  inherit (depot.lib.meta) domain;
 
   acmeUseDNS = name: conf: {
     name = conf.useACMEHost or conf.serverName or name;
@@ -24,7 +17,16 @@ in
 {
   services.websites = {
     nodes.host = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
-    nixos.host = {
+    nixos.host = { config, depot, ... }: let
+
+      importWebsites = expr: import expr {
+        tools = depot.lib.nginx;
+        inherit (depot) packages;
+      };
+
+      websites = depot.lib.nginx.mappers.mapSubdomains (importWebsites ./websites.nix);
+
+    in {
       services.nginx.virtualHosts = websites;
       security.acme.certs = lib.mapAttrs' acmeUseDNS (lib.filterAttrs isACME websites);
       consul.services.nginx = {

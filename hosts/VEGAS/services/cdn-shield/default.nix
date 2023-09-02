@@ -1,10 +1,9 @@
-{ config, lib, toolsets, ... }:
+{ depot, lib, ... }:
 
 let
-  tools = toolsets.nginx {
-    inherit lib config;
-    domain = "cdn-shield.privatevoid.net";
-  };
+  tools = (depot.lib.override {
+    meta.domain = lib.mkForce "cdn-shield.privatevoid.net";
+  }).nginx;
 in
 {
   services.nginx.virtualHosts = tools.mappers.mapSubdomains (import ./shields.nix { inherit tools; });

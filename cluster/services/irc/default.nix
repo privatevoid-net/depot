@@ -1,9 +1,9 @@
-{ config, depot, lib, tools, ... }:
+{ config, depot, lib, ... }:
 
 let
-  inherit (depot.config) hours;
+  inherit (depot) hours;
 
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
 
   subDomains = {
     VEGAS = "eu1";

@@ -1,4 +1,4 @@
-{ config, lib, depot, tools, ... }:
+{ config, lib, depot, ... }:
 let
   inherit (config) links;
 
@@ -11,7 +11,7 @@ in
 
   services.jitsi-meet = {
     enable = true;
-    hostName = "meet.${tools.meta.domain}";
+    hostName = "meet.${depot.lib.meta.domain}";
     nginx.enable = true;
     jicofo.enable = true;
     videobridge.enable = true;
@@ -38,7 +38,7 @@ in
       publicAddress = interfaces.primary.addrPublic;
     };
   };
-  services.nginx.virtualHosts."meet.${tools.meta.domain}" = {
+  services.nginx.virtualHosts."meet.${depot.lib.meta.domain}" = {
     enableACME = true;
     forceSSL = true;
     locations."=/images/watermark.svg" = {

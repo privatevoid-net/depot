@@ -1,13 +1,13 @@
-{ config, cluster, depot, lib, tools, ... }:
+{ config, cluster, depot, lib, ... }:
 
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
   inherit (depot.reflection) hyprspace;
   frontendDomain = "consul-remote.internal.${domain}";
 in
 
 {
-  services.nginx.virtualHosts.${frontendDomain} = tools.nginx.vhosts.proxy "http://127.0.0.1:8500" // {
+  services.nginx.virtualHosts.${frontendDomain} = depot.lib.nginx.vhosts.proxy "http://127.0.0.1:8500" // {
     listenAddresses = lib.singleton hyprspace.addr;
     enableACME = false;
     useACMEHost = "internal.${domain}";

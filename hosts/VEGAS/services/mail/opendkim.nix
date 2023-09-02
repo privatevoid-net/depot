@@ -1,6 +1,6 @@
-{ lib, tools, ... }:
+{ lib, depot, ... }:
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
 in
 {
   services.opendkim = {

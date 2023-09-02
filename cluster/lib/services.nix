@@ -2,18 +2,25 @@
 with lib;
 
 let
-  getHostConfigurations = svcConfig: hostName:
+  getHostConfigurations = hostName: svcConfig:
     lib.mapAttrsToList (groupName: _: svcConfig.nixos.${groupName})
     (lib.filterAttrs (_: lib.elem hostName) svcConfig.nodes);
 
-  getServiceConfigurations = svcConfig: getHostConfigurations svcConfig config.vars.hostName;
+
+  introspectionModule._module.args.cluster = {
+    inherit (config) vars;
+    inherit config;
+  };
 in
 
 {
   options.services = mkOption {
     description = "Cluster services.";
-    type = with types; attrsOf (submodule (import ./service-module.nix config.vars));
+    type = with types; attrsOf (submodule ./service-module.nix);
     default = {};
   };
-  config.out.injectedNixosConfig = lib.flatten (lib.mapAttrsToList (_: getServiceConfigurations) config.services);
+
+  config.out.injectNixosConfig = hostName: (lib.flatten (lib.mapAttrsToList (_: getHostConfigurations hostName) config.services)) ++ [
+    introspectionModule
+  ];
 }

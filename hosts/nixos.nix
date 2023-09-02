@@ -1,23 +1,13 @@
-{ config, inputs, lib, self, withSystem, ... }:
+{ config, lib, ... }:
 
 let
-  inherit (lib) const mapAttrs nixosSystem;
+  inherit (lib) mapAttrs nixosSystem;
   inherit (config) gods;
 
-  mkSpecialArgs = system: hostName: withSystem system ({ inputs', self', ... }: {
-    depot = self // self' // {
-      inputs = mapAttrs (name: const (inputs.${name} // inputs'.${name})) inputs;
-      inherit config;
-      # peer into the Watchman's Glass
-      reflection = config.hours.${hostName};
-    };
-    toolsets = import ../tools;
-  });
-
   mkNixOS = name: host: nixosSystem {
-    specialArgs = mkSpecialArgs host.system name;
+    specialArgs = config.lib.summon name lib.id;
     inherit (host) system;
-    modules = [ host.nixos ../tools/inject.nix (import ../cluster/inject.nix name) ];
+    modules = [ host.nixos ] ++ config.cluster.config.out.injectNixosConfig name;
   };
 in {
   flake.nixosConfigurations = mapAttrs mkNixOS (gods.fromLight // gods.fromFlesh);

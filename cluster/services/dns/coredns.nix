@@ -1,15 +1,14 @@
-{ cluster, config, depot, lib, pkgs, tools, ... }:
+{ cluster, config, depot, lib, ... }:
 
 let
   inherit (depot.reflection) interfaces hyprspace;
-  inherit (tools.meta) domain;
-  inherit (config.links) localRecursor;
+  inherit (depot.lib.meta) domain;
   inherit (config.networking) hostName;
 
   link = cluster.config.hostLinks.${hostName}.dnsResolver;
   backend = cluster.config.hostLinks.${hostName}.dnsResolverBackend;
 
-  otherRecursors = lib.pipe (cluster.config.services.dns.otherNodes.coredns) [
+  otherRecursors = lib.pipe (cluster.config.services.dns.otherNodes.coredns hostName) [
     (map (node: cluster.config.hostLinks.${node}.dnsResolverBackend.tuple))
     (lib.concatStringsSep " ")
   ];

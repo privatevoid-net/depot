@@ -1,5 +1,5 @@
-{ config, lib, tools, ... }:
-with tools.nginx;
+{ config, lib, depot, ... }:
+with depot.lib.nginx;
 let
   inherit (config) links;
 

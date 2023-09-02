@@ -1,6 +1,6 @@
-{ pkgs, tools, ... }:
+{ pkgs, depot, ... }:
 let
-  inherit (tools.identity) ldap;
+  inherit (depot.lib.identity) ldap;
 in
 {
   services.saslauthd = {

@@ -1,4 +1,4 @@
-{ tools, ... }:
+{ depot, ... }:
 
 {
   services.object-storage = {
@@ -7,7 +7,7 @@
   };
 
   monitoring.blackbox.targets.object-storage = {
-    address = "https://object-storage.${tools.meta.domain}/minio/health/live";
+    address = "https://object-storage.${depot.lib.meta.domain}/minio/health/live";
     module = "https2xx";
   };
 }

@@ -30,7 +30,7 @@ in
         ips = [ "${link.extra.meshIp}/24" ];
         listenPort = link.port;
         privateKeyFile = config.age.secrets.wireguard-key-core.path;
-        peers = map mkPeer cluster.config.services.wireguard.otherNodes.mesh;
+        peers = map mkPeer (cluster.config.services.wireguard.otherNodes.mesh hostName);
       };
     };
   };

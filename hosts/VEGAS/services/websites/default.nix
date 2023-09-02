@@ -1,14 +1,12 @@
-{ depot, tools, ... }:
+{ depot, ... }:
 
 let
   importWebsites = expr: import expr {
-    tools = tools.nginx;
+    tools = depot.lib.nginx;
     inherit (depot) packages;
   };
 
-  websites = tools.nginx.mappers.mapSubdomains (importWebsites ./websites.nix);
-
-  extraWebsites = importWebsites ./extra-sites.nix;
+  websites = depot.lib.nginx.mappers.mapSubdomains (importWebsites ./websites.nix);
 in {
-  services.nginx.virtualHosts = websites // extraWebsites;
+  services.nginx.virtualHosts = websites;
 }

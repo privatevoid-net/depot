@@ -1,6 +1,6 @@
-{ cluster, config, depot, lib, pkgs, tools, ... }:
+{ cluster, config, depot, lib, pkgs, ... }:
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
   cfg = config.services.ipfs;
   apiAddress = "/unix/run/ipfs/ipfs-api.sock";
   ipfsApi = pkgs.writeTextDir "api" apiAddress;
@@ -41,7 +41,7 @@ in
     extraFlags = [ "--migrate" ];
     extraConfig = {
       Bootstrap = [
-        "/ip4/${depot.config.hours.VEGAS.interfaces.primary.addr}/tcp/${toString ipfsPort}/p2p/Qmd7QHZU8UjfYdwmjmq1SBh9pvER9AwHpfwQvnvNo3HBBo"
+        "/ip4/${depot.hours.VEGAS.interfaces.primary.addr}/tcp/${toString ipfsPort}/p2p/Qmd7QHZU8UjfYdwmjmq1SBh9pvER9AwHpfwQvnvNo3HBBo"
         "/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa"
         "/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb"
         "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
@@ -62,7 +62,7 @@ in
           ID = extra.peerId;
           Addrs = extra.multiaddrs;
         })
-        cluster.config.services.ipfs.otherNodes.node;
+        (cluster.config.services.ipfs.otherNodes.node config.networking.hostName);
       Gateway = {
         Writable = false;
         APICommands = [];

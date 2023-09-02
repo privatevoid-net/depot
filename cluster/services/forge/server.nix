@@ -1,8 +1,8 @@
-{ cluster, config, depot, lib, pkgs, tools, ... }:
+{ cluster, config, depot, lib, pkgs, ... }:
 
 let
-  inherit (tools.meta) domain;
-  inherit (tools.nginx) vhosts;
+  inherit (depot.lib.meta) domain;
+  inherit (depot.lib.nginx) vhosts;
   inherit (config.age) secrets;
 
   patroni = cluster.config.links.patroni-pg-access;

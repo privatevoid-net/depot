@@ -1,4 +1,4 @@
-{ depot, tools, ... }:
+{ depot, ... }:
 
 {
   nix = {
@@ -6,7 +6,7 @@
 
     settings = {
       trusted-users = [ "root" "@wheel" "@admins" ];
-      substituters = [ "https://cache.${tools.meta.domain}" ];
+      substituters = [ "https://cache.${depot.lib.meta.domain}" ];
       trusted-public-keys = [ "cache.privatevoid.net:SErQ8bvNWANeAvtsOESUwVYr2VJynfuc9JRwlzTTkVg=" ];
     };
 
@@ -14,7 +14,7 @@
       experimental-features = nix-command flakes cgroups
       use-cgroups = true
       builders-use-substitutes = true
-      flake-registry = https://git.${tools.meta.domain}/private-void/registry/-/raw/master/registry.json
+      flake-registry = https://git.${depot.lib.meta.domain}/private-void/registry/-/raw/master/registry.json
       
       # For Hercules CI agent
       narinfo-cache-negative-ttl = 0

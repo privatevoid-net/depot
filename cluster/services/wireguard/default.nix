@@ -1,7 +1,7 @@
 { config, depot, lib, ... }:
 
 let
-  inherit (depot.config) hours;
+  inherit (depot) hours;
 
   meshNet = rec {
     netAddr = "10.1.1.0";

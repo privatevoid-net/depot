@@ -12,9 +12,9 @@ in
   services.grafana-agent = {
     settings.integrations.postgres_exporter = {
       enabled = true;
-      instance = vars.hostName;
+      instance = config.networking.hostName;
       data_source_names = [
-        "postgresql://metrics:\${PG_METRICS_DB_PASSWORD}@${getMeshIp vars.hostName}:${links.patroni-pg-internal.portStr}/postgres?sslmode=disable"
+        "postgresql://metrics:\${PG_METRICS_DB_PASSWORD}@${getMeshIp config.networking.hostName}:${links.patroni-pg-internal.portStr}/postgres?sslmode=disable"
       ];
       autodiscover_databases = true;
     };

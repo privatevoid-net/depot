@@ -1,4 +1,4 @@
-{ tools, ... }:
+{ depot, ... }:
 
 {
   services.search = {
@@ -7,7 +7,7 @@
   };
 
   monitoring.blackbox.targets.search = {
-    address = "https://search.${tools.meta.domain}/healthz";
+    address = "https://search.${depot.lib.meta.domain}/healthz";
     module = "https2xx";
   };
 }

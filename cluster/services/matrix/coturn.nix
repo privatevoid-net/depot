@@ -1,4 +1,4 @@
-{ config, tools, ... }:
+{ config, depot, ... }:
 {
   age.secrets = {
     coturn-static-auth = {
@@ -11,7 +11,7 @@
   services.coturn = {
     enable = true;
     no-cli = true;
-    realm = tools.meta.domain;
+    realm = depot.lib.meta.domain;
 
     no-tcp-relay = true;
     min-port = 64000;

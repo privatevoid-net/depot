@@ -2,7 +2,7 @@
 let
   inherit (config.networking) hostName;
   inherit (depot.packages) hyprspace;
-  hyprspaceCapableNodes = lib.filterAttrs (_: host: host.hyprspace.enable) depot.config.hours;
+  hyprspaceCapableNodes = lib.filterAttrs (_: host: host.hyprspace.enable) depot.hours;
   peersFormatted = builtins.mapAttrs (_: x: {
     inherit (x.hyprspace) id;
     routes = map (net: { inherit net; }) ((x.hyprspace.routes or []) ++ [ "${x.hyprspace.addr}/32" ]);

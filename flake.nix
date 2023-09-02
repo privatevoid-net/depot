@@ -19,6 +19,7 @@
         ./packages/part.nix
         ./jobs/part.nix
         ./lib/part.nix
+        ./cluster/part.nix
       ];
     };
 

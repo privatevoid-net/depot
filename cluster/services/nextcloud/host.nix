@@ -1,4 +1,4 @@
-{ cluster, config, lib, pkgs, tools, ... }:
+{ cluster, config, lib, pkgs, depot, ... }:
 let
   patroni = cluster.config.links.patroni-pg-access;
 in
@@ -22,7 +22,7 @@ in
     enableBrokenCiphersForSSE = false;
     enable = true;
     https = true;
-    hostName = "storage.${tools.meta.domain}";
+    hostName = "storage.${depot.lib.meta.domain}";
     home = "/srv/storage/www-app/nextcloud";
     maxUploadSize = "4G";
     enableImagemagick = true;

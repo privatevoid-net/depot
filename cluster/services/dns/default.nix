@@ -1,7 +1,7 @@
 { config, depot, lib, ... }:
 
 let
-  inherit (depot.config) hours;
+  inherit (depot) hours;
   cfg = config.services.dns;
 in
 {

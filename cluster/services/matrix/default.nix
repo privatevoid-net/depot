@@ -1,4 +1,4 @@
-{ tools, ... }:
+{ depot, ... }:
 
 {
   services.matrix = {
@@ -13,7 +13,7 @@
   };
 
   monitoring.blackbox.targets.matrix = {
-    address = "https://matrix.${tools.meta.domain}/_matrix/federation/v1/version";
+    address = "https://matrix.${depot.lib.meta.domain}/_matrix/federation/v1/version";
     module = "https2xx";
   };
 }

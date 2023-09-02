@@ -1,6 +1,6 @@
-{ config, lib, tools, ... }:
+{ config, lib, depot, ... }:
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
   login = x: "https://login.${domain}/auth/realms/master/protocol/openid-connect/${x}";
   cfg = config.services.oauth2_proxy;
 in

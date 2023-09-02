@@ -1,4 +1,4 @@
-{ config, depot, tools, ... }:
+{ config, depot, ... }:
 
 {
   imports =
@@ -43,7 +43,7 @@
 
 
   networking.hostName = "VEGAS";
-  networking.domain = "backbone.${tools.meta.domain}";
+  networking.domain = "backbone.${depot.lib.meta.domain}";
 
   time.timeZone = "Europe/Helsinki";
 
@@ -94,7 +94,7 @@
     path = depot.nixosConfigurations.soda.config.system.build.toplevel;
     privateNetwork = true;
     hostBridge = "vmdefault";
-    localAddress = "${depot.config.hours.soda.interfaces.primary.addr}/24";
+    localAddress = "${depot.hours.soda.interfaces.primary.addr}/24";
     autoStart = true;
     bindMounts.sodaDir = {
       hostPath = "/srv/storage/www/soda";

@@ -1,9 +1,9 @@
-{ config, cluster, lib, tools, ... }:
+{ cluster, config, lib, depot, ... }:
 
 let
   inherit (lib) flip pipe mapAttrsToList range recursiveUpdate substring;
 
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
   inherit (cluster.config) vars;
 
   mapTargets = mapAttrsToList (name: value: value // { name = "default/${name}"; });
@@ -19,7 +19,7 @@ let
     })
   ]) (range 1 1);
 
-  probeId = pipe "blackbox-probe-${domain}-${vars.hostName}" [
+  probeId = pipe "blackbox-probe-${domain}-${config.networking.hostName}" [
     (builtins.hashString "md5")
     (substring 0 8)
   ];
@@ -39,7 +39,7 @@ in
 {
   services.grafana-agent.settings.integrations.blackbox = {
     enabled = true;
-    instance = vars.hostName;
+    instance = config.networking.hostName;
     scrape_interval = "600s";
     relabel_configs = [
       (relabel "__param_module" "module")

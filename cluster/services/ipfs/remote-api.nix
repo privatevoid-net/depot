@@ -1,7 +1,7 @@
-{ config, tools, ... }:
-with tools.nginx;
+{ config, depot, ... }:
+with depot.lib.nginx;
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
   cfg = config.services.ipfs;
   gw = config.links.ipfsGateway;
 in

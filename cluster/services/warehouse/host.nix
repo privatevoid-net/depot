@@ -1,19 +1,19 @@
-{ config, depot, lib, pkgs, tools, ... }:
-with tools.nginx;
+{ config, depot, lib, pkgs, ... }:
+with depot.lib.nginx;
 {
   # TODO: not a whole lot to configure, maybe add some autoconfig stuff
   services.jellyfin = {
     enable = true;
     package = depot.packages.jellyfin;
   };
-  services.nginx.virtualHosts."warehouse.${tools.meta.domain}" = lib.mkMerge [
+  services.nginx.virtualHosts."warehouse.${depot.lib.meta.domain}" = lib.mkMerge [
     (vhosts.proxy "http://127.0.0.1:8096")
     {
       locations."/".extraConfig = ''
         proxy_buffering off;
       '';
       locations."/socket" = {
-        inherit (config.services.nginx.virtualHosts."warehouse.${tools.meta.domain}".locations."/") proxyPass; 
+        inherit (config.services.nginx.virtualHosts."warehouse.${depot.lib.meta.domain}".locations."/") proxyPass; 
         proxyWebsockets = true;
       };
       # TODO: video cache

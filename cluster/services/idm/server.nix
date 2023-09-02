@@ -1,7 +1,7 @@
-{ cluster, config, lib, tools, ... }:
+{ cluster, config, lib, depot, ... }:
 
 let
-  inherit (tools.meta) domain;
+  inherit (depot.lib.meta) domain;
 
   frontendLink = cluster.config.links.idm;
 
@@ -38,7 +38,7 @@ in
 
   systemd.services.kanidm.after = [ "acme-selfsigned-internal.${domain}.service" ];
 
-  services.nginx.virtualHosts."idm.${domain}" = lib.recursiveUpdate (tools.nginx.vhosts.proxy backendLink.url) {
+  services.nginx.virtualHosts."idm.${domain}" = lib.recursiveUpdate (depot.lib.nginx.vhosts.proxy backendLink.url) {
     locations."/".extraConfig = ''
       proxy_ssl_name idm-backend.internal.${domain};
       proxy_ssl_trusted_certificate ${certDir}/chain.pem;

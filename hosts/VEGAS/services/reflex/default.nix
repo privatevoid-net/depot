@@ -1,4 +1,4 @@
-{ config, depot, tools, ... }:
+{ config, depot, ... }:
 
 {
   links.nixIpfs.protocol = "http";
@@ -17,11 +17,11 @@
       IPFS_CLUSTER_API = config.services.ipfs-cluster.settings.api.restapi.http_listen_multiaddress;
       NIX_CACHES = toString [
         "https://cache.nixos.org"
-        "https://cache.${tools.meta.domain}"
+        "https://cache.${depot.lib.meta.domain}"
         "https://max.cachix.org"
       ];
     };
   };
 
-  services.nginx.virtualHosts."reflex.${tools.meta.domain}" = tools.nginx.vhosts.proxy config.links.nixIpfs.url;
+  services.nginx.virtualHosts."reflex.${depot.lib.meta.domain}" = depot.lib.nginx.vhosts.proxy config.links.nixIpfs.url;
 }

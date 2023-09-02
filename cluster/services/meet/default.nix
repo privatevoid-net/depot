@@ -1,4 +1,4 @@
-{ tools, ... }:
+{ depot, ... }:
 
 {
   services.meet = {
@@ -7,7 +7,7 @@
   };
 
   monitoring.blackbox.targets.jitsi-videobridge = {
-    address = "meet.${tools.meta.domain}:7777";
+    address = "meet.${depot.lib.meta.domain}:7777";
     module = "tcpConnect";
   };
 }
