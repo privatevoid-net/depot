@@ -7,13 +7,18 @@ let
 
   consul = "${config.services.consul.package}/bin/consul";
 
+  consulCfg = config.services.consul.extraConfig;
+  consulHttpAddr = "${consulCfg.addresses.http or "127.0.0.1"}:${toString (consulCfg.ports.http or 8500)}";
+
   consulRegisterScript = pkgs.writeShellScript "consul-register" ''
+    export CONSUL_HTTP_ADDR='${consulHttpAddr}'
     while ! ${consul} services register "$1"; do
       sleep 1
     done
   '';
 
   consulDeregisterScript = pkgs.writeShellScript "consul-deregister" ''
+    export CONSUL_HTTP_ADDR='${consulHttpAddr}'
     for i in {1..5}; do
       if ${consul} services deregister "$1"; then
         break

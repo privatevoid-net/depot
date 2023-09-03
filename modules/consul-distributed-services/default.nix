@@ -4,6 +4,9 @@ with lib;
 
 let
   consul = config.services.consul.package;
+
+  consulCfg = config.services.consul.extraConfig;
+  consulHttpAddr = "${consulCfg.addresses.http or "127.0.0.1"}:${toString (consulCfg.ports.http or 8500)}";
 in
 {
   options.systemd.services = mkOption {
@@ -36,6 +39,7 @@ in
       [Service]
       ExecStart=
       ExecStart=${consul}/bin/consul lock --name=${n} --n=${toString cfg.replicas} --shell=false --child-exit-code 'services/${n}%i' ${optionalString (cfg.registerService != null) runWithRegistration} ${ExecStart}
+      Environment="CONSUL_HTTP_ADDR=${consulHttpAddr}"
       ${optionalString (v.serviceConfig ? RestrictAddressFamilies) "RestrictAddressFamilies=AF_NETLINK"}
       ${optionalString (cfg.registerService != null) "ExecStopPost=${svc.commands.deregister}"}
     ''))
