@@ -1,8 +1,12 @@
-{ config, self, ... }:
+{ config, lib, self, ... }:
 
 {
-  perSystem = { filters, pkgs, self', ... }: {
-    checks = filters.doFilter filters.checks {
+  perSystem = { filters, pkgs, self', system, ... }: {
+    checks = lib.mkIf (system == "x86_64-linux") {
+      ascensions = pkgs.callPackage ./ascensions.nix {
+        inherit (self) nixosModules;
+      };
+
       jellyfin-stateless = pkgs.callPackage ./jellyfin-stateless.nix {
         inherit (self'.packages) jellyfin;
         inherit (config) cluster;

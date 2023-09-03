@@ -11,11 +11,4 @@
     searxng = [ "x86_64-linux" ];
     tempo = [ "x86_64-linux" ];
   };
-  checks = {
-    jellyfin-stateless = [ "x86_64-linux" ];
-    keycloak = [ "x86_64-linux" ];
-    patroni = [ "x86_64-linux" ];
-    searxng = [ "x86_64-linux" ];
-    tempo = [ "x86_64-linux" ];
-  };
 }

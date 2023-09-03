@@ -7,6 +7,7 @@ in
 {
   flake.nixosModules = with config.flake.nixosModules; {
     autopatch = ./autopatch;
+    ascensions = ./ascensions;
     consul-distributed-services = ./consul-distributed-services;
     consul-service-registry = ./consul-service-registry;
     deploy-rs-receiver = ./deploy-rs-receiver;
@@ -45,6 +46,7 @@ in
 
     serverBase = group [
       machineBase
+      ascensions
       consul-distributed-services
       consul-service-registry
       deploy-rs-receiver
