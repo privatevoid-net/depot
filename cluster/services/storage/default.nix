@@ -18,6 +18,7 @@ in
       heresy = [ ./heresy.nix ];
       garage = [
         ./garage.nix
+        ./garage-options.nix
         ./garage-layout.nix
       ];
       garageInternal = [ ./garage-internal.nix ];
