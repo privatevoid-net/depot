@@ -87,6 +87,9 @@
     in builtins.concatStringsSep "\n" (rules4 ++ rules6);
   };
 
+  zramSwap.enable = true;
+  zramSwap.algorithm = "zstd";
+
   system.stateVersion = "21.05";
   services.openssh.settings.PasswordAuthentication = false;
 
