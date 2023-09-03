@@ -1,4 +1,4 @@
-{ nixosTest, nixosModules }:
+{ testers, nixosModules }:
 
 let
   dataDir = {
@@ -9,24 +9,16 @@ let
     node1 = "before";
     node2 = "after";
   };
-  addr = {
-    consul = "10.0.0.10";
-    node1 = "10.0.0.1";
-    node2 = "10.0.0.2";
-  };
 in
 
-nixosTest {
+testers.runNixOSTest {
   name = "ascensions";
+
+  imports = [
+    ./modules/consul.nix
+  ];
+
   nodes = let
-    network = { config, lib, ... }: {
-      networking.interfaces.eth1.ipv4.addresses = lib.mkForce [
-        {
-          address = addr.${config.networking.hostName};
-          prefixLength = 24;
-        }
-      ];
-    };
     common = { config, lib, ... }: let
       inherit (config.networking) hostName;
     in {
@@ -53,10 +45,10 @@ nixosTest {
               consul kv put ${kvPath.${hostName}} ${hostName}
             fi
           '';
-          environment.CONSUL_HTTP_ADDR = "${addr.consul}:8500";
+          environment.CONSUL_HTTP_ADDR = "consul:8500";
         };
         ascend-create-kv = {
-          environment.CONSUL_HTTP_ADDR = "${addr.consul}:8500";
+          environment.CONSUL_HTTP_ADDR = "consul:8500";
         };
       };
       system.ascensions = {
@@ -79,26 +71,13 @@ nixosTest {
       };
     };
   in {
-    consul = {
-      imports = [ network ];
-      networking.firewall.allowedTCPPorts = [ 8500 ];
-      services.consul = {
-        enable = true;
-        extraConfig = {
-          addresses.http = addr.consul;
-          bind_addr = addr.consul;
-          server = true;
-          bootstrap_expect = 1;
-        };
-      };
-    };
-    node1.imports = [ network common ];
-    node2.imports = [ network common ];
+    node1.imports = [ common ];
+    node2.imports = [ common ];
   };
   testScript = /*python*/ ''
     start_all()
     consul.wait_for_unit("consul.service")
-    consul.wait_until_succeeds("CONSUL_HTTP_ADDR=${addr.consul}:8500 consul members")
+    consul.wait_until_succeeds("CONSUL_HTTP_ADDR=consul:8500 consul members")
     node1.wait_for_unit("multi-user.target")
     node1.succeed("systemctl start create-file create-kv")
     node1.succeed("tar cvf /tmp/shared/data.tar /data /var/lib/ascensions")
@@ -108,6 +87,6 @@ nixosTest {
     node2.succeed("systemctl start create-file create-kv")
 
     assert "node1" in node2.succeed("cat ${dataDir.node2}/file.txt")
-    assert "node1" in consul.succeed("CONSUL_HTTP_ADDR=${addr.consul}:8500 consul kv get ${kvPath.node2}")
+    assert "node1" in consul.succeed("CONSUL_HTTP_ADDR=consul:8500 consul kv get ${kvPath.node2}")
   '';
 }
