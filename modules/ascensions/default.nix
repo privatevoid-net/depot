@@ -34,7 +34,7 @@ let
     };
   };
 
-  runIncantations = f: with pkgs; f rec {
+  builtinIncantations = with pkgs; rec {
     execShellWith = extraPackages: script: writeShellScript "incantation" ''
       export PATH='${makeBinPath ([ coreutils ] ++ extraPackages)}'
       ${script}
@@ -53,13 +53,23 @@ let
     chmod = mode: target: "chmod -R ${escapeShellArgs [ mode target ]}";
   };
 
+  allIncantations = builtinIncantations // mapAttrs (_: mk: mk allIncantations) config.system.extraIncantations;
+
+  runIncantations = f: f allIncantations;
+
   consul = config.services.consul.package;
 in
 
 {
-  options.system.ascensions = mkOption {
-    type = with types; attrsOf (submodule ascensionType);
-    default = {};
+  options.system = {
+    ascensions = mkOption {
+      type = with types; attrsOf (submodule ascensionType);
+      default = {};
+    };
+    extraIncantations = mkOption {
+      type = with types; attrsOf (functionTo raw);
+      default = {};
+    };
   };
 
   config = {
