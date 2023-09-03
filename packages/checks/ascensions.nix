@@ -55,7 +55,9 @@ testers.runNixOSTest {
         create-file = {
           before = [ "create-file.service" ];
           incantations = m: with m; lib.optionals (hostName == "node2") [
-            (move dataDir.node1 dataDir.node2)
+            (move dataDir.node1 "/data/somewhere/intermediate1")
+            (move "/data/somewhere/intermediate1" "/var/lib/intermediate2")
+            (move "/var/lib/intermediate2" dataDir.node2)
           ];
         };
         create-kv = {
@@ -63,8 +65,12 @@ testers.runNixOSTest {
           before = [ "create-kv.service" ];
           incantations = m: with m; lib.optionals (hostName == "node2") [
             (execShellWith [ config.services.consul.package ] ''
-              consul kv put ${kvPath.node2} $(consul kv get ${kvPath.node1})
+              consul kv put intermediate/data $(consul kv get ${kvPath.node1})
               consul kv delete ${kvPath.node1}
+            '')
+            (execShellWith [ config.services.consul.package ] ''
+              consul kv put ${kvPath.node2} $(consul kv get intermediate/data)
+              consul kv delete intermediate/data
             '')
           ];
         };
