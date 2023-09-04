@@ -34,9 +34,16 @@ in
         ''${@}
       '';
 
+      waitForConsul = pkgs.writeShellScript "wait-for-consul" ''
+        while ! ${consul}/bin/consul lock --name="pre-flight-check" --n=${toString cfg.replicas} --shell=false "$1" ${pkgs.coreutils}/bin/true; do
+          sleep 1
+        done
+      '';
+
       hasSpecialPrefix = elem (substring 0 1 ExecStart) [ "@" "-" ":" "+" "!" ];
     in assert !hasSpecialPrefix; pkgs.writeTextDir "etc/systemd/system/${n}.service.d/distributed.conf" ''
       [Service]
+      ExecStartPre=${waitForConsul} 'services/${n}%i'
       ExecStart=
       ExecStart=${consul}/bin/consul lock --name=${n} --n=${toString cfg.replicas} --shell=false --child-exit-code 'services/${n}%i' ${optionalString (cfg.registerService != null) runWithRegistration} ${ExecStart}
       Environment="CONSUL_HTTP_ADDR=${consulHttpAddr}"
