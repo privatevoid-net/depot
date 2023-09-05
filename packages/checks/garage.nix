@@ -87,42 +87,42 @@ testers.runNixOSTest {
 
     with subtest("should bootstrap new cluster"):
       for node in nodes:
-          node.wait_for_unit("garage.service")
+        node.wait_for_unit("garage.service")
 
       for node in nodes:
-          node.wait_until_fails("garage status | grep 'NO ROLE ASSIGNED'")
+        node.wait_until_fails("garage status | grep 'NO ROLE ASSIGNED'")
 
     with subtest("should apply new layout with ascension"):
       for node in nodes:
-          node.succeed("/run/current-system/specialisation/modifiedLayout/bin/switch-to-configuration test")
+        node.succeed("/run/current-system/specialisation/modifiedLayout/bin/switch-to-configuration test")
 
       for node in nodes:
-          node.wait_until_succeeds("garage layout show | grep -w 2000")
-          assert "1" in node.succeed("garage layout show | grep -w 2000 | wc -l")
-          assert "2" in node.succeed("garage layout show | grep -w 1000 | wc -l")
+        node.wait_until_succeeds("garage layout show | grep -w 2000")
+        assert "1" in node.succeed("garage layout show | grep -w 2000 | wc -l")
+        assert "2" in node.succeed("garage layout show | grep -w 1000 | wc -l")
 
     with subtest("should apply new layout from scratch"):
       for node in nodes:
-          node.systemctl("stop garage.service")
-          node.succeed("rm -rf /var/lib/garage-metadata")
+        node.systemctl("stop garage.service")
+        node.succeed("rm -rf /var/lib/garage-metadata")
 
       for node in nodes:
-          node.systemctl("start garage.service")
+        node.systemctl("start garage.service")
 
       for node in nodes:
-          node.wait_for_unit("garage.service")
+        node.wait_for_unit("garage.service")
 
       for node in nodes:
-          node.wait_until_fails("garage status | grep 'NO ROLE ASSIGNED'")
+        node.wait_until_fails("garage status | grep 'NO ROLE ASSIGNED'")
 
       for node in nodes:
-          node.wait_until_succeeds("garage layout show | grep -w 2000")
-          assert "1" in node.succeed("garage layout show | grep -w 2000 | wc -l")
-          assert "2" in node.succeed("garage layout show | grep -w 1000 | wc -l")
+        node.wait_until_succeeds("garage layout show | grep -w 2000")
+        assert "1" in node.succeed("garage layout show | grep -w 2000 | wc -l")
+        assert "2" in node.succeed("garage layout show | grep -w 1000 | wc -l")
 
     with subtest("should create specified buckets and keys"):
       for node in nodes:
-          node.wait_until_succeeds('test "$(systemctl is-active garage-apply)" != activating')
+        node.wait_until_succeeds('test "$(systemctl is-active garage-apply)" != activating')
       garage1.succeed("garage key list | grep testKey")
       garage1.succeed("garage bucket list | grep bucket1")
       garage1.succeed("garage bucket list | grep bucket2")
