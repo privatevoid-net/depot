@@ -66,7 +66,7 @@ testers.runNixOSTest {
             };
             system.ascensions.garage-layout.incantations = lib.mkForce (i: [
               (i.runGarage ''
-                garage layout assign -z dc1 -c 2000 "$(garage node id 2>/dev/null | cut -d@ -f1)"
+                garage layout assign -z dc1 -c 2000 "$(garage node id -q | cut -d@ -f1)"
                 garage layout apply --version 2
               '')
             ]);
