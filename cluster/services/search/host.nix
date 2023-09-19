@@ -52,7 +52,6 @@ in
       http = links.searxng.tuple;
       cache2 = "name=searxcache,items=2000,blocks=2000,blocksize=65536,bitmap=1";
       buffer-size = 65536;
-      env = ["SEARXNG_SETTINGS_PATH=/run/searx/settings.yml"];
       disable-logging = true;
     };
   };
