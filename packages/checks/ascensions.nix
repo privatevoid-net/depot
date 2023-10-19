@@ -81,7 +81,7 @@ testers.runNixOSTest {
     node2.imports = [ common ];
   };
   testScript = /*python*/ ''
-    start_all()
+    node1.start()
     consul.wait_for_unit("consul.service")
     consul.wait_until_succeeds("CONSUL_HTTP_ADDR=consul:8500 consul members")
     node1.wait_for_unit("multi-user.target")
@@ -89,6 +89,7 @@ testers.runNixOSTest {
     node1.succeed("tar cvf /tmp/shared/data.tar /data /var/lib/ascensions")
 
     node2.wait_for_unit("multi-user.target")
+    node2.succeed("rm -rf /data")
     node2.succeed("tar xvf /tmp/shared/data.tar -C /")
     node2.succeed("systemctl start create-file create-kv")
 

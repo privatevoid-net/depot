@@ -15,6 +15,7 @@ nixosTest {
         machine.wait_for_unit("jellyfin.service")
         machine.wait_for_open_port(8096)
         machine.wait_until_succeeds("curl --fail http://127.0.0.1:8096")
+        machine.wait_until_succeeds("test -e /var/lib/jellyfin/config/encoding.xml")
 
     def stop_jf():
         machine.succeed("systemctl stop jellyfin.service")
