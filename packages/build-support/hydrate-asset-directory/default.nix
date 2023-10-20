@@ -8,7 +8,7 @@ rootDir: let
 
   hydrate = index: fetchAsset { inherit index; };
 
-  isDvc = lib.strings.hasSuffix ".dvc";
+  isDvc = file: lib.strings.hasSuffix ".dvc" (toString file);
 
   relative = file: lib.strings.removePrefix prefix (toString file);
 
