@@ -6,13 +6,20 @@ let
   } ''
     import Control.Monad.IO.Class
     import Control.Watchdog
+    import System.IO
     import System.IO.Error
     import System.Posix.User
+
+    flushLogger :: WatchdogLogger String
+    flushLogger taskErr delay = do
+      defaultLogger taskErr delay
+      hFlush stdout
 
     main :: IO ()
     main = watchdog $ do
       setInitialDelay 300_000
       setMaximumDelay 30_000_000
+      setLoggingAction flushLogger
       watch $ do
         check <- liftIO $ tryIOError $ getGroupEntryForName "infra_admins"
         case check of
