@@ -27,11 +27,14 @@ let
   runConfig = "/run/hyprspace.yml";
   nameservers = lib.unique config.networking.nameservers;
 in {
+  links.hyprspaceMetrics.protocol = "http";
+
   networking.hosts = lib.mapAttrs' (k: v: lib.nameValuePair v.hyprspace.addr [k "${k}.hypr"]) hyprspaceCapableNodes;
   age.secrets.hyprspace-key = {
     file = ../../secrets/hyprspace-key- + "${hostName}.age";
     mode = "0400";
   };
+
   systemd.services.hyprspace = {
     enable = true;
     after = [ "network-online.target" ];
@@ -43,6 +46,7 @@ in {
       ${pkgs.replace-secret}/bin/replace-secret '@HYPRSPACEPRIVATEKEY@' "${privateKeyFile}" ${runConfig}
       chmod 0400 ${runConfig}
     '';
+    environment.HYPRSPACE_METRICS_PORT = config.links.hyprspaceMetrics.portStr;
     serviceConfig = {
       Group = "wheel";
       Restart = "on-failure";
@@ -71,12 +75,28 @@ in {
       IPAddressAllow = nameservers;
     };
   };
+
   networking.firewall = {
     allowedTCPPorts = [ listenPort ];
     allowedUDPPorts = [ listenPort ];
     trustedInterfaces = [ "hyprspace" ];
   };
+
   environment.systemPackages = [
     hyprspace
   ];
+
+  services.grafana-agent.settings.metrics.configs = lib.singleton {
+    name = "metrics-hyprspace";
+    scrape_configs = lib.singleton {
+      job_name = "hyprspace";
+      static_configs = lib.singleton {
+        targets = lib.singleton config.links.hyprspaceMetrics.tuple;
+        labels = {
+          instance = hostName;
+          peer_id = myNode.hyprspace.id;
+        };
+      };
+    };
+  };
 }
