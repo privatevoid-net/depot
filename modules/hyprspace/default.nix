@@ -12,7 +12,7 @@ let
   myNode = depot.reflection;
   listenPort = myNode.hyprspace.listenPort or 8001;
 
-  interfaceConfig = pkgs.writeText "hyprspace.yml" (builtins.toJSON {
+  interfaceConfig = pkgs.writeText "hyprspace.json" (builtins.toJSON {
     interface = {
       name = "hyprspace";
       listen_port = listenPort;
@@ -24,7 +24,7 @@ let
   });
 
   privateKeyFile = config.age.secrets.hyprspace-key.path;
-  runConfig = "/run/hyprspace.yml";
+  runConfig = "/run/hyprspace.json";
   nameservers = lib.unique config.networking.nameservers;
 in {
   links.hyprspaceMetrics.protocol = "http";
