@@ -29,7 +29,7 @@
         ]);
       };
 
-      vendorSha256 = "sha256-6Hg1XdDIs6rXmag0oihCDqgNRDTQRwgPDj40q/b4+mo=";
+      vendorSha256 = "sha256-zr9gRYA979VYaD8jvK1MMEDhbcpHvaJccR91wp5qClU=";
 
       meta = with lib; {
         description = "A Lightweight VPN Built on top of Libp2p for Truly Distributed Networks.";
