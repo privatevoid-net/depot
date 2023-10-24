@@ -1,0 +1,17 @@
+{ depot, lib, ... }:
+let
+  inherit (depot.reflection) interfaces;
+in
+{
+  networking.interfaces = lib.mkIf (interfaces ? vstub) {
+    ${interfaces.vstub.link} = {
+      virtual = true;
+      ipv4.addresses = [
+        {
+          address = interfaces.vstub.addr;
+          prefixLength = 32;
+        }
+      ];
+    };
+  };
+}

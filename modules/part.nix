@@ -22,6 +22,7 @@ in
     maintenance = ./maintenance;
     minimal = ./minimal;
     motd = ./motd;
+    networking = ./networking;
     nix-builder = ./nix-builder;
     nix-config-server = ./nix-config/server.nix;
     nix-register-flakes = ./nix-register-flakes;
@@ -54,6 +55,7 @@ in
       external-storage
       fail2ban
       motd
+      networking
       nix-config-server
       system-info
       system-recovery
