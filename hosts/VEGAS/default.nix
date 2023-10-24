@@ -1,4 +1,4 @@
-tools: {
+tools: rec {
   ssh.enable = true;
   ssh.id = with tools.dns; {
     publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICz2nGA+Y4OxhMKsV6vKIns3hOoBkK557712h7FfWXcE";
@@ -19,10 +19,9 @@ tools: {
   hyprspace = {
     enable = true;
     id = "QmYs4xNBby2fTs8RnzfXEk161KD4mftBfCiR8yXtgGPj4J";
-    addr = "10.100.3.5";
     listenPort = 995;
     routes = [
-      "10.1.0.1/32"
+      "${interfaces.vstub.addr}/32"
       "10.10.0.0/16"
     ];
   };

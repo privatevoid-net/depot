@@ -10,11 +10,6 @@ with lib;
       type = types.str;
     };
 
-    addr = mkOption {
-      description = "Hyprspace internal IP address.";
-      type = types.str;
-    };
-
     routes = mkOption {
       description = "Networks to export to Hyprspace.";
       type = with types; listOf str;
