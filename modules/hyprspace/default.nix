@@ -3,9 +3,10 @@ let
   inherit (config.networking) hostName;
   inherit (depot.packages) hyprspace;
   hyprspaceCapableNodes = lib.filterAttrs (_: host: host.hyprspace.enable) depot.hours;
-  peersFormatted = builtins.mapAttrs (_: x: {
+  peersFormatted = builtins.mapAttrs (name: x: {
+    inherit name;
     inherit (x.hyprspace) id;
-    routes = map (net: { inherit net; }) ((x.hyprspace.routes or []) ++ [ "${x.hyprspace.addr}/32" ]);
+    routes = map (net: { inherit net; }) x.hyprspace.routes;
   }) hyprspaceCapableNodes;
   peersFiltered = lib.filterAttrs (name: _: name != hostName) peersFormatted;
   peerList = builtins.attrValues peersFiltered;
@@ -17,7 +18,6 @@ let
       name = "hyprspace";
       listen_port = listenPort;
       inherit (myNode.hyprspace) id;
-      address = "${myNode.hyprspace.addr}/24";
       private_key = "@HYPRSPACEPRIVATEKEY@";
     };
     peers = peerList;
@@ -29,7 +29,6 @@ let
 in {
   links.hyprspaceMetrics.protocol = "http";
 
-  networking.hosts = lib.mapAttrs' (k: v: lib.nameValuePair v.hyprspace.addr [k "${k}.hypr"]) hyprspaceCapableNodes;
   age.secrets.hyprspace-key = {
     file = ../../secrets/hyprspace-key- + "${hostName}.age";
     mode = "0400";
