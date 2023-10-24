@@ -58,11 +58,11 @@ in
         ${lib.optionalString (interfaces ? vstub) "bind ${interfaces.vstub.addr}"}
         bind 127.0.0.1
         bind ${link.ipv4}
-        ${lib.optionalString hyprspace.enable "bind ${hyprspace.addr}"}
         hosts ${stevenblack-hosts} {
           fallthrough
         }
         chaos "Private Void DNS" info@privatevoid.net
+        forward hyprspace. 127.80.1.53:5380
         forward . ${backend.tuple} ${otherRecursors} {
           policy sequential
         }
