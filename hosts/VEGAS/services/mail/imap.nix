@@ -9,16 +9,31 @@ let
   certDir = config.security.acme.certs."mail.${domain}".directory;
 
   # TODO: check how this thing does lookups, apply bind dn
-  ldapConfig = with ldap.accounts; pkgs.writeText "dovecot-ldap.conf.ext" ''
+
+  ldapConfigBase = with ldap.accounts; pkgs.writeText "dovecot-ldap.conf.ext" ''
     uris = ${ldap.server.url}
 
     auth_bind = yes
     auth_bind_userdn = ${uidAttribute}=%n,${userSearchBase}
     base = ${userSearchBase}
-    pass_filter = (uid=%n)
+    pass_filter = (&(objectClass=person)(${uidAttribute}=%n))
     pass_attrs = uid=user
+    dn = dn=token
+    dnpass = @DOVECOT2_LDAP_DNPASS@
+  '';
+
+  ldapConfig = "/run/dovecot2/dovecot-ldap.conf.ext";
+
+  writeLdapConfig = pkgs.writeShellScriptBin "write-ldap-config" ''
+    cp ${ldapConfigBase} ${ldapConfig}
+    chmod 600 ${ldapConfig}
+    ${pkgs.replace-secret}/bin/replace-secret '@DOVECOT2_LDAP_DNPASS@' "${config.age.secrets.dovecotLdapToken.path}" ${ldapConfig}
+    chmod 400 ${ldapConfig}
   '';
 in {
+
+  age.secrets.dovecotLdapToken.file = ../../../../secrets/dovecot-ldap-token.age;
+
   networking.firewall.allowedTCPPorts = [ 143 993 ];
 
   services.dovecot2 = {
@@ -62,6 +77,9 @@ in {
       auth_mechanisms = plain login
     '';
   };
+
+  systemd.services.dovecot2.serviceConfig.ExecStartPre = [ "${writeLdapConfig}/bin/write-ldap-config" ];
+
   services.fail2ban.jails.dovecot = ''
     enabled = true
   '';

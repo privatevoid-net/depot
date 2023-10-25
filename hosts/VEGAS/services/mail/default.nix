@@ -4,7 +4,6 @@
     ./imap.nix
     ./opendkim.nix
     ./postfix.nix
-    ./saslauthd.nix
   ];
   services.nginx.virtualHosts."mail.${depot.lib.meta.domain}" = {
     enableACME = true;
