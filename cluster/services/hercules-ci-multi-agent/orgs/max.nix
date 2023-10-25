@@ -2,6 +2,7 @@
 
 {
   services.hercules-ci-agents.max = {
+    enable = true;
     settings = {
       clusterJoinTokenPath = config.age.secrets.hci-token-max.path;
       binaryCachesPath = config.age.secrets.hci-cache-config-max.path;

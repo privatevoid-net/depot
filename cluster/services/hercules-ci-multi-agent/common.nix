@@ -17,7 +17,7 @@ let
 in
 {
   imports = [
-    depot.inputs.hercules-ci-agent.nixosModules.multi-agent-service
+    ./modules/multi-agent-refactored
   ];
 
   age.secrets = mergeMap (name: _: {
