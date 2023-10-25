@@ -1,7 +1,7 @@
 let
   max = (import ./users/max/userinfo.nix null).sshKeys;
   hosts = builtins.mapAttrs (_: v: v._module.specialArgs.depot.reflection)
-    (builtins.getFlake "git+file:.").nixosConfigurations;
+    (builtins.getFlake "git+file://${builtins.getEnv "PWD"}").nixosConfigurations;
   systemKeys = x: x.ssh.id.publicKey or null;
 in with hosts;
 {
