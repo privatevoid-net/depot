@@ -12,16 +12,16 @@
         server = with ldap.server; {
           # TODO: unhardcode everything here
           protocol = "ldaps";
-          hostname = "authsys.virtual-machines.${domain}";
+          hostname = "idm-ldap.internal.${domain}";
           port = 636;
           url = "${protocol}://${connectionString}";
           connectionString = "${hostname}:${builtins.toString port}";
         };
         accounts = with ldap.accounts; {
           domainComponents = ldap.lib.convertDomain domain;
-          uidAttribute = "uid";
+          uidAttribute = "name";
           uidFilter = "(${uidAttribute}=%u)";
-          userSearchBase = "cn=users,cn=accounts,${domainComponents}";
+          userSearchBase = "${domainComponents}";
         };
         lib = {
           convertDomain = domain: with builtins; lib.pipe domain [
