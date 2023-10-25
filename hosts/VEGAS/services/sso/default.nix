@@ -8,9 +8,6 @@ in
 {
   links.keycloak.protocol = "http";
 
-  imports = [
-    ./identity-management.nix
-  ];
   age.secrets.keycloak-dbpass = {
     file = ../../../../secrets/keycloak-dbpass.age;
     owner = "root";
