@@ -8,9 +8,9 @@
       ];
       env.GOPATH.eval = "$REPO_DATA_DIR/go";
     };
-    packages.hyprspace = with pkgs; buildGo120Module {
+    packages.hyprspace = with pkgs; buildGo120Module rec {
       pname = "hyprspace";
-      version = "0.7.1";
+      version = "0.8.0";
 
       src = with inputs.nix-filter.lib; let
         dirs = map inDirectory;
@@ -31,6 +31,8 @@
       };
 
       vendorSha256 = "sha256-cP93ndADvQ9gFvPdNgi3aY4kAaKAuL0wq6P6PcUwIX4=";
+
+      ldflags = [ "-s" "-w" "-X github.com/hyprspace/hyprspace/cli.appVersion=${version}" ];
 
       meta = with lib; {
         description = "A Lightweight VPN Built on top of Libp2p for Truly Distributed Networks.";
