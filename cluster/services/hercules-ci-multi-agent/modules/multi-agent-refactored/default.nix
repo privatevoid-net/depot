@@ -27,6 +27,8 @@
           inherit (agent) group;
           description = "Hercules CI Agent system user for ${name}";
           isSystemUser = true;
+          home = agent.settings.baseDirectory;
+          createHome = true;
         };
         groups.${agent.group} = { };
       });
