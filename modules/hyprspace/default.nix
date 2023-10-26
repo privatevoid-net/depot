@@ -14,12 +14,14 @@ let
   listenPort = myNode.hyprspace.listenPort or 8001;
 
   interfaceConfig = pkgs.writeText "hyprspace.json" (builtins.toJSON {
-    interface = {
-      name = "hyprspace";
-      listen_port = listenPort;
-      inherit (myNode.hyprspace) id;
-      private_key = "@HYPRSPACEPRIVATEKEY@";
-    };
+    listenAddresses = let
+      inherit (myNode.interfaces.primary) addr;
+      port = toString listenPort;
+    in [
+      "/ip4/${addr}/tcp/${port}"
+      "/ip4/${addr}/udp/${port}/quic-v1"
+    ];
+    privateKey = "@HYPRSPACEPRIVATEKEY@";
     peers = peerList;
   });
 
@@ -50,8 +52,7 @@ in {
       Group = "wheel";
       Restart = "on-failure";
       RestartSec = "5s";
-      ExecStart = "${hyprspace}/bin/hyprspace up hyprspace -f -c ${runConfig}";
-      ExecStop = "${hyprspace}/bin/hyprspace down hyprspace";
+      ExecStart = "${hyprspace}/bin/hyprspace up -c ${runConfig}";
       ExecStopPost = "${pkgs.coreutils}/bin/rm -f /run/hyprspace-rpc.hyprspace.sock";
       IPAddressDeny = [
         "10.0.0.0/8"
