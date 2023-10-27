@@ -1,51 +1,54 @@
-{ lib, buildGo118Module, fetchurl, nixosTests, openssl, pkg-config }:
+{ lib
+, buildGoModule
+, fetchurl
+, nixosTests
+, callPackage
+}:
 
-buildGo118Module rec {
-  pname = "ipfs";
-  version = "0.16.0"; # When updating, also check if the repo version changed and adjust repoVersion below
+buildGoModule rec {
+  pname = "kubo";
+  version = "0.23.0"; # When updating, also check if the repo version changed and adjust repoVersion below
   rev = "v${version}";
 
-  repoVersion = "12"; # Also update ipfs-migrator when changing the repo version
+  passthru.repoVersion = "15"; # Also update kubo-migrator when changing the repo version
 
-  # go-ipfs makes changes to it's source tarball that don't match the git source.
+  # Kubo makes changes to its source tarball that don't match the git source.
   src = fetchurl {
     url = "https://github.com/ipfs/kubo/releases/download/${rev}/kubo-source.tar.gz";
-    sha256 = "sha256-FS7lwQS7ybyoIKPkcUtPIe3srO1O/cZN+x1nzWUlF20=";
+    hash = "sha256-ycXn8h8sFGJXVMldneN51lZgXoPaZ/XeXLtqqJ4w6H0=";
   };
 
   # tarball contains multiple files/directories
   postUnpack = ''
-    mkdir ipfs-src
+    mkdir kubo-src
     shopt -s extglob
-    mv !(ipfs-src) ipfs-src || true
-    cd ipfs-src
+    mv !(kubo-src) kubo-src || true
+    cd kubo-src
   '';
+
+  patches = [
+    ./ipfs-allow-publish-with-ipns-mounted.patch
+    ./ipfs-fuse-nuke-getxattr.patch
+  ];
 
   sourceRoot = ".";
 
   subPackages = [ "cmd/ipfs" ];
 
-  buildInputs = [ openssl ];
-  nativeBuildInputs = [ pkg-config ];
-  tags = [ "openssl" ];
+  passthru.tests = {
+    inherit (nixosTests) kubo;
+    repoVersion = callPackage ./test-repoVersion.nix {};
+  };
 
-  passthru.tests.ipfs = nixosTests.ipfs;
-
-  vendorSha256 = null;
+  vendorHash = null;
 
   outputs = [ "out" "systemd_unit" "systemd_unit_hardened" ];
 
-  patches = [
-    ./ipfs-allow-publish-with-ipns-mounted.patch
-    ./ipfs-fuse-nuke-getxattr.patch
-    ./ipfs-unsafe-allow-all-paths-for-filestore.patch
-  ];
-
   postPatch = ''
     substituteInPlace 'misc/systemd/ipfs.service' \
-      --replace '/usr/bin/ipfs' "$out/bin/ipfs"
+      --replace '/usr/local/bin/ipfs' "$out/bin/ipfs"
     substituteInPlace 'misc/systemd/ipfs-hardened.service' \
-      --replace '/usr/bin/ipfs' "$out/bin/ipfs"
+      --replace '/usr/local/bin/ipfs' "$out/bin/ipfs"
   '';
 
   postInstall = ''
@@ -59,10 +62,11 @@ buildGo118Module rec {
   '';
 
   meta = with lib; {
-    description = "A global, versioned, peer-to-peer filesystem";
+    description = "An IPFS implementation in Go";
     homepage = "https://ipfs.io/";
     license = licenses.mit;
     platforms = platforms.unix;
-    maintainers = with maintainers; [ fpletz ];
+    mainProgram = "ipfs";
+    maintainers = with maintainers; [ Luflosi fpletz ];
   };
 }
