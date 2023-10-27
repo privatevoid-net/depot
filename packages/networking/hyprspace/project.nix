@@ -10,7 +10,7 @@
     };
     packages.hyprspace = with pkgs; buildGo120Module rec {
       pname = "hyprspace";
-      version = "0.8.2";
+      version = "0.8.3";
 
       src = with inputs.nix-filter.lib; let
         dirs = map inDirectory;
@@ -30,7 +30,7 @@
         ]);
       };
 
-      vendorSha256 = "sha256-cP93ndADvQ9gFvPdNgi3aY4kAaKAuL0wq6P6PcUwIX4=";
+      vendorSha256 = "sha256-VBCgFbJixBh+pKfYGJVapHqWBpUFfvjl1cwOER2Li6Y=";
 
       ldflags = [ "-s" "-w" "-X github.com/hyprspace/hyprspace/cli.appVersion=${version}" ];
 
