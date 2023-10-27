@@ -15,7 +15,7 @@
           prophet = "12D3KooWQWsHPUUeFhe4b6pyCaD1hBoj8j6Z7S7kTznRTh1p1eVt";
         }.${name};
         multiaddrs = [
-          "/ip4/${self.ipv4}/udp/${self.portStr}/quic"
+          "/ip4/${self.ipv4}/udp/${self.portStr}/quic-v1"
           "/ip4/${self.ipv4}/tcp/${self.portStr}"
         ];
       };

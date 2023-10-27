@@ -30,8 +30,8 @@ in
     swarmAddress = [
       "/ip4/0.0.0.0/tcp/${toString ipfsPort}"
       "/ip4/0.0.0.0/tcp/4001"
-      "/ip4/0.0.0.0/udp/${toString ipfsPort}/quic"
-      "/ip4/0.0.0.0/udp/4001/quic"
+      "/ip4/0.0.0.0/udp/${toString ipfsPort}/quic-v1"
+      "/ip4/0.0.0.0/udp/4001/quic-v1"
     ];
     inherit apiAddress;
     gatewayAddress = "/ip4/${gw.ipv4}/tcp/${gw.portStr}";
@@ -65,6 +65,7 @@ in
         (cluster.config.services.ipfs.otherNodes.node config.networking.hostName);
       Gateway = {
         Writable = false;
+        ExposeRoutingAPI = true;
         APICommands = [];
         HTTPHeaders = {
           Access-Control-Allow-Headers = [
@@ -80,21 +81,20 @@ in
           ];
         };
       };
-      Experimental.AcceleratedDHTClient = true;
       Routing = {
         Type = "custom";
         Routers = {
           WanDHT = {
             Type = "dht";
             Parameters = {
-              Mode = "uato";
+              Mode = "auto";
               PublicIPNetwork = true;
               AcceleratedDHTClient = true;
             };
           };
           CidContact = {
-            Type = "reframe";
-            Parameters.Endpoint = "https://cid.contact/reframe";
+            Type = "http";
+            Parameters.Endpoint = "https://cid.contact";
           };
           Parallel = {
             Type = "parallel";

@@ -34,12 +34,27 @@ in
       locations."/".return = "204";
       locations."${metrics.path}".proxyPass = "http://unix:/run/ipfs/ipfs-api.sock:";
     };
+    "p2p.${domain}" = vhosts.basic // {
+      locations."/".return = "204";
+      locations."/routing" = {
+        proxyPass = gw.url;
+        extraConfig = ''
+          add_header X-Content-Type-Options "";
+          add_header Access-Control-Allow-Origin *;
+        '';
+      };
+    };
   };
   security.acme.certs."ipfs.${domain}" = {
     domain = "*.ipfs.${domain}";
     extraDomainNames = [ "*.ipns.${domain}" ];
     dnsProvider = "pdns";
     group = "nginx";
+  };
+
+  security.acme.certs."p2p.${domain}" = {
+    dnsProvider = "pdns";
+    webroot = lib.mkForce null;
   };
 
   services.nginx.virtualHosts."ipfs.${domain}" = vhosts.basic // {
@@ -62,6 +77,11 @@ in
       Paths = [ "/ipfs" "/ipns" ];
       NoDNSLink = false;
       UseSubdomains = true;
+    };
+    "p2p.${domain}" = {
+      Paths = [ "/routing" ];
+      NoDNSLink = true;
+      UseSubdomains = false;
     };
   };
 
