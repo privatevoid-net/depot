@@ -156,7 +156,7 @@ in
       };
 
       extraConfig = mkOption {
-        type = types.attrs;
+        type = types.attrsOf types.anything;
         description = lib.mdDoc ''
           Attrset of daemon configuration to set using {command}`ipfs config`, every time the daemon starts.
           These are applied last, so may override configuration set by other options in this module.
