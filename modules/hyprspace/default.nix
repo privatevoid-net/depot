@@ -20,7 +20,9 @@ let
     in [
       "/ip4/${addr}/tcp/${port}"
       "/ip4/${addr}/udp/${port}/quic-v1"
-    ];
+    ]
+    ++ (map (port: "/ip4/${addr}/tcp/${toString port}") additionalTCPPorts)
+    ++ (map (port: "/ip4/${addr}/udp/${toString port}/quic-v1") additionalQUICPorts);
     privateKey = "@HYPRSPACEPRIVATEKEY@";
     peers = peerList;
   });
@@ -28,6 +30,15 @@ let
   privateKeyFile = config.age.secrets.hyprspace-key.path;
   runConfig = "/run/hyprspace.json";
   nameservers = lib.unique config.networking.nameservers;
+
+  additionalTCPPorts = [
+    21
+  ];
+  additionalQUICPorts = [
+    21
+    443
+    500
+  ];
 in {
   links.hyprspaceMetrics.protocol = "http";
 
@@ -77,8 +88,8 @@ in {
   };
 
   networking.firewall = {
-    allowedTCPPorts = [ listenPort ];
-    allowedUDPPorts = [ listenPort ];
+    allowedTCPPorts = [ listenPort ] ++ additionalTCPPorts;
+    allowedUDPPorts = [ listenPort ] ++ additionalQUICPorts;
     trustedInterfaces = [ "hyprspace" ];
   };
 
