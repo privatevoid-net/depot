@@ -64,20 +64,13 @@
               LimitSTACK = 256 * 1024 * 1024;
 
               # Hardening.
-              CapabilityBoundingSet = "";
               DeviceAllow = "";
               LockPersonality = true;
               NoNewPrivileges = true;
               PrivateDevices = true;
               PrivateMounts = true;
-              PrivateTmp = true;
-              PrivateUsers = true;
-              ProtectClock = true;
               ProtectControlGroups = true;
               ProtectHome = true;
-              ProtectKernelLogs = true;
-              ProtectKernelModules = true;
-              ProtectKernelTunables = true;
               ProtectSystem = "full";
               RemoveIPC = true;
               RestrictRealtime = true;
