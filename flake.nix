@@ -97,7 +97,6 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
-        hercules-ci-agent.follows = "hercules-ci-agent";
       };
     };
 
