@@ -30,6 +30,6 @@ nixosTest {
 
     with subtest("should reset to real ffmpeg"):
         machine.fail("grep -q '/FAKE/bin/ffmpeg' /var/lib/jellyfin/config/encoding.xml")
-        machine.succeed("grep -q '/nix/store/.*/bin/ffmpeg' /var/lib/jellyfin/config/encoding.xml")
+        machine.wait_until_succeeds("grep -q '/nix/store/.*/bin/ffmpeg' /var/lib/jellyfin/config/encoding.xml")
   '';
 }
