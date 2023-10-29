@@ -87,7 +87,7 @@
     };
     
     hercules-ci-agent = {
-      url = "github:hercules-ci/hercules-ci-agent/experimental-0.10";
+      url = "github:hercules-ci/hercules-ci-agent";
       inputs = {
         flake-parts.follows = "flake-parts";
       };
