@@ -31,8 +31,8 @@ in
 {
   systemd.services.idm-nss-ready = {
     description = "Wait for IDM NSS";
-    requires = [ "kanidm-unixd.service" "nss-user-lookup.target" ];
-    after = [ "kanidm-unixd.service" ];
+    requires = [ "kanidm-unixd.service" "nscd.service" "nss-user-lookup.target" ];
+    after = [ "kanidm-unixd.service" "nscd.service" ];
     before = [ "nss-user-lookup.target" ];
     serviceConfig = {
       ExecStart = lib.getExe idmReady;
