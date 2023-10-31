@@ -54,10 +54,12 @@ in
   };
 
   systemd.services.garage = {
+    unitConfig = {
+      RequiresMountsFor = [ cfg.settings.data_dir ];
+    };
     serviceConfig = {
       IPAddressDeny = [ "any" ];
       IPAddressAllow = [ "127.0.0.1/8" vars.meshNet.cidr ];
-      RequiresMountsFor = [ cfg.settings.data_dir ];
       DynamicUser = false;
       PrivateTmp = true;
       ProtectSystem = true;
