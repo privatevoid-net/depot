@@ -85,6 +85,7 @@ in
           targetLevel = toString (length incantations);
         in {
           description = "Ascension for ${name}";
+          wantedBy = [ "multi-user.target" ];
           inherit (asc) requiredBy before;
           after = asc.after ++ (lib.optional asc.distributed "consul.service");
           serviceConfig.Type = "oneshot";

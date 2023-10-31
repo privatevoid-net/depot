@@ -7,6 +7,12 @@
         inherit (self) nixosModules;
       };
 
+      garage = pkgs.callPackage ./garage.nix {
+        inherit (self'.packages) garage;
+        inherit (self) nixosModules;
+        inherit (config) cluster;
+      };
+
       jellyfin-stateless = pkgs.callPackage ./jellyfin-stateless.nix {
         inherit (self'.packages) jellyfin;
         inherit (config) cluster;
