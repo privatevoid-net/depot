@@ -5,6 +5,10 @@ let
 in
 
 {
+  imports = [
+    ./options.nix
+  ];
+
   services.storage = {
     nodes = {
       external = [ "prophet" ];
@@ -20,6 +24,11 @@ in
         ./garage.nix
         ./garage-options.nix
         ./garage-layout.nix
+        {
+          services.garage = {
+            inherit (config.garage) buckets keys;
+          };
+        }
       ];
       garageInternal = [ ./garage-internal.nix ];
       garageExternal = [ ./garage-external.nix ];
