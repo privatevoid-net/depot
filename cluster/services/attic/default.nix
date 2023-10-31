@@ -11,4 +11,11 @@
       ];
     };
   };
+
+  garage = {
+    keys.attic = { };
+    buckets.attic = {
+      allow.attic = [ "read" "write" ];
+    };
+  };
 }
