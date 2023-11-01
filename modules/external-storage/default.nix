@@ -1,11 +1,7 @@
-{ config, lib, pkgs, ... }:
+{ config, depot, lib, pkgs, ... }:
 
 let
-  s3qlWithSystemd = pkgs.s3ql.overrideAttrs (old: {
-    propagatedBuildInputs = old.propagatedBuildInputs ++ [
-      pkgs.python3Packages.systemd
-    ];
-  });
+  inherit (depot.packages) s3ql;
 
   cfg = config.services.external-storage;
 
@@ -105,7 +101,7 @@ in
                     echo Creating new S3QL filesystem on ${underlayPath}
                     ${pkgs.gnugrep}/bin/grep -m1 fs-passphrase: '${config.age.secrets."storageEncryptionKey-${name}".path}' \
                       | cut -d' ' -f2- \
-                      | ${s3qlWithSystemd}/bin/mkfs.s3ql ${lib.escapeShellArgs commonOptions} -L '${name}' 'local://${underlayPath}'
+                      | ${s3ql}/bin/mkfs.s3ql ${lib.escapeShellArgs commonOptions} -L '${name}' 'local://${underlayPath}'
                   fi
                 '')
               ]
@@ -113,14 +109,14 @@ in
                 "${pkgs.coreutils}/bin/install" "-dm755" fs.mountpoint
               ]
               ([
-                "${s3qlWithSystemd}/bin/fsck.s3ql"
+                "${s3ql}/bin/fsck.s3ql"
                 "local://${underlayPath}"
                 "--compress" "none"
               ] ++ commonOptions)
             ];
 
             ExecStart = lib.escapeShellArgs ([
-              "${s3qlWithSystemd}/bin/mount.s3ql"
+              "${s3ql}/bin/mount.s3ql"
               "local://${underlayPath}"
               fs.mountpoint
               "--fs-name" "${fs.unitName}"
@@ -131,7 +127,7 @@ in
             ] ++ commonOptions);
 
             ExecStop = lib.escapeShellArgs [
-              "${s3qlWithSystemd}/bin/umount.s3ql"
+              "${s3ql}/bin/umount.s3ql"
               "--log" "none"
               fs.mountpoint
             ];
