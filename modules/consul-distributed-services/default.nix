@@ -35,7 +35,7 @@ in
       '';
 
       waitForConsul = pkgs.writeShellScript "wait-for-consul" ''
-        while ! ${consul}/bin/consul lock --name="pre-flight-check" --n=${toString cfg.replicas} --shell=false "$1" ${pkgs.coreutils}/bin/true; do
+        while ! ${consul}/bin/consul lock --name="pre-flight-check" --n=${toString cfg.replicas} --shell=false "$1-pre-flight-check-${config.networking.hostName}-$RANDOM" ${pkgs.coreutils}/bin/true; do
           sleep 1
         done
       '';
