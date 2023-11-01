@@ -97,6 +97,12 @@ super: rec {
 
   prometheus-jitsi-exporter = patch super.prometheus-jitsi-exporter "patches/base/prometheus-jitsi-exporter";
 
+  s3ql = (patch super.s3ql "patches/base/s3ql").overrideAttrs (old: {
+    propagatedBuildInputs = old.propagatedBuildInputs ++ [
+      super.python3Packages.systemd
+    ];
+  });
+
   tempo = (super.tempo.override { buildGoModule = super.buildGo119Module; }).overrideAttrs (_: {
     version = builtins.substring 1 (-1) pins.tempo.version;
     src = super.npins.mkSource pins.tempo;

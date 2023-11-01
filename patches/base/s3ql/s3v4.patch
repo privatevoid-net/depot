@@ -1,0 +1,169 @@
+diff --git a/src/s3ql/backends/s3.py b/src/s3ql/backends/s3.py
+index d19b783..5b5831f 100644
+--- a/src/s3ql/backends/s3.py
++++ b/src/s3ql/backends/s3.py
+@@ -9,6 +9,7 @@ This work can be distributed under the terms of the GNU GPLv3.
+ from ..logging import logging, QuietError # Ensure use of custom logger class
+ from . import s3c
+ from .s3c import get_S3Error
++from .s3c import hmac_sha256
+ from .common import NoSuchObject, retry
+ from ..inherit_docstrings import copy_ancestor_docstring
+ from xml.sax.saxutils import escape as xml_escape
+@@ -236,10 +237,3 @@ class Backend(s3c.Backend):
+         signing_key = hmac_sha256(service_key, b'aws4_request')
+ 
+         self.signing_key = (signing_key, ymd)
+-
+-def hmac_sha256(key, msg, hex=False):
+-    d = hmac.new(key, msg, hashlib.sha256)
+-    if hex:
+-        return d.hexdigest()
+-    else:
+-        return d.digest()
+diff --git a/src/s3ql/backends/s3c.py b/src/s3ql/backends/s3c.py
+index 11687d5..8d9f887 100644
+--- a/src/s3ql/backends/s3c.py
++++ b/src/s3ql/backends/s3c.py
+@@ -78,6 +78,8 @@ class Backend(AbstractBackend, metaclass=ABCDocstMeta):
+         self.conn = self._get_conn()
+         self.password = options.backend_password
+         self.login = options.backend_login
++        self.region = "us-east-1"
++        self.signing_key = None
+ 
+     @property
+     @copy_ancestor_docstring
+@@ -597,43 +599,76 @@ class Backend(AbstractBackend, metaclass=ABCDocstMeta):
+     def _authorize_request(self, method, path, headers, subres, query_string):
+         '''Add authorization information to *headers*'''
+ 
+-        # See http://docs.amazonwebservices.com/AmazonS3/latest/dev/RESTAuthentication.html
++        # See http://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-auth-using-authorization-header.html
+ 
+-        # Date, can't use strftime because it's locale dependent
+         now = time.gmtime()
+-        headers['Date'] = ('%s, %02d %s %04d %02d:%02d:%02d GMT'
+-                           % (C_DAY_NAMES[now.tm_wday],
+-                              now.tm_mday,
+-                              C_MONTH_NAMES[now.tm_mon - 1],
+-                              now.tm_year, now.tm_hour,
+-                              now.tm_min, now.tm_sec))
+-
+-        auth_strs = [method, '\n']
+-
+-        for hdr in ('Content-MD5', 'Content-Type', 'Date'):
+-            if hdr in headers:
+-                auth_strs.append(headers[hdr])
+-            auth_strs.append('\n')
+-
+-        for hdr in sorted(x for x in headers if x.lower().startswith('x-amz-')):
+-            val = ' '.join(re.split(r'\s*\n\s*', headers[hdr].strip()))
+-            auth_strs.append('%s:%s\n' % (hdr, val))
+-
+-        # Always include bucket name in path for signing
+-        if self.hostname.startswith(self.bucket_name):
+-            path = '/%s%s' % (self.bucket_name, path)
+-        sign_path = urllib.parse.quote(path)
+-        auth_strs.append(sign_path)
+-        if subres:
+-            auth_strs.append('?%s' % subres)
++        #now = time.strptime('Fri, 24 May 2013 00:00:00 GMT',
++        #                    '%a, %d %b %Y %H:%M:%S GMT')
+ 
+-        # False positive, hashlib *does* have sha1 member
+-        #pylint: disable=E1101
+-        auth_str = ''.join(auth_strs).encode()
+-        signature = b64encode(hmac.new(self.password.encode(), auth_str,
+-                                       hashlib.sha1).digest()).decode()
++        ymd = time.strftime('%Y%m%d', now)
++        ymdhms = time.strftime('%Y%m%dT%H%M%SZ', now)
+ 
+-        headers['Authorization'] = 'AWS %s:%s' % (self.login, signature)
++        headers['x-amz-date'] = ymdhms
++        headers['x-amz-content-sha256'] = 'UNSIGNED-PAYLOAD'
++        #headers['x-amz-content-sha256'] = hashlib.sha256(body).hexdigest()
++        headers.pop('Authorization', None)
++
++        auth_strs = [method]
++        auth_strs.append(urllib.parse.quote(path))
++
++        if query_string:
++            s = urllib.parse.urlencode(query_string, doseq=True,
++                                       quote_via=urllib.parse.quote).split('&')
++        else:
++            s = []
++        if subres:
++            s.append(urllib.parse.quote(subres) + '=')
++        if s:
++            s = '&'.join(sorted(s))
++        else:
++            s = ''
++        auth_strs.append(s)
++
++        # Headers
++        sig_hdrs = sorted(x.lower() for x in headers.keys())
++        for hdr in sig_hdrs:
++            auth_strs.append('%s:%s' % (hdr, headers[hdr].strip()))
++        auth_strs.append('')
++        auth_strs.append(';'.join(sig_hdrs))
++        auth_strs.append(headers['x-amz-content-sha256'])
++        can_req = '\n'.join(auth_strs)
++        #log.debug('canonical request: %s', can_req)
++
++        can_req_hash = hashlib.sha256(can_req.encode()).hexdigest()
++        str_to_sign = ("AWS4-HMAC-SHA256\n" + ymdhms + '\n' +
++                       '%s/%s/s3/aws4_request\n' % (ymd, self.region) +
++                       can_req_hash)
++        #log.debug('string to sign: %s', str_to_sign)
++
++        if self.signing_key is None or self.signing_key[1] != ymd:
++            self.update_signing_key(ymd)
++        signing_key = self.signing_key[0]
++
++        sig = hmac_sha256(signing_key, str_to_sign.encode(), hex=True)
++
++        cred = ('%s/%04d%02d%02d/%s/s3/aws4_request'
++                % (self.login, now.tm_year, now.tm_mon, now.tm_mday,
++                   self.region))
++
++        headers['Authorization'] = (
++            'AWS4-HMAC-SHA256 '
++            'Credential=%s,'
++            'SignedHeaders=%s,'
++            'Signature=%s' % (cred, ';'.join(sig_hdrs), sig))
++
++    def update_signing_key(self, ymd):
++        date_key = hmac_sha256(("AWS4" + self.password).encode(),
++                               ymd.encode())
++        region_key = hmac_sha256(date_key, self.region.encode())
++        service_key = hmac_sha256(region_key, b's3')
++        signing_key = hmac_sha256(service_key, b'aws4_request')
++
++        self.signing_key = (signing_key, ymd)
+ 
+     def _send_request(self, method, path, headers, subres=None, query_string=None, body=None):
+         '''Add authentication and send request
+@@ -646,7 +681,7 @@ class Backend(AbstractBackend, metaclass=ABCDocstMeta):
+ 
+         if not self.hostname.startswith(self.bucket_name):
+             path = '/%s%s' % (self.bucket_name, path)
+-        headers['host'] = self.hostname
++        headers['host'] = self.hostname if self.port == "80" else f"{self.hostname}:{self.port}"
+ 
+         self._authorize_request(method, path, headers, subres, query_string)
+ 
+@@ -950,6 +985,13 @@ def md5sum_b64(buf):
+ 
+     return b64encode(hashlib.md5(buf).digest()).decode('ascii')
+ 
++def hmac_sha256(key, msg, hex=False):
++    d = hmac.new(key, msg, hashlib.sha256)
++    if hex:
++        return d.hexdigest()
++    else:
++        return d.digest()
++
+ def _parse_retry_after(header):
+     '''Parse headers for Retry-After value'''
+ 
