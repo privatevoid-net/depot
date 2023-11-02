@@ -20,7 +20,7 @@ let
   rewriteRecords = lib.filterAttrs (_: record: record.rewrite.target != null) cluster.config.dns.records;
 
   rewrites = lib.mapAttrsToList (_: record: let
-    maybeEscapeRegex = str: if record.write.type == "regex" then "^${lib.escapeRegex str}$" else str;
+    maybeEscapeRegex = str: if record.rewrite.type == "regex" then "^${lib.escapeRegex str}$" else str;
   in "rewrite stop name ${record.rewrite.type} ${record.name}${maybeEscapeRegex ".${record.root}."} ${record.rewrite.target}. answer auto") rewriteRecords;
 
   rewriteConf = pkgs.writeText "coredns-rewrites.conf" (lib.concatStringsSep "\n" rewrites);
