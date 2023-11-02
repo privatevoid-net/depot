@@ -140,7 +140,7 @@ in
 
   config = {
     system.extraIncantations = {
-      runGarage = i: script: i.execShellWith [ config.services.garage.package ] ''
+      runGarage = i: script: i.execShellWith [ config.services.garage.package pkgs.gnugrep ] ''
         source ${garageShellLibrary}
         waitForGarage
         ${script}
