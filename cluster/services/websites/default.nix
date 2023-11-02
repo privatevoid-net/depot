@@ -52,6 +52,6 @@ in
   };
 
   dns.records = lib.genAttrs [ "www" "draw" "stop-using-nix-env" "whoami" ] (lib.const {
-    rewrite.target = "static-lb";
+    consulService = "static-lb";
   });
 }
