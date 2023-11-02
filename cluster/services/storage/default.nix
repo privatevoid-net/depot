@@ -44,4 +44,11 @@ in
       ipv4 = meshIpForNode name;
     };
   });
+
+  garage = {
+    keys.storage-prophet = {};
+    buckets.storage-prophet = {
+      allow.storage-prophet = [ "read" "write" ];
+    };
+  };
 }

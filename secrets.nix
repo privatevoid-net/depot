@@ -45,7 +45,7 @@ in with hosts;
   "cluster/services/patroni/passwords/rewind.age".publicKeys = max ++ map systemKeys [ thunderskin VEGAS prophet ];
   "cluster/services/patroni/passwords/superuser.age".publicKeys = max ++ map systemKeys [ thunderskin VEGAS prophet ];
   "cluster/services/storage/secrets/heresy-encryption-key.age".publicKeys = max ++ map systemKeys [ VEGAS ];
-  "cluster/services/storage/secrets/external-storage-encryption-key-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
+  "cluster/services/storage/secrets/external-storage-auth-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "cluster/services/storage/secrets/garage-rpc-secret.age".publicKeys = max ++ map systemKeys [ checkmate VEGAS prophet ];
   "cluster/services/storage/secrets/storage-box-credentials.age".publicKeys = max ++ map systemKeys [ checkmate VEGAS prophet ];
   "cluster/services/wireguard/mesh-keys/checkmate.age".publicKeys = max ++ map systemKeys [ checkmate ];

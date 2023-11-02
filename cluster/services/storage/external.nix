@@ -1,15 +1,16 @@
-{ config, ... }:
+{ config, cluster, ... }:
+
+let
+  inherit (config.networking) hostName;
+in
 
 {
   services.external-storage = {
-    underlays.default = {
-      subUser = "sub1";
-      credentialsFile = ./secrets/storage-box-credentials.age;
-      path = "/fs/by-host/${config.networking.hostName}";
-    };
     fileSystems.external = {
       mountpoint = "/srv/storage";
-      encryptionKeyFile = ./secrets/external-storage-encryption-key-${config.networking.hostName}.age;
+      authFile = ./secrets/external-storage-auth-${hostName}.age;
+      backend = "s3c://${cluster.config.hostLinks.${hostName}.garageS3.tuple}/storage-${hostName}";
+      backendOptions = [ "no-ssl" ];
     };
   };
 }
