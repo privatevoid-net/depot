@@ -9,7 +9,7 @@
       mountpoint = "/srv/heresy";
       unitName = "heresy";
       unitDescription = "Heresy Filesystem";
-      encryptionKeyFile = ./secrets/heresy-encryption-key.age;
+      authFile = ./secrets/heresy-encryption-key.age;
       underlay = "heresy";
     };
   };
