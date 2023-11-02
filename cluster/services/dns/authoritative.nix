@@ -1,4 +1,4 @@
-{ cluster, config, depot, lib, ... }:
+{ cluster, config, depot, lib, pkgs, ... }:
 
 let
   inherit (depot.reflection) interfaces;
@@ -16,6 +16,12 @@ let
   translateConfig = cfg: let
     configList = lib.mapAttrsToList (n: v: "${n}=${v}") cfg;
   in lib.concatStringsSep "\n" configList;
+
+  rewriteRecords = lib.filterAttrs (_: record: record.rewriteTarget != null) cluster.config.dns.records;
+
+  rewrites = lib.mapAttrsToList (_: record: "rewrite stop name exact ${record.name}.${record.root}. ${record.rewriteTarget}.") rewriteRecords;
+
+  rewriteConf = pkgs.writeText "coredns-rewrites.conf" (lib.concatStringsSep "\n" rewrites);
 in {
   links.localAuthoritativeDNS = {};
 
@@ -64,6 +70,7 @@ in {
         }
         forward service.eu-central.sd-magic.${domain} 127.0.0.1:8600
         forward addr.eu-central.sd-magic.${domain} 127.0.0.1:8600
+        import ${rewriteConf}
         forward . ${config.links.localAuthoritativeDNS.tuple} ${otherDnsServers} {
           policy sequential
         }

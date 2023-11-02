@@ -5,6 +5,10 @@ let
   cfg = config.services.dns;
 in
 {
+  imports = [
+    ./options.nix
+  ];
+
   vars.pdns-api-key-secret = {
     file = ./pdns-api-key.age;
     mode = "0400";
