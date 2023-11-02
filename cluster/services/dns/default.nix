@@ -59,4 +59,6 @@ in
       client = ./client.nix;
     };
   };
+
+  dns.records.securedns.consulService = "securedns";
 }
