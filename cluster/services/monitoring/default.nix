@@ -69,4 +69,6 @@ in
       ];
     };
   };
+
+  dns.records.monitoring.consulService = "grafana";
 }
