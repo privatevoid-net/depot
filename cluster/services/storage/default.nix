@@ -13,10 +13,9 @@ in
     nodes = {
       external = [ "prophet" ];
       heresy = [ "VEGAS" ];
-      garage = [ "checkmate" "prophet" "VEGAS" ];
+      garage = [ "prophet" "VEGAS" ];
       garageInternal = [ "VEGAS" ];
-      garageExternal = [ "checkmate" "prophet" ];
-      garageLimitMemory = [ "checkmate" ];
+      garageExternal = [ "prophet" ];
     };
     nixos = {
       external = [ ./external.nix ];
@@ -33,7 +32,6 @@ in
       ];
       garageInternal = [ ./garage-internal.nix ];
       garageExternal = [ ./garage-external.nix ];
-      garageLimitMemory = [ ./garage-limit-memory.nix ];
     };
   };
 
