@@ -29,11 +29,11 @@ in
   };
 
   config = {
-    boot.supportedFilesystems = [ "cifs" ];
+    boot.supportedFilesystems = lib.mkIf (cfg.underlays != {}) [ "cifs" ];
 
     age.secrets = lib.mkMerge [
       (create cfg.underlays (name: ul: lib.nameValuePair "cifsCredentials-${name}" { file = ul.credentialsFile; }))
-      (create cfg.fileSystems (name: fs: lib.nameValuePair "storageEncryptionKey-${name}" { file = fs.encryptionKeyFile; }))
+      (create cfg.fileSystems (name: fs: lib.nameValuePair "storageAuth-${name}" { file = fs.authFile; }))
     ];
 
     fileSystems = create cfg.underlays (name: ul: {
@@ -71,7 +71,12 @@ in
       services = create cfg.fileSystems (name: fs: {
         name = fs.unitName;
         value = let
+          isUnderlay = fs.underlay != null;
           underlayPath = cfg.underlays.${fs.underlay}.mountpoint;
+
+          backendUrl = if isUnderlay then "local://${underlayPath}" else fs.backend;
+
+          fsType = if isUnderlay then "local" else lib.head (lib.strings.match "([a-z0-9]*)://.*" backendUrl);
         in {
           description = fs.unitDescription;
           wantedBy = [ "multi-user.target" ];
@@ -84,40 +89,52 @@ in
             util-linux
           ];
 
-          unitConfig.RequiresMountsFor = underlayPath;
+          unitConfig.RequiresMountsFor = lib.mkIf isUnderlay underlayPath;
 
           serviceConfig = let
             commonOptions = [
               "--cachedir" fs.cacheDir
-              "--authfile" config.age.secrets."storageEncryptionKey-${name}".path
-            ];
+              "--authfile" config.age.secrets."storageAuth-${name}".path
+            ] ++ (lib.optionals (fs.backendOptions != []) [ "--backend-options" (lib.concatStringsSep "," fs.backendOptions) ]);
           in {
             Type = "notify";
 
             ExecStartPre = map lib.escapeShellArgs [
               [
-                (pkgs.writeShellScript "create-s3ql-filesystem" ''
-                  if ! test -e ${underlayPath}/s3ql_passphrase; then
-                    echo Creating new S3QL filesystem on ${underlayPath}
-                    ${pkgs.gnugrep}/bin/grep -m1 fs-passphrase: '${config.age.secrets."storageEncryptionKey-${name}".path}' \
+                (let
+                  mkfsEncrypted = ''
+                    ${pkgs.gnugrep}/bin/grep -m1 fs-passphrase: '${config.age.secrets."storageAuth-${name}".path}' \
                       | cut -d' ' -f2- \
-                      | ${s3ql}/bin/mkfs.s3ql ${lib.escapeShellArgs commonOptions} -L '${name}' 'local://${underlayPath}'
+                      | ${s3ql}/bin/mkfs.s3ql ${lib.escapeShellArgs commonOptions} -L '${name}' '${backendUrl}'
+                  '';
+
+                  mkfsPlain = ''
+                    ${s3ql}/bin/mkfs.s3ql ${lib.escapeShellArgs commonOptions} --plain -L '${name}' '${backendUrl}'
+                  '';
+
+                  detectFs = {
+                    local = "test -e ${underlayPath}/s3ql_metadata";
+                  }.${fsType} or null;
+                in pkgs.writeShellScript "create-s3ql-filesystem" (lib.optionalString (detectFs != null) ''
+                  if ! ${detectFs}; then
+                    echo Creating new S3QL filesystem on ${backendUrl}
+                    ${if fs.encrypt then mkfsEncrypted else mkfsPlain}
                   fi
-                '')
+                ''))
               ]
               [
                 "${pkgs.coreutils}/bin/install" "-dm755" fs.mountpoint
               ]
               ([
                 "${s3ql}/bin/fsck.s3ql"
-                "local://${underlayPath}"
+                backendUrl
                 "--compress" "none"
               ] ++ commonOptions)
             ];
 
             ExecStart = lib.escapeShellArgs ([
               "${s3ql}/bin/mount.s3ql"
-              "local://${underlayPath}"
+              backendUrl
               fs.mountpoint
               "--fs-name" "${fs.unitName}"
               "--allow-other"

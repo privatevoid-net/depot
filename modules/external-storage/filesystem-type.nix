@@ -15,7 +15,11 @@ with lib;
       type = types.str;
       default = "Remote Storage | ${name}";
     };
-    encryptionKeyFile = mkOption {
+    encrypt = mkOption {
+      type = types.bool;
+      default = false;
+    };
+    authFile = mkOption {
       type = types.path;
     };
     cacheDir = mkOption {
@@ -23,8 +27,15 @@ with lib;
       default = "/var/cache/remote-storage/${name}";
     };
     underlay = mkOption {
-      type = types.str;
-      default = "default";
+      type = with types; nullOr str;
+      default = null;
+    };
+    backend = mkOption {
+      type = with types; nullOr str;
+    };
+    backendOptions = mkOption {
+      type = with types; listOf str;
+      default = [];
     };
     dependentServices = mkOption {
       type = with types; listOf str;
