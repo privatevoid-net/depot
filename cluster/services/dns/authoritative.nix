@@ -17,9 +17,11 @@ let
     configList = lib.mapAttrsToList (n: v: "${n}=${v}") cfg;
   in lib.concatStringsSep "\n" configList;
 
-  rewriteRecords = lib.filterAttrs (_: record: record.rewriteTarget != null) cluster.config.dns.records;
+  rewriteRecords = lib.filterAttrs (_: record: record.rewrite.target != null) cluster.config.dns.records;
 
-  rewrites = lib.mapAttrsToList (_: record: "rewrite stop name exact ${record.name}.${record.root}. ${record.rewriteTarget}.") rewriteRecords;
+  rewrites = lib.mapAttrsToList (_: record: let
+    maybeEscapeRegex = str: if record.write.type == "regex" then "^${lib.escapeRegex str}$" else str;
+  in "rewrite stop name ${record.rewrite.type} ${record.name}${maybeEscapeRegex ".${record.root}."} ${record.rewrite.target}. answer auto") rewriteRecords;
 
   rewriteConf = pkgs.writeText "coredns-rewrites.conf" (lib.concatStringsSep "\n" rewrites);
 in {

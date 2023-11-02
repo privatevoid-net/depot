@@ -34,13 +34,19 @@ let
         type = with types; nullOr str;
         default = null;
       };
-      rewriteTarget = mkOption {
-        type = with types; nullOr str;
-        default = null;
+      rewrite = {
+        target = mkOption {
+          type = with types; nullOr str;
+          default = null;
+        };
+        type = mkOption {
+          type = types.enum [ "exact" "substring" "prefix" "suffix" "regex" ];
+          default = "exact";
+        };
       };
     };
     config = {
-      rewriteTarget = mkIf (config.consulService != null) "${config.consulService}.${config.consulServicesRoot}";
+      rewrite.target = mkIf (config.consulService != null) "${config.consulService}.${config.consulServicesRoot}";
     };
   });
 in
