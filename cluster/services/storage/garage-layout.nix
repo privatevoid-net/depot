@@ -4,10 +4,6 @@
     requiredBy = [ "garage.service" ];
     after = [ "garage.service" "garage-layout-init.service" ];
     incantations = i: [
-      (i.runGarage ''
-        garage layout remove "$(getNodeId checkmate)"
-        garage layout apply --version 2
-      '')
     ];
   };
 
