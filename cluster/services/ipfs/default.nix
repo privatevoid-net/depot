@@ -49,4 +49,10 @@
     address = "https://bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354.ipfs.${depot.lib.meta.domain}/";
     module = "https2xx";
   };
+
+  dns.records = {
+    p2p.consulService = "ipfs-gateway";
+    ".*\\.ipfs".consulService = "ipfs-gateway";
+    ".*\\.ipns".consulService = "ipfs-gateway";
+  };
 }
