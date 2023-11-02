@@ -58,4 +58,6 @@ in
       module = "ircsConnect";
     };
   };
+
+  dns.records.irc.consulService = "irc";
 }
