@@ -16,6 +16,7 @@ in
       garage = [ "checkmate" "prophet" "VEGAS" ];
       garageInternal = [ "VEGAS" ];
       garageExternal = [ "checkmate" "prophet" ];
+      garageLimitMemory = [ "checkmate" ];
     };
     nixos = {
       external = [ ./external.nix ];
@@ -32,6 +33,7 @@ in
       ];
       garageInternal = [ ./garage-internal.nix ];
       garageExternal = [ ./garage-external.nix ];
+      garageLimitMemory = [ ./garage-limit-memory.nix ];
     };
   };
 
