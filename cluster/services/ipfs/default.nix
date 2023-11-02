@@ -52,11 +52,11 @@
 
   dns.records = {
     p2p.consulService = "ipfs-gateway";
-    ".*\\.ipfs" = {
+    "\\.ipfs" = {
       consulService = "ipfs-gateway";
       rewrite.type = "regex";
     };
-    ".*\\.ipns" = {
+    "\\.ipns" = {
       consulService = "ipfs-gateway";
       rewrite.type = "regex";
     };
