@@ -24,6 +24,7 @@ in
         ./garage.nix
         ./garage-options.nix
         ./garage-layout.nix
+        ./garage-gateway.nix
         {
           services.garage = {
             inherit (config.garage) buckets keys;
@@ -51,4 +52,6 @@ in
       allow.storage-prophet = [ "read" "write" ];
     };
   };
+
+  dns.records.garage.consulService = "garage";
 }
