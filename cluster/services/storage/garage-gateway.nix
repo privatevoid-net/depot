@@ -14,7 +14,7 @@ in
       locations = {
         "/".proxyPass = cluster.config.hostLinks.${config.networking.hostName}.garageS3.url;
 
-        "= /".proxyPass = config.links.garageMetrics.tuple;
+        "= /".proxyPass = config.links.garageMetrics.url;
       };
     };
   };
