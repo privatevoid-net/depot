@@ -17,4 +17,6 @@ in
       ./remote-api.nix
     ];
   };
+
+  dns.records."consul-remote.internal".consulService = "consul-remote";
 }
