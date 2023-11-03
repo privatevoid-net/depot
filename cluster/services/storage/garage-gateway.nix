@@ -37,14 +37,12 @@ in
           http = "https://${address}/health";
           tls_server_name = "garage.${domain}";
           header.Host = lib.singleton tls_server_name;
-          method = "HEAD";
         }
         {
           name = "Garage Node";
           id = "service:garage:node";
           interval = "5s";
           http = "${config.links.garageMetrics.url}/health";
-          method = "HEAD";
         }
       ];
     };
