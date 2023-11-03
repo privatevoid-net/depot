@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, depot, lib, ... }:
 
 let
   meshIpForNode = name: config.vars.mesh.${name}.meshIp;
@@ -37,6 +37,12 @@ in
       garageInternal = [ ./garage-internal.nix ];
       garageExternal = [ ./garage-external.nix ];
     };
+  };
+
+  links.garageS3 = {
+    hostname = "garage.${depot.lib.meta.domain}";
+    port = 443;
+    protocol = "https";
   };
 
   hostLinks = lib.genAttrs config.services.storage.nodes.garage (name: {

@@ -1,7 +1,7 @@
 { config, cluster, depot, lib, ... }:
 
 let
-  inherit (depot.lib.meta) domain;
+  link = cluster.config.links.garageS3;
 in
 
 {
@@ -10,7 +10,7 @@ in
   services.garage.settings.admin.api_bind_addr = config.links.garageMetrics.tuple;
 
   services.nginx.virtualHosts = {
-    "garage.${domain}" = depot.lib.nginx.vhosts.basic // {
+    ${link.hostname} = depot.lib.nginx.vhosts.basic // {
       locations = {
         "/".proxyPass = cluster.config.hostLinks.${config.networking.hostName}.garageS3.url;
 
@@ -18,7 +18,7 @@ in
       };
     };
   };
-  security.acme.certs."garage.${domain}" = {
+  security.acme.certs.${link.hostname} = {
     dnsProvider = "pdns";
     webroot = lib.mkForce null;
   };
@@ -28,15 +28,15 @@ in
     definition = rec {
       name = "garage";
       address = depot.reflection.interfaces.primary.addrPublic;
-      port = 443;
+      inherit (link) port;
       checks = [
-        rec {
+        {
           name = "Frontend";
           id = "service:garage:frontend";
           interval = "60s";
           http = "https://${address}/health";
-          tls_server_name = "garage.${domain}";
-          header.Host = lib.singleton tls_server_name;
+          tls_server_name = link.hostname;
+          header.Host = lib.singleton link.hostname;
         }
         {
           name = "Garage Node";
