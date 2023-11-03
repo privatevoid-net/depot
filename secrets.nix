@@ -30,6 +30,7 @@ in with hosts;
   "cluster/services/hercules-ci-multi-agent/secrets/hci-token-private-void-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/hercules-ci-multi-agent/secrets/hci-token-private-void-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "cluster/services/idm/secrets/service-account-checkmate.age".publicKeys = max ++ map systemKeys [ checkmate ];
+  "cluster/services/idm/secrets/service-account-grail.age".publicKeys = max ++ map systemKeys [ grail ];
   "cluster/services/idm/secrets/service-account-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "cluster/services/idm/secrets/service-account-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/idm/secrets/service-account-soda.age".publicKeys = max ++ map systemKeys [ soda ];
