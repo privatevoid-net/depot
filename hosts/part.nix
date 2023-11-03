@@ -16,6 +16,8 @@ in with tools.dns;
       VEGAS = import ./VEGAS tools;
 
       prophet = import ./prophet tools;
+
+      grail = import ./grail tools;
     };
 
     fromFlesh = {
