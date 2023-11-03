@@ -47,7 +47,7 @@ in
       storage = {
         type = "s3";
         region = "us-east-1";
-        endpoint = cluster.config.hostLinks.${hostName}.garageS3.url;
+        endpoint = cluster.config.links.garageS3.url;
         bucket = "attic";
       };
     };
