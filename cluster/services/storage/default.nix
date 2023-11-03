@@ -43,6 +43,7 @@ in
     hostname = "garage.${depot.lib.meta.domain}";
     port = 443;
     protocol = "https";
+    url = with config.links.garageS3; lib.mkForce "${protocol}://${hostname}";
   };
 
   hostLinks = lib.genAttrs config.services.storage.nodes.garage (name: {
