@@ -49,6 +49,7 @@ in with hosts;
   "cluster/services/storage/secrets/garage-rpc-secret.age".publicKeys = max ++ map systemKeys [ checkmate VEGAS prophet ];
   "cluster/services/storage/secrets/storage-box-credentials.age".publicKeys = max ++ map systemKeys [ checkmate VEGAS prophet ];
   "cluster/services/wireguard/mesh-keys/checkmate.age".publicKeys = max ++ map systemKeys [ checkmate ];
+  "cluster/services/wireguard/mesh-keys/grail.age".publicKeys = max ++ map systemKeys [ grail ];
   "cluster/services/wireguard/mesh-keys/thunderskin.age".publicKeys = max ++ map systemKeys [ thunderskin ];
   "cluster/services/wireguard/mesh-keys/VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/wireguard/mesh-keys/prophet.age".publicKeys = max ++ map systemKeys [ prophet ];

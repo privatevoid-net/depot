@@ -27,6 +27,16 @@ in
         extraRoutes = [];
       };
     };
+    grail.mesh = {
+      ipv4 = getExtAddr hours.grail;
+      extra = {
+        meshIp = "10.1.1.6";
+        inherit meshNet;
+        pubKey = "0WAiQGdWySsGWFUk+a9e0I+BDTKwTyWQdFT2d7BMfDQ=";
+        privKeyFile = ./mesh-keys/grail.age;
+        extraRoutes = [];
+      };
+    };
     thunderskin.mesh = {
       ipv4 = getExtAddr hours.thunderskin;
       extra = {
@@ -60,7 +70,7 @@ in
   };
   services.wireguard = {
     nodes = {
-      mesh = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
+      mesh = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
     };
     nixos = {
       mesh = ./mesh.nix;
