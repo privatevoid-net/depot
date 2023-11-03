@@ -20,6 +20,12 @@ in
     group = "garage";
   };
 
+  system.ascensions.garage-layout = {
+    distributed = true;
+    requiredBy = [ "garage.service" ];
+    after = [ "garage.service" "garage-layout-init.service" ];
+  };
+
   services.garage = {
     enable = true;
     package = depot.packages.garage;

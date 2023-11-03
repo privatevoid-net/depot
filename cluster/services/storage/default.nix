@@ -14,6 +14,7 @@ in
       external = [ "prophet" ];
       heresy = [ "VEGAS" ];
       garage = [ "prophet" "VEGAS" ];
+      garageConfig = [ "prophet" "VEGAS" ];
       garageInternal = [ "VEGAS" ];
       garageExternal = [ "prophet" ];
     };
@@ -24,6 +25,8 @@ in
         ./garage.nix
         ./garage-options.nix
         ./garage-layout.nix
+      ];
+      garageConfig = [
         ./garage-gateway.nix
         {
           services.garage = {

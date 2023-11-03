@@ -1,11 +1,6 @@
 {
-  system.ascensions.garage-layout = {
-    distributed = true;
-    requiredBy = [ "garage.service" ];
-    after = [ "garage.service" "garage-layout-init.service" ];
-    incantations = i: [
-    ];
-  };
+  system.ascensions.garage-layout.incantations = i: [
+  ];
 
   services.garage.layout.initial = {
     prophet = { zone = "eu-central"; capacity = 1000; };
