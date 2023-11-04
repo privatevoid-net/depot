@@ -30,7 +30,7 @@ in
     enable = true;
     package = depot.packages.garage;
     settings = {
-      replication_mode = "2-dangerous";
+      replication_mode = 3;
       block_size = 16 * 1024 * 1024;
       db_engine = "lmdb";
       metadata_dir = "/var/lib/garage-metadata";

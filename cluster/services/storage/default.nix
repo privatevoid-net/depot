@@ -13,10 +13,10 @@ in
     nodes = {
       external = [ "prophet" ];
       heresy = [ "VEGAS" ];
-      garage = [ "prophet" "VEGAS" ];
-      garageConfig = [ "prophet" "VEGAS" ];
+      garage = [ "grail" "prophet" "VEGAS" ];
+      garageConfig = [ "grail" "prophet" "VEGAS" ];
       garageInternal = [ "VEGAS" ];
-      garageExternal = [ "prophet" ];
+      garageExternal = [ "grail" "prophet" ];
     };
     nixos = {
       external = [ ./external.nix ];
