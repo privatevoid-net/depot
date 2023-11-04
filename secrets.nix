@@ -16,7 +16,7 @@ in with hosts;
   "cluster/services/dns/pdns-admin-oidc-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/dns/pdns-admin-salt.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/dns/pdns-admin-secret.age".publicKeys = max ++ map systemKeys [ VEGAS ];
-  "cluster/services/dns/pdns-api-key.age".publicKeys = max ++ map systemKeys [ checkmate thunderskin VEGAS prophet ];
+  "cluster/services/dns/pdns-api-key.age".publicKeys = max ++ map systemKeys [ checkmate grail thunderskin VEGAS prophet ];
   "cluster/services/dns/pdns-db-credentials.age".publicKeys = max ++ map systemKeys [ checkmate VEGAS prophet ];
   "cluster/services/forge/credentials/forgejo-oidc-secret.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/forge/credentials/forgejo-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
