@@ -51,7 +51,7 @@ in
   });
   services.monitoring = {
     nodes = {
-      client = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
+      client = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
       blackbox = [ "checkmate" "VEGAS" "prophet" ];
       grafana = [ "VEGAS" "prophet" ];
       logging = [ "VEGAS" ];
