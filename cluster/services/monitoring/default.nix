@@ -42,6 +42,10 @@ in
       protocol = "http";
       ipv4 = meshIpFor "server";
     };
+    tempo-zipkin-http = {
+      protocol = "http";
+      ipv4 = meshIpFor "server";
+    };
   };
   hostLinks = lib.genAttrs config.services.monitoring.nodes.grafana (name: {
     grafana = {

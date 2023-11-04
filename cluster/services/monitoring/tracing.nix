@@ -10,11 +10,14 @@ let
       grpc_listen_address = links.tempo-grpc.ipv4;
       grpc_listen_port = links.tempo-grpc.port;
     };
-    distributor.receivers.otlp = {
-      protocols = {
-        http.endpoint = links.tempo-otlp-http.tuple;
-        grpc.endpoint = links.tempo-otlp-grpc.tuple;
+    distributor.receivers = {
+      otlp = {
+        protocols = {
+          http.endpoint = links.tempo-otlp-http.tuple;
+          grpc.endpoint = links.tempo-otlp-grpc.tuple;
+        };
       };
+      zipkin.endpoint = links.tempo-zipkin-http.tuple;
     };
     querier.frontend_worker.frontend_address = links.tempo-grpc.tuple;
     ingester = {
