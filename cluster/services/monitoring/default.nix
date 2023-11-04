@@ -32,7 +32,7 @@ in
     };
     tempo-grpc = {
       protocol = "http";
-      ipv4 = meshIpFor "server";
+      ipv4 = "127.0.0.1";
     };
     tempo-otlp-http = {
       protocol = "http";
