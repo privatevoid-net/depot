@@ -9,6 +9,7 @@ in with hosts;
   "cluster/services/attic/attic-s3-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/attic/attic-server-token.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/cachix-deploy-agent/credentials/checkmate.age".publicKeys = max ++ map systemKeys [ checkmate ];
+  "cluster/services/cachix-deploy-agent/credentials/grail.age".publicKeys = max ++ map systemKeys [ grail ];
   "cluster/services/cachix-deploy-agent/credentials/prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "cluster/services/cachix-deploy-agent/credentials/VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/cachix-deploy-agent/credentials/thunderskin.age".publicKeys = max ++ map systemKeys [ thunderskin ];
