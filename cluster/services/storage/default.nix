@@ -28,6 +28,7 @@ in
       ];
       garageConfig = [
         ./garage-gateway.nix
+        ./garage-metrics.nix
         {
           services.garage = {
             inherit (config.garage) buckets keys;
