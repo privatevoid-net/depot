@@ -70,6 +70,10 @@ in {
           prefetch 3
           serve_stale 86400s
         }
+        trace zipkin ${cluster.config.links.tempo-zipkin-http.tuple} {
+          every 100
+          client_server
+        }
         forward service.eu-central.sd-magic.${domain} 127.0.0.1:8600
         forward addr.eu-central.sd-magic.${domain} 127.0.0.1:8600
         import ${rewriteConf}
