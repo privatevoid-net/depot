@@ -22,7 +22,7 @@ index d19b783..5b5831f 100644
 -    else:
 -        return d.digest()
 diff --git a/src/s3ql/backends/s3c.py b/src/s3ql/backends/s3c.py
-index 11687d5..8d9f887 100644
+index 11687d5..cfb1893 100644
 --- a/src/s3ql/backends/s3c.py
 +++ b/src/s3ql/backends/s3c.py
 @@ -78,6 +78,8 @@ class Backend(AbstractBackend, metaclass=ABCDocstMeta):
@@ -149,7 +149,7 @@ index 11687d5..8d9f887 100644
          if not self.hostname.startswith(self.bucket_name):
              path = '/%s%s' % (self.bucket_name, path)
 -        headers['host'] = self.hostname
-+        headers['host'] = self.hostname if self.port == "80" else f"{self.hostname}:{self.port}"
++        headers['host'] = self.hostname if int(self.port) == 80 or int(self.port) == 443 else f"{self.hostname}:{self.port}"
  
          self._authorize_request(method, path, headers, subres, query_string)
  
