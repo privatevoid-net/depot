@@ -69,6 +69,7 @@ in with hosts;
   "secrets/hydra-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/hydra-s3.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/hyprspace-key-checkmate.age".publicKeys = max ++ map systemKeys [ checkmate ];
+  "secrets/hyprspace-key-grail.age".publicKeys = max ++ map systemKeys [ grail ];
   "secrets/hyprspace-key-thunderskin.age".publicKeys = max ++ map systemKeys [ thunderskin ];
   "secrets/hyprspace-key-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/hyprspace-key-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];

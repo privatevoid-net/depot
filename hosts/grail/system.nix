@@ -11,6 +11,8 @@ in
     depot.inputs.agenix.nixosModules.age
 
     depot.nixosModules.serverBase
+
+    depot.nixosModules.hyprspace
   ];
 
   zramSwap.enable = true;

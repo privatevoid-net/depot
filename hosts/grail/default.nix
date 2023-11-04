@@ -1,4 +1,4 @@
-tools: {
+tools: rec {
   ssh.enable = true;
   ssh.id = with tools.dns; {
     publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBi5Fm2pmMBhRgJms+me1ldt9Vgj9cMSnB7UllSz3mpY";
@@ -14,6 +14,15 @@ tools: {
       addr = "10.1.0.6";
       link = "vstub";
     };
+  };
+
+  hyprspace = {
+    enable = true;
+    id = "12D3KooWN31twBvdEcxz2jTv4tBfPe3mkNueBwDJFCN4xn7ZwFbi";
+    listenPort = 995;
+    routes = [
+      "${interfaces.vstub.addr}/32"
+    ];
   };
 
   enterprise = {
