@@ -11,7 +11,7 @@ in
     };
   });
   services.consul = {
-    nodes.agent = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
+    nodes.agent = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
     nixos.agent = [
       ./agent.nix
       ./remote-api.nix
