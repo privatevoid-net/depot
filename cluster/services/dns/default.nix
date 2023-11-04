@@ -47,7 +47,7 @@ in
       master = [ "VEGAS" ];
       slave = [ "checkmate" "prophet" ];
       coredns = [ "checkmate" "VEGAS" ];
-      client = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
+      client = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
     };
     nixos = {
       master = [
