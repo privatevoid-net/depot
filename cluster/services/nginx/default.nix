@@ -1,6 +1,6 @@
 {
   services.nginx = {
-    nodes.host = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
+    nodes.host = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
     nixos.host = [ ./nginx.nix ];
   };
 }
