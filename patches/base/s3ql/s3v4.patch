@@ -22,7 +22,7 @@ index d19b783..5b5831f 100644
 -    else:
 -        return d.digest()
 diff --git a/src/s3ql/backends/s3c.py b/src/s3ql/backends/s3c.py
-index 11687d5..cfb1893 100644
+index 11687d5..05750b9 100644
 --- a/src/s3ql/backends/s3c.py
 +++ b/src/s3ql/backends/s3c.py
 @@ -78,6 +78,8 @@ class Backend(AbstractBackend, metaclass=ABCDocstMeta):
@@ -102,7 +102,7 @@ index 11687d5..cfb1893 100644
 +        auth_strs.append(s)
 +
 +        # Headers
-+        sig_hdrs = sorted(x.lower() for x in headers.keys())
++        sig_hdrs = sorted(x for x in (x.lower() for x in headers.keys()) if x == "host" or x == "content-type" or x.startswith("x-amz-"))
 +        for hdr in sig_hdrs:
 +            auth_strs.append('%s:%s' % (hdr, headers[hdr].strip()))
 +        auth_strs.append('')
