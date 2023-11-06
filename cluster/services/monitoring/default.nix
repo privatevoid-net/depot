@@ -74,5 +74,16 @@ in
     };
   };
 
+  garage = {
+    keys = {
+      loki = { };
+      tempo = { };
+    };
+    buckets = {
+      loki-chunks.allow.loki = [ "read" "write" ];
+      tempo-chunks.allow.tempo = [ "read" "write" ];
+    };
+  };
+
   dns.records.monitoring.consulService = "grafana";
 }
