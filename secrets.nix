@@ -41,6 +41,7 @@ in with hosts;
   "cluster/services/irc/irc-peer-key.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/monitoring/secrets/grafana-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/monitoring/secrets/grafana-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
+  "cluster/services/monitoring/secrets/loki-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/monitoring/secrets/secret-monitoring/blackbox.age".publicKeys = max ++ map systemKeys [ checkmate grail prophet ];
   "cluster/services/patroni/passwords/metrics.age".publicKeys = max ++ map systemKeys [ thunderskin VEGAS prophet ];
   "cluster/services/patroni/passwords/replication.age".publicKeys = max ++ map systemKeys [ thunderskin VEGAS prophet ];
