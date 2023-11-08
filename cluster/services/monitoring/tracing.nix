@@ -33,10 +33,15 @@ let
       };
     };
     storage.trace = {
-      backend = "local";
+      backend = "s3";
       block.bloom_filter_false_positive = 0.05;
       wal.path = "${dataDir}/wal";
-      local.path = "${dataDir}/blocks";
+      s3 = {
+        bucket = "tempo-chunks";
+        endpoint = cluster.config.links.garageS3.hostname;
+        region = "us-east-1";
+        forcepathstyle = true;
+      };
       pool = {
         max_workers = 16;
         queue_depth = 1000;
@@ -63,6 +68,8 @@ let
     ];
   };
 in {
+  age.secrets.tempoSecrets.file = ./secrets/tempo-secrets.age;
+
   users.users.tempo = {
     isSystemUser = true;
     group = "tempo";
@@ -79,6 +86,7 @@ in {
       Group = "tempo";
       ExecStart = "${pkgs.tempo}/bin/tempo -config.file=${pkgs.writeText "tempo.yaml" (builtins.toJSON tempoConfig)}";
       PrivateTmp = true;
+      EnvironmentFile = config.age.secrets.tempoSecrets.path;
     };
   };
   services.grafana.provision.datasources.settings.datasources = [
