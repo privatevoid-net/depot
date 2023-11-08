@@ -17,6 +17,7 @@ in
   services.loki = {
     enable = true;
     dataDir = "/srv/storage/private/loki";
+    extraFlags = [ "--config.expand-env=true" ];
     configuration = {
       auth_enabled = false;
       server = {
