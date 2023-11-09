@@ -26,7 +26,7 @@ class IPFSController:
             upload = {"file": ("FILE", content, "application/octet-stream")}
             try:
                 rIpfs = requests_unixsocket.post(
-                    f"{self.__nodeAddr}/api/v0/add?pin=false&quieter=true", files=upload
+                    f"{self.__nodeAddr}/api/v0/add?pin=false&quieter=true&chunker=buzhash&trickle=true", files=upload
                 )
                 hash = rIpfs.json()["Hash"]
                 print(f"Mapped: {nar} -> /ipfs/{hash}")
