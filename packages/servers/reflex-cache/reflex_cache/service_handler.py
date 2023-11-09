@@ -49,7 +49,7 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
             resultHash = self._db.get_path(self.path)
 
             if resultHash == None:
-                code, cache, _ = self._nix.try_all("head", self.path)
+                code, cache, _ = self._nix.try_all("get", self.path)
                 if code != 200:
                     self.send_response(404)
                     self.end_headers()
