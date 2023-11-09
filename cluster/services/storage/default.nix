@@ -57,6 +57,11 @@ in
     };
   });
 
+  monitoring.blackbox.targets.garage = {
+    address = "https://garage.${depot.lib.meta.domain}/health";
+    module = "https2xx";
+  };
+
   garage = {
     keys.storage-prophet = {};
     buckets.storage-prophet = {
