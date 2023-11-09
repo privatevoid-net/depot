@@ -50,11 +50,7 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
 
             if resultHash == None:
                 code, cache, _ = self._nix.try_all("head", self.path)
-                if code == 200:
-                    self.send_response(302)
-                    self.send_header("Location", f"{cache}{self.path}")
-                    self.end_headers()
-                else:
+                if code != 200:
                     self.send_response(404)
                     self.end_headers()
                     return
@@ -82,6 +78,13 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
                             self._ipfs.ipfs_fetch_task, cb, self.path, cache
                         )
                         self._workSet.add((self.path, f))
+                _, code, resultHash = f.result()
+            else:
+                code = 200
+
+            if code != 200:
+                self.send_response(code)
+                self.end_headers()
                 return
 
             self.send_response(302)
@@ -113,11 +116,15 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
             self.send_response(code)
             self.end_headers()
             if code == 200:
-                self.wfile.write(content)
                 if match := re.search(
                     "URL: (nar/[a-z0-9]*\\.nar.*)", content.decode("utf-8")
                 ):
                     nar = f"/{match.group(1)}"
+                    # we decompress xz, so tell Nix to except an uncompressed NAR
+                    if nar.endswith(".xz"):
+                        self.wfile.write(content.replace(b"Compression: xz\n", b"Compression: none\n"))
+                    else:
+                        self.wfile.write(content)
                     if not self._db.get_path(nar):
                         with self._workSetLock:
                             found = False
@@ -139,6 +146,8 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
                                     self._ipfs.ipfs_fetch_task, cb, nar
                                 )
                                 self._workSet.add((nar, f))
+                else:
+                    self.wfile.write(content)
             return
 
         else:

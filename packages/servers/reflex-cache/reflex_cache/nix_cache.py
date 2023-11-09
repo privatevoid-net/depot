@@ -30,7 +30,7 @@ class NixCacheFetcher:
             caches = self.__caches
         for cache in caches:
             try:
-                rCache = fn(f"{cache}{path}")
+                rCache = fn(f"{cache}{path}", allow_redirects=True)
                 if rCache.status_code < bestState:
                     bestState = rCache.status_code
 

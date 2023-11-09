@@ -3,6 +3,7 @@ from urllib.parse import quote_plus
 
 import requests
 import requests_unixsocket
+import lzma
 
 
 class IPFSController:
@@ -16,6 +17,12 @@ class IPFSController:
         print(f"Downloading NAR: {nar}")
         code, _, content = self.__nix.try_all("get", nar, hint)
         if code == 200:
+            if nar.endswith(".nar.xz"):
+                print(f"Attempt decompression of {nar}")
+                decompressed = lzma.decompress(content)
+                print(f"Size diff: {len(content)} -> {len(decompressed)}")
+                content = decompressed
+
             upload = {"file": ("FILE", content, "application/octet-stream")}
             try:
                 rIpfs = requests_unixsocket.post(
