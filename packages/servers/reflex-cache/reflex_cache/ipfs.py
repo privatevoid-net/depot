@@ -32,11 +32,14 @@ class IPFSController:
                 print(f"Mapped: {nar} -> /ipfs/{hash}")
                 self.__db.set_path(nar, hash)
                 expireAt = datetime.now(timezone.utc) + timedelta(hours=24)
-                rClusterPin = requests_unixsocket.post(
-                    f"{self.__clusterAddr}/pins/ipfs/{hash}?expire-at={quote_plus(expireAt.isoformat())}&mode=recursive&name=reflex-{quote_plus(nar)}&replication-max=2&replication-min=1", files=upload
-                )
-                if rClusterPin.status_code != 200:
-                    print(f"Warning: failed to pin {hash} on IPFS cluster")
+                try:
+                    rClusterPin = requests_unixsocket.post(
+                        f"{self.__clusterAddr}/pins/ipfs/{hash}?expire-at={quote_plus(expireAt.isoformat())}&mode=recursive&name=reflex-{quote_plus(nar)}&replication-max=2&replication-min=1", files=upload
+                    )
+                    if rClusterPin.status_code != 200:
+                        print(f"Warning: failed to pin {hash} on IPFS cluster: {rClusterPin.status_code}")
+                except requests.ConnectionError as e:
+                    print(f"Warning: failed to pin {hash} on IPFS cluster: {e}")
                 callback()
                 return (nar, 200, hash)
             except requests.ConnectionError as e:
