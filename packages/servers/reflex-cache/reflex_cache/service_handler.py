@@ -49,7 +49,7 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
             resultHash = self._db.get_path(self.path)
 
             if resultHash == None:
-                code, cache, _ = self._nix.try_all("get", self.path)
+                code, cache, content = self._nix.try_all("get", self.path)
                 if code != 200:
                     self.send_response(404)
                     self.end_headers()
@@ -75,7 +75,7 @@ class ReflexHTTPServiceHandler(BaseHTTPRequestHandler):
                                     # already removed
                                     pass
                         f = self._executor_nar.submit(
-                            self._ipfs.ipfs_fetch_task, cb, self.path, cache
+                            self._ipfs.ipfs_fetch_task, cb, self.path, cache, content
                         )
                         self._workSet.add((self.path, f))
                 _, code, resultHash = f.result()

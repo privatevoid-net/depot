@@ -13,9 +13,12 @@ class IPFSController:
         self.__nix = nixCache
         self.__db = db
 
-    def ipfs_fetch_task(self, callback, nar, hint=None):
-        print(f"Downloading NAR: {nar}")
-        code, _, content = self.__nix.try_all("get", nar, hint)
+    def ipfs_fetch_task(self, callback, nar, hint=None, content=None):
+        if content == None:
+            print(f"Downloading NAR: {nar}")
+            code, _, content = self.__nix.try_all("get", nar, hint)
+        else:
+            code = 200
         if code == 200:
             if nar.endswith(".nar.xz"):
                 print(f"Attempt decompression of {nar}")
