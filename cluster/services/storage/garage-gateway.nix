@@ -16,6 +16,7 @@ in
 
         "= /health".proxyPass = config.links.garageMetrics.url;
       };
+      extraConfig = "client_max_body_size 4G;";
     };
   };
   security.acme.certs.${link.hostname} = {
