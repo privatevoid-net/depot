@@ -18,7 +18,6 @@
       NIX_CACHES = toString [
         "https://cache.nixos.org"
         "https://cache.${depot.lib.meta.domain}"
-        "https://max.cachix.org"
       ];
     };
   };
