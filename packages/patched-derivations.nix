@@ -105,7 +105,7 @@ super: rec {
     ];
   });
 
-  tempo = (super.tempo.override { buildGoModule = super.buildGo119Module; }).overrideAttrs (_: {
+  tempo = (super.tempo.override { buildGoModule = super.buildGo121Module; }).overrideAttrs (_: {
     version = builtins.substring 1 (-1) pins.tempo.version;
     src = super.npins.mkSource pins.tempo;
     subPackages = [ "cmd/tempo" ];
