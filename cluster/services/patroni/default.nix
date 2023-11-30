@@ -15,7 +15,7 @@
   };
   services.patroni = {
     nodes = {
-      worker = [ "thunderskin" "VEGAS" "prophet" ];
+      worker = [ "grail" "thunderskin" "VEGAS" ];
       haproxy = [ "checkmate" "VEGAS" "prophet" ];
     };
     nixos = {
