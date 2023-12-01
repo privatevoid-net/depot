@@ -53,8 +53,21 @@ in
     };
   };
 
+  users = {
+    users.atticd = {
+      isSystemUser = true;
+      group = "atticd";
+      home = "/var/lib/atticd";
+      createHome = true;
+    };
+    groups.atticd = {};
+  };
+
   systemd.services.atticd = {
     after = [ "postgresql.service" ];
+    serviceConfig = {
+      DynamicUser = lib.mkForce false;
+    };
     environment = {
       AWS_SHARED_CREDENTIALS_FILE = config.age.secrets.atticS3Credentials.path;
       PGPASSFILE = config.age.secrets.atticDBCredentials.path;
