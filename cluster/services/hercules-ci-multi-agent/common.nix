@@ -43,6 +43,7 @@ in
       restartIfChanged = false;
       environment = {
         AWS_SHARED_CREDENTIALS_FILE = config.age.secrets."hci-cache-credentials-${name}".path;
+        AWS_EC2_METADATA_DISABLED = "true";
       };
       serviceConfig.Slice = "builder.slice";
     };
