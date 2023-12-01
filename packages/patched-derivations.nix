@@ -16,6 +16,8 @@ let
   };
 in with tools;
 super: rec {
+  cachix = patch super.cachix "patches/base/cachix";
+
   dvc = patch (super.dvc.overrideAttrs (old: let
     filteredBaseDeps = super.lib.subtractLists [
       super.python3Packages.dvc-data

@@ -1,0 +1,22 @@
+diff --git a/cachix/src/Cachix/Deploy/Activate.hs b/cachix/src/Cachix/Deploy/Activate.hs
+index 0f54ce6..2bc0d7d 100644
+--- a/src/Cachix/Deploy/Activate.hs
++++ b/src/Cachix/Deploy/Activate.hs
+@@ -122,6 +122,8 @@ getActivationScript profile storePath = do
+   isNixDarwin <- checkPath "darwin-version"
+   isHomeManager <- checkPath "hm-version"
+   user <- InstallationMode.getUser
++  oldKernelPath <- Directory.getSymbolicLinkTarget "/run/booted-system/kernel"
++  newKernelPath <- Directory.getSymbolicLinkTarget $ toS storePath </> "kernel"
+   let systemProfileDir = "/nix/var/nix/profiles"
+   let perUserProfileDir = systemProfileDir </> "per-user" </> toS user
+   let mkProfilePath profileBaseDir defaultProfile =
+@@ -136,7 +138,7 @@ getActivationScript profile storePath = do
+       let profilePath = mkProfilePath systemProfileDir "system"
+        in ( profilePath,
+             [ setNewProfile profilePath,
+-              (toS storePath </> "bin/switch-to-configuration", ["switch"])
++              (toS storePath </> "bin/switch-to-configuration", [if oldKernelPath == newKernelPath then "switch" else "boot"])
+             ]
+           )
+     (_, True, _) ->
