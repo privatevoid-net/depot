@@ -30,5 +30,8 @@
     daemonIOSchedPriority = 7;
   };
 
-  systemd.services.nix-daemon.serviceConfig.Slice = "builder.slice";
+  systemd.services.nix-daemon = {
+    serviceConfig.Slice = "builder.slice";
+    environment.AWS_EC2_METADATA_DISABLED = "true";
+  };
 }
