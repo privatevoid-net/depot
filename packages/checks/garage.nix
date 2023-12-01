@@ -94,7 +94,7 @@ testers.runNixOSTest {
 
     with subtest("should apply new layout with ascension"):
       for node in nodes:
-        node.wait_until_succeeds('test "$(systemctl is-active ascend-garage-layout)" != activating')
+        node.wait_until_succeeds('test "$(systemctl list-jobs | wc -l)" -eq 1')
 
       for node in nodes:
         node.succeed("/run/current-system/specialisation/modifiedLayout/bin/switch-to-configuration test")
