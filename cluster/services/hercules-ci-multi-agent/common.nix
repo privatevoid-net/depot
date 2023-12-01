@@ -44,6 +44,7 @@ in
       environment = {
         AWS_SHARED_CREDENTIALS_FILE = config.age.secrets."hci-cache-credentials-${name}".path;
       };
+      serviceConfig.Slice = "builder.slice";
     };
   });
 }
