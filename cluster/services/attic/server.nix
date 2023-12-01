@@ -50,6 +50,11 @@ in
         endpoint = cluster.config.links.garageS3.url;
         bucket = "attic";
       };
+
+      garbage-collection = {
+        interval = "2 weeks";
+        default-retention-period = "3 months";
+      };
     };
   };
 
