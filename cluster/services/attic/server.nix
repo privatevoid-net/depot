@@ -54,6 +54,7 @@ in
   };
 
   systemd.services.atticd = {
+    after = [ "postgresql.service" ];
     environment = {
       AWS_SHARED_CREDENTIALS_FILE = config.age.secrets.atticS3Credentials.path;
       PGPASSFILE = config.age.secrets.atticDBCredentials.path;
