@@ -81,13 +81,14 @@ let
     }.${mode};
     value = {
       direct = {
+        after = [ "consul.service" ];
         serviceConfig = {
           ExecStartPost = register servicesJson;
           ExecStopPost = deregister servicesJson;
         };
       };
       external = {
-        after = [ "${unit}.service" ];
+        after = [ "consul.service" "${unit}.service" ];
         wantedBy = [ "${unit}.service" ];
         unitConfig.BindsTo = "${unit}.service";
         serviceConfig = {
