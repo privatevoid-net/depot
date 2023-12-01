@@ -25,5 +25,10 @@
       dates = "weekly";
       options = "--delete-older-than 7d";
     };
+
+    daemonCPUSchedPolicy = "batch";
+    daemonIOSchedPriority = 7;
   };
+
+  systemd.services.nix-daemon.serviceConfig.Slice = "builder.slice";
 }
