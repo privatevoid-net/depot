@@ -71,7 +71,7 @@ in
       ProtectSystem = true;
       User = "garage";
       Group = "garage";
-      StateDirectory = lib.removePrefix "/var/lib/" cfg.settings.metadata_dir;
+      StateDirectory = lib.mkForce (lib.removePrefix "/var/lib/" cfg.settings.metadata_dir);
     };
   };
 }
