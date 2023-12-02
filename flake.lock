@@ -119,34 +119,6 @@
         "type": "github"
       }
     },
-    "deploy-rs": {
-      "inputs": {
-        "flake-compat": [
-          "blank"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "utils": [
-          "repin-flake-utils"
-        ]
-      },
-      "locked": {
-        "host": "git.privatevoid.net",
-        "lastModified": 1638903228,
-        "narHash": "sha256-mEbLD0A9gp159pFtdK4n1Yp2uFSE1T2nOr8BkfwgrC8=",
-        "owner": "max",
-        "repo": "deploy-rs",
-        "rev": "0d11e93f47be21051683e1b38f6b0dcb3f0a71cf",
-        "type": "gitlab"
-      },
-      "original": {
-        "host": "git.privatevoid.net",
-        "owner": "max",
-        "repo": "deploy-rs",
-        "type": "gitlab"
-      }
-    },
     "devshell": {
       "inputs": {
         "nixpkgs": [
@@ -513,7 +485,6 @@
         "agenix": "agenix",
         "attic": "attic",
         "blank": "blank",
-        "deploy-rs": "deploy-rs",
         "devshell": "devshell",
         "drv-parts": "drv-parts",
         "flake-parts": "flake-parts",
