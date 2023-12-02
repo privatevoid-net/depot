@@ -36,15 +36,6 @@
       };
     };
 
-    deploy-rs = {
-      url = "gitlab:max/deploy-rs?host=git.privatevoid.net";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "blank";
-        utils.follows = "repin-flake-utils";
-      };
-    };
-
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";

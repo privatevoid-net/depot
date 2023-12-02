@@ -56,7 +56,6 @@
       in {
         tools = with flakePkgs; [
           agenix
-          deploy-rs
           dvc
           graf
           hci
