@@ -4,6 +4,8 @@ let
 
 in with tools;
 super: rec {
+  acme-dns = patch super.acme-dns "patches/base/acme-dns";
+
   cachix = patch super.cachix "patches/base/cachix";
 
   forgejo = patch super.forgejo "patches/base/forgejo";
