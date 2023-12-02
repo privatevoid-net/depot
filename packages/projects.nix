@@ -21,6 +21,8 @@
   {
     packages = filters.doFilter filters.packages rec {
 
+      acme-dns = pkgs.callPackage ./servers/acme-dns { };
+
       cinny = pkgs.callPackage ./web-apps/cinny { inherit pins; };
 
       excalidraw = pkgs.callPackage ./web-apps/excalidraw { inherit pins; };
