@@ -39,7 +39,6 @@ in
       rpc_secret_file = config.age.secrets.garageRpcSecret.path;
       consul_discovery = {
         consul_http_addr = "http://127.0.0.1:8500";
-        api = "agent";
         service_name = "garage-discovery";
       };
       s3_api = {
