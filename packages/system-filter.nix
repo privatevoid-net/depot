@@ -1,7 +1,6 @@
 {
   packages = {
     cinny = [ "x86_64-linux" ];
-    dvc = [ "x86_64-linux" ];
     hci = [ "x86_64-linux" ];
     hydra = [ "x86_64-linux" ];
     jellyfin = [ "x86_64-linux" ];

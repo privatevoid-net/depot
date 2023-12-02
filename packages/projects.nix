@@ -56,7 +56,6 @@
       in {
         tools = with flakePkgs; [
           agenix
-          dvc
           graf
           hci
           npins

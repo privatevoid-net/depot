@@ -2,56 +2,9 @@ let
   tools = import ./lib/tools.nix;
   pins = import ./sources;
 
-  dvcMd5ToSha256 = old: {
-    postPatch = (old.postPatch or "") + ''
-      grep -Rwl md5 | xargs sed -i s/md5/sha256/g
-    '';
-  };
-
-  dvcYamlToJson = old: {
-    postPatch = (old.postPatch or "") + ''
-      grep -Rwl yaml | xargs sed -i s/yaml/json/g
-      grep -Rwl ruamel.json | xargs sed -i s/ruamel.json/ruamel.yaml/g
-    '';
-  };
 in with tools;
 super: rec {
   cachix = patch super.cachix "patches/base/cachix";
-
-  dvc = patch (super.dvc.overrideAttrs (old: let
-    filteredBaseDeps = super.lib.subtractLists [
-      super.python3Packages.dvc-data
-      super.python3Packages.dvc-http
-    ] old.propagatedBuildInputs;
-
-    baseDeps = filteredBaseDeps ++ [
-      dvc-data
-      dvc-http
-    ];
-    patched = dvcMd5ToSha256 old;
-    patched' = dvcYamlToJson patched;
-  in patched' // {
-    propagatedBuildInputs = with super.python3Packages; baseDeps ++ [
-      aiobotocore
-      boto3
-      (s3fs.overrideAttrs (_: { postPatch = ''
-          substituteInPlace requirements.txt \
-            --replace "fsspec==2023.3.0" "fsspec" \
-            --replace "aiobotocore~=2.1.0" "aiobotocore"
-        '';
-      }))
-    ];
-  })) "patches/base/dvc";
-
-  dvc-data = (super.python3Packages.dvc-data.override {
-    inherit dvc-objects;
-  }).overrideAttrs dvcMd5ToSha256;
-
-  dvc-http = super.python3Packages.dvc-http.override {
-    inherit dvc-objects;
-  };
-
-  dvc-objects = super.python3Packages.dvc-objects.overrideAttrs dvcMd5ToSha256;
 
   forgejo = patch super.forgejo "patches/base/forgejo";
 
