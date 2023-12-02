@@ -10,7 +10,6 @@ in
     ascensions = ./ascensions;
     consul-distributed-services = ./consul-distributed-services;
     consul-service-registry = ./consul-service-registry;
-    deploy-rs-receiver = ./deploy-rs-receiver;
     effect-receiver = ./effect-receiver;
     enterprise = ./enterprise;
     external-storage = ./external-storage;
@@ -50,7 +49,6 @@ in
       ascensions
       consul-distributed-services
       consul-service-registry
-      deploy-rs-receiver
       effect-receiver
       external-storage
       fail2ban
