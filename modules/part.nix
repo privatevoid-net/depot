@@ -6,6 +6,7 @@ in
 
 {
   flake.nixosModules = with config.flake.nixosModules; {
+    acme-dns = ./acme-dns;
     autopatch = ./autopatch;
     ascensions = ./ascensions;
     consul-distributed-services = ./consul-distributed-services;
