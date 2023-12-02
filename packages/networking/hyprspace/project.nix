@@ -30,7 +30,7 @@
         ]);
       };
 
-      vendorSha256 = "sha256-VBCgFbJixBh+pKfYGJVapHqWBpUFfvjl1cwOER2Li6Y=";
+      vendorHash = "sha256-VBCgFbJixBh+pKfYGJVapHqWBpUFfvjl1cwOER2Li6Y=";
 
       ldflags = [ "-s" "-w" "-X github.com/hyprspace/hyprspace/cli.appVersion=${version}" ];
 
