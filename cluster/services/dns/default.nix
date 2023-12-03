@@ -7,6 +7,7 @@ in
 {
   imports = [
     ./options.nix
+    ./nodes.nix
   ];
 
   links = {
