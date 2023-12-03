@@ -51,7 +51,9 @@ in
     };
   };
 
-  dns.records = lib.mkMerge [
+  dns.records = let
+    oldStaticAddr = [ depot.hours.VEGAS.interfaces.primary.addrPublic ];
+  in lib.mkMerge [
     (lib.genAttrs [ "www" "draw" "stop-using-nix-env" "whoami" ] (lib.const {
       consulService = "static-lb";
     }))
@@ -61,6 +63,16 @@ in
         type = "CNAME";
         target = [ "www.${domain}." ];
       };
+
+      autoconfig.target = oldStaticAddr;
+
+      ktp.target = oldStaticAddr;
+      legacy.target = oldStaticAddr;
+
+      # jokes
+      "bone-ds-dc.com-ldap".target = oldStaticAddr;
+      rzentrale.target = oldStaticAddr;
+      wunschnachricht.target = oldStaticAddr;
     }
   ];
 }
