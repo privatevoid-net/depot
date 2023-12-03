@@ -51,7 +51,16 @@ in
     };
   };
 
-  dns.records = lib.genAttrs [ "www" "draw" "stop-using-nix-env" "whoami" ] (lib.const {
-    consulService = "static-lb";
-  });
+  dns.records = lib.mkMerge [
+    (lib.genAttrs [ "www" "draw" "stop-using-nix-env" "whoami" ] (lib.const {
+      consulService = "static-lb";
+    }))
+    {
+      CNAME = {
+        name = "@";
+        type = "CNAME";
+        target = [ "www.${domain}." ];
+      };
+    }
+  ];
 }
