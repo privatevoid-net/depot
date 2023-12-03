@@ -1,4 +1,4 @@
-{ depot, ... }:
+{ config, depot, ... }:
 
 {
   services.search = {
@@ -10,4 +10,8 @@
     address = "https://search.${depot.lib.meta.domain}/healthz";
     module = "https2xx";
   };
+
+  dns.records.search.target = map
+    (node: depot.hours.${node}.interfaces.primary.addrPublic)
+    config.services.search.nodes.host;
 }
