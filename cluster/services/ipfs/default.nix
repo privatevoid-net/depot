@@ -52,11 +52,15 @@
 
   dns.records = {
     p2p.consulService = "ipfs-gateway";
-    "\\.ipfs" = {
+    pin.consulService = "ipfs-gateway";
+    "ipfs.admin".target = map
+      (node: depot.hours.${node}.interfaces.primary.addrPublic)
+      config.services.ipfs.nodes.remote-api;
+    "^[^_].+\\.ipfs" = {
       consulService = "ipfs-gateway";
       rewrite.type = "regex";
     };
-    "\\.ipns" = {
+    "^[^_].+\\.ipns" = {
       consulService = "ipfs-gateway";
       rewrite.type = "regex";
     };
