@@ -8,6 +8,7 @@ in
   imports = [
     ./options.nix
     ./nodes.nix
+    ./ns-records.nix
   ];
 
   links = {
