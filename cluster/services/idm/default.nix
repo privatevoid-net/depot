@@ -34,4 +34,22 @@
       ];
     };
   };
+
+  dns.records = let
+    serverAddrsPublic =  map
+      (node: depot.hours.${node}.interfaces.primary.addrPublic)
+      config.services.idm.nodes.server;
+    serverAddrsInternal =  map
+      (node: config.vars.mesh.${node}.meshIp)
+      config.services.idm.nodes.server;
+  in {
+    idm = {
+      type = "A";
+      target = serverAddrsPublic;
+    };
+    "idm-ldap.internal" = {
+      type = "A";
+      target = serverAddrsInternal;
+    };
+  };
 }
