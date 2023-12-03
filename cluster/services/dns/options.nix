@@ -19,7 +19,7 @@ let
       };
 
       type = mkOption {
-        type = types.enum [ "A" "CNAME" "AAAA" "NS" "MX" "SOA" ];
+        type = types.enum [ "A" "CNAME" "AAAA" "NS" "MX" "SOA" "TXT" ];
         default = "A";
       };
       target = mkOption {
