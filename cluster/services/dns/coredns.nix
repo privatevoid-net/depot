@@ -13,10 +13,9 @@ let
     (lib.concatStringsSep " ")
   ];
 
-  authoritativeServers = lib.pipe (with cluster.config.services.dns.nodes; master ++ slave) [
-    (map (node: cluster.config.hostLinks.${node}.dnsAuthoritative.tuple))
-    (lib.concatStringsSep ";")
-  ];
+  authoritativeServers = map
+    (node: cluster.config.hostLinks.${node}.dnsAuthoritative.tuple)
+    cluster.config.services.dns.nodes.authoritative;
 
   inherit (depot.packages) stevenblack-hosts;
   dot = config.security.acme.certs."securedns.${domain}";
@@ -54,29 +53,29 @@ in
   services.coredns = {
     enable = true;
     config = ''
-      .:${link.portStr} {
-        ${lib.optionalString (interfaces ? vstub) "bind ${interfaces.vstub.addr}"}
-        bind 127.0.0.1
-        bind ${link.ipv4}
+      (localresolver) {
         hosts ${stevenblack-hosts} {
           fallthrough
         }
         chaos "Private Void DNS" info@privatevoid.net
         forward hyprspace. 127.80.1.53:5380
+        forward ${domain}. ${lib.concatStringsSep " " authoritativeServers} {
+          policy random
+        }
         forward . ${backend.tuple} ${otherRecursors} {
           policy sequential
         }
       }
+      .:${link.portStr} {
+        ${lib.optionalString (interfaces ? vstub) "bind ${interfaces.vstub.addr}"}
+        bind 127.0.0.1
+        bind ${link.ipv4}
+        import localresolver
+      }
       tls://.:853 {
         bind ${interfaces.primary.addr}
         tls {$CREDENTIALS_DIRECTORY}/dot-cert.pem {$CREDENTIALS_DIRECTORY}/dot-key.pem
-        hosts ${stevenblack-hosts} {
-          fallthrough
-        }
-        chaos "Private Void DNS" info@privatevoid.net
-        forward . ${backend.tuple} ${otherRecursors} {
-          policy sequential
-        }
+        import localresolver
       }
     '';
   };
@@ -86,7 +85,7 @@ in
     dnssecValidation = "process";
     forwardZones = {
       # optimize queries against our own domain
-      "${domain}" = authoritativeServers;
+      "${domain}" = lib.concatStringsSep ";" authoritativeServers;
     };
     dns = {
       inherit (backend) port;
