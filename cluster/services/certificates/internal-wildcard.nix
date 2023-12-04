@@ -11,7 +11,7 @@ in
   security.acme.certs."internal.${domain}" = {
     domain = "*.internal.${domain}";
     extraDomainNames = [ "*.internal.${domain}" ];
-    dnsProvider = "pdns";
+    dnsProvider = "exec";
     group = "nginx";
     postRun = ''
       ${pkgs.acl}/bin/setfacl -Rb out/

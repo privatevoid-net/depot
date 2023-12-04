@@ -81,7 +81,7 @@ in {
   services.nginx.virtualHosts."pin.${domain}" = vhosts.proxy "http://unix:${pinSvcSocket}";
   users.users.nginx.extraGroups = [ cfg.group ];
   security.acme.certs."pin.${domain}" = {
-    dnsProvider = "pdns";
+    dnsProvider = "exec";
     webroot = lib.mkForce null;
   };
 }

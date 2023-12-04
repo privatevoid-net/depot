@@ -20,7 +20,7 @@ in
     };
   };
   security.acme.certs.${link.hostname} = {
-    dnsProvider = "pdns";
+    dnsProvider = "exec";
     webroot = lib.mkForce null;
   };
 

@@ -18,7 +18,7 @@ in
   security.acme.certs = {
     "internal.${domain}".reloadServices = [ "kanidm.service" ];
     "idm.${domain}" = {
-      dnsProvider = "pdns";
+      dnsProvider = "exec";
       webroot = lib.mkForce null;
     };
   };

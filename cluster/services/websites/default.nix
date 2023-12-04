@@ -6,7 +6,7 @@ let
   acmeUseDNS = name: conf: {
     name = conf.useACMEHost or conf.serverName or name;
     value = {
-      dnsProvider = "pdns";
+      dnsProvider = "exec";
       webroot = null;
     };
   };
