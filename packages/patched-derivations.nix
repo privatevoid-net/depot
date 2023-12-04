@@ -44,14 +44,6 @@ super: rec {
 
   postgresql = super.postgresql_14;
 
-  powerdns-admin = let
-    package = super.powerdns-admin.override {
-      python3 = super.python3.override {
-        packageOverrides = _: _: { python3-saml = null; };
-      };
-    };
-  in patch package "patches/base/powerdns-admin";
-
   prometheus-jitsi-exporter = patch super.prometheus-jitsi-exporter "patches/base/prometheus-jitsi-exporter";
 
   s3ql = (patch super.s3ql "patches/base/s3ql").overrideAttrs (old: {
