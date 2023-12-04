@@ -13,6 +13,7 @@ in
 
   services.n8n = {
     enable = true;
+    webhookUrl = "https://${apiAddr}";
     settings = {
       inherit (config.links.api) port;
     };
@@ -22,7 +23,6 @@ in
       N8N_LISTEN_ADDRESS = "127.0.0.1";
       N8N_ENDPOINT_WEBHOOK = "api";
       N8N_ENDPOINT_WEBHOOK_TEST = "test";
-      WEBHOOK_URL = "https://${apiAddr}";
   };
 
   services.nginx.virtualHosts."${apiAddr}" = lib.recursiveUpdate proxy {

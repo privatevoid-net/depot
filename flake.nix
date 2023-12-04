@@ -26,22 +26,13 @@
   inputs = {
     systems.url = "github:privatevoid-net/nix-systems-default-linux";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05-small";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11-small";
 
     nix-super = {
       url = "gitlab:max/nix-super?host=git.privatevoid.net";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         nixpkgs-regression.follows = "blank";
-      };
-    };
-
-    deploy-rs = {
-      url = "gitlab:max/deploy-rs?host=git.privatevoid.net";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "blank";
-        utils.follows = "repin-flake-utils";
       };
     };
 

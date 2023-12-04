@@ -48,12 +48,12 @@ in
   security.acme.certs."ipfs.${domain}" = {
     domain = "*.ipfs.${domain}";
     extraDomainNames = [ "*.ipns.${domain}" ];
-    dnsProvider = "pdns";
+    dnsProvider = "exec";
     group = "nginx";
   };
 
   security.acme.certs."p2p.${domain}" = {
-    dnsProvider = "pdns";
+    dnsProvider = "exec";
     webroot = lib.mkForce null;
   };
 

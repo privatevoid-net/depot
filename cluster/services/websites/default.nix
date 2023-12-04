@@ -6,7 +6,7 @@ let
   acmeUseDNS = name: conf: {
     name = conf.useACMEHost or conf.serverName or name;
     value = {
-      dnsProvider = "pdns";
+      dnsProvider = "exec";
       webroot = null;
     };
   };
@@ -51,7 +51,28 @@ in
     };
   };
 
-  dns.records = lib.genAttrs [ "www" "draw" "stop-using-nix-env" "whoami" ] (lib.const {
-    consulService = "static-lb";
-  });
+  dns.records = let
+    oldStaticAddr = [ depot.hours.VEGAS.interfaces.primary.addrPublic ];
+  in lib.mkMerge [
+    (lib.genAttrs [ "www" "draw" "stop-using-nix-env" "whoami" ] (lib.const {
+      consulService = "static-lb";
+    }))
+    {
+      CNAME = {
+        name = "@";
+        type = "CNAME";
+        target = [ "www.${domain}." ];
+      };
+
+      autoconfig.target = oldStaticAddr;
+
+      ktp.target = oldStaticAddr;
+      legacy.target = oldStaticAddr;
+
+      # jokes
+      "bone-ds-dc.com-ldap".target = oldStaticAddr;
+      rzentrale.target = oldStaticAddr;
+      wunschnachricht.target = oldStaticAddr;
+    }
+  ];
 }

@@ -3,11 +3,7 @@
   services.fail2ban = {
     enable = true;
     banaction = "iptables-multiport[blocktype=DROP]";
-    jails.sshd = ''
-      enabled = true
-      port = 22
-      mode = aggressive
-    '';
+    jails.sshd.settings.mode = "aggressive";
     ignoreIP = [
       "10.0.0.0/8"
       depot.reflection.interfaces.primary.addr

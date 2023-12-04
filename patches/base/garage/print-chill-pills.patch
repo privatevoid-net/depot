@@ -54,8 +54,31 @@ index 11cae4e..ffef3fa 100644
  #[derive(Clone)]
  pub struct Db(pub(crate) Arc<dyn IDb>);
  
+diff --git a/src/format-table/lib.rs b/src/format-table/lib.rs
+index 55252ba..4d8caf1 100644
+--- a/src/format-table/lib.rs
++++ b/src/format-table/lib.rs
+@@ -13,6 +13,18 @@
+ //! A table to be formatted is a `Vec<String>`, containing one string per line.
+ //! Table columns in each line are separated by a `\t` character.
+ 
++use std::io::Write;
++
++macro_rules! print {
++  () => (print!("\n"));
++  ($fmt:expr) => ({
++    write!(std::io::stdout(), $fmt).unwrap_or(())
++  });
++  ($fmt:expr, $($arg:tt)*) => ({
++    write!(std::io::stdout(), $fmt, $($arg)*).unwrap_or(())
++  })
++}
++
+ /// Format a table and return the result as a string.
+ pub fn format_table_to_string(data: Vec<String>) -> String {
+ 	let data = data
 diff --git a/src/garage/cli/cmd.rs b/src/garage/cli/cmd.rs
-index 0d73588..6bf4ecc 100644
+index cb7a898..97093e6 100644
 --- a/src/garage/cli/cmd.rs
 +++ b/src/garage/cli/cmd.rs
 @@ -13,6 +13,28 @@ use garage_model::helper::error::Error as HelperError;
@@ -111,7 +134,7 @@ index 20813f1..f4baea2 100644
  
  pub fn node_id_command(config_file: PathBuf, quiet: bool) -> Result<(), Error> {
 diff --git a/src/garage/cli/layout.rs b/src/garage/cli/layout.rs
-index 3884bb9..ef55a66 100644
+index dc5315a..193fd97 100644
 --- a/src/garage/cli/layout.rs
 +++ b/src/garage/cli/layout.rs
 @@ -8,6 +8,28 @@ use garage_rpc::*;
@@ -144,7 +167,7 @@ index 3884bb9..ef55a66 100644
  	cmd: LayoutOperation,
  	system_rpc_endpoint: &Endpoint<SystemRpc, ()>,
 diff --git a/src/garage/cli/util.rs b/src/garage/cli/util.rs
-index 2c6be2f..db6f25d 100644
+index 1140cf2..e4c4d18 100644
 --- a/src/garage/cli/util.rs
 +++ b/src/garage/cli/util.rs
 @@ -17,6 +17,28 @@ use garage_model::s3::version_table::Version;
@@ -177,10 +200,10 @@ index 2c6be2f..db6f25d 100644
  	println!("List of buckets:");
  
 diff --git a/src/k2v-client/bin/k2v-cli.rs b/src/k2v-client/bin/k2v-cli.rs
-index cdd63cc..dfa4df4 100644
+index b9461c8..b9cc148 100644
 --- a/src/k2v-client/bin/k2v-cli.rs
 +++ b/src/k2v-client/bin/k2v-cli.rs
-@@ -11,6 +11,28 @@ use rusoto_core::Region;
+@@ -10,6 +10,28 @@ use format_table::format_table;
  
  use clap::{Parser, Subcommand};
  
@@ -242,23 +265,3 @@ index 1030e3a..47eca49 100644
  /// The layout of the cluster, i.e. the list of roles
  /// which are assigned to each cluster node
  #[derive(Clone, Debug, Serialize, Deserialize)]
-diff --git a/src/util/formater.rs b/src/util/formater.rs
-index 2ea53eb..cc7d8a4 100644
---- a/src/util/formater.rs
-+++ b/src/util/formater.rs
-@@ -1,3 +1,15 @@
-+use std::io::Write;
-+
-+macro_rules! print {
-+  () => (print!("\n"));
-+  ($fmt:expr) => ({
-+    write!(std::io::stdout(), $fmt).unwrap_or(())
-+  });
-+  ($fmt:expr, $($arg:tt)*) => ({
-+    write!(std::io::stdout(), $fmt, $($arg)*).unwrap_or(())
-+  })
-+}
-+
- pub fn format_table_to_string(data: Vec<String>) -> String {
- 	let data = data
- 		.iter()

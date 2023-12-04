@@ -82,7 +82,7 @@ in {
     params.ngircd.bits = 2048;
   };
   security.acme.certs."${serverName}" = {
-    dnsProvider = "pdns";
+    dnsProvider = "exec";
     group = "ngircd";
     reloadServices = [ "ngircd" ];
     extraDomainNames = [ linkGlobalSecure.ipv4 ];

@@ -19,7 +19,6 @@ in
   };
   services.nextcloud = {
     package = pkgs.nextcloud26;
-    enableBrokenCiphersForSSE = false;
     enable = true;
     https = true;
     hostName = "storage.${depot.lib.meta.domain}";

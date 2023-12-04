@@ -7,32 +7,42 @@ let
 
   link = cluster.config.hostLinks.${hostName}.dnsAuthoritative;
   patroni = cluster.config.links.patroni-pg-access;
+  inherit (cluster.config.hostLinks.${hostName}) acmeDnsApi;
 
-  otherDnsServers = lib.pipe (with cluster.config.services.dns.otherNodes; (master hostName) ++ (slave hostName)) [
+  otherDnsServers = lib.pipe (cluster.config.services.dns.otherNodes.authoritative hostName) [
     (map (node: cluster.config.hostLinks.${node}.dnsAuthoritative.tuple))
     (lib.concatStringsSep " ")
   ];
 
-  translateConfig = cfg: let
-    configList = lib.mapAttrsToList (n: v: "${n}=${v}") cfg;
-  in lib.concatStringsSep "\n" configList;
+  recordsList = lib.mapAttrsToList (lib.const lib.id) cluster.config.dns.records;
+  recordsPartitioned = lib.partition (record: record.rewrite.target == null) recordsList;
 
-  rewriteRecords = lib.filterAttrs (_: record: record.rewrite.target != null) cluster.config.dns.records;
+  staticRecords = let
+    escape = type: {
+      TXT = builtins.toJSON;
+    }.${type} or lib.id;
 
-  rewrites = lib.mapAttrsToList (_: record: let
+    recordName = record: {
+      "@" = "${record.root}.";
+    }.${record.name} or "${record.name}.${record.root}.";
+  in lib.flatten (
+    map (record: map (target: "${recordName record} ${record.type} ${escape record.type target}") record.target) recordsPartitioned.right
+  );
+
+  rewrites = map (record: let
     maybeEscapeRegex = str: if record.rewrite.type == "regex" then "${lib.escapeRegex str}$" else str;
-  in "rewrite stop name ${record.rewrite.type} ${record.name}${maybeEscapeRegex ".${record.root}."} ${record.rewrite.target}. answer auto") rewriteRecords;
+  in "rewrite stop name ${record.rewrite.type} ${record.name}${maybeEscapeRegex ".${record.root}."} ${record.rewrite.target}. answer auto") recordsPartitioned.wrong;
 
   rewriteConf = pkgs.writeText "coredns-rewrites.conf" (lib.concatStringsSep "\n" rewrites);
 in {
   links.localAuthoritativeDNS = {};
 
   age.secrets = {
-    pdns-db-credentials = {
-      file = ./pdns-db-credentials.age;
-      mode = "0400";
-      owner = "pdns";
-      group = "pdns";
+    acmeDnsDbCredentials = {
+      file = ./acme-dns-db-credentials.age;
+    };
+    acmeDnsDirectKey = {
+      file = ./acme-dns-direct-key.age;
     };
   };
 
@@ -41,22 +51,32 @@ in {
     allowedUDPPorts = [ 53 ];
   };
 
-  services.powerdns = {
+  services.acme-dns = {
     enable = true;
-    extraConfig = translateConfig {
-      launch = "gpgsql";
-      local-address = config.links.localAuthoritativeDNS.tuple;
-      gpgsql-host = patroni.ipv4;
-      gpgsql-port = patroni.portStr;
-      gpgsql-dbname = "powerdns";
-      gpgsql-user = "powerdns";
-      gpgsql-extra-connection-parameters = "passfile=${config.age.secrets.pdns-db-credentials.path}";
-      version-string = "Private Void DNS";
-      enable-lua-records = "yes";
-      expand-alias = "yes";
-      resolver = "127.0.0.1:8600";
+    package = depot.packages.acme-dns;
+    settings = {
+      general = {
+        listen = config.links.localAuthoritativeDNS.tuple;
+        inherit domain;
+        nsadmin = "hostmaster.${domain}";
+        nsname = "eu1.ns.${domain}";
+        records = staticRecords;
+      };
+      api = {
+        ip = acmeDnsApi.ipv4;
+        inherit (acmeDnsApi) port;
+      };
+      database = {
+        engine = "postgres";
+        connection = "postgres://acmedns@${patroni.tuple}/acmedns?sslmode=disable";
+      };
     };
   };
+
+  systemd.services.acme-dns.serviceConfig.EnvironmentFile = with config.age.secrets; [
+    acmeDnsDbCredentials.path
+    acmeDnsDirectKey.path
+  ];
 
   services.coredns = {
     enable = true;
@@ -85,18 +105,29 @@ in {
   };
 
   systemd.services.coredns = {
-    after = [ "pdns.service" ];
+    after = [ "acme-dns.service" ];
   };
 
-  consul.services.pdns = {
-    mode = "external";
-    definition = {
-      name = "authoritative-dns-backend";
-      address = config.links.localAuthoritativeDNS.ipv4;
-      port = config.links.localAuthoritativeDNS.port;
+  consul.services = {
+    authoritative-dns = {
+      unit = "acme-dns";
+      definition = {
+        name = "authoritative-dns-backend";
+        address = config.links.localAuthoritativeDNS.ipv4;
+        port = config.links.localAuthoritativeDNS.port;
+        checks = lib.singleton {
+          interval = "60s";
+          tcp = config.links.localAuthoritativeDNS.tuple;
+        };
+      };
+    };
+    acme-dns.definition = {
+      name = "acme-dns";
+      address = acmeDnsApi.ipv4;
+      port = acmeDnsApi.port;
       checks = lib.singleton {
         interval = "60s";
-        tcp = config.links.localAuthoritativeDNS.tuple;
+        http = "${acmeDnsApi.url}/health";
       };
     };
   };

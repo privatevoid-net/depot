@@ -8,8 +8,6 @@
 
   {
     packages = filters.doFilter filters.packages rec {
-      inherit (packages.deploy-rs) deploy-rs;
-
       nix-super = packages.nix-super.nix;
 
       agenix = packages.agenix.agenix.override { nix = nix-super; };

@@ -43,7 +43,7 @@
         ]);
       };
 
-      vendorSha256 = "sha256-EpZQ7br+ChoAGIj0g6pdpWvFeOFOn2i+6YRBgtzoO+A=";
+      vendorHash = "sha256-EpZQ7br+ChoAGIj0g6pdpWvFeOFOn2i+6YRBgtzoO+A=";
 
       doCheck = false;
 
