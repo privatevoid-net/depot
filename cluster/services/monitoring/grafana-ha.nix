@@ -103,7 +103,7 @@ in
   };
 
   security.acme.certs."monitoring.${domain}" = {
-    dnsProvider = "pdns";
+    dnsProvider = "exec";
     webroot = lib.mkForce null;
   };
 
