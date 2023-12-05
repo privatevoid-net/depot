@@ -47,7 +47,7 @@ in
                 '';
               in pkgs.writeShellScript "post-effect.sh" ''
                 export PATH="${pkgs.consul}/bin:${pkgs.coreutils}/bin"
-                if [[ "$(realpath /run/booted-system/kernel)" != "$(realpath /run/current-system/kernel)" ]]; then
+                if [[ "$(realpath /run/booted-system/kernel)" != "$(realpath /nix/var/nix/profiles/system/kernel)" ]]; then
                   echo "Scheduling reboot for kernel upgrade"
                   if ! consul members >/dev/null; then
                     echo "Consul not active, skipping reboot"
