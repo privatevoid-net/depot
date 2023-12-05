@@ -6,5 +6,8 @@
     module = "sshConnect";
   };
 
-  dns.records.soda.target = [ depot.hours.VEGAS.interfaces.primary.addrPublic ];
+  dns.records = {
+    soda.target = [ depot.hours.VEGAS.interfaces.primary.addrPublic ];
+    "soda.int".target = [ "10.10.2.206" ];
+  };
 }
