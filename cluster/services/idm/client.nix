@@ -5,14 +5,6 @@ let
 in
 
 {
-  disabledModules = [
-    "security/pam.nix"
-  ];
-
-  imports = [
-    ./backports/pam.nix
-  ];
-
   age.secrets.idmServiceAccountCredentials.file = ./secrets/service-account-${config.networking.hostName}.age;
 
   systemd.services.kanidm-unixd.serviceConfig = {
