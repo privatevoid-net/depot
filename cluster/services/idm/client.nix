@@ -38,6 +38,24 @@ in
     authorizedKeysCommandUser = "nobody";
   };
 
+  security = {
+    pam.services.sudo = { config, ... }: {
+      rules.auth.rssh = {
+        order = config.rules.auth.unix.order - 10;
+        control = "sufficient";
+        modulePath = "${pkgs.pam_rssh}/lib/libpam_rssh.so";
+        settings = {
+          authorized_keys_command = "/etc/ssh/authorized_keys_command_kanidm";
+          authorized_keys_command_user = "nobody";
+        };
+      };
+    };
+
+    sudo.extraConfig = ''
+      Defaults env_keep+=SSH_AUTH_SOCK
+    '';
+  };
+
   environment.systemPackages = let
     idmAlias = pkgs.runCommand "kanidm-idm-alias" {} ''
       mkdir -p $out/bin
