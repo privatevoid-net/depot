@@ -33,7 +33,11 @@ let
     maybeEscapeRegex = str: if record.rewrite.type == "regex" then "${lib.escapeRegex str}$" else str;
   in "rewrite stop name ${record.rewrite.type} ${record.name}${maybeEscapeRegex ".${record.root}."} ${record.rewrite.target}. answer auto") recordsPartitioned.wrong;
 
-  rewriteConf = pkgs.writeText "coredns-rewrites.conf" (lib.concatStringsSep "\n" rewrites);
+  rewriteConf = pkgs.writeText "coredns-rewrites.conf" ''
+    rewrite stop type NS NS
+    rewrite stop type SOA SOA
+    ${lib.concatStringsSep "\n" rewrites}
+  '';
 in {
   links.localAuthoritativeDNS = {};
 
