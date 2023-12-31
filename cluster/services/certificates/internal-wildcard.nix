@@ -14,9 +14,9 @@ in
     dnsProvider = "exec";
     group = "nginx";
     postRun = ''
-      ${pkgs.acl}/bin/setfacl -Rb out/
+      ${pkgs.acl}/bin/setfacl -Rb .
       ${lib.concatStringsSep "\n" (
-        map (group: "${pkgs.acl}/bin/setfacl -Rm g:${group}:rX out/") extraGroups
+        map (group: "${pkgs.acl}/bin/setfacl -Rm g:${group}:rX .") extraGroups
       )}
     '';
   };
