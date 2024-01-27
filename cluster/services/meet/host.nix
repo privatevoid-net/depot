@@ -19,6 +19,7 @@ in
     config = {
       p2p.enabled = false;
       startAudioOnly = true;
+      openBridgeChannel = "websocket";
     };
   };
   services.jitsi-videobridge = {
