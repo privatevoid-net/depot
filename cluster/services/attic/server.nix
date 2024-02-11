@@ -72,6 +72,8 @@ in
     after = [ "postgresql.service" ];
     serviceConfig = {
       DynamicUser = lib.mkForce false;
+      Restart = "on-failure";
+      RestartSec = "10s";
     };
     environment = {
       AWS_SHARED_CREDENTIALS_FILE = config.age.secrets.atticS3Credentials.path;
