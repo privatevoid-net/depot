@@ -94,7 +94,7 @@ in
   systemd.services.postfix-setup.after = [ "network-online.target" "network-addresses-${interfaces.primary.link}.service" "network-addresses-vstub.service" ];
 
   services.fail2ban.jails.postfix.settings = {
-    mode = "aggressive";
+    mode = "extra";
     findtime = "43200";
   };
 }
