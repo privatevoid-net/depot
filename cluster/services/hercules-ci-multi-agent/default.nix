@@ -22,4 +22,15 @@
       ];
     };
   };
+  garage = let
+    hciAgentKeys = lib.pipe config.services.hercules-ci-multi-agent.nodes [
+      (lib.collect lib.isList)
+      lib.flatten
+      lib.unique
+      (map (x: "hci-agent-${x}"))
+    ];
+  in {
+    keys = lib.genAttrs hciAgentKeys (lib.const {});
+    buckets.nix-store.allow = lib.genAttrs hciAgentKeys (lib.const [ "read" "write" ]);
+  };
 }
