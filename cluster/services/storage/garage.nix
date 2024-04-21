@@ -45,6 +45,10 @@ in
         api_bind_addr = links.garageS3.tuple;
         s3_region = "us-east-1";
       };
+      s3_web = {
+        bind_addr = links.garageWeb.tuple;
+        root_domain = cluster.config.links.garageWeb.hostname;
+      };
     };
   };
 
