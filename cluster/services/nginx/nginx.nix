@@ -11,7 +11,7 @@ in {
     recommendedTlsSettings = true;
     recommendedOptimisation = true;
     recommendedGzipSettings = true;
-    proxyResolveWhileRunning = false;
+    proxyResolveWhileRunning = true;
     resolver = {
       addresses = [ "127.0.0.1" ];
       valid = "30s";
