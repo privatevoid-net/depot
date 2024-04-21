@@ -26,7 +26,9 @@ testers.runNixOSTest {
             hostLinks.${hostName} = {
               garageRpc.tuple = "${primaryIPAddress}:3901";
               garageS3.tuple = "${primaryIPAddress}:8080";
+              garageWeb.tuple = "${primaryIPAddress}:8081";
             };
+            links.garageWeb.hostname = "web.garage.example.com";
             vars.meshNet.cidr = "192.168.0.0/16";
           };
         };
