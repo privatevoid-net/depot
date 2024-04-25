@@ -19,7 +19,7 @@ in
       server ${config.links.nar-serve-nixos-org.tuple} fail_timeout=0;
     '';
     nix-store.servers = {
-      "${cluster.config.hostLinks.${config.networking.hostName}.garageWeb.tuple}" = {
+      "${config.links.atticServer.tuple}" = {
         fail_timeout = 0;
       };
       "${config.links.garageNixStoreInternalRedirect.tuple}" = {
