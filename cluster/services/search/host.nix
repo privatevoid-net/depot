@@ -3,9 +3,6 @@ let
   inherit (config) links;
 in
 {
-  imports = [
-    ./proxy-shuffle.nix
-  ];
   links.searxng.protocol = "http";
 
   age.secrets.searxng-secrets.file = ../../../secrets/searxng-secrets.age;
@@ -27,25 +24,12 @@ in
         { name = "brave"; disabled = true; }
       ];
       ui.theme_args.simple_style = "dark";
-      outgoing.proxies = rec {
-        http = [
-            "socks5://se-got-wg-socks5-001.relays.mullvad.net:1080"
-            "socks5://se-sto-wg-socks5-010.relays.mullvad.net:1080"
-            "socks5://se-sto-wg-socks5-014.relays.mullvad.net:1080"
-            "socks5://ch-zrh-wg-socks5-005.relays.mullvad.net:1080"
-            "socks5://se-mma-wg-socks5-001.relays.mullvad.net:1080"
-            "socks5://se-mma-wg-socks5-101.relays.mullvad.net:1080"
-            "socks5://se-mma-wg-socks5-102.relays.mullvad.net:1080"
-            "socks5://se-mma-wg-socks5-103.relays.mullvad.net:1080"
-            "socks5://ch-zrh-wg-socks5-002.relays.mullvad.net:1080"
-            "socks5://se-sto-wg-socks5-004.relays.mullvad.net:1080"
-            "socks5://se-got-wg-socks5-003.relays.mullvad.net:1080"
-            "socks5://se-sto-wg-socks5-006.relays.mullvad.net:1080"
-            "socks5://se-sto-wg-socks5-008.relays.mullvad.net:1080"
-            "socks5://se-sto-wg-socks5-001.relays.mullvad.net:1080"
-            "socks5://se-mma-wg-socks5-004.relays.mullvad.net:1080"
-        ];
-        https = http;
+      outgoing = {
+        using_tor_proxy = true;
+        proxies = rec {
+          http = [ config.links.torSocks.url ];
+          https = http;
+        };
       };
     };
     uwsgiConfig = {
@@ -58,5 +42,5 @@ in
   services.nginx.virtualHosts."search.${depot.lib.meta.domain}" = lib.recursiveUpdate (depot.lib.nginx.vhosts.proxy links.searxng.url) {
     extraConfig = "access_log off;";
   };
-  systemd.services.uwsgi.after = [ "wireguard-wgmv.service" "network-addresses-wgmv.service" ];
+  systemd.services.uwsgi.after = [ "tor.service" ];
 }
