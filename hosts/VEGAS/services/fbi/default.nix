@@ -49,14 +49,12 @@ with depot.lib.nginx;
   systemd.services.radarr.serviceConfig.Slice = "mediamanagement.slice";
   systemd.services.sonarr.serviceConfig.Slice = "mediamanagement.slice";
   systemd.services.prowlarr = {
-    after = [ "wireguard-wgmv.service" "network-addresses-wgmv.service" ];
+    after = [ "tor.service" ];
     serviceConfig = {
       Slice = "mediamanagement.slice";
       IPAddressDeny = [ "any" ];
       IPAddressAllow = [
         "localhost"
-        "10.64.0.0/16"
-        "10.124.0.0/16"
         "10.100.0.0/24"
       ];
     };
