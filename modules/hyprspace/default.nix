@@ -1,7 +1,7 @@
 { pkgs, depot, lib, config, ... }:
 let
   inherit (config.networking) hostName;
-  inherit (depot.packages) hyprspace;
+  hyprspace = depot.inputs.hyprspace.packages.default;
   hyprspaceCapableNodes = lib.filterAttrs (_: host: host.hyprspace.enable) depot.hours;
   peersFormatted = builtins.mapAttrs (name: x: {
     inherit name;
