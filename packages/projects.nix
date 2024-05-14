@@ -6,7 +6,6 @@
     ./modules/devshell.nix
     ./build-support
 
-    ./networking/hyprspace/project.nix
     ./networking/ipfs-cluster/project.nix
     ./servers/reflex-cache/project.nix
     ./websites/landing/project.nix
