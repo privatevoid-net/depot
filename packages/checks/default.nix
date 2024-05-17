@@ -19,7 +19,7 @@
       };
 
       keycloak = pkgs.callPackage ./keycloak-custom-jre.nix {
-        jre = self'.packages.jre17_standard;
+        inherit (self'.packages) keycloak;
       };
 
       patroni = pkgs.callPackage ./patroni.nix {

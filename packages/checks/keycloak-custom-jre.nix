@@ -1,10 +1,10 @@
-{ nixosTest, keycloak, jre }:
+{ nixosTest, keycloak }:
 
 nixosTest {
   name = "keycloak";
   nodes.machine.services.keycloak = {
     enable = true;
-    package = keycloak.override { inherit jre; };
+    package = keycloak;
     database.passwordFile = builtins.toFile "keycloak-test-password" "kcnixostest1234";
     settings = {
       proxy = "edge";
