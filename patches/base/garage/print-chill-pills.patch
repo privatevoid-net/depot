@@ -1,38 +1,5 @@
-diff --git a/src/db/bin/convert.rs b/src/db/bin/convert.rs
-index bbde204..7bed4b0 100644
---- a/src/db/bin/convert.rs
-+++ b/src/db/bin/convert.rs
-@@ -4,6 +4,28 @@ use garage_db::*;
- 
- use clap::Parser;
- 
-+use std::io::Write;
-+
-+macro_rules! println {
-+  () => (print!("\n"));
-+  ($fmt:expr) => ({
-+    writeln!(std::io::stdout(), $fmt).unwrap_or(())
-+  });
-+  ($fmt:expr, $($arg:tt)*) => ({
-+    writeln!(std::io::stdout(), $fmt, $($arg)*).unwrap_or(())
-+  })
-+}
-+
-+macro_rules! print {
-+  () => (print!("\n"));
-+  ($fmt:expr) => ({
-+    write!(std::io::stdout(), $fmt).unwrap_or(())
-+  });
-+  ($fmt:expr, $($arg:tt)*) => ({
-+    write!(std::io::stdout(), $fmt, $($arg)*).unwrap_or(())
-+  })
-+}
-+
- /// K2V command line interface
- #[derive(Parser, Debug)]
- #[clap(author, version, about, long_about = None)]
 diff --git a/src/db/lib.rs b/src/db/lib.rs
-index 11cae4e..ffef3fa 100644
+index 11cae4e3..ffef3fac 100644
 --- a/src/db/lib.rs
 +++ b/src/db/lib.rs
 @@ -25,6 +25,18 @@ use std::sync::Arc;
@@ -55,7 +22,7 @@ index 11cae4e..ffef3fa 100644
  pub struct Db(pub(crate) Arc<dyn IDb>);
  
 diff --git a/src/format-table/lib.rs b/src/format-table/lib.rs
-index 55252ba..4d8caf1 100644
+index 55252ba9..4d8caf1d 100644
 --- a/src/format-table/lib.rs
 +++ b/src/format-table/lib.rs
 @@ -13,6 +13,18 @@
@@ -78,7 +45,7 @@ index 55252ba..4d8caf1 100644
  pub fn format_table_to_string(data: Vec<String>) -> String {
  	let data = data
 diff --git a/src/garage/cli/cmd.rs b/src/garage/cli/cmd.rs
-index cb7a898..97093e6 100644
+index cb7a898c..97093e69 100644
 --- a/src/garage/cli/cmd.rs
 +++ b/src/garage/cli/cmd.rs
 @@ -13,6 +13,28 @@ use garage_model::helper::error::Error as HelperError;
@@ -111,7 +78,7 @@ index cb7a898..97093e6 100644
  	cmd: Command,
  	system_rpc_endpoint: &Endpoint<SystemRpc, ()>,
 diff --git a/src/garage/cli/init.rs b/src/garage/cli/init.rs
-index 20813f1..f4baea2 100644
+index 20813f1c..f4baea29 100644
 --- a/src/garage/cli/init.rs
 +++ b/src/garage/cli/init.rs
 @@ -2,6 +2,18 @@ use std::path::PathBuf;
@@ -134,7 +101,7 @@ index 20813f1..f4baea2 100644
  
  pub fn node_id_command(config_file: PathBuf, quiet: bool) -> Result<(), Error> {
 diff --git a/src/garage/cli/layout.rs b/src/garage/cli/layout.rs
-index dc5315a..193fd97 100644
+index dc5315a1..193fd97c 100644
 --- a/src/garage/cli/layout.rs
 +++ b/src/garage/cli/layout.rs
 @@ -8,6 +8,28 @@ use garage_rpc::*;
@@ -167,7 +134,7 @@ index dc5315a..193fd97 100644
  	cmd: LayoutOperation,
  	system_rpc_endpoint: &Endpoint<SystemRpc, ()>,
 diff --git a/src/garage/cli/util.rs b/src/garage/cli/util.rs
-index 1140cf2..e4c4d18 100644
+index 1140cf22..e4c4d188 100644
 --- a/src/garage/cli/util.rs
 +++ b/src/garage/cli/util.rs
 @@ -17,6 +17,28 @@ use garage_model::s3::version_table::Version;
@@ -200,7 +167,7 @@ index 1140cf2..e4c4d18 100644
  	println!("List of buckets:");
  
 diff --git a/src/k2v-client/bin/k2v-cli.rs b/src/k2v-client/bin/k2v-cli.rs
-index b9461c8..b9cc148 100644
+index b9461c89..b9cc1485 100644
 --- a/src/k2v-client/bin/k2v-cli.rs
 +++ b/src/k2v-client/bin/k2v-cli.rs
 @@ -10,6 +10,28 @@ use format_table::format_table;
@@ -233,7 +200,7 @@ index b9461c8..b9cc148 100644
  #[derive(Parser, Debug)]
  #[clap(author, version, about, long_about = None)]
 diff --git a/src/rpc/layout.rs b/src/rpc/layout.rs
-index 1030e3a..47eca49 100644
+index 1030e3a6..47eca49d 100644
 --- a/src/rpc/layout.rs
 +++ b/src/rpc/layout.rs
 @@ -10,6 +10,28 @@ use garage_util::error::*;

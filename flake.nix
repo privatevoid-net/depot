@@ -36,6 +36,13 @@
       };
     };
 
+    hyprspace = {
+      url = "github:privatevoid-net/hyprspace";
+      inputs = {
+        flake-parts.follows = "flake-parts";
+      };
+    };
+
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";

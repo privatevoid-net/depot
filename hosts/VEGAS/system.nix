@@ -26,7 +26,6 @@
       ./services/minecraft
       ./services/reflex
       ./services/sso
-      ./services/vault
       ./services/websites
       ./services/wireguard-server
       depot.nixosModules.hyprspace

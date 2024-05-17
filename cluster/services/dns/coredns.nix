@@ -58,7 +58,7 @@ in
           fallthrough
         }
         chaos "Private Void DNS" info@privatevoid.net
-        forward hyprspace. 127.80.1.53:5380
+        forward hyprspace. 127.43.104.80:11355
         forward ${domain}. ${lib.concatStringsSep " " authoritativeServers} {
           policy random
         }

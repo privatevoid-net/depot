@@ -12,11 +12,11 @@ super: rec {
 
   garage = patch super.garage_0_8 "patches/base/garage";
 
-  jellyfin = patch (super.jellyfin.override {
+  jellyfin = super.jellyfin.override {
     ffmpeg = super.ffmpeg.override {
       withMfx = true;
     };
-  }) "patches/base/jellyfin";
+  };
 
   jre17_standard = let
     jre = super.jre_minimal.override {
@@ -38,7 +38,7 @@ super: rec {
 
   kanidm = patch super.kanidm "patches/base/kanidm";
 
-  keycloak = super.keycloak.override {
+  keycloak = super.callPackage ./security/keycloak {
     jre = jre17_standard;
   };
 
