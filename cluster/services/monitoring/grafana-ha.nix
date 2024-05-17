@@ -88,7 +88,7 @@ in
       };
       serviceConfig = {
         EnvironmentFile = config.age.secrets.grafana-secrets.path;
-        Restart = "on-failure";
+        Restart = lib.mkForce "always";
         RestartSec = "10s";
       };
     };
