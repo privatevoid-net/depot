@@ -6,6 +6,7 @@
       private-void = [ "VEGAS" "prophet" ];
       nixpak = [ "VEGAS" "prophet" ];
       max = [ "VEGAS" "prophet" ];
+      hyprspace = [ "VEGAS" "prophet" ];
     };
     nixos = {
       private-void = [
@@ -19,6 +20,10 @@
       max = [
         ./common.nix
         ./orgs/max.nix
+      ];
+      hyprspace = [
+        ./common.nix
+        ./orgs/hyprspace.nix
       ];
     };
   };

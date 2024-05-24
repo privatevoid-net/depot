@@ -21,6 +21,8 @@ in with hosts;
   "cluster/services/hercules-ci-multi-agent/secrets/hci-cache-credentials-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "cluster/services/hercules-ci-multi-agent/secrets/hci-cache-credentials-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/hercules-ci-multi-agent/secrets/hci-effects-secrets-private-void.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
+  "cluster/services/hercules-ci-multi-agent/secrets/hci-token-hyprspace-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "cluster/services/hercules-ci-multi-agent/secrets/hci-token-hyprspace-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "cluster/services/hercules-ci-multi-agent/secrets/hci-token-max-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/hercules-ci-multi-agent/secrets/hci-token-max-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "cluster/services/hercules-ci-multi-agent/secrets/hci-token-nixpak-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
