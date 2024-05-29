@@ -8,6 +8,6 @@ in
 {
   services.nginx.virtualHosts."top-level.${domain}".locations = {
     "= /.well-known/matrix/server".alias = federation;
-    inherit (config.services.nginx.virtualHosts."matrix.${domain}".locations) "= /.well-known/matrix/client";
+    "= /.well-known/matrix/client".return = "302 https://matrix.${domain}/.well-known/matrix/client";
   };
 }

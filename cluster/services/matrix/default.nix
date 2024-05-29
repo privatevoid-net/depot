@@ -2,14 +2,21 @@
 
 {
   services.matrix = {
-    nodes.homeserver = [ "VEGAS" ];
-    nixos.homeserver = [
-      ./homeserver.nix
-      ./coturn.nix
-      ./bridges/discord.nix
-      ./federation.nix
-      ./web-client.nix
-    ];
+    nodes = {
+      homeserver = [ "VEGAS" ];
+      static = config.services.websites.nodes.host;
+    };
+    nixos = {
+      homeserver = [
+        ./homeserver.nix
+        ./coturn.nix
+        ./bridges/discord.nix
+      ];
+      static = [
+        ./federation.nix
+        ./web-client.nix
+      ];
+    };
   };
 
   monitoring.blackbox.targets.matrix = {
@@ -23,8 +30,8 @@
       config.services.matrix.nodes.homeserver;
   in {
     matrix.target = homeserverAddrs;
-    chat.target = homeserverAddrs;
     stun.target = homeserverAddrs;
     turn.target = homeserverAddrs;
+    chat.consulService = "static-lb";
   };
 }
