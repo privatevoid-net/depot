@@ -336,15 +336,15 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1716907549,
-        "narHash": "sha256-gRPDFMIcwZKM/YxUs/XQBf/Y/HJwRu6XY3+pWN9hE1Q=",
-        "owner": "privatevoid-net",
+        "lastModified": 1717268948,
+        "narHash": "sha256-hLVg+AncJx2LrseX2NCR77d3S5BYJBerYl/f9D8xEdg=",
+        "owner": "hyprspace",
         "repo": "hyprspace",
-        "rev": "121b22faf77884a03ddc039f7474ed413b2ff471",
+        "rev": "d97924b908475021b3e7c7edf86a0b9761d3bef8",
         "type": "github"
       },
       "original": {
-        "owner": "privatevoid-net",
+        "owner": "hyprspace",
         "repo": "hyprspace",
         "type": "github"
       }
