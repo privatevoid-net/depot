@@ -21,7 +21,7 @@ in
 
       importWebsites = expr: import expr {
         tools = depot.lib.nginx;
-        inherit (depot) packages;
+        inherit (depot) inputs packages;
       };
 
       websites = depot.lib.nginx.mappers.mapSubdomains (importWebsites ./websites.nix);
@@ -54,7 +54,7 @@ in
   dns.records = let
     oldStaticAddr = [ depot.hours.VEGAS.interfaces.primary.addrPublic ];
   in lib.mkMerge [
-    (lib.genAttrs [ "www" "draw" "stop-using-nix-env" "whoami" ] (lib.const {
+    (lib.genAttrs [ "www" "draw" "stop-using-nix-env" "whoami" "docs.hyprspace" ] (lib.const {
       consulService = "static-lb";
     }))
     {
