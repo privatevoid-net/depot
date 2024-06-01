@@ -37,7 +37,7 @@
     };
 
     hyprspace = {
-      url = "github:privatevoid-net/hyprspace";
+      url = "github:hyprspace/hyprspace";
       inputs = {
         flake-parts.follows = "flake-parts";
       };
