@@ -13,4 +13,9 @@ in
       allowCustomHomeservers = false;
     });
   };
+
+  security.acme.certs."chat.${domain}" = {
+    dnsProvider = "exec";
+    webroot = lib.mkForce null;
+  };
 }
