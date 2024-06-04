@@ -4,11 +4,12 @@
   perSystem = { filters, pkgs, self', system, ... }: {
     checks = lib.mkIf (system == "x86_64-linux") {
       ascensions = pkgs.callPackage ./ascensions.nix {
+        inherit (self'.packages) consul;
         inherit (self) nixosModules;
       };
 
       garage = pkgs.callPackage ./garage.nix {
-        inherit (self'.packages) garage;
+        inherit (self'.packages) garage consul;
         inherit (self) nixosModules;
         inherit (config) cluster;
       };
