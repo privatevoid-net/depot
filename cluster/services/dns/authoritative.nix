@@ -106,6 +106,11 @@ in {
 
   systemd.services.coredns = {
     after = [ "acme-dns.service" ];
+    serviceConfig = {
+      MemoryMax = "200M";
+      MemorySwapMax = "50M";
+      CPUQuota = "25%";
+    };
   };
 
   consul.services = {
