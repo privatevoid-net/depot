@@ -23,10 +23,10 @@ in
           async = true;
           deploy = {
             agents = callUpon hour;
-            rollbackScript = genAttrs systems (flip withSystem ({ pkgs, ... }:
+            rollbackScript = genAttrs systems (flip withSystem ({ config, pkgs, ... }:
               let
                 scheduleReboot = pkgs.writeShellScript "schedule-reboot.sh" ''
-                  export PATH="${pkgs.consul}/bin:${pkgs.systemd}/bin:${pkgs.coreutils}/bin"
+                  export PATH="${config.packages.consul}/bin:${pkgs.systemd}/bin:${pkgs.coreutils}/bin"
                   currentTime=$(date +%s)
                   lastScheduledTime=$(consul kv get system/coordinated-reboot/last)
                   if [[ $? -ne 0 ]]; then
@@ -46,7 +46,7 @@ in
                     ScheduleShutdown st reboot ''${nextScheduledTime}000000
                 '';
               in pkgs.writeShellScript "post-effect.sh" ''
-                export PATH="${pkgs.consul}/bin:${pkgs.coreutils}/bin"
+                export PATH="${config.packages.consul}/bin:${pkgs.coreutils}/bin"
                 if [[ "$(realpath /run/booted-system/kernel)" != "$(realpath /nix/var/nix/profiles/system/kernel)" ]]; then
                   echo "Scheduling reboot for kernel upgrade"
                   if ! consul members >/dev/null; then
