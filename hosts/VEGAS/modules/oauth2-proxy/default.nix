@@ -2,7 +2,7 @@
 let
   inherit (depot.lib.meta) domain;
   login = x: "https://login.${domain}/auth/realms/master/protocol/openid-connect/${x}";
-  cfg = config.services.oauth2_proxy;
+  cfg = config.services.oauth2-proxy;
 in
 {
   age.secrets.oauth2_proxy-secrets = {
@@ -12,10 +12,7 @@ in
     mode = "0400";
   };
 
-  users.users.oauth2_proxy.group = "oauth2_proxy";
-  users.groups.oauth2_proxy = {};
-
-  services.oauth2_proxy = {
+  services.oauth2-proxy = {
     enable = true;
     approvalPrompt = "auto";
     provider = "keycloak";
