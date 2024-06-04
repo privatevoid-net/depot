@@ -92,7 +92,7 @@ in {
           success 4000 86400
           denial 0
           prefetch 3
-          serve_stale 86400s
+          serve_stale 86400s verify
         }
         trace zipkin ${cluster.config.links.tempo-zipkin-http.tuple} {
           every 100
