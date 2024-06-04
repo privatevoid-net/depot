@@ -36,7 +36,6 @@ in
   services.forgejo = {
     enable = true;
     package = depot.packages.forgejo;
-    appName = "The Forge";
     stateDir = "/srv/storage/private/forge";
     database = {
       createDatabase = false;
@@ -48,6 +47,9 @@ in
       passwordFile = secrets.forgejoDbCredentials.path;
     };
     settings = {
+      DEFAULT = {
+        APP_NAME = "The Forge";
+      };
       server = {
         DOMAIN = host;
         ROOT_URL = "https://${host}/";
