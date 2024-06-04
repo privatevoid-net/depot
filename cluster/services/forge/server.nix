@@ -15,6 +15,11 @@ let
 in
 
 {
+  system.ascensions.forgejo = {
+    requiredBy = [ "gitea.service" ];
+    incantations = i: [ ];
+  };
+
   age.secrets = {
     forgejoOidcSecret = {
       file = ./credentials/forgejo-oidc-secret.age;
