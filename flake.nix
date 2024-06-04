@@ -58,7 +58,7 @@
     };
 
     nar-serve = {
-      url = "github:numtide/nar-serve/v0.5.0";
+      url = "github:numtide/nar-serve";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-utils.follows = "repin-flake-utils";
