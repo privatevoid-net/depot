@@ -16,8 +16,11 @@ in
 
 {
   system.ascensions.forgejo = {
-    requiredBy = [ "gitea.service" ];
-    incantations = i: [ ];
+    requiredBy = [ "forgejo.service" ];
+    before = [ "forgejo.service" ];
+    incantations = i: [
+      (i.execShell "chown -R forgejo:forgejo /srv/storage/private/forge")
+    ];
   };
 
   age.secrets = {
