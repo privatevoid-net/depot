@@ -1,7 +1,6 @@
-{ pkgs, depot, lib, config, ... }:
+{ depot, lib, config, ... }:
 let
   inherit (config.networking) hostName;
-  hyprspace = depot.inputs.hyprspace.packages.default;
   hyprspaceCapableNodes = lib.filterAttrs (_: host: host.hyprspace.enable) depot.hours;
   peersFormatted = builtins.mapAttrs (name: x: {
     inherit name;
@@ -13,22 +12,7 @@ let
   myNode = depot.reflection;
   listenPort = myNode.hyprspace.listenPort or 8001;
 
-  interfaceConfig = pkgs.writeText "hyprspace.json" (builtins.toJSON {
-    listenAddresses = let
-      inherit (myNode.interfaces.primary) addr;
-      port = toString listenPort;
-    in [
-      "/ip4/${addr}/tcp/${port}"
-      "/ip4/${addr}/udp/${port}/quic-v1"
-    ]
-    ++ (map (port: "/ip4/${addr}/tcp/${toString port}") additionalTCPPorts)
-    ++ (map (port: "/ip4/${addr}/udp/${toString port}/quic-v1") additionalQUICPorts);
-    privateKey = "@HYPRSPACEPRIVATEKEY@";
-    peers = peerList;
-  });
-
   privateKeyFile = config.age.secrets.hyprspace-key.path;
-  runConfig = "/run/hyprspace.json";
   nameservers = lib.unique config.networking.nameservers;
 
   additionalTCPPorts = [
@@ -40,6 +24,11 @@ let
     500
   ];
 in {
+
+  imports = [
+    depot.inputs.hyprspace.nixosModules.default
+  ];
+
   links.hyprspaceMetrics.protocol = "http";
 
   age.secrets.hyprspace-key = {
@@ -48,23 +37,7 @@ in {
   };
 
   systemd.services.hyprspace = {
-    enable = true;
-    after = [ "network-online.target" ];
-    wantedBy = [ "multi-user.target" ];
-    preStart = ''
-      test -e ${runConfig} && rm ${runConfig}
-      cp ${interfaceConfig} ${runConfig}
-      chmod 0600 ${runConfig}
-      ${pkgs.replace-secret}/bin/replace-secret '@HYPRSPACEPRIVATEKEY@' "${privateKeyFile}" ${runConfig}
-      chmod 0400 ${runConfig}
-    '';
-    environment.HYPRSPACE_METRICS_PORT = config.links.hyprspaceMetrics.portStr;
     serviceConfig = {
-      Group = "wheel";
-      Restart = "on-failure";
-      RestartSec = "5s";
-      ExecStart = "${hyprspace}/bin/hyprspace up -c ${runConfig}";
-      ExecStopPost = "${pkgs.coreutils}/bin/rm -f /run/hyprspace-rpc.hyprspace.sock";
       IPAddressDeny = [
         "10.0.0.0/8"
         "100.64.0.0/10"
@@ -87,15 +60,25 @@ in {
     };
   };
 
-  networking.firewall = {
-    allowedTCPPorts = [ listenPort ] ++ additionalTCPPorts;
-    allowedUDPPorts = [ listenPort ] ++ additionalQUICPorts;
-    trustedInterfaces = [ "hyprspace" ];
+  services.hyprspace = {
+    enable = true;
+    metricsPort = config.links.hyprspaceMetrics.port;
+    inherit privateKeyFile;
+    settings = {
+      listenAddresses = let
+        inherit (myNode.interfaces.primary) addr;
+        port = toString listenPort;
+      in [
+        "/ip4/${addr}/tcp/${port}"
+        "/ip4/${addr}/udp/${port}/quic-v1"
+      ]
+      ++ (map (port: "/ip4/${addr}/tcp/${toString port}") additionalTCPPorts)
+      ++ (map (port: "/ip4/${addr}/udp/${toString port}/quic-v1") additionalQUICPorts);
+      peers = peerList;
+    };
   };
 
-  environment.systemPackages = [
-    hyprspace
-  ];
+  networking.firewall.trustedInterfaces = [ "hyprspace" ];
 
   services.grafana-agent.settings.metrics.configs = lib.singleton {
     name = "metrics-hyprspace";
