@@ -38,7 +38,7 @@ super: rec {
 
   kanidm = patch super.kanidm "patches/base/kanidm";
 
-  keycloak = super.callPackage ./security/keycloak {
+  keycloak = super.keycloak.override {
     jre = jre17_standard;
   };
 
