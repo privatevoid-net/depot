@@ -31,7 +31,6 @@
     nix-super = {
       url = "gitlab:max/nix-super?host=git.privatevoid.net";
       inputs = {
-        nixpkgs.follows = "nixpkgs";
         nixpkgs-regression.follows = "blank";
       };
     };
