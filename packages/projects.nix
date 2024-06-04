@@ -22,6 +22,8 @@
 
       cinny = pkgs.callPackage ./web-apps/cinny { inherit pins; };
 
+      consul = pkgs.callPackage ./servers/consul { };
+
       excalidraw = pkgs.callPackage ./web-apps/excalidraw { inherit pins; };
 
       graf = pkgs.callPackage ./tools/graf { };
