@@ -14,6 +14,11 @@ in {
     depot.nixosModules.ipfs-cluster
   ];
 
+  system.ascensions.ipfs-cluster = {
+    requiredBy = [ "ipfs-cluster.service" ];
+    incantations = i: [ ];
+  };
+
   age.secrets = {
     ipfs-cluster-secret.file = ./cluster-secret.age;
     ipfs-cluster-pinsvc-credentials = {
