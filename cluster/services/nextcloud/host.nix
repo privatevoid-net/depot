@@ -18,7 +18,7 @@ in
     };
   };
   services.nextcloud = {
-    package = pkgs.nextcloud28;
+    package = pkgs.nextcloud29;
     enable = true;
     https = true;
     hostName = "storage.${depot.lib.meta.domain}";
