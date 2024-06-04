@@ -11,7 +11,7 @@ let
 
   link = config.links.forge;
 
-  exe = lib.getExe config.services.gitea.package;
+  exe = lib.getExe config.services.forgejo.package;
 in
 
 {
@@ -23,17 +23,17 @@ in
   age.secrets = {
     forgejoOidcSecret = {
       file = ./credentials/forgejo-oidc-secret.age;
-      owner = "gitea";
+      owner = "forgejo";
     };
     forgejoDbCredentials = {
       file = ./credentials/forgejo-db-credentials.age;
-      owner = "gitea";
+      owner = "forgejo";
     };
   };
 
   links.forge.protocol = "http";
 
-  services.gitea = {
+  services.forgejo = {
     enable = true;
     package = depot.packages.forgejo;
     appName = "The Forge";
@@ -75,7 +75,7 @@ in
 
   services.nginx.virtualHosts."${host}" = vhosts.proxy link.url;
 
-  systemd.services.gitea.preStart = let
+  systemd.services.forgejo.preStart = let
     providerName = "PrivateVoidAccount";
     args = lib.escapeShellArgs [
       "--name" providerName
