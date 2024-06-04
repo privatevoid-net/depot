@@ -35,7 +35,7 @@
 
       systemd = forAllAgents (name: agent:
         let
-          command = "${lib.getExe agent.package} --config ${agent.tomlFile}";
+          command = "${agent.package}/bin/hercules-ci-agent --config ${agent.tomlFile}";
           testCommand = "${command} --test-configuration";
         in
         {
