@@ -48,7 +48,7 @@ in {
 
     modules = [ pkgs.dovecot_pigeonhole ];
 
-    sieveScripts.after = ./sieve;
+    sieve.scripts.after = ./sieve;
 
     extraConfig = with config.services.dovecot2; ''
       auth_username_format = %n
