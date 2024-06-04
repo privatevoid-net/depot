@@ -6,7 +6,6 @@
     ./modules/devshell.nix
     ./build-support
 
-    ./networking/ipfs-cluster/project.nix
     ./servers/reflex-cache/project.nix
     ./websites/landing/project.nix
     ./websites/stop-using-nix-env/project.nix
