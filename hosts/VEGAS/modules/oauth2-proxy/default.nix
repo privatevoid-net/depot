@@ -13,6 +13,7 @@ in
 
   services.oauth2-proxy = {
     enable = true;
+    nginx.domain = config.services.keycloak.settings.hostname;
     approvalPrompt = "auto";
     provider = "keycloak";
     scope = "openid";
