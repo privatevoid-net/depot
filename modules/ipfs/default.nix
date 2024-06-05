@@ -282,7 +282,7 @@ in
                   cfg.extraConfig
               ))
             } \
-          | install -m 0600 -o '${cfg.user}' -g '${cfg.group}' /dev/stdin "$IPFS_PATH/.config.new"
+          | install -m 0600 /dev/stdin "$IPFS_PATH/.config.new"
         mv "$IPFS_PATH/.config.new" "$IPFS_PATH/config"
       '';
       serviceConfig = {
