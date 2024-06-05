@@ -5,6 +5,8 @@ let
 
   cfg = config.services.external-storage;
 
+  cfgAge = config.age;
+
   create = lib.flip lib.mapAttrs';
 in
 
@@ -18,7 +20,14 @@ in
       fileSystems = lib.mkOption {
         description = "S3QL-based filesystems on top of CIFS mountpoints.";
         default = {};
-        type = with lib.types; lazyAttrsOf (submodule ./filesystem-type.nix);
+        type = with lib.types; lazyAttrsOf (submodule ({ config, name, ... }: {
+          imports = [ ./filesystem-type.nix ];
+          backend = lib.mkIf (config.underlay != null) "local://${cfg.underlays.${config.underlay}.mountpoint}";
+          commonArgs = [
+            "--cachedir" config.cacheDir
+            "--authfile" cfgAge.secrets."storageAuth-${name}".path
+          ] ++ (lib.optionals (config.backendOptions != []) [ "--backend-options" (lib.concatStringsSep "," config.backendOptions) ]);
+        }));
       };
       underlays = lib.mkOption {
         description = "CIFS underlays for S3QL filesystems.";
@@ -29,6 +38,21 @@ in
   };
 
   config = {
+    system.extraIncantations = {
+      runS3qlUpgrade = i: filesystem: let
+        fs = cfg.fileSystems.${filesystem};
+      in i.execShellWith [ s3ql ] ''
+        echo yes | ${lib.escapeShellArgs
+          ([
+            "${s3ql}/bin/s3qladm"
+          ] ++ fs.commonArgs ++ [
+            "upgrade"
+            fs.backend
+          ])
+        }
+      '';
+    };
+
     boot.supportedFilesystems = lib.mkIf (cfg.underlays != {}) [ "cifs" ];
 
     age.secrets = lib.mkMerge [
@@ -73,11 +97,9 @@ in
         value = let
           isUnderlay = fs.underlay != null;
 
-          backendUrl = if isUnderlay then "local://${localBackendPath}" else fs.backend;
+          fsType = if isUnderlay then "local" else lib.head (lib.strings.match "([a-z0-9]*)://.*" fs.backend);
 
-          fsType = if isUnderlay then "local" else lib.head (lib.strings.match "([a-z0-9]*)://.*" backendUrl);
-
-          localBackendPath = if isUnderlay then cfg.underlays.${fs.underlay}.mountpoint else lib.head (lib.strings.match "[a-z0-9]*://(/.*)" backendUrl);
+          localBackendPath = if isUnderlay then cfg.underlays.${fs.underlay}.mountpoint else lib.head (lib.strings.match "[a-z0-9]*://(/.*)" fs.backend);
         in {
           description = fs.unitDescription;
           wantedBy = [ "multi-user.target" ];
@@ -92,12 +114,7 @@ in
 
           unitConfig.RequiresMountsFor = lib.mkIf isUnderlay localBackendPath;
 
-          serviceConfig = let
-            commonOptions = [
-              "--cachedir" fs.cacheDir
-              "--authfile" config.age.secrets."storageAuth-${name}".path
-            ] ++ (lib.optionals (fs.backendOptions != []) [ "--backend-options" (lib.concatStringsSep "," fs.backendOptions) ]);
-          in {
+          serviceConfig = {
             Type = "notify";
 
             ExecStartPre = map lib.escapeShellArgs [
@@ -106,11 +123,11 @@ in
                   mkfsEncrypted = ''
                     ${pkgs.gnugrep}/bin/grep -m1 fs-passphrase: '${config.age.secrets."storageAuth-${name}".path}' \
                       | cut -d' ' -f2- \
-                      | ${s3ql}/bin/mkfs.s3ql ${lib.escapeShellArgs commonOptions} -L '${name}' '${backendUrl}'
+                      | ${s3ql}/bin/mkfs.s3ql ${lib.escapeShellArgs fs.commonArgs} -L '${name}' '${fs.backend}'
                   '';
 
                   mkfsPlain = ''
-                    ${s3ql}/bin/mkfs.s3ql ${lib.escapeShellArgs commonOptions} --plain -L '${name}' '${backendUrl}'
+                    ${s3ql}/bin/mkfs.s3ql ${lib.escapeShellArgs fs.commonArgs} --plain -L '${name}' '${fs.backend}'
                   '';
 
                   detectFs = {
@@ -118,7 +135,7 @@ in
                   }.${fsType} or null;
                 in pkgs.writeShellScript "create-s3ql-filesystem" (lib.optionalString (detectFs != null) ''
                   if ! ${detectFs}; then
-                    echo Creating new S3QL filesystem on ${backendUrl}
+                    echo Creating new S3QL filesystem on ${fs.backend}
                     ${if fs.encrypt then mkfsEncrypted else mkfsPlain}
                   fi
                 ''))
@@ -128,21 +145,21 @@ in
               ]
               ([
                 "${s3ql}/bin/fsck.s3ql"
-                backendUrl
+                fs.backend
                 "--compress" "none"
-              ] ++ commonOptions)
+              ] ++ fs.commonArgs)
             ];
 
             ExecStart = lib.escapeShellArgs ([
               "${s3ql}/bin/mount.s3ql"
-              backendUrl
+              fs.backend
               fs.mountpoint
               "--fs-name" "${fs.unitName}"
               "--allow-other"
               "--systemd" "--fg"
               "--log" "none"
               "--compress" "none"
-            ] ++ commonOptions);
+            ] ++ fs.commonArgs);
 
             ExecStop = pkgs.writeShellScript "umount-s3ql-filesystem" ''
               if grep -qw '${fs.mountpoint}' /proc/self/mounts; then

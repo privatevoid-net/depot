@@ -41,5 +41,10 @@ with lib;
       type = with types; listOf str;
       default = [];
     };
+    commonArgs = mkOption {
+      type = with types; listOf str;
+      internal = true;
+      readOnly = true;
+    };
   };
 }
