@@ -34,6 +34,7 @@ let
   in "rewrite stop name ${record.rewrite.type} ${record.name}${maybeEscapeRegex ".${record.root}."} ${record.rewrite.target}. answer auto") recordsPartitioned.wrong;
 
   rewriteConf = pkgs.writeText "coredns-rewrites.conf" ''
+    rewrite stop type DS DS
     rewrite stop type NS NS
     rewrite stop type SOA SOA
     ${lib.concatStringsSep "\n" rewrites}
@@ -93,6 +94,9 @@ in {
           denial 0
           prefetch 3
           serve_stale 86400s verify
+        }
+        template ANY DS {
+          rcode NXDOMAIN
         }
         forward service.eu-central.sd-magic.${domain} 127.0.0.1:8600
         forward addr.eu-central.sd-magic.${domain} 127.0.0.1:8600
