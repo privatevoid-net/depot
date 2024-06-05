@@ -72,11 +72,12 @@ in
         name = fs.unitName;
         value = let
           isUnderlay = fs.underlay != null;
-          underlayPath = cfg.underlays.${fs.underlay}.mountpoint;
 
-          backendUrl = if isUnderlay then "local://${underlayPath}" else fs.backend;
+          backendUrl = if isUnderlay then "local://${localBackendPath}" else fs.backend;
 
           fsType = if isUnderlay then "local" else lib.head (lib.strings.match "([a-z0-9]*)://.*" backendUrl);
+
+          localBackendPath = if isUnderlay then cfg.underlays.${fs.underlay}.mountpoint else lib.head (lib.strings.match "[a-z0-9]*://(/.*)" backendUrl);
         in {
           description = fs.unitDescription;
           wantedBy = [ "multi-user.target" ];
@@ -89,7 +90,7 @@ in
             util-linux
           ];
 
-          unitConfig.RequiresMountsFor = lib.mkIf isUnderlay underlayPath;
+          unitConfig.RequiresMountsFor = lib.mkIf isUnderlay localBackendPath;
 
           serviceConfig = let
             commonOptions = [
@@ -113,7 +114,7 @@ in
                   '';
 
                   detectFs = {
-                    local = "test -e ${underlayPath}/s3ql_metadata";
+                    local = "test -e ${localBackendPath}/s3ql_metadata";
                   }.${fsType} or null;
                 in pkgs.writeShellScript "create-s3ql-filesystem" (lib.optionalString (detectFs != null) ''
                   if ! ${detectFs}; then
