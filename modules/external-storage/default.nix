@@ -144,11 +144,13 @@ in
               "--compress" "none"
             ] ++ commonOptions);
 
-            ExecStop = lib.escapeShellArgs [
-              "${s3ql}/bin/umount.s3ql"
-              "--log" "none"
-              fs.mountpoint
-            ];
+            ExecStop = pkgs.writeShellScript "umount-s3ql-filesystem" ''
+              if grep -qw '${fs.mountpoint}' /proc/self/mounts; then
+                ${s3ql}/bin/umount.s3ql --log none '${fs.mountpoint}'
+              else
+                echo Filesystem already unmounted.
+              fi
+            '';
 
             # fsck and unmounting might take a while
             TimeoutStartSec = "6h";
