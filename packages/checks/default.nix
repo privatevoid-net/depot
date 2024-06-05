@@ -38,6 +38,13 @@ in
         inherit (self) nixosModules;
         inherit (self'.packages) postgresql;
       };
+
+      s3ql-upgrade = pkgs.callPackage ./s3ql-upgrade.nix {
+        inherit (self'.packages) s3ql;
+        inherit (self) nixosModules;
+        previous = timeMachine.preUnstable;
+      };
+
       searxng = pkgs.callPackage ./searxng.nix {
         inherit (self'.packages) searxng;
       };
