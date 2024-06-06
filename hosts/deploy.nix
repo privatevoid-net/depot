@@ -30,11 +30,11 @@ in
                   currentTime=$(date +%s)
                   lastScheduledTime=$(consul kv get system/coordinated-reboot/last)
                   if [[ $? -ne 0 ]]; then
-                    lastScheduledTime=$((currentTime - 300))
+                    lastScheduledTime=$((currentTime - 900))
                   fi
                   nextScheduledTime=$((lastScheduledTime + 3600))
-                  if [[ $nextScheduledTime -lt $((currentTime + 300)) ]]; then
-                    nextScheduledTime=$((currentTime + 300))
+                  if [[ $nextScheduledTime -lt $((currentTime + 900)) ]]; then
+                    nextScheduledTime=$((currentTime + 900))
                   fi
                   consul kv put system/coordinated-reboot/last $nextScheduledTime
                   echo "Scheduling reboot for $nextScheduledTime"
