@@ -48,7 +48,16 @@ in {
 
     modules = [ pkgs.dovecot_pigeonhole ];
 
-    sieve.scripts.after = ./sieve;
+    sieve = {
+      extensions = [
+        "variables"
+        "envelope"
+        "fileinto"
+        "subaddress"
+        "mailbox"
+      ];
+      scripts.after = ./sieve;
+    };
 
     extraConfig = with config.services.dovecot2; ''
       auth_username_format = %n
