@@ -90,8 +90,14 @@ in
     };
   };
 
-  systemd.services.postfix.after = [ "network-online.target" "network-addresses-${interfaces.primary.link}.service" "network-addresses-vstub.service" ];
-  systemd.services.postfix-setup.after = [ "network-online.target" "network-addresses-${interfaces.primary.link}.service" "network-addresses-vstub.service" ];
+  systemd.services.postfix = {
+    after = [ "network-online.target" "network-addresses-${interfaces.primary.link}.service" "network-addresses-vstub.service" ];
+    wants = [ "network-online.target" ];
+  };
+  systemd.services.postfix-setup = {
+    after = [ "network-online.target" "network-addresses-${interfaces.primary.link}.service" "network-addresses-vstub.service" ];
+    wants = [ "network-online.target" ];
+  };
 
   services.fail2ban.jails.postfix.settings = {
     mode = "extra";

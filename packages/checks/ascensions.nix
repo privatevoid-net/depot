@@ -1,4 +1,4 @@
-{ testers, nixosModules }:
+{ testers, nixosModules, consul }:
 
 let
   dataDir = {
@@ -17,6 +17,8 @@ testers.runNixOSTest {
   imports = [
     ./modules/consul.nix
   ];
+
+  extraBaseModules.services.consul.package = consul;
 
   nodes = let
     common = { config, lib, ... }: let

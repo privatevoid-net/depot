@@ -29,7 +29,6 @@ in {
 
   services.ipfs-cluster = {
     enable = true;
-    package = depot.packages.ipfs-cluster;
     consensus = "crdt";
     dataDir = "/srv/storage/ipfs/cluster";
     secretFile = config.age.secrets.ipfs-cluster-secret.path;

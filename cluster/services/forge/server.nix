@@ -11,32 +11,34 @@ let
 
   link = config.links.forge;
 
-  exe = lib.getExe config.services.gitea.package;
+  exe = lib.getExe config.services.forgejo.package;
 in
 
 {
   system.ascensions.forgejo = {
-    requiredBy = [ "gitea.service" ];
-    incantations = i: [ ];
+    requiredBy = [ "forgejo.service" ];
+    before = [ "forgejo.service" ];
+    incantations = i: [
+      (i.execShell "chown -R forgejo:forgejo /srv/storage/private/forge")
+    ];
   };
 
   age.secrets = {
     forgejoOidcSecret = {
       file = ./credentials/forgejo-oidc-secret.age;
-      owner = "gitea";
+      owner = "forgejo";
     };
     forgejoDbCredentials = {
       file = ./credentials/forgejo-db-credentials.age;
-      owner = "gitea";
+      owner = "forgejo";
     };
   };
 
   links.forge.protocol = "http";
 
-  services.gitea = {
+  services.forgejo = {
     enable = true;
     package = depot.packages.forgejo;
-    appName = "The Forge";
     stateDir = "/srv/storage/private/forge";
     database = {
       createDatabase = false;
@@ -48,6 +50,9 @@ in
       passwordFile = secrets.forgejoDbCredentials.path;
     };
     settings = {
+      DEFAULT = {
+        APP_NAME = "The Forge";
+      };
       server = {
         DOMAIN = host;
         ROOT_URL = "https://${host}/";
@@ -75,7 +80,7 @@ in
 
   services.nginx.virtualHosts."${host}" = vhosts.proxy link.url;
 
-  systemd.services.gitea.preStart = let
+  systemd.services.forgejo.preStart = let
     providerName = "PrivateVoidAccount";
     args = lib.escapeShellArgs [
       "--name" providerName

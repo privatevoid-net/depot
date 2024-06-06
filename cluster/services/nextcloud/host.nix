@@ -41,10 +41,12 @@ in
       dbuser = "storage";
       dbpassFile = config.age.secrets.nextcloud-dbpass.path;
 
-      overwriteProtocol = "https";
-
       adminuser = "sa";
       adminpassFile = config.age.secrets.nextcloud-adminpass.path;
+    };
+
+    settings = {
+      overwriteprotocol = "https";
     };
   };
   services.nginx.virtualHosts."${config.services.nextcloud.hostName}" = {

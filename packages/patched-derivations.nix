@@ -38,7 +38,7 @@ super: rec {
 
   kanidm = patch super.kanidm "patches/base/kanidm";
 
-  keycloak = super.callPackage ./security/keycloak {
+  keycloak = super.keycloak.override {
     jre = jre17_standard;
   };
 
@@ -48,6 +48,7 @@ super: rec {
 
   s3ql = (patch super.s3ql "patches/base/s3ql").overrideAttrs (old: {
     propagatedBuildInputs = old.propagatedBuildInputs ++ [
+      super.python3Packages.packaging
       super.python3Packages.systemd
     ];
   });

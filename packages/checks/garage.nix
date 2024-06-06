@@ -1,4 +1,4 @@
-{ testers, nixosModules, cluster, garage }:
+{ testers, nixosModules, cluster, garage, consul }:
 
 testers.runNixOSTest {
   name = "garage";
@@ -6,6 +6,8 @@ testers.runNixOSTest {
   imports = [
     ./modules/consul.nix
   ];
+
+  extraBaseModules.services.consul.package = consul;
 
   nodes = let
     common = { config, lib, ... }: let

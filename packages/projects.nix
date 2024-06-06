@@ -6,7 +6,6 @@
     ./modules/devshell.nix
     ./build-support
 
-    ./networking/ipfs-cluster/project.nix
     ./servers/reflex-cache/project.nix
     ./websites/landing/project.nix
     ./websites/stop-using-nix-env/project.nix
@@ -21,6 +20,8 @@
     packages = filters.doFilter filters.packages rec {
 
       cinny = pkgs.callPackage ./web-apps/cinny { inherit pins; };
+
+      consul = pkgs.callPackage ./servers/consul { };
 
       excalidraw = pkgs.callPackage ./web-apps/excalidraw { inherit pins; };
 

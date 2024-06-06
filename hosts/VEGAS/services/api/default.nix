@@ -36,6 +36,5 @@ in
     };
   };
 
-
-  services.oauth2_proxy.nginx.virtualHosts = [ apiAddr ];
+  services.oauth2-proxy.nginx.virtualHosts.${apiAddr} = { };
 }

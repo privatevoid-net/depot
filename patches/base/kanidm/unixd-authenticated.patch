@@ -1,16 +1,16 @@
 diff --git a/unix_integration/src/idprovider/kanidm.rs b/unix_integration/src/idprovider/kanidm.rs
-index d1b02de0f..599dec6d5 100644
+index 6fc015756..31593f03e 100644
 --- a/unix_integration/src/idprovider/kanidm.rs
 +++ b/unix_integration/src/idprovider/kanidm.rs
-@@ -2,6 +2,7 @@ use async_trait::async_trait;
- use kanidm_client::{ClientError, KanidmClient, StatusCode};
- use kanidm_proto::v1::{OperationError, UnixGroupToken, UnixUserToken};
- use tokio::sync::RwLock;
+@@ -4,6 +4,7 @@ use kanidm_client::{ClientError, KanidmClient, StatusCode};
+ use kanidm_proto::internal::OperationError;
+ use kanidm_proto::v1::{UnixGroupToken, UnixUserToken};
+ use tokio::sync::{broadcast, RwLock};
 +use std::env;
  
  use super::interface::{
-     AuthCacheAction, AuthCredHandler, AuthRequest, AuthResult, GroupToken, Id, IdProvider,
-@@ -11,12 +12,28 @@ use crate::unix_proto::PamAuthRequest;
+     // KeyStore,
+@@ -25,12 +26,28 @@ const TAG_IDKEY: &str = "idkey";
  
  pub struct KanidmProvider {
      client: RwLock<KanidmClient>,
@@ -39,10 +39,10 @@ index d1b02de0f..599dec6d5 100644
          }
      }
  }
-@@ -73,7 +90,11 @@ impl From<UnixGroupToken> for GroupToken {
- impl IdProvider for KanidmProvider {
+@@ -118,7 +135,11 @@ impl IdProvider for KanidmProvider {
+ 
      // Needs .read on all types except re-auth.
-     async fn provider_authenticate(&self) -> Result<(), IdpError> {
+     async fn provider_authenticate(&self, _tpm: &mut tpm::BoxedDynTpm) -> Result<(), IdpError> {
 -        match self.client.write().await.auth_anonymous().await {
 +        let auth_method = match (&self.auth_name, &self.auth_password) {
 +            (Some(name), Some(password)) => self.client.write().await.auth_simple_password(name, password).await,

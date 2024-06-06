@@ -16,5 +16,5 @@ in
     };
   };
 
-  services.oauth2_proxy.nginx.virtualHosts = [ "ipfs.admin.${domain}" ];
+  services.oauth2-proxy.nginx.virtualHosts."ipfs.admin.${domain}" = { };
 }

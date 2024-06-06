@@ -26,12 +26,11 @@
   inputs = {
     systems.url = "github:privatevoid-net/nix-systems-default-linux";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11-small";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
 
     nix-super = {
       url = "gitlab:max/nix-super?host=git.privatevoid.net";
       inputs = {
-        nixpkgs.follows = "nixpkgs";
         nixpkgs-regression.follows = "blank";
       };
     };
@@ -59,7 +58,7 @@
     };
 
     nar-serve = {
-      url = "github:numtide/nar-serve/v0.5.0";
+      url = "github:numtide/nar-serve";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-utils.follows = "repin-flake-utils";
