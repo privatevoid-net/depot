@@ -61,14 +61,27 @@ in
             period = "24h";
           };
         }
+        {
+          from = "2024-06-10";
+          store = "tsdb";
+          object_store = "s3";
+          schema = "v13";
+          index = {
+            prefix = "index_";
+            period = "24h";
+          };
+        }
       ];
       storage_config = {
         boltdb.directory = "${cfg.dataDir}/boltdb-index";
         filesystem.directory = "${cfg.dataDir}/storage-chunks";
         boltdb_shipper = {
-          shared_store = "s3";
           active_index_directory = "${cfg.dataDir}/boltdb-shipper-index";
           cache_location = "${cfg.dataDir}/boltdb-shipper-cache";
+        };
+        tsdb_shipper = {
+          active_index_directory = "${cfg.dataDir}/tsdb-shipper-index";
+          cache_location = "${cfg.dataDir}/tsdb-shipper-cache";
         };
         aws = {
           endpoint = cluster.config.links.garageS3.url;
@@ -80,14 +93,15 @@ in
         };
       };
       compactor = {
-        shared_store = "s3";
         working_directory = "${cfg.dataDir}/compactor-work";
       };
       limits_config = {
-        enforce_metric_name = false;
         reject_old_samples = true;
         reject_old_samples_max_age = "168h";
+        allow_structured_metadata = false;
       };
+      query_scheduler.max_outstanding_requests_per_tenant = 32768;
+      querier.max_concurrent = 16;
     };
   };
 }
