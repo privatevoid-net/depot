@@ -167,6 +167,8 @@ in
               else
                 echo Filesystem already unmounted.
               fi
+              echo "Waiting for MainPID ($MAINPID) to die..."
+              tail --pid=$MAINPID -f /dev/null
             '';
 
             # fsck and unmounting might take a while
