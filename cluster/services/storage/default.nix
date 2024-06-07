@@ -19,8 +19,14 @@ in
       garageExternal = [ "grail" "prophet" ];
     };
     nixos = {
-      external = [ ./external.nix ];
-      heresy = [ ./heresy.nix ];
+      external = [
+        ./external.nix
+        ./s3ql-upgrades.nix
+      ];
+      heresy = [
+        ./heresy.nix
+        ./s3ql-upgrades.nix
+      ];
       garage = [
         ./garage.nix
         ./garage-options.nix
