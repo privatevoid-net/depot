@@ -6,7 +6,9 @@
     value = {
       requiredBy = [ "${fs.unitName}.service" ];
       before = [ "${fs.unitName}.service" ];
-      incantations = i: [ ];
+      incantations = i: [
+        (i.runS3qlUpgrade name) # 4.0.0 -> 5.1.3
+      ];
     };
   }) config.services.external-storage.fileSystems;
 }
