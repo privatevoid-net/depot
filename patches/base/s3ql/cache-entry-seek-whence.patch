@@ -1,0 +1,18 @@
+diff --git a/src/s3ql/block_cache.py b/src/s3ql/block_cache.py
+index a4b55fd1..267b9a12 100644
+--- a/src/s3ql/block_cache.py
++++ b/src/s3ql/block_cache.py
+@@ -86,10 +86,10 @@ class CacheEntry:
+     def flush(self):
+         self.fh.flush()
+ 
+-    def seek(self, off):
++    def seek(self, off, whence=0):
+         if self.pos != off:
+-            self.fh.seek(off)
+-            self.pos = off
++            self.fh.seek(off, whence)
++            self.pos = self.fh.tell()
+ 
+     def tell(self):
+         return self.pos
