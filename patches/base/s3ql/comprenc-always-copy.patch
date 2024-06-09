@@ -1,0 +1,17 @@
+diff --git a/src/s3ql/backends/comprenc.py b/src/s3ql/backends/comprenc.py
+index 9ed3627e..db419bb7 100644
+--- a/src/s3ql/backends/comprenc.py
++++ b/src/s3ql/backends/comprenc.py
+@@ -276,6 +276,12 @@ class ComprencBackend(AbstractBackend):
+             buf.seek(0)
+             fh = buf
+ 
++        if meta_raw['compression'] == 'None' and meta_raw['encryption'] == 'None':
++            buf = io.BytesIO()
++            copyfh(fh, buf, len_)
++            buf.seek(0)
++            fh = buf
++        
+         return self.backend.write_fh(key, fh, meta_raw, len_=len_ if meta_raw['compression'] == 'None'and meta_raw['encryption'] == 'None' else None)
+ 
+     def contains(self, key):
