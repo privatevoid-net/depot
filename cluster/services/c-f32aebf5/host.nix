@@ -81,6 +81,9 @@ in
       Group = cid;
       ReadWritePaths = [ home ];
 
+      ExecStop = "${pkgs.wine64Packages.staging}/bin/wineserver --kill";
+      Restart = "on-failure";
+
       CPUQuota = "75%";
       MemoryMax = "2G";
       MemorySwapMax = "2G";
@@ -104,6 +107,60 @@ in
         "fe80::/10"
       ];
       IPAddressAllow = lib.unique config.networking.nameservers;
+    };
+  };
+
+  systemd.services."${cid}-backup" = {
+    startAt = "04:00";
+
+    script = ''
+      cd ${home}/drive_c/spt/user
+      tarball=".profiles-backup-$(date +%s).tar"
+      final="profiles-backup-$(date +%Y-%m-%d-%H:%M:%S).tar.xz"
+      ${pkgs.gnutar}/bin/tar cvf "$tarball" profiles/
+      ${pkgs.xz}/bin/xz -9 "$tarball"
+      mv "''${tarball}.xz" "$final"
+      ${pkgs.rotate-backups}/bin/rotate-backups -S yes -q --daily 30 --weekly 12 -I 'profiles-backup-*.tar.xz' .
+    '';
+
+    unitConfig.ConditionPathExists = "${home}/drive_c/spt/user";
+
+    serviceConfig = {
+      Type = "oneshot";
+      DynamicUser = true;
+      User = cid;
+      Group = cid;
+      ReadWritePaths = [ home ];
+      PrivateNetwork = true;
+    };
+  };
+
+  systemd.services."${cid}-auto-restart" = {
+    startAt = "05:00";
+
+    script = ''
+      echo -n "Service status: "
+      if ! systemctl is-active '${cid}.service'; then
+        echo Service not active.
+        exit
+      fi
+
+      for i in {1..120}; do
+        if test "$(${pkgs.iproute2}/bin/ss -H -tn 'cgroup = /sys/fs/cgroup/system.slice/${cid}.service' | wc -l)" != 0; then
+          echo Service in use.
+          exit
+        fi
+        sleep 1
+      done
+
+      echo Restarting service...
+      systemctl restart --no-block '${cid}.service'
+    '';
+
+    unitConfig.ConditionPathExists = "${home}/drive_c/spt";
+
+    serviceConfig = {
+      Type = "oneshot";
     };
   };
 
