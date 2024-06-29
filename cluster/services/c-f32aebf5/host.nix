@@ -163,6 +163,32 @@ in
       Type = "oneshot";
     };
   };
+  systemd.services."${cid}-control" = {
+    script = ''
+      if test -e ${home}/drive_c/spt/control/restart; then
+        echo Action: restart
+        trap 'rm -f ${home}/drive_c/spt/control/restart' EXIT
+        systemctl restart ${cid}.service
+      elif test -e ${home}/drive_c/spt/control/shutdown; then
+        echo Action: stop
+        systemctl stop ${cid}.service
+      else
+        echo Action: start
+        systemctl start ${cid}.service
+      fi
+    '';
+
+    unitConfig.ConditionPathExists = "${home}/drive_c/spt/control";
+
+    serviceConfig = {
+      Type = "oneshot";
+    };
+  };
+
+  systemd.paths."${cid}-control" = {
+    wantedBy = [ "paths.target" ];
+    pathConfig.PathChanged = "${home}/drive_c/spt/control";
+  };
 
   services.openssh.extraConfig = ''
     Match User ${cid}
