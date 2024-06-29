@@ -1,12 +1,5 @@
 { config, cluster, depot, ... }:
 with depot.lib.nginx;
-let
-  addrSplit' = builtins.split ":" config.services.minio.listenAddress;
-  addrSplit = builtins.filter builtins.isString addrSplit';
-  host' = builtins.head addrSplit;
-  host = if host' == "" then "127.0.0.1" else host';
-  port = builtins.head (builtins.tail addrSplit);
-in
 {
   links.garageNixStoreInternalRedirect = {
     protocol = "http";
@@ -24,10 +17,6 @@ in
       };
       "${config.links.garageNixStoreInternalRedirect.tuple}" = {
         fail_timeout = 0;
-      };
-      "${host}:${port}" = {
-        fail_timeout = 0;
-        backup = true;
       };
     };
   };
