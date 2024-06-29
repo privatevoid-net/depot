@@ -1,0 +1,5 @@
+{
+  garage = {
+    buckets.content-delivery = { };
+  };
+}
