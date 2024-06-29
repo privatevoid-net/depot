@@ -13,7 +13,7 @@ super: rec {
   garage = patch super.garage_0_8 "patches/base/garage";
 
   jellyfin = super.jellyfin.override {
-    ffmpeg = super.ffmpeg.override {
+    jellyfin-ffmpeg = super.ffmpeg.override {
       withMfx = true;
     };
   };
