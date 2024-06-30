@@ -27,8 +27,6 @@
 
       graf = pkgs.callPackage ./tools/graf { };
 
-      grafana = pkgs.callPackage ./monitoring/grafana { };
-
       ipfs = pkgs.callPackage ./networking/ipfs { };
 
       npins = pkgs.callPackage ./tools/npins {
