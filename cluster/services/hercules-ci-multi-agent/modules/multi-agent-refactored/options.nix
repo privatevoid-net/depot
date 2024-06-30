@@ -18,7 +18,7 @@ in
       Support is available at [help@hercules-ci.com](mailto:help@hercules-ci.com).
     '');
 
-    package = lib.mkPackageOptionMD pkgs "hercules-ci-agent" { };
+    package = lib.mkPackageOption pkgs "hercules-ci-agent" { };
 
     user = lib.mkOption {
       type = types.str;

@@ -61,7 +61,6 @@ in with hosts;
   "secrets/gitlab-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/gitlab-initial-root-password.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/gitlab-openid-secret.age".publicKeys = max ++ map systemKeys [ VEGAS ];
-  "secrets/gitlab-runner-registration.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/gitlab-secret-db.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/gitlab-secret-jws.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/gitlab-secret-otp.age".publicKeys = max ++ map systemKeys [ VEGAS ];

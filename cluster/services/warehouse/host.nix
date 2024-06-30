@@ -20,7 +20,7 @@ with depot.lib.nginx;
     }
   ];
 
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
     package = pkgs.intel-media-driver;
   };

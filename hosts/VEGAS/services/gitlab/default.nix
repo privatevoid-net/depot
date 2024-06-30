@@ -22,7 +22,6 @@ in
     "gitlab-db-credentials"
     "gitlab-initial-root-password"
     "gitlab-openid-secret"
-    "gitlab-runner-registration"
     "gitlab-secret-db"
     "gitlab-secret-jws"
     "gitlab-secret-otp"
@@ -87,21 +86,6 @@ in
           }
           
         ];
-      };
-    };
-  };
-
-  systemd.services.gitlab-runner.after = [ "gitlab.target" ];
-  services.gitlab-runner = {
-    enable = true;
-    services = {
-      shell = {
-        # File should contain at least these two variables:
-        # `CI_SERVER_URL`
-        # `REGISTRATION_TOKEN`
-        registrationConfigFile = secrets.gitlab-runner-registration;
-        executor = "shell";
-        tagList = [ "shell" ];
       };
     };
   };
