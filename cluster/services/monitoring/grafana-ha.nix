@@ -1,4 +1,4 @@
-{ cluster, config, depot, lib, pkgs, ... }:
+{ cluster, config, depot, lib, ... }:
 let
   inherit (depot.lib.meta) domain;
 
@@ -25,7 +25,6 @@ in
 
   services.grafana = {
     enable = true;
-    package = depot.packages.grafana;
     settings = {
       server = {
         root_url = "https://monitoring.${domain}/";
