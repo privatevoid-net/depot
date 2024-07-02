@@ -1,18 +1,18 @@
-{ depot, ... }:
+{ depot, lib, ... }:
 {
   imports = [
     ./imap.nix
     ./opendkim.nix
     ./postfix.nix
   ];
-  services.nginx.virtualHosts."mail.${depot.lib.meta.domain}" = {
-    enableACME = true;
-    locations."/".return = "204";
+
+  security.acme.certs."mail.${depot.lib.meta.domain}" = {
+    dnsProvider = "exec";
+    webroot = lib.mkForce null;
+    extraDomainNames = map (x: "${x}.${depot.lib.meta.domain}") [
+      "mx"
+      "imap"
+      "smtp"
+    ];
   };
-  security.acme.certs."mail.${depot.lib.meta.domain}".extraDomainNames = map
-  (x: "${x}.${depot.lib.meta.domain}") [
-    "mx"
-    "imap"
-    "smtp"
-  ];
 }
