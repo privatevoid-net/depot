@@ -38,7 +38,7 @@ in {
       cluster = {
         peer_addresses = [
           "/ip4/95.216.8.12/tcp/9096/p2p/12D3KooWFqccQN24XbpJbguWmtqAJwKarPXxMNqGCz1wSQqKL97D"
-          "/ip4/152.67.79.222/tcp/9096/p2p/12D3KooWC7y9GH5j6zioqGx6354WfWwKCQAKbRMDJY2gJ5j5qLzm"
+          "/ip4/152.67.79.222/tcp/9096/p2p/12D3KooWKoDuA7iEB9XVZazErzFUGqQ6msSYRPJodNicPxKx7K1f"
         ];
         replication_factor_min = 1;
         replication_factor_max = 2;
