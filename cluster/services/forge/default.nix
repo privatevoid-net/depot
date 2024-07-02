@@ -9,4 +9,9 @@
   dns.records.forge.target = map
     (node: depot.hours.${node}.interfaces.primary.addrPublic)
     config.services.forge.nodes.server;
+
+  garage = {
+    keys.forgejo = { };
+    buckets.forgejo.allow.forgejo = [ "read" "write" ];
+  };
 }
