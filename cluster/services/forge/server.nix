@@ -20,6 +20,7 @@ in
     before = [ "forgejo.service" ];
     incantations = i: [
       (i.execShell "chown -R forgejo:forgejo /srv/storage/private/forge")
+      (i.execShell "rm -rf /srv/storage/private/forge/data/{attachments,lfs,avatars,repo-avatars,repo-archive,packages,actions_log,actions_artifacts}")
     ];
   };
 
@@ -30,6 +31,14 @@ in
     };
     forgejoDbCredentials = {
       file = ./credentials/forgejo-db-credentials.age;
+      owner = "forgejo";
+    };
+    forgejoS3AccessKeyID = {
+      file = ./credentials/forgejo-s3-access-key-id.age;
+      owner = "forgejo";
+    };
+    forgejoS3SecretAccessKey = {
+      file = ./credentials/forgejo-s3-secret-access-key.age;
       owner = "forgejo";
     };
   };
@@ -72,9 +81,23 @@ in
         ALLOW_ONLY_INTERNAL_REGISTRATION = false;
         ALLOW_ONLY_EXTERNAL_REGISTRATION = true;
       };
+      storage = {
+        STORAGE_TYPE = "minio";
+        MINIO_ENDPOINT = cluster.config.links.garageS3.hostname;
+        MINIO_BUCKET = "forgejo";
+        MINIO_USE_SSL = true;
+        MINIO_BUCKET_LOOKUP = "path";
+        SERVE_DIRECT = true;
+      };
       log.ENABLE_XORM_LOG = false;
       # enabling this will leak secrets to the log
       database.LOG_SQL = false;
+    };
+    secrets = {
+      storage = {
+        MINIO_ACCESS_KEY_ID = secrets.forgejoS3AccessKeyID.path;
+        MINIO_SECRET_ACCESS_KEY = secrets.forgejoS3SecretAccessKey.path;
+      };
     };
   };
 

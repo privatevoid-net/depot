@@ -17,6 +17,8 @@ in with hosts;
   "cluster/services/dns/acme-dns-db-credentials.age".publicKeys = max ++ map systemKeys [ checkmate VEGAS prophet ];
   "cluster/services/forge/credentials/forgejo-oidc-secret.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/forge/credentials/forgejo-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "cluster/services/forge/credentials/forgejo-s3-access-key-id.age".publicKeys = max ++ map systemKeys [ VEGAS ];
+  "cluster/services/forge/credentials/forgejo-s3-secret-access-key.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/hercules-ci-multi-agent/secrets/hci-cache-config.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/hercules-ci-multi-agent/secrets/hci-cache-credentials-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "cluster/services/hercules-ci-multi-agent/secrets/hci-cache-credentials-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
