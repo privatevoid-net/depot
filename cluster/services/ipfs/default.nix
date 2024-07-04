@@ -64,7 +64,7 @@
   ways = {
     p2p = {
       consulService = "ipfs-gateway";
-      extras.locations."/routing" = {
+      extras.locations."/" = {
         extraConfig = ''
           add_header X-Content-Type-Options "";
           add_header Access-Control-Allow-Origin *;
