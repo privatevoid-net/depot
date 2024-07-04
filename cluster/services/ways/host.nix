@@ -54,6 +54,11 @@ in
     };
   }) externalWays;
 
+  systemd.services = lib.mapAttrs' (name: cfg: {
+    name = "acme-${name}.${cfg.domainSuffix}";
+    value.distributed.enable = true;
+  }) externalWays;
+
   services.consul-template.instances.ways = lib.mkIf (consulServiceWays != {}) {
     user = "nginx";
     group = "nginx";
