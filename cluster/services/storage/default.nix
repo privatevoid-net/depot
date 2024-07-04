@@ -88,9 +88,19 @@ in
     };
   };
 
-  dns.records.garage.consulService = "garage";
-  dns.records."^[^_].+\\.web\\.garage" = {
-    consulService = "garage-web";
-    rewrite.type = "regex";
+  ways = {
+    garage = {
+      consulService = "garage";
+      extras.extraConfig = ''
+        client_max_body_size 4G;
+      '';
+    };
+    "web.garage" = {
+      consulService = "garage-web";
+      wildcard = true;
+      extras.locations."/".extraConfig = ''
+        proxy_set_header Host "$1.${config.links.garageWeb.hostname}";
+      '';
+    };
   };
 }
