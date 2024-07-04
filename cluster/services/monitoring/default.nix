@@ -85,5 +85,8 @@ in
     };
   };
 
-  dns.records.monitoring.consulService = "grafana";
+  ways.monitoring = {
+    consulService = "grafana";
+    extras.locations."/".proxyWebsockets = true;
+  };
 }
