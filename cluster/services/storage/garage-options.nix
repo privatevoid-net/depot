@@ -132,6 +132,7 @@ in
               default = null;
             };
           };
+          web.enable = mkEnableOption "website access for this bucket";
         };
       });
       default = {};
@@ -222,6 +223,14 @@ in
               garage bucket set-quotas '${bucket}' \
                 --max-objects '${if bCfg.quotas.maxObjects == null then "none" else toString bCfg.quotas.maxObjects}' \
                 --max-size '${if bCfg.quotas.maxSize == null then "none" else toString bCfg.quotas.maxSize}'
+            ''))
+            (lib.concatStringsSep "\n")
+          ]}
+
+          # bucket website access
+          ${lib.pipe cfg.buckets [
+            (lib.mapAttrsToList (bucket: bCfg: ''
+              garage bucket website ${if bCfg.web.enable then "--allow" else "--deny"} '${bucket}'
             ''))
             (lib.concatStringsSep "\n")
           ]}
