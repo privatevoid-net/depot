@@ -1,5 +1,5 @@
 {
   garage = {
-    buckets.content-delivery = { };
+    buckets.content-delivery.web.enable = true;
   };
 }
