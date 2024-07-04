@@ -36,6 +36,9 @@
     ];
   in {
     keys = lib.genAttrs hciAgentKeys (lib.const {});
-    buckets.nix-store.allow = lib.genAttrs hciAgentKeys (lib.const [ "read" "write" ]);
+    buckets.nix-store = {
+      allow = lib.genAttrs hciAgentKeys (lib.const [ "read" "write" ]);
+      web.enable = true;
+    };
   };
 }
