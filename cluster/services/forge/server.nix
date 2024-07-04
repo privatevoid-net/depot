@@ -9,7 +9,7 @@ let
 
   host = "forge.${domain}";
 
-  link = config.links.forge;
+  link = cluster.config.hostLinks.${config.networking.hostName}.forge;
 
   exe = lib.getExe config.services.forgejo.package;
 in
@@ -42,8 +42,6 @@ in
       owner = "forgejo";
     };
   };
-
-  links.forge.protocol = "http";
 
   services.forgejo = {
     enable = true;
@@ -100,8 +98,6 @@ in
       };
     };
   };
-
-  services.nginx.virtualHosts."${host}" = vhosts.proxy link.url;
 
   systemd.services.forgejo.preStart = let
     providerName = "PrivateVoidAccount";
