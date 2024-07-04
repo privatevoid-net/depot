@@ -8,8 +8,6 @@ let
 
   inherit (config.networking) hostName;
 
-  svc = cluster.config.services.monitoring;
-
   iniList = lib.concatStringsSep " ";
 
   login = x: "https://login.${domain}/auth/realms/master/protocol/openid-connect/${x}";
@@ -93,36 +91,15 @@ in
     };
   };
 
-  services.nginx = {
-    upstreams.grafana-ha.servers = lib.mapAttrs' (_: links: lib.nameValuePair links.grafana.tuple {}) (lib.getAttrs (svc.nodes.grafana) hostLinks);
-
-    virtualHosts."monitoring.${domain}" = lib.recursiveUpdate (depot.lib.nginx.vhosts.proxy "http://grafana-ha") {
-      locations."/".proxyWebsockets = true;
-    };
-  };
-
-  security.acme.certs."monitoring.${domain}" = {
-    dnsProvider = "exec";
-    webroot = lib.mkForce null;
-  };
-
   consul.services.grafana = {
     mode = "manual";
-    definition = rec {
+    definition = {
       name = "grafana";
-      address = depot.reflection.interfaces.primary.addrPublic;
-      port = 443;
+      address = hostLinks.${hostName}.grafana.ipv4;
+      port = hostLinks.${hostName}.grafana.port;
       checks = [
-        rec {
-          name = "Frontend";
-          id = "service:grafana:frontend";
-          interval = "30s";
-          http = "https://${address}/healthz";
-          tls_server_name = "monitoring.${domain}";
-          header.Host = lib.singleton tls_server_name;
-        }
         {
-          name = "Backend";
+          name = "Grafana";
           id = "service:grafana:backend";
           interval = "5s";
           http = "${hostLinks.${hostName}.grafana.url}/healthz";

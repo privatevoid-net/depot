@@ -4,11 +4,15 @@
   services.forge = {
     nodes.server = [ "VEGAS" ];
     nixos.server = ./server.nix;
+    meshLinks.server = {
+      name = "forge";
+      link.protocol = "http";
+    };
   };
 
-  dns.records.forge.target = map
-    (node: depot.hours.${node}.interfaces.primary.addrPublic)
-    config.services.forge.nodes.server;
+  ways.forge.target = let
+    host = builtins.head config.services.forge.nodes.server;
+  in config.hostLinks.${host}.forge.url;
 
   garage = {
     keys.forgejo = { };

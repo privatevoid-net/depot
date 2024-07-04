@@ -1,8 +1,9 @@
-{ config, lib, ... }:
+{ config, lib, name, ... }:
 with lib;
 
 let
   filterGroup = group: hostName: builtins.filter (x: x != hostName) group;
+  serviceName = name;
 in
 
 {
@@ -29,6 +30,22 @@ in
     nixos = mkOption {
       description = "NixOS configurations per node group.";
       type = with types; attrs;
+      default = {};
+    };
+    meshLinks = mkOption {
+      description = "Create host links on the mesh network.";
+      type = types.attrsOf (types.submodule ({ name, ... }: {
+        options = {
+          name = mkOption {
+            type = types.str;
+            default = "${serviceName}-${name}";
+          };
+          link = mkOption {
+            type = types.deferredModule;
+            default = {};
+          };
+        };
+      }));
       default = {};
     };
   };
