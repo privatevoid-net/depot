@@ -23,5 +23,8 @@
     });
   };
 
-  config._module.args.depot = config;
+  config = {
+    _module.args.depot = config;
+    flake = { inherit (config) lib; };
+  };
 }
