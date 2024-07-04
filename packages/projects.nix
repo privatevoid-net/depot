@@ -60,6 +60,7 @@
           hci
           npins
           pin
+          void
           pkgs.deadnix
           pkgs.statix
         ];
