@@ -106,7 +106,7 @@ in {
         "/etc/synapse/discord-registration.yaml"
       ];
       turn_uris = let
-        combinations = lib.cartesianProductOfSets {
+        combinations = lib.cartesianProduct {
           proto = [ "udp" "tcp" ];
           scheme = [ "turns" "turn" ];
         };
