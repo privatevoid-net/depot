@@ -4,7 +4,7 @@ let
   cfg = config.services.ipfs;
   apiAddress = "/unix/run/ipfs/ipfs-api.sock";
   ipfsApi = pkgs.writeTextDir "api" apiAddress;
-  gw = config.links.ipfsGateway;
+  gw = cluster.config.hostLinks.${config.networking.hostName}.ipfsGateway;
   ipfsPort = 110;
   nameservers = lib.unique config.networking.nameservers;
 in
@@ -12,8 +12,6 @@ in
   imports = [
     depot.nixosModules.ipfs
   ];
-
-  links.ipfsGateway.protocol = "http";
 
   networking.firewall = {
     allowedTCPPorts = [ ipfsPort 4001 ];
@@ -157,7 +155,9 @@ in
         "fc00::/7"
         "fe80::/10"
       ];
-      IPAddressAllow = nameservers;
+      IPAddressAllow = nameservers ++ [
+        cluster.config.vars.meshNet.cidr
+      ];
     };
     postStart = "chmod 660 /run/ipfs/ipfs-api.sock";
   };

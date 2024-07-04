@@ -1,8 +1,7 @@
-{ config, depot, lib, ... }:
-with depot.lib.nginx;
+{ cluster, config, depot, lib, ... }:
 let
   inherit (depot.lib.meta) domain;
-  gw = config.links.ipfsGateway;
+  gw = cluster.config.hostLinks.${config.networking.hostName}.ipfsGateway;
   cfg = config.services.ipfs;
   metrics = config.links.ipfsMetrics;
 in
@@ -34,42 +33,6 @@ in
       locations."/".return = "204";
       locations."${metrics.path}".proxyPass = "http://unix:/run/ipfs/ipfs-api.sock:";
     };
-    "p2p.${domain}" = vhosts.basic // {
-      locations."/".return = "204";
-      locations."/routing" = {
-        proxyPass = gw.url;
-        extraConfig = ''
-          add_header X-Content-Type-Options "";
-          add_header Access-Control-Allow-Origin *;
-        '';
-      };
-    };
-  };
-  security.acme.certs."ipfs.${domain}" = {
-    domain = "*.ipfs.${domain}";
-    extraDomainNames = [ "*.ipns.${domain}" ];
-    dnsProvider = "exec";
-    group = "nginx";
-  };
-
-  security.acme.certs."p2p.${domain}" = {
-    dnsProvider = "exec";
-    webroot = lib.mkForce null;
-  };
-
-  services.nginx.virtualHosts."ipfs.${domain}" = vhosts.basic // {
-    serverName = "~^(.+)\.(ip[fn]s)\.${domain}$";
-    enableACME = false;
-    useACMEHost = "ipfs.${domain}";
-    locations = {
-      "/" = {
-        proxyPass = gw.url;
-        extraConfig = ''
-          add_header X-Content-Type-Options "";
-          add_header Access-Control-Allow-Origin *;
-        '';
-      };
-    };
   };
 
   services.ipfs.extraConfig.Gateway.PublicGateways = {
@@ -88,20 +51,11 @@ in
   consul.services.ipfs-gateway = {
     mode = "external";
     unit = "ipfs";
-    definition = rec {
+    definition = {
       name = "ipfs-gateway";
-      address = depot.reflection.interfaces.primary.addrPublic;
-      port = 443;
+      address = gw.ipv4;
+      port = gw.port;
       checks = [
-        rec {
-          name = "Frontend";
-          id = "service:ipfs-gateway:frontend";
-          interval = "60s";
-          http = "https://${address}/";
-          tls_server_name = "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354.ipfs.${domain}"; # empty directory
-          header.Host = lib.singleton tls_server_name;
-          method = "HEAD";
-        }
         {
           name = "IPFS Node";
           id = "service:ipfs-gateway:ipfs";

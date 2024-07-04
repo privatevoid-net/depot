@@ -29,6 +29,10 @@
       io-tweaks = [ "VEGAS" ];
       remote-api = [ "VEGAS" ];
     };
+    meshLinks.gateway = {
+      name = "ipfsGateway";
+      link.protocol = "http";
+    };
     nixos = {
       node = [
         ./node.nix
@@ -51,18 +55,37 @@
   };
 
   dns.records = {
-    p2p.consulService = "ipfs-gateway";
-    pin.consulService = "ipfs-gateway";
     "ipfs.admin".target = map
       (node: depot.hours.${node}.interfaces.primary.addrPublic)
       config.services.ipfs.nodes.remote-api;
-    "^[^_].+\\.ipfs" = {
+    pin.consulService = "ipfs-gateway";
+  };
+
+  ways = {
+    p2p = {
       consulService = "ipfs-gateway";
-      rewrite.type = "regex";
+      extras.locations."/routing" = {
+        extraConfig = ''
+          add_header X-Content-Type-Options "";
+          add_header Access-Control-Allow-Origin *;
+        '';
+      };
     };
-    "^[^_].+\\.ipns" = {
+    ipfs = {
       consulService = "ipfs-gateway";
-      rewrite.type = "regex";
+      wildcard = true;
+      extras.extraConfig = ''
+        add_header X-Content-Type-Options "";
+        add_header Access-Control-Allow-Origin *;
+      '';
+    };
+    ipns = {
+      consulService = "ipfs-gateway";
+      wildcard = true;
+      extras.extraConfig = ''
+        add_header X-Content-Type-Options "";
+        add_header Access-Control-Allow-Origin *;
+      '';
     };
   };
 }
