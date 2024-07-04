@@ -69,7 +69,7 @@ in
                 {{end}}
               }
             '') consulServiceWays;
-          in pkgs.writeText "ways-upstreams.ctmpl" (lib.concatStringsSep "\n" upstreams);
+          in pkgs.writeText "ways-upstreams.ctmpl" (lib.concatStringsSep "\n" (lib.unique upstreams));
           destination = "/run/consul-template/nginx-ways-upstreams.conf";
           exec.command = [
             "${config.services.nginx.package}/bin/nginx"
