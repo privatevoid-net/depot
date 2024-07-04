@@ -336,11 +336,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1719665650,
-        "narHash": "sha256-tGhKCelgMzuoYZkENWT6xcrCi6XMgnoc+dg/awGuny4=",
+        "lastModified": 1720112399,
+        "narHash": "sha256-CCXoaAjMjxrwSbw0GpfVR6Svn7n4l6+Mct4f0ghYH44=",
         "owner": "hyprspace",
         "repo": "hyprspace",
-        "rev": "e2e2cd7723cca661fb4c50396a6fde5f82c9331c",
+        "rev": "565f297061e9b9dd1f078e695523a8431f3d7d83",
         "type": "github"
       },
       "original": {
