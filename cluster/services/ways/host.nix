@@ -1,8 +1,6 @@
 { cluster, config, depot, lib, pkgs, ... }:
 
 let
-  inherit (depot.lib.meta) domain;
-
   externalWays = lib.filterAttrs (_: cfg: !cfg.internal) cluster.config.ways;
 
   consulServiceWays = lib.filterAttrs (_: cfg: cfg.useConsul) cluster.config.ways;
@@ -13,14 +11,17 @@ in
 {
   services.nginx = {
     virtualHosts = lib.mapAttrs' (name: cfg: {
-      name = if cfg.internal then "${name}.internal.${domain}" else "${name}.${domain}";
+      name = cfg.name;
       value = { ... }: {
         imports = [
           cfg.extras
           {
             forceSSL = true;
-            enableACME = !cfg.internal;
-            useACMEHost = lib.mkIf cfg.internal "internal.${domain}";
+            enableACME = !cfg.internal && !cfg.wildcard;
+            useACMEHost = lib.mkMerge [
+              (lib.mkIf cfg.internal cfg.domainSuffixInternal)
+              (lib.mkIf cfg.wildcard "${name}.${cfg.domainSuffix}")
+            ];
             locations = lib.mkMerge [
               {
                 "/".proxyPass = cfg.target;
@@ -44,10 +45,12 @@ in
   };
 
   security.acme.certs = lib.mapAttrs' (name: cfg: {
-    name = "${name}.${domain}";
+    name = "${name}.${cfg.domainSuffix}";
     value = {
+      domain = lib.mkIf cfg.wildcard "*.${name}.${cfg.domainSuffix}";
       dnsProvider = "exec";
       webroot = lib.mkForce null;
+      group = "nginx";
     };
   }) externalWays;
 

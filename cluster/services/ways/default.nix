@@ -10,7 +10,7 @@
     nixos.host = ./host.nix;
   };
 
-  dns.records = lib.mapAttrs (name: cfg: {
-    consulService = "${name}.ways-proxy";
-  }) (lib.filterAttrs (_: cfg: !cfg.internal) config.ways);
+  dns.records = lib.mapAttrs'
+    (_: cfg: lib.nameValuePair cfg.dnsRecord.name ({ ... }: { imports = [ cfg.dnsRecord.value ]; }))
+    config.ways;
 }

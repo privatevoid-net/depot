@@ -1,4 +1,4 @@
-{ lib, name, options, ... }:
+{ config, lib, name, options, ... }:
 
 with lib;
 
@@ -11,13 +11,37 @@ with lib;
     };
 
     name = mkOption {
-      description = "Subdomain name to use.";
+      description = "Domain name to use.";
       type = types.str;
-      default = name;
+      default = let
+        basename = "${name}.${config.domainSuffix}";
+      in if config.wildcard then "~^(.+)\.${lib.escapeRegex basename}$" else basename;
+    };
+
+    dnsRecord = {
+      name = mkOption {
+        description = "DNS record name for this Way.";
+        type = types.str;
+        default = if config.wildcard then "^[^_].+\\.${lib.escapeRegex name}" else name;
+      };
+
+      value = mkOption {
+        description = "DNS record value for this Way.";
+        type = types.deferredModule;
+        default = {
+          consulService = "${name}.ways-proxy";
+          rewrite.type = lib.mkIf config.wildcard "regex";
+        };
+      };
     };
 
     target = mkOption {
       type = types.str;
+    };
+
+    wildcard = mkOption {
+      type = types.bool;
+      default = false;
     };
 
     consulService = mkOption {
@@ -38,6 +62,22 @@ with lib;
     nginxUpstreamName = mkOption {
       type = types.str;
       internal = true;
+    };
+
+    domainSuffixInternal = mkOption {
+      type = types.str;
+      internal = true;
+    };
+
+    domainSuffixExternal = mkOption {
+      type = types.str;
+      internal = true;
+    };
+
+    domainSuffix = mkOption {
+      type = types.str;
+      internal = true;
+      default = if config.internal then config.domainSuffixInternal else config.domainSuffixExternal;
     };
 
     extras = mkOption {
