@@ -1,4 +1,4 @@
-{ lib, name, ... }:
+{ lib, name, options, ... }:
 
 with lib;
 
@@ -20,9 +20,24 @@ with lib;
       type = types.str;
     };
 
+    consulService = mkOption {
+      type = types.str;
+    };
+
     healthCheckPath = mkOption {
       type = types.path;
       default = "/.well-known/ways/internal-health-check";
+    };
+
+    useConsul = mkOption {
+      type = types.bool;
+      internal = true;
+      default = false;
+    };
+
+    nginxUpstreamName = mkOption {
+      type = types.str;
+      internal = true;
     };
 
     extras = mkOption {
@@ -31,4 +46,12 @@ with lib;
       default = {};
     };
   };
+
+  config = lib.mkMerge [
+    (lib.mkIf options.consulService.isDefined {
+      useConsul = true;
+      nginxUpstreamName = "ways_upstream_${builtins.hashString "md5" options.consulService.value}";
+      target = "http://${options.nginxUpstreamName.value}";
+    })
+  ];
 }
