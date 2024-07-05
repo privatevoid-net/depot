@@ -4,3 +4,4 @@ result-*
 **/.direnv/
 .data/
 .cache/
+.nixos-test-history
