@@ -8,6 +8,7 @@ in {
   imports = [
     ./projects.nix
     ./patched-inputs.nix
+    ./catalog
   ];
   perSystem = { pkgs, self', system, ... }: let
     patched-derivations = import ./patched-derivations.nix (pkgs // { flakePackages = self'.packages; });

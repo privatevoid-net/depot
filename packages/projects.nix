@@ -46,6 +46,8 @@
       searxng = pkgs.callPackage ./web-apps/searxng { inherit pins; };
 
       stevenblack-hosts = pkgs.callPackage ./data/stevenblack { inherit pins; };
+
+      void = pkgs.callPackage ./tools/void { };
     };
 
     projectShells = {
@@ -58,6 +60,7 @@
           hci
           npins
           pin
+          void
           pkgs.deadnix
           pkgs.statix
         ];

@@ -7,6 +7,7 @@
     ./meta.nix
     ./nginx.nix
     ./identity.nix
+    ./catalog.nix
   ];
 
   options.lib = lib.mkOption {
@@ -23,5 +24,8 @@
     });
   };
 
-  config._module.args.depot = config;
+  config = {
+    _module.args.depot = config;
+    flake = { inherit (config) lib; };
+  };
 }
