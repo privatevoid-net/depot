@@ -1,5 +1,0 @@
-[core]
-    remote = cdn
-['remote "cdn"']
-    url = s3://content-delivery/assets
-    endpointurl = https://object-storage.privatevoid.net
