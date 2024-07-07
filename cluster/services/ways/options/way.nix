@@ -48,6 +48,10 @@ with lib;
       type = types.str;
     };
 
+    bucket = mkOption {
+      type = types.str;
+    };
+
     healthCheckPath = mkOption {
       type = types.path;
       default = "/.well-known/ways/internal-health-check";
@@ -92,6 +96,9 @@ with lib;
       useConsul = true;
       nginxUpstreamName = "ways_upstream_${builtins.hashString "md5" options.consulService.value}";
       target = "http://${options.nginxUpstreamName.value}";
+    })
+    (lib.mkIf options.bucket.isDefined {
+      consulService = "garage-web";
     })
   ];
 }
