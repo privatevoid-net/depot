@@ -78,7 +78,6 @@ in with hosts;
   "secrets/hyprspace-key-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "secrets/keycloak-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/matrix-appservice-discord-token.age".publicKeys = max ++ map systemKeys [ VEGAS ];
-  "secrets/minio-root-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/nextcloud-adminpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/nextcloud-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/oauth2_proxy-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
