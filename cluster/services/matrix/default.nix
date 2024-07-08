@@ -17,6 +17,23 @@
         ./web-client.nix
       ];
     };
+    secrets = let
+      inherit (config.services.matrix) nodes;
+      default = {
+        nodes = nodes.homeserver;
+        owner = "matrix-synapse";
+      };
+    in {
+      ldapConfig = default;
+      dbConfig = default;
+      turnConfig = default;
+      keysConfig = default;
+      coturnStaticAuth = {
+        nodes = nodes.homeserver;
+        owner = "turnserver";
+      };
+      discordAppServiceToken.nodes = nodes.homeserver;
+    };
   };
 
   monitoring.blackbox.targets.matrix = {

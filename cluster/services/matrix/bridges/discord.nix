@@ -1,19 +1,11 @@
-{ config, depot, ... }:
+{ cluster, depot, ... }:
 let
   inherit (depot.lib.meta) domain;
 in
 {
-  age.secrets = {
-    matrix-appservice-discord-token = {
-      file = ../../../../secrets/matrix-appservice-discord-token.age;
-      owner = "root";
-      group = "root";
-      mode = "0400";
-    };
-  };
   services.matrix-appservice-discord = {
     enable = true;
-    environmentFile = config.age.secrets.matrix-appservice-discord-token.path;
+    environmentFile = cluster.config.services.matrix.secrets.discordAppServiceToken.path;
     settings = {
       bridge = {
         inherit domain;

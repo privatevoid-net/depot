@@ -1,13 +1,5 @@
-{ config, depot, ... }:
+{ cluster, depot, ... }:
 {
-  age.secrets = {
-    coturn-static-auth = {
-      file = ../../../secrets/coturn-static-auth.age;
-      owner = "turnserver";
-      group = "root";
-      mode = "0400";
-    };
-  };
   services.coturn = {
     enable = true;
     no-cli = true;
@@ -22,7 +14,7 @@
     lt-cred-mech = true;
     use-auth-secret = true;
 
-    static-auth-secret-file = config.age.secrets.coturn-static-auth.path;
+    static-auth-secret-file = cluster.config.services.matrix.secrets.coturnStaticAuth.path;
     # TODO: acme
     cert = "/etc/coturn/certs/fullchain.pem";
     pkey = "/etc/coturn/certs/privkey.pem";
