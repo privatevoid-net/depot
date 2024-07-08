@@ -47,6 +47,17 @@
       io-tweaks = ./io-tweaks.nix;
       remote-api = ./remote-api.nix;
     };
+    secrets = let
+      inherit (config.services.ipfs) nodes;
+    in {
+      clusterSecret = {
+        nodes = nodes.clusterPeer;
+      };
+      pinningServiceCredentials = {
+        nodes = nodes.clusterPeer;
+        owner = "ipfs";
+      };
+    };
   };
 
   monitoring.blackbox.targets.ipfs-gateway = {
