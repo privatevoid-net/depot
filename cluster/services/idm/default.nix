@@ -33,6 +33,10 @@
         ./policies/soda.nix
       ];
     };
+    secrets.serviceAccountCredentials = {
+      nodes = config.services.idm.nodes.client;
+      shared = false;
+    };
   };
 
   dns.records = let

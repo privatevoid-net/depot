@@ -5,10 +5,8 @@ let
 in
 
 {
-  age.secrets.idmServiceAccountCredentials.file = ./secrets/service-account-${config.networking.hostName}.age;
-
   systemd.services.kanidm-unixd.serviceConfig = {
-    EnvironmentFile = config.age.secrets.idmServiceAccountCredentials.path;
+    EnvironmentFile = cluster.config.services.idm.secrets.serviceAccountCredentials.path;
   };
 
   services.kanidm = {
