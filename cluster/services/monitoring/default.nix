@@ -64,12 +64,14 @@ in
     nixos = {
       client = ./client.nix;
       blackbox = ./blackbox.nix;
-      grafana = ./grafana-ha.nix;
+      grafana = [
+        ./grafana-ha.nix
+        ./provisioning/dashboards.nix
+      ];
       logging = ./logging.nix;
       server = [
         ./server.nix
         ./tracing.nix
-        ./provisioning/dashboards.nix
       ];
     };
   };
