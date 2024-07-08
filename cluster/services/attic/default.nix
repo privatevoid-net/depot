@@ -12,6 +12,21 @@
         ./nar-serve.nix
       ];
     };
+    secrets = let
+      inherit (config.services.attic) nodes;
+    in {
+      serverToken = {
+        nodes = nodes.server;
+      };
+      dbCredentials = {
+        nodes = nodes.server;
+        owner = "atticd";
+      };
+      s3Credentials = {
+        nodes = nodes.server;
+        owner = "atticd";
+      };
+    };
   };
 
   garage = {

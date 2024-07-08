@@ -13,11 +13,6 @@ let
   };
 in
 {
-  age.secrets.wireguard-key-core = {
-    file = link.extra.privKeyFile;
-    mode = "0400";
-  };
-
   networking = {
     firewall = {
       trustedInterfaces = [ "wgmesh" ];
@@ -29,7 +24,7 @@ in
       interfaces.wgmesh = {
         ips = [ "${link.extra.meshIp}/24" ];
         listenPort = link.port;
-        privateKeyFile = config.age.secrets.wireguard-key-core.path;
+        privateKeyFile = cluster.config.services.wireguard.secrets.meshPrivateKey.path;
         peers = map mkPeer (cluster.config.services.wireguard.otherNodes.mesh hostName);
       };
     };

@@ -7,6 +7,10 @@ let
 in
 
 {
+  imports = [
+    ./services/secrets.nix
+  ];
+
   options = {
     nodes = mkOption {
       description = ''

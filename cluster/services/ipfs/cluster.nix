@@ -1,8 +1,9 @@
-{ config, depot, lib, pkgs, ... }:
+{ cluster, config, depot, lib, ... }:
 
 let
   inherit (depot.lib.meta) domain;
   inherit (depot.lib.nginx) vhosts;
+  inherit (cluster.config.services.ipfs) secrets;
   cfg = config.services.ipfs-cluster;
   ipfsCfg = config.services.ipfs;
 
@@ -19,20 +20,12 @@ in {
     incantations = i: [ ];
   };
 
-  age.secrets = {
-    ipfs-cluster-secret.file = ./cluster-secret.age;
-    ipfs-cluster-pinsvc-credentials = {
-      file = ./cluster-pinsvc-credentials.age;
-      owner = cfg.user;
-    };
-  };
-
   services.ipfs-cluster = {
     enable = true;
     consensus = "crdt";
     dataDir = "/srv/storage/ipfs/cluster";
-    secretFile = config.age.secrets.ipfs-cluster-secret.path;
-    pinSvcBasicAuthFile = config.age.secrets.ipfs-cluster-pinsvc-credentials.path;
+    secretFile = secrets.clusterSecret.path;
+    pinSvcBasicAuthFile = secrets.pinningServiceCredentials.path;
     openSwarmPort = true;
     settings = {
       cluster = {

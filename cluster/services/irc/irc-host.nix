@@ -93,17 +93,15 @@ in {
       auth required ${pkgs.kanidm}/lib/pam_kanidm.so 
     '';
   };
-  age.secrets = { inherit (vars) ircPeerKey; };
   systemd.services.ngircd = {
     after = [ "acme-finished-${serverName}.target" "dhparams-gen-ngircd.service" ];
     wants = [ "acme-finished-${serverName}.target" "dhparams-gen-ngircd.service" ];
-    restartTriggers = [ "${config.age.secrets.ircPeerKey.file}" ];
     serviceConfig.RuntimeDirectory = "ngircd";
     preStart = ''
       install -d -m700 /run/ngircd/secrets
       for cfg in ${builtins.concatStringsSep " " otherServerFiles}; do
         install -m600 $cfg /run/ngircd/secrets/
-        ${pkgs.replace-secret}/bin/replace-secret '@PEER_PASSWORD@' '${config.age.secrets.ircPeerKey.path}' /run/ngircd/secrets/$(basename $cfg)
+        ${pkgs.replace-secret}/bin/replace-secret '@PEER_PASSWORD@' '${cluster.config.services.irc.secrets.peerKey.path}' /run/ngircd/secrets/$(basename $cfg)
       done
     '';
   };

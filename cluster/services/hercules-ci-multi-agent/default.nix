@@ -1,4 +1,4 @@
-{ config, lib, depot, ... }:
+{ config, lib, ... }:
 
 {
   services.hercules-ci-multi-agent = {
@@ -11,21 +11,49 @@
     nixos = {
       private-void = [
         ./common.nix
-        ./orgs/private-void.nix
+        {
+          services.hercules-ci-agents.private-void.settings = {
+            secretsJsonPath = config.services.hercules-ci-multi-agent.secrets.effectsSecrets.path;
+          };
+        }
       ];
       nixpak = [
         ./common.nix
-        ./orgs/nixpak.nix
       ];
       max = [
         ./common.nix
-        ./orgs/max.nix
       ];
       hyprspace = [
         ./common.nix
-        ./orgs/hyprspace.nix
       ];
     };
+    secrets = let
+      inherit (config.services.hercules-ci-multi-agent) nodes;
+      allNodes = lib.unique (lib.concatLists (lib.attrValues nodes));
+    in {
+      cacheConfig = {
+        nodes = allNodes;
+        mode = "0440";
+        group = "hercules-ci-agent";
+      };
+      cacheCredentials = {
+        nodes = allNodes;
+        shared = false;
+        mode = "0440";
+        group = "hercules-ci-agent";
+      };
+      effectsSecrets = {
+        nodes = nodes.private-void;
+        owner = "hci-private-void";
+      };
+    } // lib.mapAttrs' (org: nodes: {
+      name = "clusterJoinToken-${org}";
+      value = {
+        inherit nodes;
+        shared = false;
+        owner = "hci-${org}";
+      };
+    }) nodes;
   };
   garage = let
     hciAgentKeys = lib.pipe config.services.hercules-ci-multi-agent.nodes [

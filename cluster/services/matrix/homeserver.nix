@@ -1,6 +1,7 @@
 { cluster, config, lib, pkgs, depot, ... }:
 let
   inherit (depot.lib.meta) domain;
+  inherit (cluster.config.services.matrix) secrets;
 
   patroni = cluster.config.links.patroni-pg-access;
 
@@ -51,36 +52,10 @@ let
   clientConfigJSON = pkgs.writeText "matrix-client-config.json" (builtins.toJSON clientConfig);
   logConfigJSON = pkgs.writeText "matrix-log-config.json" (builtins.toJSON logConfig);
   dbConfigJSON = pkgs.writeText "matrix-log-config.json" (builtins.toJSON dbConfig);
-  dbPasswordFile = config.age.secrets.synapse-db.path;
+  dbPasswordFile = secrets.dbConfig.path;
   dbConfigOut = "${cfg.dataDir}/synapse-db-config-generated.yml";
   cfg = config.services.matrix-synapse;
 in {
-  age.secrets = {
-    synapse-ldap = {
-      file = ../../../secrets/synapse-ldap.age;
-      owner = "matrix-synapse";
-      group = "matrix-synapse";
-      mode = "0400";
-    };
-    synapse-db = {
-      file = ../../../secrets/synapse-db.age;
-      owner = "matrix-synapse";
-      group = "matrix-synapse";
-      mode = "0400";
-    };
-    synapse-turn = {
-      file = ../../../secrets/synapse-turn.age;
-      owner = "matrix-synapse";
-      group = "matrix-synapse";
-      mode = "0400";
-    };
-    synapse-keys = {
-      file = ../../../secrets/synapse-keys.age;
-      owner = "matrix-synapse";
-      group = "matrix-synapse";
-      mode = "0400";
-    };
-  };
   services.matrix-synapse = {
     enable = true;
     plugins = [ pkgs.matrix-synapse-plugins.matrix-synapse-ldap3 ];
@@ -114,10 +89,10 @@ in {
       in map makeTurnServer combinations;
     };
 
-    extraConfigFiles = (map (x: config.age.secrets.${x}.path) [
-      "synapse-ldap"
-      "synapse-turn"
-      "synapse-keys"
+    extraConfigFiles = (map (x: secrets."${x}Config".path) [
+      "ldap"
+      "turn"
+      "keys"
     ]) ++ [ dbConfigOut ];
   };
 

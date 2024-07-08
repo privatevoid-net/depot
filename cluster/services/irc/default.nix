@@ -12,11 +12,6 @@ let
 in
 {
   vars = {
-    ircPeerKey = {
-      file = ./irc-peer-key.age;
-      owner = "ngircd";
-      group = "ngircd";
-    };
     ircOpers = [ "max" "num" "ark" ];
   };
   hostLinks = lib.genAttrs config.services.irc.nodes.host (name: {
@@ -49,6 +44,11 @@ in
       host = [
         ./irc-host.nix
       ];
+    };
+    secrets.peerKey = {
+      nodes = config.services.irc.nodes.host;
+      owner = "ngircd";
+      services = [ "ngircd" ];
     };
   };
 

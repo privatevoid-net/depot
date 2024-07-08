@@ -1,7 +1,7 @@
 { cluster, config, depot, lib, ... }:
 
 let
-  inherit (config.networking) hostName;
+  inherit (cluster.config.services.attic) secrets;
 in
 
 {
@@ -9,26 +9,12 @@ in
     depot.inputs.attic.nixosModules.atticd
   ];
 
-  age.secrets = {
-    atticServerToken.file = ./attic-server-token.age;
-
-    atticDBCredentials = {
-      file = ./attic-db-credentials.age;
-      owner = "atticd";
-    };
-
-    atticS3Credentials = {
-      file = ./attic-s3-credentials.age;
-      owner = "atticd";
-    };
-  };
-
   links.atticServer.protocol = "http";
 
   services.atticd = {
     enable = true;
 
-    credentialsFile = config.age.secrets.atticServerToken.path;
+    credentialsFile = secrets.serverToken.path;
 
     settings = {
       listen = config.links.atticServer.tuple;
@@ -74,8 +60,8 @@ in
       DynamicUser = lib.mkForce false;
     };
     environment = {
-      AWS_SHARED_CREDENTIALS_FILE = config.age.secrets.atticS3Credentials.path;
-      PGPASSFILE = config.age.secrets.atticDBCredentials.path;
+      AWS_SHARED_CREDENTIALS_FILE = secrets.s3Credentials.path;
+      PGPASSFILE = secrets.dbCredentials.path;
     };
   };
 

@@ -1,7 +1,9 @@
-{ config, depot, lib, pkgs, ... }:
+{ cluster, depot, lib, ... }:
 
 let
-  mapAgents = lib.flip lib.mapAttrs config.services.hercules-ci-agents;
+  inherit (cluster.config.services.hercules-ci-multi-agent) nodes secrets;
+
+  mapAgents = lib.flip lib.mapAttrs nodes;
 
   mergeMap = f: let
     outputs = mapAgents f;
@@ -20,32 +22,26 @@ in
     ./modules/multi-agent-refactored
   ];
 
-  age.secrets = mergeMap (name: _: {
-    hci-token = {
-      file = ./secrets + "/hci-token-${name}-${config.networking.hostName}.age";
-      owner = "hci-${name}";
-      group = "hci-${name}";
-    };
-    hci-cache-credentials = {
-      file = ./secrets + "/hci-cache-credentials-${config.networking.hostName}.age";
-      owner = "hci-${name}";
-      group = "hci-${name}";
-    };
-    hci-cache-config = {
-      file = ./secrets/hci-cache-config.age;
-      owner = "hci-${name}";
-      group = "hci-${name}";
-    };
-  });
-  systemd.services = mergeMap (name: _: {
+  systemd.services = mergeMap (_: _: {
     hercules-ci-agent = {
       # hercules-ci-agent-restarter should take care of this
       restartIfChanged = false;
       environment = {
-        AWS_SHARED_CREDENTIALS_FILE = config.age.secrets."hci-cache-credentials-${name}".path;
+        AWS_SHARED_CREDENTIALS_FILE = secrets.cacheCredentials.path;
         AWS_EC2_METADATA_DISABLED = "true";
       };
       serviceConfig.Slice = "builder.slice";
     };
   });
+
+  services.hercules-ci-agents = lib.genAttrs (lib.attrNames nodes) (org: {
+    enable = true;
+    package = depot.inputs.hercules-ci-agent.packages.hercules-ci-agent;
+    settings = {
+      clusterJoinTokenPath = secrets."clusterJoinToken-${org}".path;
+      binaryCachesPath = secrets.cacheConfig.path;
+    };
+  });
+
+  users.groups.hercules-ci-agent.members = map (org: "hci-${org}") (lib.attrNames nodes);
 }

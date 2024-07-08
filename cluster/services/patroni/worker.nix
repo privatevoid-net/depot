@@ -2,6 +2,7 @@
 
 let
   inherit (cluster.config) vars;
+  inherit (cluster.config.services.patroni) secrets;
   inherit (config.networking) hostName;
 
   getMeshIp = name: vars.mesh.${name}.meshIp;
@@ -19,13 +20,6 @@ in
   imports = [
     depot.nixosModules.patroni
   ];
-
-  age.secrets = lib.mapAttrs (_: file: {
-    inherit file;
-    mode = "0400";
-    owner = "patroni";
-    group = "patroni";
-  }) vars.patroni.passwords;
 
   systemd.tmpfiles.rules = [
     "d '${baseDir}' 0700 patroni patroni - -"
@@ -83,6 +77,6 @@ in
         ];
       };
     };
-    environmentFiles = lib.mapAttrs (n: _: config.age.secrets.${n}.path) vars.patroni.passwords;
+    environmentFiles = lib.mapAttrs (_: secret: secret.path) (lib.filterAttrs (name: _: lib.hasPrefix "PATRONI_" name) secrets);
   };
 }

@@ -15,6 +15,7 @@ lib.evalModules {
     ./lib/inject-nixos-config.nix
     ./lib/port-magic-multi.nix
     ./lib/mesh.nix
+    ./lib/secrets.nix
 
     ./import-services.nix
   ];
