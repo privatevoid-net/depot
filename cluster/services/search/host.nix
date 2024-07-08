@@ -1,16 +1,15 @@
-{ config, depot, lib, ... }:
+{ cluster, config, depot, lib, ... }:
 let
   inherit (config) links;
 in
 {
   links.searxng.protocol = "http";
 
-  age.secrets.searxng-secrets.file = ../../../secrets/searxng-secrets.age;
   services.searx = {
     enable = true;
     runInUwsgi = true;
     package = depot.packages.searxng;
-    environmentFile = config.age.secrets.searxng-secrets.path;
+    environmentFile = cluster.config.services.search.secrets.default.path;
     settings = {
       server = {
         secret_key = "@SEARXNG_SECRET@";

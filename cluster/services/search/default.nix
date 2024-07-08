@@ -4,6 +4,7 @@
   services.search = {
     nodes.host = [ "VEGAS" ];
     nixos.host = ./host.nix;
+    secrets.default.nodes = config.services.search.nodes.host;
   };
 
   monitoring.blackbox.targets.search = {
