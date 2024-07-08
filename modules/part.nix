@@ -14,7 +14,6 @@ in
     enterprise = ./enterprise;
     external-storage = ./external-storage;
     fail2ban = ./fail2ban;
-    hydra = ./hydra;
     hyprspace = ./hyprspace;
     ipfs = ./ipfs;
     ipfs-cluster = ./ipfs-cluster;
