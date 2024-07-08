@@ -44,6 +44,12 @@ in
           type = lib.types.str;
           default = "root";
         };
+
+        services = lib.mkOption {
+          type = with lib.types; listOf str;
+          description = "Services to restart when this secret changes.";
+          default = [];
+        };
       };
     }));
     default = {};

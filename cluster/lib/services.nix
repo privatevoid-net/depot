@@ -7,13 +7,21 @@ let
       lib.mapAttrsToList (groupName: _: svcConfig.nixos.${groupName})
       (lib.filterAttrs (_: lib.elem hostName) svcConfig.nodes);
 
-    secretsConfig.age.secrets = lib.mapAttrs' (secretName: secretConfig: {
-      name = "cluster-${svcName}-${secretName}";
-      value = {
-        inherit (secretConfig) path mode owner group;
-        file = ../secrets/${svcName}-${secretName}${lib.optionalString (!secretConfig.shared) "-${hostName}"}.age;
-      };
-    }) (lib.filterAttrs (_: secret: lib.any (node: node == hostName) secret.nodes) svcConfig.secrets);
+    secretsConfig = let
+      secrets = lib.filterAttrs (_: secret: lib.any (node: node == hostName) secret.nodes) svcConfig.secrets;
+    in {
+      age.secrets = lib.mapAttrs' (secretName: secretConfig: {
+        name = "cluster-${svcName}-${secretName}";
+        value = {
+          inherit (secretConfig) path mode owner group;
+          file = ../secrets/${svcName}-${secretName}${lib.optionalString (!secretConfig.shared) "-${hostName}"}.age;
+        };
+      }) secrets;
+
+      systemd.services = lib.mkMerge (lib.mapAttrsToList (secretName: secretConfig: lib.genAttrs secretConfig.services (systemdServiceName: {
+        restartTriggers = [ "${../secrets/${svcName}-${secretName}${lib.optionalString (!secretConfig.shared) "-${hostName}"}.age}" ];
+      })) secrets);
+    };
   in serviceConfigs ++ [
     secretsConfig
   ];
