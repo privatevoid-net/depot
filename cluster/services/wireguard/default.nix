@@ -23,7 +23,6 @@ in
         meshIp = "10.1.1.32";
         inherit meshNet;
         pubKey = "fZMB9CDCWyBxPnsugo3Uxm/TIDP3VX54uFoaoC0bP3U=";
-        privKeyFile = ./mesh-keys/checkmate.age;
         extraRoutes = [];
       };
     };
@@ -33,7 +32,6 @@ in
         meshIp = "10.1.1.6";
         inherit meshNet;
         pubKey = "0WAiQGdWySsGWFUk+a9e0I+BDTKwTyWQdFT2d7BMfDQ=";
-        privKeyFile = ./mesh-keys/grail.age;
         extraRoutes = [];
       };
     };
@@ -43,7 +41,6 @@ in
         meshIp = "10.1.1.4";
         inherit meshNet;
         pubKey = "xvSsFvCVK8h2wThZJ7E5K0fniTBIEIYOblkKIf3Cwy0=";
-        privKeyFile = ./mesh-keys/thunderskin.age;
         extraRoutes = [];
       };
     };
@@ -53,7 +50,6 @@ in
         meshIp = "10.1.1.5";
         inherit meshNet;
         pubKey = "NpeB8O4erGTas1pz6Pt7qtY9k45YV6tcZmvvA4qXoFk=";
-        privKeyFile = ./mesh-keys/VEGAS.age;
         extraRoutes = [ "${hours.VEGAS.interfaces.vstub.addr}/32" "10.10.0.0/16" ];
       };
     };
@@ -63,7 +59,6 @@ in
         meshIp = "10.1.1.9";
         inherit meshNet;
         pubKey = "MMZAbRtNE+gsLm6DJy9VN/Y39E69oAZnvOcFZPUAVDc=";
-        privKeyFile = ./mesh-keys/prophet.age;
         extraRoutes = [];
       };
     };
@@ -74,6 +69,10 @@ in
     };
     nixos = {
       mesh = ./mesh.nix;
+    };
+    secrets.meshPrivateKey = {
+      nodes = config.services.wireguard.nodes.mesh;
+      shared = false;
     };
   };
 }
