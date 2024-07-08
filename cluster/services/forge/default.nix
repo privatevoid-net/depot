@@ -8,6 +8,15 @@
       name = "forge";
       link.protocol = "http";
     };
+    secrets = with config.services.forge.nodes; {
+      oidcSecret = {
+        nodes = server;
+        owner = "forgejo";
+      };
+      dbCredentials.nodes = server;
+      s3AccessKeyID.nodes = server;
+      s3SecretAccessKey.nodes = server;
+    };
   };
 
   ways.forge.target = let

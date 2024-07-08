@@ -2,8 +2,7 @@
 
 let
   inherit (depot.lib.meta) domain;
-  inherit (depot.lib.nginx) vhosts;
-  inherit (config.age) secrets;
+  inherit (cluster.config.services.forge) secrets;
 
   patroni = cluster.config.links.patroni-pg-access;
 
@@ -24,25 +23,6 @@ in
     ];
   };
 
-  age.secrets = {
-    forgejoOidcSecret = {
-      file = ./credentials/forgejo-oidc-secret.age;
-      owner = "forgejo";
-    };
-    forgejoDbCredentials = {
-      file = ./credentials/forgejo-db-credentials.age;
-      owner = "forgejo";
-    };
-    forgejoS3AccessKeyID = {
-      file = ./credentials/forgejo-s3-access-key-id.age;
-      owner = "forgejo";
-    };
-    forgejoS3SecretAccessKey = {
-      file = ./credentials/forgejo-s3-secret-access-key.age;
-      owner = "forgejo";
-    };
-  };
-
   services.forgejo = {
     enable = true;
     package = depot.packages.forgejo;
@@ -54,7 +34,7 @@ in
       inherit (patroni) port;
       name = "forge";
       user = "forge";
-      passwordFile = secrets.forgejoDbCredentials.path;
+      passwordFile = secrets.dbCredentials.path;
     };
     settings = {
       DEFAULT = {
@@ -93,8 +73,8 @@ in
     };
     secrets = {
       storage = {
-        MINIO_ACCESS_KEY_ID = secrets.forgejoS3AccessKeyID.path;
-        MINIO_SECRET_ACCESS_KEY = secrets.forgejoS3SecretAccessKey.path;
+        MINIO_ACCESS_KEY_ID = secrets.s3AccessKeyID.path;
+        MINIO_SECRET_ACCESS_KEY = secrets.s3SecretAccessKey.path;
       };
     };
   };
@@ -112,9 +92,9 @@ in
   in lib.mkAfter /*bash*/ ''
     providerId="$(${exe} admin auth list | ${pkgs.gnugrep}/bin/grep -w '${providerName}' | cut -f1)"
     if [[ -z "$providerId" ]]; then
-      FORGEJO_ADMIN_OAUTH2_SECRET="$(< ${secrets.forgejoOidcSecret.path})" ${exe} admin auth add-oauth ${args}
+      FORGEJO_ADMIN_OAUTH2_SECRET="$(< ${secrets.oidcSecret.path})" ${exe} admin auth add-oauth ${args}
     else
-      FORGEJO_ADMIN_OAUTH2_SECRET="$(< ${secrets.forgejoOidcSecret.path})" ${exe} admin auth update-oauth --id "$providerId" ${args}
+      FORGEJO_ADMIN_OAUTH2_SECRET="$(< ${secrets.oidcSecret.path})" ${exe} admin auth update-oauth --id "$providerId" ${args}
     fi
   '';
 }
