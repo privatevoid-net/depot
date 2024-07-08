@@ -31,7 +31,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 3,
+    "id": 991,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -616,7 +616,7 @@
     "timezone": "",
     "title": "fail2ban",
     "uid": "DoU6WSXnk",
-    "version": 13,
+    "version": 1,
     "weekStart": ""
   },
   "folderId": 0,
