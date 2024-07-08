@@ -1,13 +1,6 @@
 { config, lib, ... }:
 
 {
-  vars.patroni = {
-    passwords = {
-      PATRONI_REPLICATION_PASSWORD = ./passwords/replication.age;
-      PATRONI_SUPERUSER_PASSWORD = ./passwords/superuser.age;
-      PATRONI_REWIND_PASSWORD = ./passwords/rewind.age;
-    };
-  };
   links = {
     patroni-pg-internal.ipv4 = "0.0.0.0";
     patroni-api.ipv4 = "0.0.0.0";
@@ -24,6 +17,18 @@
         ./metrics.nix
       ];
       haproxy = ./haproxy.nix;
+    };
+    secrets = let
+      inherit (config.services.patroni) nodes;
+      default = {
+        nodes = nodes.worker;
+        owner = "patroni";
+      };
+    in {
+      PATRONI_REPLICATION_PASSWORD = default;
+      PATRONI_SUPERUSER_PASSWORD = default;
+      PATRONI_REWIND_PASSWORD = default;
+      metricsCredentials.nodes = nodes.worker;
     };
   };
 }
