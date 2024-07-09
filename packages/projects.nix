@@ -36,6 +36,8 @@
         };
       };
 
+      openbao = pkgs.callPackage ./projects/openbao { };
+
       opentelemetry-java-agent-bin = pkgs.callPackage ./monitoring/opentelemetry-java-agent-bin { };
 
       pin = pkgs.callPackage ./tools/pin {
