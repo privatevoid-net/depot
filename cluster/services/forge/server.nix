@@ -67,7 +67,7 @@ in
         MINIO_BUCKET_LOOKUP = "path";
         SERVE_DIRECT = true;
       };
-      log.ENABLE_XORM_LOG = false;
+      log."logger.xorm.MODE" = "";
       # enabling this will leak secrets to the log
       database.LOG_SQL = false;
     };
