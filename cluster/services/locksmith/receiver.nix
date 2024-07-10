@@ -32,9 +32,9 @@ in
           ];
           script = ''
             for key in ${lib.escapeShellArgs secrets}; do
-              if ! test -e "$key"; then
+              if ! test -e "/run/locksmith/$key"; then
                 echo "Waiting for secret: $key"
-                inotifywait -qq -e create,moved_to --include "$key" /run/locksmith
+                inotifywait -qq -e create,moved_to --include "^/run/locksmith/''${key}$" /run/locksmith
               fi
               echo "Heard secret: $key"
             done
