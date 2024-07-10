@@ -14,8 +14,6 @@
         owner = "forgejo";
       };
       dbCredentials.nodes = server;
-      s3AccessKeyID.nodes = server;
-      s3SecretAccessKey.nodes = server;
     };
   };
 
@@ -24,7 +22,7 @@
   in config.hostLinks.${host}.forge.url;
 
   garage = {
-    keys.forgejo = { };
+    keys.forgejo.locksmith.nodes = config.services.forge.nodes.server;
     buckets.forgejo.allow.forgejo = [ "read" "write" ];
   };
 }

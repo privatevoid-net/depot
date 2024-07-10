@@ -23,6 +23,11 @@ in
     ];
   };
 
+  services.locksmith.waitForSecrets.forgejo = [
+    "garage-forgejo-id"
+    "garage-forgejo-secret"
+  ];
+
   services.forgejo = {
     enable = true;
     package = depot.packages.forgejo;
@@ -73,8 +78,8 @@ in
     };
     secrets = {
       storage = {
-        MINIO_ACCESS_KEY_ID = secrets.s3AccessKeyID.path;
-        MINIO_SECRET_ACCESS_KEY = secrets.s3SecretAccessKey.path;
+        MINIO_ACCESS_KEY_ID = "/run/locksmith/garage-forgejo-id";
+        MINIO_SECRET_ACCESS_KEY = "/run/locksmith/garage-forgejo-secret";
       };
     };
   };
