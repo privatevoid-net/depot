@@ -22,15 +22,15 @@
         nodes = nodes.server;
         owner = "atticd";
       };
-      s3Credentials = {
-        nodes = nodes.server;
-        owner = "atticd";
-      };
     };
   };
 
   garage = {
-    keys.attic = { };
+    keys.attic.locksmith = {
+      nodes = config.services.attic.nodes.server;
+      owner = "atticd";
+      format = "aws";
+    };
     buckets.attic = {
       allow.attic = [ "read" "write" ];
     };

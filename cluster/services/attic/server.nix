@@ -11,6 +11,8 @@ in
 
   links.atticServer.protocol = "http";
 
+  services.locksmith.waitForSecrets.atticd = [ "garage-attic" ];
+
   services.atticd = {
     enable = true;
 
@@ -60,7 +62,7 @@ in
       DynamicUser = lib.mkForce false;
     };
     environment = {
-      AWS_SHARED_CREDENTIALS_FILE = secrets.s3Credentials.path;
+      AWS_SHARED_CREDENTIALS_FILE = "/run/locksmith/garage-attic";
       PGPASSFILE = secrets.dbCredentials.path;
     };
   };
