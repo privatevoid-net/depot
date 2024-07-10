@@ -77,7 +77,7 @@ in
   });
 
   monitoring.blackbox.targets.garage = {
-    address = "https://garage.${depot.lib.meta.domain}/health";
+    address = "https://content-delivery.web.garage.${depot.lib.meta.domain}/";
     module = "https2xx";
   };
 
