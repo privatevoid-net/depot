@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, depot, lib, pkgs, ... }:
 
 let
   cfg = config.services.garage;
@@ -102,11 +102,37 @@ in
     };
     keys = mkOption {
       type = with types; attrsOf (submodule {
-        options.allow = {
-          createBucket = mkOption {
-            description = "Allow the key to create new buckets.";
-            type = bool;
-            default = false;
+        options = {
+          allow = {
+            createBucket = mkOption {
+              description = "Allow the key to create new buckets.";
+              type = bool;
+              default = false;
+            };
+          };
+          locksmith = {
+            nodes = mkOption {
+              description = "Nodes that this key will be made available to via Locksmith.";
+              type = listOf str;
+              default = [];
+            };
+            format = mkOption {
+              description = "Locksmith secret format.";
+              type = enum [ "files" "aws" "envFile" ];
+              default = "files";
+            };
+            owner = mkOption {
+              type = str;
+              default = "root";
+            };
+            group = mkOption {
+              type = str;
+              default = "root";
+            };
+            mode = mkOption {
+              type = str;
+              default = "0400";
+            };
           };
         };
       });
@@ -236,6 +262,49 @@ in
           ]}
         '';
       };
+    };
+
+    services.locksmith.providers.garage = {
+      wantedBy = [ "garage-apply.service" ];
+      after = [ "garage-apply.service" ];
+      secrets = lib.mkMerge (lib.mapAttrsToList (key: kCfg: let
+        common = {
+          inherit (kCfg.locksmith) mode owner group nodes;
+        };
+        getKeyID = "${cfg.package}/bin/garage key info ${lib.escapeShellArg key} | grep -m1 'Key ID:' | cut -d ' ' -f3";
+        getSecretKey = "${cfg.package}/bin/garage key info ${lib.escapeShellArg key} | grep -m1 'Secret key:' | cut -d ' ' -f3";
+      in if kCfg.locksmith.format == "files" then {
+        "${key}-id" = common // {
+          command = getKeyID;
+        };
+        "${key}-secret" = common // {
+          command = getSecretKey;
+        };
+      } else let
+        template = pkgs.writeText "garage-key-template" {
+          aws = ''
+            [default]
+            aws_access_key_id=@@GARAGE_KEY_ID@@
+            aws_secret_access_key=@@GARAGE_SECRET_KEY@@
+          '';
+          envFile = ''
+            AWS_ACCESS_KEY_ID=@@GARAGE_KEY_ID@@
+            AWS_SECRET_ACCESS_KEY=@@GARAGE_SECRET_KEY@@
+          '';
+        }.${kCfg.locksmith.format};
+      in {
+        ${key} = common // {
+          command = pkgs.writeShellScript "garage-render-key-template" ''
+            tmpFile="$(mktemp -ut garageKeyTemplate-XXXXXXXXXXXXXXXX)"
+            cp ${template} "$tmpFile"
+            trap "rm -f $tmpFile" EXIT
+            chmod 600 "$tmpFile"
+            ${getKeyID} | ${pkgs.replace-secret}/bin/replace-secret '@@GARAGE_KEY_ID@@' /dev/stdin "$tmpFile"
+            ${getSecretKey} | ${pkgs.replace-secret}/bin/replace-secret '@@GARAGE_SECRET_KEY@@' /dev/stdin "$tmpFile"
+            cat "$tmpFile"
+          '';
+        };
+      }) cfg.keys);
     };
   };
 }
