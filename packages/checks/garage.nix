@@ -21,6 +21,9 @@ testers.runNixOSTest {
         cluster.config.services.storage.nixos.garage
         cluster.config.services.storage.nixos.garageInternal
       ];
+      options.services.locksmith.providers = lib.mkOption {
+        type = lib.types.raw;
+      };
       config = {
         _module.args = {
           depot.packages = { inherit garage; };
