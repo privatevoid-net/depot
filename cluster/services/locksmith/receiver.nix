@@ -12,6 +12,7 @@ in
 {
   options.services.locksmith.waitForSecrets = lib.mkOption {
     type = with lib.types; attrsOf (listOf str);
+    default = {};
   };
 
   config = lib.mkMerge [
