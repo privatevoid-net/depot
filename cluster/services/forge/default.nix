@@ -25,4 +25,9 @@
     keys.forgejo.locksmith.nodes = config.services.forge.nodes.server;
     buckets.forgejo.allow.forgejo = [ "read" "write" ];
   };
+
+  monitoring.blackbox.targets.forge = {
+    address = "https://forge.${depot.lib.meta.domain}/api/v1/version";
+    module = "https2xx";
+  };
 }
