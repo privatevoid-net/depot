@@ -52,7 +52,7 @@ let
                 triggers.add(target)
 
         for trigger in triggers:
-            subprocess.run(["${config.systemd.package}/bin/systemctl", "start", "--no-block", f"{trigger}.service"])
+            subprocess.run(["${config.systemd.package}/bin/systemctl", "start", f"{trigger}.service"])
 
     with open(indexFile, "w") as f:
         f.write(newIndex)
