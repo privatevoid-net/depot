@@ -51,20 +51,6 @@
       "revision": "73ef1823bb9b76d6cbde5d349e82eed0d5dcb4cb",
       "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.14.82",
       "hash": "1f3d1m27xph8canm7ll0c2fbh6gzf4pfqmrbhix1fg2hxz1pwbqm"
-    },
-    "tempo": {
-      "type": "GitRelease",
-      "repository": {
-        "type": "GitHub",
-        "owner": "grafana",
-        "repo": "tempo"
-      },
-      "pre_releases": false,
-      "version_upper_bound": null,
-      "version": "v2.3.0",
-      "revision": "0b0f48ea2dea728b06ba93bb505fb96b4224fcae",
-      "url": "https://api.github.com/repos/grafana/tempo/tarball/v2.3.0",
-      "hash": "08rh22zmx7j5gxsqn4cjr1lg5frmq0bgq8iyvdlgmml5xdbkqj90"
     }
   },
   "version": 2
