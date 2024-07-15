@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, withSystem, ... }:
 
 let
   inherit (lib) mapAttrs nixosSystem;
@@ -6,8 +6,12 @@ let
 
   mkNixOS = name: host: nixosSystem {
     specialArgs = config.lib.summon name lib.id;
-    inherit (host) system;
-    modules = [ host.nixos ] ++ config.cluster.config.out.injectNixosConfig name;
+    modules = [
+      host.nixos
+      (withSystem host.system ({ pkgs, ... }: {
+        nixpkgs = { inherit pkgs; };
+      }))
+    ] ++ config.cluster.config.out.injectNixosConfig name;
   };
 in {
   flake.nixosConfigurations = mapAttrs mkNixOS (gods.fromLight // gods.fromFlesh);
