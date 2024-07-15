@@ -22,8 +22,12 @@
       client-soda = [ "soda" ];
     };
     nixos = {
-      server = ./server.nix;
+      server = [
+        ./common.nix
+        ./server.nix
+      ];
       client = [
+        ./common.nix
         ./client.nix
         ./modules/idm-nss-ready.nix
         ./modules/idm-tmpfiles.nix
