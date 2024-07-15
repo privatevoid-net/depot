@@ -48,9 +48,6 @@ in
       searxng = pkgs.callPackage ./searxng.nix {
         inherit (self'.packages) searxng;
       };
-      tempo = pkgs.callPackage ./tempo.nix {
-        inherit (self'.packages) tempo;
-      };
     };
   };
 }
