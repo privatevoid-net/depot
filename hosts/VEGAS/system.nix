@@ -15,7 +15,6 @@
       depot.inputs.mms.module
 
       # Services
-      ./services/api
       ./services/backbone-routing
       ./services/bitwarden
       ./services/cdn-shield
