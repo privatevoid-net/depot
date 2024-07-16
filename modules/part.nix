@@ -6,7 +6,6 @@ in
 
 {
   flake.nixosModules = with config.flake.nixosModules; {
-    autopatch = ./autopatch;
     ascensions = ./ascensions;
     consul-distributed-services = ./consul-distributed-services;
     consul-service-registry = ./consul-service-registry;
@@ -23,6 +22,7 @@ in
     networking = ./networking;
     nix-builder = ./nix-builder;
     nix-config-server = ./nix-config/server.nix;
+    nixpkgs-config = ./nixpkgs-config;
     nix-register-flakes = ./nix-register-flakes;
     patroni = ./patroni;
     port-magic = ./port-magic;
@@ -34,10 +34,10 @@ in
     tested = ./tested;
 
     machineBase = group [
-      autopatch
       enterprise
       maintenance
       minimal
+      nixpkgs-config
       port-magic
       ssh
       systemd-extras
