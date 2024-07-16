@@ -15,6 +15,7 @@ in
 
   services.atticd = {
     enable = true;
+    package = depot.inputs.attic.packages.attic-server;
 
     credentialsFile = secrets.serverToken.path;
 
