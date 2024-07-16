@@ -70,7 +70,6 @@ in
         MINIO_BUCKET = "forgejo";
         MINIO_USE_SSL = true;
         MINIO_BUCKET_LOOKUP = "path";
-        SERVE_DIRECT = true;
       };
       log."logger.xorm.MODE" = "";
       # enabling this will leak secrets to the log
