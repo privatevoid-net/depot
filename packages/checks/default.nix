@@ -7,6 +7,7 @@ let
 in
 
 {
+  debug = lib.warn "debug mode is enabled" true;
   perSystem = { filters, pkgs, self', system, ... }: {
     checks = lib.mkIf (system == "x86_64-linux") {
       ascensions = pkgs.callPackage ./ascensions.nix {
