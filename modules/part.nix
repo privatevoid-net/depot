@@ -26,6 +26,7 @@ in
     nix-register-flakes = ./nix-register-flakes;
     patroni = ./patroni;
     port-magic = ./port-magic;
+    reflection = ./reflection;
     shell-config = ./shell-config;
     ssh = ./ssh;
     system-info = ./system-info;
@@ -39,6 +40,7 @@ in
       minimal
       nixpkgs-config
       port-magic
+      reflection
       ssh
       systemd-extras
     ];
