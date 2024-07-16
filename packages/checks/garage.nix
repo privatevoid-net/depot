@@ -14,7 +14,8 @@ testers.runNixOSTest {
       inherit (config.networking) hostName primaryIPAddress;
     in {
       imports = lib.flatten [
-        ./modules/nixos/age-dummy-secrets.nix
+        ./modules/nixos/age-dummy-secrets
+        ./modules/nixos/age-dummy-secrets/options.nix
         nixosModules.ascensions
         nixosModules.systemd-extras
         nixosModules.consul-distributed-services

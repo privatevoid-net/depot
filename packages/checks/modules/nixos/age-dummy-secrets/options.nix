@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ lib, ... }:
 with lib;
 
 let
@@ -22,12 +22,4 @@ in
       };
     }));
   };
-  config.environment.etc = mapAttrs' (name: secret: {
-    name = removePrefix "/etc/" secret.path;
-    value = mapAttrs (const mkDefault) {
-      user = secret.owner;
-      inherit (secret) mode group;
-      text = builtins.hashString "md5" name;
-    };
-  }) config.age.secrets;
 }

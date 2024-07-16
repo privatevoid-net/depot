@@ -8,7 +8,8 @@ testers.runNixOSTest {
       nixosModules.ascensions
       nixosModules.external-storage
       nixosModules.systemd-extras
-      ./modules/nixos/age-dummy-secrets.nix
+      ./modules/nixos/age-dummy-secrets
+      ./modules/nixos/age-dummy-secrets/options.nix
     ];
 
     _module.args.depot.packages = { inherit (previous.packages.${system}) s3ql; };
