@@ -51,6 +51,7 @@ in
         PROTOCOL = link.protocol;
         HTTP_ADDR = link.ipv4;
         HTTP_PORT = link.port;
+        SSH_DOMAIN = "ssh.${host}";
       };
       oauth2_client = {
         REGISTER_EMAIL_CONFIRM = false;

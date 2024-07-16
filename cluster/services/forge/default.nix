@@ -30,4 +30,8 @@
     address = "https://forge.${depot.lib.meta.domain}/api/v1/version";
     module = "https2xx";
   };
+
+  dns.records."ssh.forge".target = map
+    (node: depot.hours.${node}.interfaces.primary.addrPublic)
+    config.services.forge.nodes.server;
 }
