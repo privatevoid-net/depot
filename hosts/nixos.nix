@@ -8,8 +8,8 @@ let
     specialArgs = config.lib.summon name lib.id;
     modules = [
       host.nixos
-      (withSystem host.system ({ pkgs, ... }: {
-        nixpkgs = { inherit pkgs; };
+      (withSystem host.system ({ config, pkgs, ... }: {
+        nixpkgs.pkgs = pkgs // config.shadows;
       }))
     ] ++ config.cluster.config.out.injectNixosConfig name;
   };
