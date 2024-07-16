@@ -1,7 +1,7 @@
 { cluster, config, depot, lib, pkgs, ... }:
 
 let
-  inherit (depot.reflection) interfaces;
+  inherit (config.reflection) interfaces;
   inherit (depot.lib.meta) domain;
   inherit (config.networking) hostName;
 

@@ -10,7 +10,7 @@ let
   lmtpSocket = "lmtp:unix:/run/dovecot2/lmtp";
   postfixLdapMailboxes = "ldap:${config.age.secrets."postfix-ldap-mailboxes.cf".path}";
 
-  inherit (depot.reflection) interfaces;
+  inherit (config.reflection) interfaces;
 in
 {
   age.secrets."postfix-ldap-mailboxes.cf" = {

@@ -33,7 +33,7 @@ in
         mode = "external";
         definition = {
           name = "static-lb";
-          address = depot.reflection.interfaces.primary.addrPublic;
+          address = config.reflection.interfaces.primary.addrPublic;
           port = 443;
           checks = lib.singleton {
             interval = "60s";

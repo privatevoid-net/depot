@@ -9,7 +9,7 @@ let
   }) hyprspaceCapableNodes;
   peersFiltered = lib.filterAttrs (name: _: name != hostName) peersFormatted;
   peerList = builtins.attrValues peersFiltered;
-  myNode = depot.reflection;
+  myNode = config.reflection;
   listenPort = myNode.hyprspace.listenPort or 8001;
 
   privateKeyFile = config.age.secrets.hyprspace-key.path;

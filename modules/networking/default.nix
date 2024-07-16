@@ -1,6 +1,6 @@
-{ depot, lib, ... }:
+{ config, lib, ... }:
 let
-  inherit (depot.reflection) interfaces;
+  inherit (config.reflection) interfaces;
 in
 {
   networking.interfaces = lib.mkIf (interfaces ? vstub) {

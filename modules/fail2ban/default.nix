@@ -1,4 +1,4 @@
-{ config, depot, ... }:
+{ config, ... }:
 {
   services.fail2ban = {
     enable = true;
@@ -6,7 +6,7 @@
     jails.sshd.settings.mode = "aggressive";
     ignoreIP = [
       "10.0.0.0/8"
-      depot.reflection.interfaces.primary.addr
+      config.reflection.interfaces.primary.addr
     ];
     bantime-increment = {
       enable = true;

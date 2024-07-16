@@ -1,4 +1,4 @@
-{ cluster, config, depot, lib, pkgs, ... }:
+{ cluster, config, lib, pkgs, ... }:
 
 let
   externalWays = lib.filterAttrs (_: cfg: !cfg.internal) cluster.config.ways;
@@ -91,7 +91,7 @@ in
     mode = "external";
     definition = {
       name = "ways-proxy";
-      address = depot.reflection.interfaces.primary.addrPublic;
+      address = config.reflection.interfaces.primary.addrPublic;
       port = 443;
       checks = lib.singleton {
         interval = "60s";

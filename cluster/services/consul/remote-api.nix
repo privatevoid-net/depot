@@ -1,10 +1,10 @@
-{ depot, lib, ... }:
+{ config, depot, lib, ... }:
 
 let
   inherit (depot.lib.meta) domain;
   frontendDomain = "consul-remote.internal.${domain}";
 
-  inherit (depot.reflection.interfaces.vstub) addr;
+  inherit (config.reflection.interfaces.vstub) addr;
 in
 
 {

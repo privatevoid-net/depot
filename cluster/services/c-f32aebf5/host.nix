@@ -1,4 +1,4 @@
-{ config, depot, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cid = "c-f32aebf5";
@@ -28,7 +28,7 @@ in
 {
   links.${cid} = {
     protocol = "http";
-    ipv4 = depot.reflection.interfaces.primary.addrPublic;
+    ipv4 = config.reflection.interfaces.primary.addrPublic;
   };
 
   users.users.${cid} = {

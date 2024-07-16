@@ -1,8 +1,8 @@
 { config, depot, lib, ... }:
 
 {
-  hostLinks = lib.genAttrs config.services.ipfs.nodes.node (name: depot.lib.summon name ({ depot, ... }: let
-    host = depot.reflection;
+  hostLinks = lib.genAttrs config.services.ipfs.nodes.node (name: let
+    host = depot.hours.${name};
     intf = host.interfaces.primary;
     self = config.hostLinks.${name}.ipfs;
   in {
@@ -20,7 +20,7 @@
         ];
       };
     };
-  }));
+  });
   services.ipfs = {
     nodes = {
       node = [ "VEGAS" "prophet" ];

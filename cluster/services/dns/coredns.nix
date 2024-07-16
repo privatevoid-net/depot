@@ -1,7 +1,7 @@
 { cluster, config, depot, lib, ... }:
 
 let
-  inherit (depot.reflection) interfaces hyprspace;
+  inherit (config.reflection) interfaces;
   inherit (depot.lib.meta) domain;
   inherit (config.networking) hostName;
 

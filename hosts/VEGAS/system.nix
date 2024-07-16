@@ -77,7 +77,7 @@
         "fe80::/10"
       ];
 
-      mkRules = ipt: ranges: map (x: "${ipt} -I nixos-fw 1 -d ${x} -o ${depot.reflection.interfaces.primary.link} -j DROP") ranges;
+      mkRules = ipt: ranges: map (x: "${ipt} -I nixos-fw 1 -d ${x} -o ${config.reflection.interfaces.primary.link} -j DROP") ranges;
 
       rules4 = mkRules "iptables" privateIp4Ranges;
 

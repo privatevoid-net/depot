@@ -1,7 +1,7 @@
-{ depot, ... }:
+{ config, depot, ... }:
 
 let
-  inherit (depot.reflection.interfaces) primary;
+  inherit (config.reflection.interfaces) primary;
 in
 
 {

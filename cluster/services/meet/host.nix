@@ -2,7 +2,7 @@
 let
   inherit (config) links;
 
-  inherit (depot.reflection) interfaces;
+  inherit (config.reflection) interfaces;
 in
 {
   links = {
