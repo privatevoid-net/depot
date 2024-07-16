@@ -1,4 +1,4 @@
-{ depot, ... }:
+{ config, depot, ... }:
 
 {
   imports = with depot.nixosModules; [
@@ -12,7 +12,7 @@
 
   networking.useDHCP = false;
 
-  networking.interfaces.eth0.useDHCP = true;
+  networking.interfaces.${config.reflection.interfaces.primary.link}.useDHCP = true;
 
   networking.nameservers = [ depot.hours.VEGAS.interfaces.vstub.addr ];
 

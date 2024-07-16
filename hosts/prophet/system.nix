@@ -1,4 +1,4 @@
-{ depot, ... }:
+{ config, depot, ... }:
 
 {
   imports =
@@ -24,7 +24,7 @@
   time.timeZone = "Europe/Zurich";
 
   networking.useDHCP = false;
-  networking.interfaces.enp0s6.useDHCP = true;
+  networking.interfaces.${config.reflection.interfaces.primary.link}.useDHCP = true;
 
   i18n.defaultLocale = "en_US.UTF-8";
 
