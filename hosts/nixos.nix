@@ -5,7 +5,7 @@ let
   inherit (config) gods;
 
   mkNixOS = name: host: nixosSystem {
-    specialArgs = config.lib.summon name lib.id;
+    specialArgs = config.lib.summon host.system lib.id;
     modules = [
       host.nixos
       (withSystem host.system ({ config, pkgs, ... }: {

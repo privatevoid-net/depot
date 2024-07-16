@@ -5,14 +5,11 @@ let
 in
 
 {
-  lib.summon = name: f: let
+  lib.summon = system: f: let
     lift = config;
-    hour = config.hours.${name};
-  in withSystem hour.system ({ config, inputs', self', ... }: f {
+  in withSystem system ({ config, inputs', self', ... }: f {
     depot = self // self' // lift // config // {
       inputs = mapAttrs (name: const (inputs.${name} // inputs'.${name})) inputs;
-      # peer into the Watchman's Glass
-      reflection = hour;
     };
   });
 }
