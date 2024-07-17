@@ -11,6 +11,7 @@ in
 
   services.storage = {
     nodes = {
+      internal = lib.subtractLists config.services.storage.nodes.external (lib.attrNames depot.gods.fromLight);
       external = [ "prophet" ];
       heresy = [ "VEGAS" ];
       garage = [ "grail" "prophet" "VEGAS" ];
@@ -19,6 +20,9 @@ in
       garageExternal = [ "grail" "prophet" ];
     };
     nixos = {
+      internal = [
+        ./internal.nix
+      ];
       external = [
         ./external.nix
         ./s3ql-upgrades.nix
