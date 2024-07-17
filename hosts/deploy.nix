@@ -46,6 +46,9 @@ in
                     ScheduleShutdown st reboot ''${nextScheduledTime}000000
                 '';
               in pkgs.writeShellScript "post-effect.sh" ''
+                if [[ -e /etc/consul.json ]]; then
+                  export CONSUL_HTTP_ADDR="$(${pkgs.jq}/bin/jq -r < /etc/consul.json '"\(.addresses.http // "127.0.0.1"):\(.ports.http // 8500)"')"
+                fi
                 export PATH="${config.packages.consul}/bin:${pkgs.coreutils}/bin"
                 if [[ "$(realpath /run/booted-system/kernel)" != "$(realpath /nix/var/nix/profiles/system/kernel)" ]]; then
                   echo "Scheduling reboot for kernel upgrade"
