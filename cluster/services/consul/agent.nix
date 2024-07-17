@@ -10,6 +10,8 @@ let
 in
 
 {
+  links.consulAgent.protocol = "http";
+
   services.consul = {
     enable = true;
     webUi = true;
@@ -24,11 +26,14 @@ in
       ports.serf_lan = hl.port;
       retry_join = map (hostName: hostLinks.${hostName}.consul.tuple) (cfg.otherNodes.agent hostName);
       bootstrap_expect = builtins.length cfg.nodes.agent;
+      addresses.http = config.links.consulAgent.ipv4;
+      ports.http = config.links.consulAgent.port;
     };
   };
 
   services.grafana-agent.settings.integrations.consul_exporter = {
     enabled = true;
     instance = hostName;
+    server = config.links.consulAgent.url;
   };
 }
