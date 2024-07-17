@@ -42,8 +42,8 @@ in
 {
   systemd.services.consul-ready = {
     description = "Wait for Consul";
-    requires = [ "consul.service" ];
-    after = [ "consul.service" ];
+    requires = lib.mkIf config.services.consul.enable [ "consul.service" ];
+    after = lib.mkIf config.services.consul.enable [ "consul.service" ];
     serviceConfig = {
       ExecStart = lib.getExe consulReady;
       DynamicUser = true;
