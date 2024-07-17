@@ -12,6 +12,7 @@ in
       ascensions = pkgs.callPackage ./ascensions.nix {
         inherit (self'.packages) consul;
         inherit (self) nixosModules;
+        inherit (config) cluster;
       };
 
       garage = pkgs.callPackage ./garage.nix {

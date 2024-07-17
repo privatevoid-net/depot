@@ -1,4 +1,4 @@
-{ testers, nixosModules, consul }:
+{ testers, nixosModules, consul, cluster }:
 
 let
   dataDir = {
@@ -28,6 +28,7 @@ testers.runNixOSTest {
         nixosModules.ascensions
         nixosModules.systemd-extras
         nixosModules.consul-distributed-services
+        cluster.config.services.consul.nixos.ready
       ];
       systemd.services = {
         create-file = {
