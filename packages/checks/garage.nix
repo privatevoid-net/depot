@@ -19,6 +19,7 @@ testers.runNixOSTest {
         nixosModules.ascensions
         nixosModules.systemd-extras
         nixosModules.consul-distributed-services
+        nixosModules.port-magic
         cluster.config.services.storage.nixos.garage
         cluster.config.services.storage.nixos.garageInternal
       ];
@@ -26,6 +27,11 @@ testers.runNixOSTest {
         type = lib.types.raw;
       };
       config = {
+        links.consulAgent = {
+          protocol = "http";
+          hostname = "consul";
+          port = 8500;
+        };
         _module.args = {
           depot.packages = { inherit garage; };
           cluster.config = {
@@ -41,7 +47,6 @@ testers.runNixOSTest {
         environment.etc."dummy-secrets/garageRpcSecret".text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         networking.firewall.allowedTCPPorts = [ 3901 8080 ];
         services.garage = {
-          settings.consul_discovery.consul_http_addr = lib.mkForce "http://consul:8500";
           layout.initial = lib.mkOverride 51 {
             garage1 = { zone = "dc1"; capacity = 1000; };
             garage2 = { zone = "dc1"; capacity = 1000; };
