@@ -23,12 +23,12 @@ in
           * X evaluators, Y smallBuilders, Z bigBuilders
         etc.
       '';
-      type = with types; attrsOf (oneOf [ str (listOf str) ]);
+      type = with types; lazyAttrsOf (oneOf [ str (listOf str) ]);
       default = [];
     };
     otherNodes = mkOption {
       description = "Other nodes in the group.";
-      type = with types; attrsOf (functionTo (listOf str));
+      type = with types; lazyAttrsOf (functionTo (listOf str));
       default = [];
     };
     nixos = mkOption {
