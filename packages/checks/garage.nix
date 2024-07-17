@@ -22,6 +22,7 @@ testers.runNixOSTest {
         nixosModules.port-magic
         cluster.config.services.storage.nixos.garage
         cluster.config.services.storage.nixos.garageInternal
+        cluster.config.services.consul.nixos.ready
       ];
       options.services.locksmith.providers = lib.mkOption {
         type = lib.types.raw;
