@@ -87,7 +87,8 @@ in
           description = "Ascension for ${name}";
           wantedBy = [ "multi-user.target" ];
           inherit (asc) requiredBy before;
-          after = asc.after ++ (lib.optional asc.distributed "consul.service");
+          after = asc.after ++ (lib.optional asc.distributed "consul-ready.service");
+          requires = lib.optional asc.distributed "consul-ready.service";
           serviceConfig.Type = "oneshot";
           distributed.enable = asc.distributed;
           script = ''

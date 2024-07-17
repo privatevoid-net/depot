@@ -42,6 +42,10 @@ in
 
       hasSpecialPrefix = elem (substring 0 1 ExecStart) [ "@" "-" ":" "+" "!" ];
     in assert !hasSpecialPrefix; pkgs.writeTextDir "etc/systemd/system/${n}.service.d/distributed.conf" ''
+      [Unit]
+      Requires=consul-ready.service
+      After=consul-ready.service
+
       [Service]
       ExecStartPre=${waitForConsul} 'services/${n}%i'
       ExecStart=
