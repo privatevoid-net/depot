@@ -26,10 +26,16 @@ testers.runNixOSTest {
     in {
       imports = [
         nixosModules.ascensions
+        nixosModules.port-magic
         nixosModules.systemd-extras
         nixosModules.consul-distributed-services
         cluster.config.services.consul.nixos.ready
       ];
+      links.consulAgent = {
+        protocol = "http";
+        hostname = "consul";
+        port = 8500;
+      };
       systemd.services = {
         create-file = {
           serviceConfig.Type = "oneshot";
@@ -48,10 +54,10 @@ testers.runNixOSTest {
               consul kv put ${kvPath.${hostName}} ${hostName}
             fi
           '';
-          environment.CONSUL_HTTP_ADDR = "consul:8500";
+          environment.CONSUL_HTTP_ADDR = config.links.consulAgent.tuple;
         };
         ascend-create-kv = {
-          environment.CONSUL_HTTP_ADDR = "consul:8500";
+          environment.CONSUL_HTTP_ADDR = config.links.consulAgent.tuple;
         };
       };
       system.ascensions = {
