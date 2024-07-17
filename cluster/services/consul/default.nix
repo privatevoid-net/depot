@@ -11,12 +11,17 @@ in
     };
   });
   services.consul = {
-    nodes.agent = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
-    nixos.agent = [
-      ./agent.nix
-      ./remote-api.nix
-      ./ready.nix
-    ];
+    nodes = {
+      agent = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
+      ready = config.services.consul.nodes.agent;
+    };
+    nixos = {
+      agent = [
+        ./agent.nix
+        ./remote-api.nix
+      ];
+      ready = ./ready.nix;
+    };
   };
 
   dns.records."consul-remote.internal".consulService = "consul-remote";
