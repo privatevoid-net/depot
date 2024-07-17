@@ -1,9 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  consulCfg = config.services.consul.extraConfig;
-  consulIpAddr = consulCfg.addresses.http or "127.0.0.1";
-  consulHttpAddr = "${consulIpAddr}:${toString (consulCfg.ports.http or 8500)}";
+  consul = config.links.consulAgent;
 
   kvRoot = "secrets/locksmith";
   kvValue = "recipient/${config.networking.hostName}";
@@ -61,13 +59,13 @@ in
           config.services.consul.package
         ];
         environment = {
-          CONSUL_HTTP_ADDR = consulHttpAddr;
+          CONSUL_HTTP_ADDR = consul.tuple;
         };
         serviceConfig = {
           PrivateTmp = true;
           WorkingDirectory = "/tmp";
           IPAddressDeny = [ "any" ];
-          IPAddressAllow = [ consulIpAddr ];
+          IPAddressAllow = [ consul.ipv4 ];
           LoadCredential = lib.mkForce [];
         };
         script = ''

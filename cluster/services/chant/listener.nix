@@ -1,9 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  consulCfg = config.services.consul.extraConfig;
-  consulIpAddr = consulCfg.addresses.http or "127.0.0.1";
-  consulHttpAddr = "${consulIpAddr}:${toString (consulCfg.ports.http or 8500)}";
+  consul = config.links.consulAgent;
 
   validTargets = lib.pipe config.systemd.services [
     (lib.filterAttrs (name: value: value.chant.enable))
@@ -75,10 +73,10 @@ in
       RestartSec = 60;
       Restart = "always";
       IPAddressDeny = [ "any" ];
-      IPAddressAllow = [ consulIpAddr ];
+      IPAddressAllow = [ consul.ipv4 ];
     };
     environment = {
-      CONSUL_HTTP_ADDR = consulHttpAddr;
+      CONSUL_HTTP_ADDR = consul.tuple;
     };
   };
 }

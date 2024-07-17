@@ -41,7 +41,7 @@ in
     softwareWatchdog = true;
     settings = {
       consul = {
-        host = "127.0.0.1:8500";
+        host = config.links.consulAgent.tuple;
         register_service = true;
       };
       bootstrap.dcs = {

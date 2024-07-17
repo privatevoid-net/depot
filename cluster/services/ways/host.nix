@@ -4,8 +4,6 @@ let
   externalWays = lib.filterAttrs (_: cfg: !cfg.internal) cluster.config.ways;
 
   consulServiceWays = lib.filterAttrs (_: cfg: cfg.useConsul) cluster.config.ways;
-
-  consulHttpAddr = "${config.services.consul.extraConfig.addresses.http or "127.0.0.1"}:${toString (config.services.consul.extraConfig.ports.http or 8500)}";
 in
 
 {
@@ -63,7 +61,7 @@ in
     user = "nginx";
     group = "nginx";
     settings = {
-      consul.address = "http://${consulHttpAddr}";
+      consul.address = config.links.consulAgent.url;
       template = [
         {
           source = let

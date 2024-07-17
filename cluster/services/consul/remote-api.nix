@@ -8,7 +8,7 @@ let
 in
 
 {
-  services.nginx.virtualHosts.${frontendDomain} = depot.lib.nginx.vhosts.proxy "http://127.0.0.1:8500" // {
+  services.nginx.virtualHosts.${frontendDomain} = depot.lib.nginx.vhosts.proxy config.links.consulAgent.url // {
     listenAddresses = lib.singleton addr;
     enableACME = false;
     useACMEHost = "internal.${domain}";
@@ -33,7 +33,7 @@ in
         {
           name = "Backend";
           id = "service:consul-remote:backend";
-          http = "http://127.0.0.1:8500/v1/status/leader";
+          http = "${config.links.consulAgent.url}/v1/status/leader";
           interval = "30s";
         }
       ];
