@@ -60,8 +60,8 @@ in
   systemd.services.chant-listener = {
     description = "Chant Listener";
     wantedBy = [ "multi-user.target" ];
-    wants = [ "consul.service" ];
-    after = [ "consul.service" ];
+    requires = [ "consul-ready.service" ];
+    after = [ "consul-ready.service" ];
     serviceConfig = {
       ExecStart = "${config.services.consul.package}/bin/consul watch --type=event ${eventHandler}";
 

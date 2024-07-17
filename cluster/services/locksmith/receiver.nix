@@ -52,8 +52,8 @@ in
       systemd.services.locksmith = {
         description = "The Locksmith's Chant";
         wantedBy = [ "multi-user.target" ];
-        wants = [ "consul.service" ];
-        after = [ "consul.service" ];
+        requires = [ "consul-ready.service" ];
+        after = [ "consul-ready.service" ];
         chant.enable = true;
         path = [
           config.services.consul.package
