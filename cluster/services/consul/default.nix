@@ -15,6 +15,7 @@ in
     nixos.agent = [
       ./agent.nix
       ./remote-api.nix
+      ./ready.nix
     ];
   };
 
