@@ -18,7 +18,6 @@
       ./services/backbone-routing
       ./services/bitwarden
       ./services/cdn-shield
-      ./services/fbi
       ./services/gitlab
       ./services/jokes
       ./services/mail

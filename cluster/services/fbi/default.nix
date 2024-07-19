@@ -1,6 +1,11 @@
 { depot, ... }:
 
 {
+  services.fbi = {
+    nodes.host = [ "VEGAS" ];
+    nixos.host = ./host.nix;
+  };
+
   dns.records = let
     fbiAddr = [ depot.hours.VEGAS.interfaces.primary.addrPublic ];
   in {
