@@ -22,7 +22,6 @@
       ./services/jokes
       ./services/mail
       ./services/minecraft
-      ./services/reflex
       ./services/sso
       ./services/websites
       ./services/wireguard-server
