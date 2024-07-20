@@ -18,7 +18,6 @@
       ./services/backbone-routing
       ./services/bitwarden
       ./services/cdn-shield
-      ./services/gitlab
       ./services/jokes
       ./services/mail
       ./services/minecraft

@@ -9,7 +9,7 @@ let
     owner = "gitlab";
     group = "gitlab";
     mode = "0400";
-    file = ../../../../secrets/${name}.age;
+    file = ../../../secrets/${name}.age;
   };
 
   secrets = lib.mapAttrs (_: v: v.path) config.age.secrets;
