@@ -3,10 +3,6 @@ let
   inherit (config.reflection) interfaces;
 in
 {
-  imports = [
-    ./port-forward.nix
-  ];
-
   networking.nat = {
     enable = true;
     externalInterface = interfaces.primary.link;

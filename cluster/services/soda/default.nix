@@ -1,6 +1,11 @@
 { depot, ... }:
 
 {
+  services.soda = {
+    nodes.host = [ "VEGAS" ];
+    nixos.host = ./host.nix;
+  };
+
   monitoring.blackbox.targets.soda-machine = {
     address = "soda.int.${depot.lib.meta.domain}:22";
     module = "sshConnect";

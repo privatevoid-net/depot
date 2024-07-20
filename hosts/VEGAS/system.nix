@@ -88,18 +88,4 @@
 
   system.stateVersion = "21.05";
   services.openssh.settings.PasswordAuthentication = false;
-
-  containers.soda = {
-    path = depot.nixosConfigurations.soda.config.system.build.toplevel;
-    privateNetwork = true;
-    hostBridge = "vmdefault";
-    localAddress = "${depot.hours.soda.interfaces.primary.addr}/24";
-    autoStart = true;
-    bindMounts.sodaDir = {
-      hostPath = "/srv/storage/www/soda";
-      mountPoint = "/soda";
-      isReadOnly = false;
-    };
-  };
-  systemd.services."container@soda".after = [ "libvirtd.service" "sys-devices-virtual-net-vmdefault.device" ];
 }
