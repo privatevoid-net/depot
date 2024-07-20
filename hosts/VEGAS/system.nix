@@ -20,7 +20,6 @@
       ./services/jokes
       ./services/mail
       ./services/minecraft
-      ./services/sso
       ./services/websites
       ./services/wireguard-server
       depot.nixosModules.hyprspace

@@ -9,7 +9,7 @@ in
   links.keycloak.protocol = "http";
 
   age.secrets.keycloak-dbpass = {
-    file = ../../../../secrets/keycloak-dbpass.age;
+    file = ../../../secrets/keycloak-dbpass.age;
     owner = "root";
     group = "root";
     mode = "0400";
