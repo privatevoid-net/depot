@@ -16,7 +16,6 @@
 
       # Services
       ./services/backbone-routing
-      ./services/bitwarden
       ./services/cdn-shield
       ./services/jokes
       ./services/mail
