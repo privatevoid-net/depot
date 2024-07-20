@@ -39,7 +39,11 @@ in
     default = {};
   };
 
-  config.out.injectNixosConfig = hostName: (lib.flatten (lib.mapAttrsToList (getHostConfigurations hostName) config.services)) ++ [
-    introspectionModule
-  ];
+  config.out = {
+    injectNixosConfigForServices = services: hostName: (lib.flatten (lib.mapAttrsToList (getHostConfigurations hostName) (lib.getAttrs services config.services))) ++ [
+      introspectionModule
+    ];
+
+    injectNixosConfig = config.out.injectNixosConfigForServices (lib.attrNames config.services);
+  };
 }
