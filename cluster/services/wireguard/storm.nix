@@ -6,7 +6,7 @@ let
 in
 {
   age.secrets.wireguard-key-storm = {
-    file = ../../../../secrets + "/wireguard-key-storm-${hostName}.age";
+    file = ../../../secrets + "/wireguard-key-storm-${hostName}.age";
     mode = "0400";
   };
 

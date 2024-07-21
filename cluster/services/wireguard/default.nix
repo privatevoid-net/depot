@@ -66,9 +66,11 @@ in
   services.wireguard = {
     nodes = {
       mesh = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
+      storm = [ "VEGAS" ];
     };
     nixos = {
       mesh = ./mesh.nix;
+      storm = ./storm.nix;
     };
     secrets.meshPrivateKey = {
       nodes = config.services.wireguard.nodes.mesh;

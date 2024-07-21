@@ -20,7 +20,6 @@
       ./services/jokes
       ./services/minecraft
       ./services/websites
-      ./services/wireguard-server
       depot.nixosModules.hyprspace
       depot.nixosModules.nix-builder
 
