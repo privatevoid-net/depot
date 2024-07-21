@@ -18,7 +18,6 @@
       ./services/backbone-routing
       ./services/cdn-shield
       ./services/jokes
-      ./services/mail
       ./services/minecraft
       ./services/websites
       ./services/wireguard-server

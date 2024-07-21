@@ -14,7 +14,7 @@ let
 in
 {
   age.secrets."postfix-ldap-mailboxes.cf" = {
-    file = ../../../../secrets/postfix-ldap-mailboxes.age;
+    file = ../../../secrets/postfix-ldap-mailboxes.age;
     owner = "postfix";
     group = "postfix";
     mode = "0400";

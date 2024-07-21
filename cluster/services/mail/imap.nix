@@ -32,7 +32,7 @@ let
   '';
 in {
 
-  age.secrets.dovecotLdapToken.file = ../../../../secrets/dovecot-ldap-token.age;
+  age.secrets.dovecotLdapToken.file = ../../../secrets/dovecot-ldap-token.age;
 
   networking.firewall.allowedTCPPorts = [ 143 993 ];
 

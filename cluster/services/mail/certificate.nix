@@ -1,11 +1,6 @@
 { depot, lib, ... }:
-{
-  imports = [
-    ./imap.nix
-    ./opendkim.nix
-    ./postfix.nix
-  ];
 
+{
   security.acme.certs."mail.${depot.lib.meta.domain}" = {
     dnsProvider = "exec";
     webroot = lib.mkForce null;

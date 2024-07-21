@@ -1,6 +1,24 @@
 { depot, ... }:
 
 {
+  services.mail = {
+    nodes = {
+      smtp = [ "VEGAS" ];
+      imap = [ "VEGAS" ];
+    };
+    nixos = {
+      smtp = [
+        ./postfix.nix
+        ./opendkim.nix
+        ./certificate.nix
+      ];
+      imap = [
+        ./imap.nix
+        ./certificate.nix
+      ];
+    };
+  };
+
   dns.records = let
     inherit (depot.lib.meta) domain adminEmail;
     mailServerAddr = depot.hours.VEGAS.interfaces.primary.addrPublic;
