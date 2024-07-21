@@ -52,6 +52,24 @@ in
       }));
       default = {};
     };
+    simulacrum = {
+      enable = mkEnableOption "testing this service in the Simulacrum";
+      deps = mkOption {
+        description = "Other services to include.";
+        type = with types; listOf str;
+        default = [];
+      };
+      settings = mkOption {
+        description = "NixOS test configuration.";
+        type = types.deferredModule;
+        default = {};
+      };
+      augments = mkOption {
+        description = "Cluster augments (will be propagated).";
+        type = types.deferredModule;
+        default = {};
+      };
+    };
   };
   config.otherNodes = builtins.mapAttrs (const filterGroup) config.nodes;
 }
