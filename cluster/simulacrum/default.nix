@@ -31,7 +31,13 @@ let
         cluster = lib.mkForce (lift.cluster.extendModules {
           specialArgs.depot = config;
           modules = [
-            { simulacrum = true; }
+            {
+              simulacrum = true;
+              testConfig = {
+                subject = service;
+                activeServices = serviceList;
+              };
+            }
           ];
         });
       })
