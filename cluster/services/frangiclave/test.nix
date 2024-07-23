@@ -7,4 +7,6 @@
       environment.systemPackages = [ config.services.vault.package ];
     };
   };
+
+  testScript = "assert False";
 }
