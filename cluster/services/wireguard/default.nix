@@ -10,6 +10,19 @@ let
   };
 
   getExtAddr = host: host.interfaces.primary.addrPublic;
+
+  snakeoilPublicKeys = {
+    checkmate = "TESTtbFybW5YREwtd18a1A4StS4YAIUS5/M1Lv0jHjA=";
+    grail = "TEsTh7bthkaDh9A1CpqDi/F121ao5lRZqIJznLH8mB4=";
+    thunderskin = "tEST6afFmVN18o+EiWNFx+ax3MJwdQIeNfJSGEpffXw=";
+    VEGAS = "tEsT6s7VtM5C20eJBaq6UlQydAha8ATlmrTRe9T5jnM=";
+    prophet = "TEstYyb5IoqSL53HbSQwMhTaR16sxcWcMmXIBPd+1gE=";
+  };
+
+  grease = hourName: realPublicKey: if config.simulacrum then
+    snakeoilPublicKeys.${hourName}
+  else
+    realPublicKey;
 in
 {
   vars = {
@@ -22,7 +35,7 @@ in
       extra = {
         meshIp = "10.1.1.32";
         inherit meshNet;
-        pubKey = "fZMB9CDCWyBxPnsugo3Uxm/TIDP3VX54uFoaoC0bP3U=";
+        pubKey = grease "checkmate" "fZMB9CDCWyBxPnsugo3Uxm/TIDP3VX54uFoaoC0bP3U=";
         extraRoutes = [];
       };
     };
@@ -31,7 +44,7 @@ in
       extra = {
         meshIp = "10.1.1.6";
         inherit meshNet;
-        pubKey = "0WAiQGdWySsGWFUk+a9e0I+BDTKwTyWQdFT2d7BMfDQ=";
+        pubKey = grease "grail" "0WAiQGdWySsGWFUk+a9e0I+BDTKwTyWQdFT2d7BMfDQ=";
         extraRoutes = [];
       };
     };
@@ -40,7 +53,7 @@ in
       extra = {
         meshIp = "10.1.1.4";
         inherit meshNet;
-        pubKey = "xvSsFvCVK8h2wThZJ7E5K0fniTBIEIYOblkKIf3Cwy0=";
+        pubKey = grease "thunderskin" "xvSsFvCVK8h2wThZJ7E5K0fniTBIEIYOblkKIf3Cwy0=";
         extraRoutes = [];
       };
     };
@@ -49,7 +62,7 @@ in
       extra = {
         meshIp = "10.1.1.5";
         inherit meshNet;
-        pubKey = "NpeB8O4erGTas1pz6Pt7qtY9k45YV6tcZmvvA4qXoFk=";
+        pubKey = grease "VEGAS" "NpeB8O4erGTas1pz6Pt7qtY9k45YV6tcZmvvA4qXoFk=";
         extraRoutes = [ "${hours.VEGAS.interfaces.vstub.addr}/32" "10.10.0.0/16" ];
       };
     };
@@ -58,7 +71,7 @@ in
       extra = {
         meshIp = "10.1.1.9";
         inherit meshNet;
-        pubKey = "MMZAbRtNE+gsLm6DJy9VN/Y39E69oAZnvOcFZPUAVDc=";
+        pubKey = grease "prophet" "MMZAbRtNE+gsLm6DJy9VN/Y39E69oAZnvOcFZPUAVDc=";
         extraRoutes = [];
       };
     };
@@ -69,8 +82,12 @@ in
       storm = [ "VEGAS" ];
     };
     nixos = {
-      mesh = ./mesh.nix;
-      storm = ./storm.nix;
+      mesh = [
+        ./mesh.nix
+      ] ++ lib.optionals config.simulacrum [
+        ./simulacrum/snakeoil-keys.nix
+      ];
+      storm = [ ./storm.nix ];
     };
     secrets.meshPrivateKey = {
       nodes = config.services.wireguard.nodes.mesh;
