@@ -19,19 +19,21 @@
 
   ways.forge.target = let
     host = builtins.head config.services.forge.nodes.server;
-  in config.hostLinks.${host}.forge.url;
+  in config.lib.forService "forge" config.hostLinks.${host}.forge.url;
 
-  garage = {
+  garage = config.lib.forService "forge" {
     keys.forgejo.locksmith.nodes = config.services.forge.nodes.server;
     buckets.forgejo.allow.forgejo = [ "read" "write" ];
   };
 
-  monitoring.blackbox.targets.forge = {
+  monitoring.blackbox.targets.forge = config.lib.forService "forge" {
     address = "https://forge.${depot.lib.meta.domain}/api/v1/version";
     module = "https2xx";
   };
 
-  dns.records."ssh.forge".target = map
-    (node: depot.hours.${node}.interfaces.primary.addrPublic)
-    config.services.forge.nodes.server;
+  dns.records = config.lib.forService "forge" {
+    "ssh.forge".target = map
+      (node: depot.hours.${node}.interfaces.primary.addrPublic)
+      config.services.forge.nodes.server;
+  };
 }
