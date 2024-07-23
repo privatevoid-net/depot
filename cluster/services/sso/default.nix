@@ -2,8 +2,14 @@
 
 {
   services.sso = {
-    nodes.host = [ "VEGAS" ];
-    nixos.host = ./host.nix;
+    nodes = {
+      host = [ "VEGAS" ];
+      oauth2-proxy = [ "VEGAS" ];
+    };
+    nixos = {
+      host = ./host.nix;
+      oauth2-proxy = ./oauth2-proxy.nix;
+    };
   };
 
   dns.records = let

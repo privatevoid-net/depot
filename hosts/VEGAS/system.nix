@@ -8,7 +8,6 @@
 
       # Plumbing
       ./modules/database
-      ./modules/oauth2-proxy
       ./modules/redis
       ./modules/virtualisation
       depot.inputs.agenix.nixosModules.age

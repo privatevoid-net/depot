@@ -5,7 +5,7 @@ let
 in
 {
   age.secrets.oauth2_proxy-secrets = {
-    file = ../../../../secrets/oauth2_proxy-secrets.age;
+    file = ../../../secrets/oauth2_proxy-secrets.age;
     owner = "root";
     group = "root";
     mode = "0400";
