@@ -46,6 +46,7 @@ in
               };
             }) // (if secretConfig.shared then let
               secretFile = "${svcName}-${secretName}.age";
+              snakeoilFile = "${svcName}-${secretName}-snakeoil.txt";
             in {
               editSecret = {
                 description = "Edit this secret";
@@ -54,15 +55,31 @@ in
                   agenix -e '${secretFile}'
                 '';
               };
-            } else lib.mapAttrs' (name: lib.nameValuePair "editSecretInstance-${name}") (lib.genAttrs secretConfig.nodes (node: let
-              secretFile = "${svcName}-${secretName}-${node}.age";
-            in {
-              description = "Edit this secret for '${node}'";
-              command = ''
-                ${setupCommands secretFile [ node ]}
-                agenix -e '${secretFile}'
-              '';
-            })));
+              editSnakeoil = {
+                description = "Edit this secret's snakeoil";
+                command = ''
+                  $EDITOR "$PRJ_ROOT/cluster/secrets"/'${snakeoilFile}'
+                '';
+              };
+            } else lib.mkMerge [
+              (lib.mapAttrs' (name: lib.nameValuePair "editSecretInstance-${name}") (lib.genAttrs secretConfig.nodes (node: let
+                secretFile = "${svcName}-${secretName}-${node}.age";
+              in {
+                description = "Edit this secret for '${node}'";
+                command = ''
+                  ${setupCommands secretFile [ node ]}
+                  agenix -e '${secretFile}'
+                '';
+              })))
+              (lib.mapAttrs' (name: lib.nameValuePair "editSnakeoilInstance-${name}") (lib.genAttrs secretConfig.nodes (node: let
+                snakeoilFile = "${svcName}-${secretName}-${node}-snakeoil.txt";
+              in {
+                description = "Edit this secret's snakeoil for '${node}'";
+                command = ''
+                  $EDITOR "$PRJ_ROOT/cluster/secrets"/'${snakeoilFile}'
+                '';
+              })))
+            ]);
           };
         }) svcConfig.secrets))
         lib.concatLists
