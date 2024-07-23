@@ -7,7 +7,6 @@
       ./hardware-configuration.nix
 
       # Plumbing
-      ./modules/database
       ./modules/redis
       ./modules/virtualisation
       depot.inputs.agenix.nixosModules.age
