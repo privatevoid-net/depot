@@ -35,6 +35,8 @@ in
         ./garage.nix
         ./garage-options.nix
         ./garage-layout.nix
+      ] ++ lib.optionals config.simulacrum [
+        ./simulacrum/snakeoil-rpc-secret.nix
       ];
       garageConfig = [
         ./garage-gateway.nix
@@ -47,6 +49,11 @@ in
       ];
       garageInternal = [ ./garage-internal.nix ];
       garageExternal = [ ./garage-external.nix ];
+    };
+    simulacrum = {
+      enable = true;
+      deps = [ "wireguard" "consul" "locksmith" ];
+      settings = ./test.nix;
     };
   };
 
