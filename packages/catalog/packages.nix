@@ -8,7 +8,7 @@ in
   perSystem = { config, ... }: {
     catalog.depot = {
       packages = lib.mapAttrs (name: package: {
-        description = package.meta.description or "Package: ${name}";
+        description = "Package: ${name}";
         actions = lib.mkMerge [
           {
             build = {
