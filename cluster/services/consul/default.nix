@@ -22,6 +22,11 @@ in
       ];
       ready = ./ready.nix;
     };
+    simulacrum = {
+      enable = true;
+      deps = [ "wireguard" ];
+      settings = ./test.nix;
+    };
   };
 
   dns.records."consul-remote.internal".consulService = "consul-remote";
