@@ -18,5 +18,10 @@
       cluster = [];
       agent = [];
     };
+    simulacrum = {
+      enable = true;
+      deps = [ "wireguard" "consul" ];
+      settings = ./test.nix;
+    };
   };
 }
