@@ -63,6 +63,8 @@ in
   };
 
   systemd.services.garage = {
+    requires = [ "consul-ready.service" ];
+    after = [ "consul-ready.service" ];
     unitConfig = {
       RequiresMountsFor = [ cfg.settings.data_dir ];
     };
