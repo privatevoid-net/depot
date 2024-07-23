@@ -17,6 +17,7 @@ lib.evalModules {
     ./lib/mesh.nix
     ./lib/secrets.nix
     ./lib/testing.nix
+    ./lib/lib.nix
 
     ./import-services.nix
   ];
