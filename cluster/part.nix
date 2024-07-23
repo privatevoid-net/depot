@@ -3,6 +3,7 @@
 {
   imports = [
     ./catalog
+    ./simulacrum/checks.nix
   ];
 
   options.cluster = lib.mkOption {
