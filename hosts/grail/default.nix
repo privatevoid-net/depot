@@ -16,6 +16,11 @@ tools: rec {
     };
   };
 
+  hardware = {
+    cpu.cores = 4;
+    memory.gb = 8;
+  };
+
   hyprspace = {
     enable = true;
     id = "12D3KooWN31twBvdEcxz2jTv4tBfPe3mkNueBwDJFCN4xn7ZwFbi";
