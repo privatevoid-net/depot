@@ -48,5 +48,11 @@ in
     };
   });
 
+  nix.settings.cores = lib.pipe config.reflection.hardware.cpu.cores [
+    (builtins.mul 0.75)
+    builtins.floor
+    (lib.max 1)
+  ];
+
   users.groups.hercules-ci-agent.members = map (org: "hci-${org}") (lib.attrNames nodes);
 }
