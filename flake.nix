@@ -62,7 +62,6 @@
       url = "github:numtide/nar-serve";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "repin-flake-utils";
       };
     };
 
@@ -70,7 +69,6 @@
       url = "github:numtide/devshell";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "repin-flake-utils";
       };
     };
     
