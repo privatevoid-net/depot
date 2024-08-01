@@ -1,4 +1,4 @@
-{ cluster, depot, lib, ... }:
+{ cluster, config, depot, lib, ... }:
 
 let
   inherit (cluster.config.services.hercules-ci-multi-agent) nodes secrets;
@@ -40,6 +40,11 @@ in
     settings = {
       clusterJoinTokenPath = secrets."clusterJoinToken-${org}".path;
       binaryCachesPath = secrets.cacheConfig.path;
+      concurrentTasks = lib.pipe config.reflection.hardware.cpu.cores [
+        (lib.flip builtins.div 2)
+        builtins.floor
+        (lib.max 2)
+      ];
     };
   });
 
