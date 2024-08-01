@@ -9,6 +9,7 @@ let
       ./hour/interfaces.nix
       ./hour/nixos.nix
       ./hour/ssh.nix
+      ./hour/hardware.nix
     ];
   };
 
