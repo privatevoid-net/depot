@@ -15,12 +15,6 @@ in
         inherit (config) cluster;
       };
 
-      garage = pkgs.callPackage ./garage.nix {
-        inherit (self'.packages) garage consul;
-        inherit (self) nixosModules;
-        inherit (config) cluster;
-      };
-
       ipfs-cluster-upgrade = pkgs.callPackage ./ipfs-cluster-upgrade.nix {
         inherit (self) nixosModules;
         previous = timeMachine.preUnstable;
