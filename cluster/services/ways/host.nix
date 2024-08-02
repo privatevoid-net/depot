@@ -3,6 +3,8 @@
 let
   externalWays = lib.filterAttrs (_: cfg: !cfg.internal) cluster.config.ways;
 
+  internalWays = lib.filterAttrs (_: cfg: cfg.internal) cluster.config.ways;
+
   consulServiceWays = lib.filterAttrs (_: cfg: cfg.useConsul) cluster.config.ways;
 in
 
@@ -14,6 +16,7 @@ in
         imports = [
           cfg.extras
           {
+            listenAddresses = lib.mkIf cfg.internal [ config.reflection.interfaces.vstub.addr ];
             forceSSL = true;
             enableACME = !cfg.internal && !cfg.wildcard;
             useACMEHost = lib.mkMerge [
@@ -84,18 +87,34 @@ in
     };
   };
 
-  consul.services.ways-proxy = {
-    unit = "nginx";
-    mode = "external";
-    definition = {
-      name = "ways-proxy";
-      address = config.reflection.interfaces.primary.addrPublic;
-      port = 443;
-      checks = lib.singleton {
-        interval = "60s";
-        tcp = "127.0.0.1:80";
+  consul.services = {
+    ways-proxy = {
+      unit = "nginx";
+      mode = "external";
+      definition = {
+        name = "ways-proxy";
+        address = config.reflection.interfaces.primary.addrPublic;
+        port = 443;
+        checks = lib.singleton {
+          interval = "60s";
+          tcp = "127.0.0.1:80";
+        };
+        tags = lib.attrNames externalWays;
       };
-      tags = lib.attrNames externalWays;
+    };
+    ways-proxy-internal = {
+      unit = "nginx";
+      mode = "external";
+      definition = {
+        name = "ways-proxy-internal";
+        address = config.reflection.interfaces.vstub.addr;
+        port = 443;
+        checks = lib.singleton {
+          interval = "60s";
+          tcp = "127.0.0.1:80";
+        };
+        tags = lib.attrNames internalWays;
+      };
     };
   };
 }

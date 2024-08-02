@@ -29,7 +29,7 @@ with lib;
         description = "DNS record value for this Way.";
         type = types.deferredModule;
         default = {
-          consulService = "${name}.ways-proxy";
+          consulService = "${name}.${if config.internal then "ways-proxy-internal" else "ways-proxy"}";
           rewrite.type = lib.mkIf config.wildcard "regex";
         };
       };
