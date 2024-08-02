@@ -21,7 +21,7 @@ in rustPlatform.buildRustPackage rec {
   inherit (src) version;
   src = passthru.mkSource sources.npins;
 
-  cargoSha256 = "0rwnzkmx91cwcz9yw0rbbqv73ba6ggim9f4qgz5pgy6h696ld2k8";
+  cargoHash = "sha256-aIpGTTLQ+HfLf5i4VON7Rq1xNl4rA+7TZ5yF1Ov8lmc=";
 
   buildInputs = lib.optional stdenv.isDarwin (with darwin.apple_sdk.frameworks; [ Security ]);
   nativeBuildInputs = [ makeWrapper ];
