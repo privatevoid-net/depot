@@ -2,14 +2,16 @@
 
 let
   inherit (cluster.config.services.attic) secrets;
+
+  link = cluster.config.hostLinks.${config.networking.hostName}.attic;
+
+  isMonolith = lib.elem config.networking.hostName cluster.config.services.attic.nodes.monolith;
 in
 
 {
   imports = [
     depot.inputs.attic.nixosModules.atticd
   ];
-
-  links.atticServer.protocol = "http";
 
   services.locksmith.waitForSecrets.atticd = [ "garage-attic" ];
 
@@ -18,9 +20,10 @@ in
     package = depot.inputs.attic.packages.attic-server;
 
     credentialsFile = secrets.serverToken.path;
+    mode = if isMonolith then "monolithic" else "api-server";
 
     settings = {
-      listen = config.links.atticServer.tuple;
+      listen = link.tuple;
 
       chunking = {
         nar-size-threshold = 0;
@@ -59,8 +62,13 @@ in
 
   systemd.services.atticd = {
     after = [ "postgresql.service" ];
+    distributed = lib.mkIf isMonolith {
+      enable = true;
+      registerService = "atticd";
+    };
     serviceConfig = {
       DynamicUser = lib.mkForce false;
+      RestrictAddressFamilies = [ "AF_INET" "AF_INET6" "AF_UNIX" "AF_NETLINK" ];
     };
     environment = {
       AWS_SHARED_CREDENTIALS_FILE = "/run/locksmith/garage-attic";
@@ -68,9 +76,20 @@ in
     };
   };
 
-  services.nginx.virtualHosts."cache-api.${depot.lib.meta.domain}" = depot.lib.nginx.vhosts.proxy config.links.atticServer.url // {
-    extraConfig = ''
-      client_max_body_size 4G;
-    '';
+  consul.services.atticd = {
+    mode = if isMonolith then "manual" else "direct";
+    definition = {
+      name = "atticd";
+      address = link.ipv4;
+      inherit (link) port;
+      checks = [
+        {
+          name = "Attic Server";
+          id = "service:atticd:backend";
+          interval = "5s";
+          http = link.url;
+        }
+      ];
+    };
   };
 }

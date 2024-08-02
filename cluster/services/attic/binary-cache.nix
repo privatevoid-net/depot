@@ -1,10 +1,16 @@
-{ config, cluster, depot, ... }:
+{ config, cluster, depot, lib, ... }:
 with depot.lib.nginx;
 {
-  links.garageNixStoreInternalRedirect = {
-    protocol = "http";
-    path = "/nix-store";
+  links = {
+    atticNixStoreInternalRedirect.protocol = "http";
+    garageNixStoreInternalRedirect.protocol = "http";
   };
+
+  security.acme.certs."cache.${depot.lib.meta.domain}" = {
+    dnsProvider = "exec";
+    webroot = lib.mkForce null;
+  };
+
   services.nginx.upstreams = {
       nar-serve.extraConfig = ''
       random;
@@ -12,10 +18,10 @@ with depot.lib.nginx;
       server ${config.links.nar-serve-nixos-org.tuple} fail_timeout=0;
     '';
     nix-store.servers = {
-      "${config.links.atticServer.tuple}" = {
+      "${config.links.garageNixStoreInternalRedirect.tuple}" = {
         fail_timeout = 0;
       };
-      "${config.links.garageNixStoreInternalRedirect.tuple}" = {
+      "${config.links.atticNixStoreInternalRedirect.tuple}" = {
         fail_timeout = 0;
       };
     };
@@ -28,7 +34,7 @@ with depot.lib.nginx;
       locations = {
         "= /".return = "302 /404";
         "/" = {
-          proxyPass = "http://nix-store/nix-store$request_uri";
+          proxyPass = "http://nix-store";
           extraConfig = ''
             proxy_next_upstream error http_500 http_502 http_404;
           '';
@@ -56,11 +62,27 @@ with depot.lib.nginx;
           inherit (config.links.garageNixStoreInternalRedirect) port;
         }
       ];
-      locations."~ ^${config.links.garageNixStoreInternalRedirect.path}/(.*)" = {
-        proxyPass = with cluster.config.links.garageWeb; "${protocol}://nix-store.${hostname}/$1";
+      locations."/" = {
+        proxyPass = with cluster.config.links.garageWeb; "${protocol}://nix-store.${hostname}";
         recommendedProxySettings = false;
         extraConfig = ''
           proxy_set_header Host "nix-store.${cluster.config.links.garageWeb.hostname}";
+        '';
+      };
+    };
+    "attic-nix-store.internal.${depot.lib.meta.domain}" = {
+      serverName = "127.0.0.1";
+      listen = [
+        {
+          addr = "127.0.0.1";
+          inherit (config.links.atticNixStoreInternalRedirect) port;
+        }
+      ];
+      locations."/" = {
+        proxyPass = "https://cache-api.${depot.lib.meta.domain}/nix-store$request_uri";
+        recommendedProxySettings = false;
+        extraConfig = ''
+          proxy_set_header Host "cache-api.${depot.lib.meta.domain}";
         '';
       };
     };

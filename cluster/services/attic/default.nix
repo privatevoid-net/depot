@@ -3,14 +3,22 @@
 {
   services.attic = {
     nodes = {
-      server = [ "VEGAS" ];
+      monolith = [ "VEGAS" "prophet" ];
+      server = [ "VEGAS" "grail" "prophet" ];
     };
     nixos = {
+      monolith = [
+        ./server.nix
+      ];
       server = [
         ./server.nix
         ./binary-cache.nix
         ./nar-serve.nix
       ];
+    };
+    meshLinks.server = {
+      name = "attic";
+      link.protocol = "http";
     };
     secrets = let
       inherit (config.services.attic) nodes;
@@ -41,7 +49,13 @@
       (node: depot.hours.${node}.interfaces.primary.addrPublic)
       config.services.attic.nodes.server;
   in {
-    cache-api.target = serverAddrs;
     cache.target = serverAddrs;
+  };
+
+  ways.cache-api = {
+    consulService = "atticd";
+    extras.extraConfig = ''
+      client_max_body_size 4G;
+    '';
   };
 }
