@@ -104,4 +104,20 @@ in
       querier.max_concurrent = 16;
     };
   };
+
+  consul.services.loki = {
+    definition = {
+      name = "loki";
+      address = loki-ingest.ipv4;
+      inherit (loki-ingest) port;
+      checks = [
+        {
+          name = "Loki";
+          id = "service:loki:backend";
+          interval = "5s";
+          http = "${loki-ingest.url}/ready";
+        }
+      ];
+    };
+  };
 }

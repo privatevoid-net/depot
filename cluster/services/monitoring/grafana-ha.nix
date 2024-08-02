@@ -70,7 +70,7 @@ in
         {
           name = "Loki";
           uid = "P8E80F9AEF21F6940";
-          inherit (loki-ingest) url;
+          inherit (cluster.config.ways.monitoring-logs) url;
           type = "loki";
         }
       ];

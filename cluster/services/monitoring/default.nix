@@ -87,8 +87,18 @@ in
     };
   };
 
-  ways.monitoring = {
-    consulService = "grafana";
-    extras.locations."/".proxyWebsockets = true;
+  ways = {
+    monitoring = {
+      consulService = "grafana";
+      extras.locations."/".proxyWebsockets = true;
+    };
+    monitoring-logs = {
+      internal = true;
+      consulService = "loki";
+      extras.extraConfig = ''
+        client_max_body_size 4G;
+        proxy_read_timeout 3600s;
+      '';
+    };
   };
 }
