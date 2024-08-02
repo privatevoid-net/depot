@@ -57,6 +57,12 @@ with lib;
       default = "/.well-known/ways/internal-health-check";
     };
 
+    url = mkOption {
+      type = types.str;
+      readOnly = true;
+      default = "https://${name}.${config.domainSuffix}";
+    };
+
     useConsul = mkOption {
       type = types.bool;
       internal = true;
