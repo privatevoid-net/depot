@@ -1,4 +1,4 @@
-{ depot, ... }:
+{ config, depot, ... }:
 
 let
   inherit (depot.lib.meta) adminEmail;
@@ -13,7 +13,7 @@ in {
     recommendedGzipSettings = true;
     proxyResolveWhileRunning = true;
     resolver = {
-      addresses = [ "127.0.0.1" ];
+      addresses = config.networking.nameservers;
       valid = "30s";
     };
     appendHttpConfig = ''
