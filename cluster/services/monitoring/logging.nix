@@ -8,12 +8,16 @@ let
   cfg = config.services.loki;
 in
 {
-  age.secrets.lokiSecrets.file = ./secrets/loki-secrets.age;
   links.loki-grpc.protocol = "grpc";
   systemd.services.loki = {
     after = [ "wireguard-wgmesh.service" ];
-    serviceConfig.EnvironmentFile = config.age.secrets.lokiSecrets.path;
+    serviceConfig.EnvironmentFile = "/run/locksmith/garage-loki-ingest";
   };
+
+  services.locksmith.waitForSecrets.loki = [
+    "garage-loki-ingest"
+  ];
+
   services.loki = {
     enable = true;
     dataDir = "/srv/storage/private/loki";

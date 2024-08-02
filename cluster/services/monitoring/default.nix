@@ -78,11 +78,21 @@ in
 
   garage = {
     keys = {
-      loki = { };
+      loki-ingest.locksmith = {
+        nodes = config.services.monitoring.nodes.logging;
+        format = "envFile";
+      };
+      loki-query.locksmith = {
+        nodes = config.services.monitoring.nodes.logging;
+        format = "envFile";
+      };
       tempo = { };
     };
     buckets = {
-      loki-chunks.allow.loki = [ "read" "write" ];
+      loki-chunks.allow = {
+        loki-ingest = [ "read" "write" ];
+        loki-query = [ "read" ];
+      };
       tempo-chunks.allow.tempo = [ "read" "write" ];
     };
   };

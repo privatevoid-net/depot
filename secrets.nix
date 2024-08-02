@@ -9,7 +9,6 @@ in with hosts;
   "cluster/services/dns/acme-dns-db-credentials.age".publicKeys = max ++ map systemKeys [ checkmate VEGAS prophet ];
   "cluster/services/monitoring/secrets/grafana-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/monitoring/secrets/grafana-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
-  "cluster/services/monitoring/secrets/loki-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/monitoring/secrets/secret-monitoring/blackbox.age".publicKeys = max ++ map systemKeys [ checkmate grail prophet ];
   "cluster/services/monitoring/secrets/tempo-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/storage/secrets/heresy-encryption-key.age".publicKeys = max ++ map systemKeys [ VEGAS ];
