@@ -9,11 +9,7 @@
 
     options.shadows = lib.mkOption {
       type = with lib.types; lazyAttrsOf package;
-      default = {
-        inherit (self'.packages)
-          kanidm
-        ;
-      };
+      default = { };
     };
   };
 }
