@@ -27,7 +27,7 @@ in
     mode = "0755";
     text = ''
       #!/bin/sh
-      exec ${pkgs.kanidm}/bin/kanidm_ssh_authorizedkeys "$@"
+      exec ${config.services.kanidm.package}/bin/kanidm_ssh_authorizedkeys "$@"
     '';
   };
 
@@ -57,10 +57,10 @@ in
   environment.systemPackages = let
     idmAlias = pkgs.runCommand "kanidm-idm-alias" {} ''
       mkdir -p $out/bin
-      ln -s ${pkgs.kanidm}/bin/kanidm $out/bin/idm
+      ln -s ${config.services.kanidm.package}/bin/kanidm $out/bin/idm
       mkdir -p $out/share/bash-completion/completions
       cat >$out/share/bash-completion/completions/idm.bash <<EOF
-      source ${pkgs.kanidm}/share/bash-completion/completions/kanidm.bash
+      source ${config.services.kanidm.package}/share/bash-completion/completions/kanidm.bash
       complete -F _kanidm -o bashdefault -o default idm
       EOF
     '';
