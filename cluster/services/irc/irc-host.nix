@@ -90,7 +90,7 @@ in {
   security.pam.services.ngircd = {
     text = ''
       # verify IRC users via IDM
-      auth required ${pkgs.kanidm}/lib/pam_kanidm.so 
+      auth required ${config.services.kanidm.package}/lib/pam_kanidm.so 
     '';
   };
   systemd.services.ngircd = {
