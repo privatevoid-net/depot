@@ -26,7 +26,7 @@ in {
         name = "logging";
         positions.filename = "\${STATE_DIRECTORY:/tmp}/logging-positions.yaml";
         clients = singleton {
-          url = "${cluster.config.links.loki-ingest.url}/loki/api/v1/push";
+          url = "${cluster.config.ways.monitoring-logs.url}/loki/api/v1/push";
         };
         scrape_configs = singleton {
           job_name = "journal";

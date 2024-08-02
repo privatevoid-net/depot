@@ -14,14 +14,6 @@ in
   ];
 
   links = {
-    loki-ingest = {
-      protocol = "http";
-      ipv4 = meshIpFor "logging";
-    };
-    loki = {
-      protocol = "http";
-      ipv4 = meshIpFor "logging";
-    };
     prometheus-ingest = {
       protocol = "http";
       ipv4 = meshIpFor "server";
@@ -58,7 +50,7 @@ in
       client = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
       blackbox = [ "checkmate" "grail" "prophet" ];
       grafana = [ "VEGAS" "prophet" ];
-      logging = [ "VEGAS" ];
+      logging = [ "VEGAS" "grail" ];
       server = [ "VEGAS" ];
     };
     nixos = {
@@ -73,6 +65,10 @@ in
         ./server.nix
         ./tracing.nix
       ];
+    };
+    meshLinks.logging = {
+      name = "loki";
+      link.protocol = "http";
     };
   };
 

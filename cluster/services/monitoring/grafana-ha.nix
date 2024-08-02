@@ -2,7 +2,7 @@
 let
   inherit (depot.lib.meta) domain;
 
-  inherit (cluster.config.links) loki-ingest prometheus-ingest;
+  inherit (cluster.config.links) prometheus-ingest;
 
   inherit (cluster.config) hostLinks;
 

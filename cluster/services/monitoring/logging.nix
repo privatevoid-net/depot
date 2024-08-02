@@ -3,13 +3,17 @@
 let
   inherit (config.links) loki-grpc;
 
-  inherit (cluster.config.links) loki-ingest;
+  link = cluster.config.hostLinks.${config.networking.hostName}.loki;
 
   cfg = config.services.loki;
 in
 {
   links.loki-grpc.protocol = "grpc";
   systemd.services.loki = {
+    distributed = {
+      enable = true;
+      registerService = "loki";
+    };
     after = [ "wireguard-wgmesh.service" ];
     serviceConfig.EnvironmentFile = "/run/locksmith/garage-loki-ingest";
   };
@@ -26,8 +30,8 @@ in
       auth_enabled = false;
       server = {
         log_level = "warn";
-        http_listen_address = loki-ingest.ipv4;
-        http_listen_port = loki-ingest.port;
+        http_listen_address = link.ipv4;
+        http_listen_port = link.port;
         grpc_listen_address = loki-grpc.ipv4;
         grpc_listen_port = loki-grpc.port;
       };
@@ -110,16 +114,17 @@ in
   };
 
   consul.services.loki = {
+    mode = "manual";
     definition = {
       name = "loki";
-      address = loki-ingest.ipv4;
-      inherit (loki-ingest) port;
+      address = link.ipv4;
+      inherit (link) port;
       checks = [
         {
           name = "Loki";
           id = "service:loki:backend";
           interval = "5s";
-          http = "${loki-ingest.url}/ready";
+          http = "${link.url}/ready";
         }
       ];
     };
