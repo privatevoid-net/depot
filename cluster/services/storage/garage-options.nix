@@ -118,7 +118,7 @@ in
             };
             format = mkOption {
               description = "Locksmith secret format.";
-              type = enum [ "files" "aws" "envFile" ];
+              type = enum [ "files" "aws" "envFile" "s3ql" ];
               default = "files";
             };
             owner = mkOption {
@@ -290,6 +290,12 @@ in
           envFile = ''
             AWS_ACCESS_KEY_ID=@@GARAGE_KEY_ID@@
             AWS_SECRET_ACCESS_KEY=@@GARAGE_SECRET_KEY@@
+          '';
+          s3ql = ''
+            [s3c]
+            storage-url: s3c4://
+            backend-login: @@GARAGE_KEY_ID@@
+            backend-password: @@GARAGE_SECRET_KEY@@
           '';
         }.${kCfg.locksmith.format};
       in {
