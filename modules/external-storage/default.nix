@@ -8,6 +8,8 @@ let
   cfgAge = config.age;
 
   create = lib.flip lib.mapAttrs';
+
+  createFiltered = pred: attrs: f: create (lib.filterAttrs pred attrs) f;
 in
 
 {
@@ -20,12 +22,17 @@ in
       fileSystems = lib.mkOption {
         description = "S3QL-based filesystems on top of CIFS mountpoints.";
         default = {};
-        type = with lib.types; lazyAttrsOf (submodule ({ config, name, ... }: {
+        type = with lib.types; lazyAttrsOf (submodule ({ config, name, ... }: let
+          authFile = if config.locksmithSecret != null then
+            "/run/locksmith/${config.locksmithSecret}"
+          else
+            cfgAge.secrets."storageAuth-${name}".path;
+        in {
           imports = [ ./filesystem-type.nix ];
           backend = lib.mkIf (config.underlay != null) "local://${cfg.underlays.${config.underlay}.mountpoint}";
           commonArgs = [
             "--cachedir" config.cacheDir
-            "--authfile" cfgAge.secrets."storageAuth-${name}".path
+            "--authfile" authFile
           ] ++ (lib.optionals (config.backendOptions != []) [ "--backend-options" (lib.concatStringsSep "," config.backendOptions) ]);
         }));
       };
@@ -57,8 +64,13 @@ in
 
     age.secrets = lib.mkMerge [
       (create cfg.underlays (name: ul: lib.nameValuePair "cifsCredentials-${name}" { file = ul.credentialsFile; }))
-      (create cfg.fileSystems (name: fs: lib.nameValuePair "storageAuth-${name}" { file = fs.authFile; }))
+      (createFiltered (_: fs: fs.locksmithSecret == null) cfg.fileSystems (name: fs: lib.nameValuePair "storageAuth-${name}" { file = fs.authFile; }))
     ];
+
+    services.locksmith.waitForSecrets = createFiltered (_: fs: fs.locksmithSecret != null) cfg.fileSystems (name: fs: {
+      name = fs.unitName;
+      value = [ fs.locksmithSecret ];
+    });
 
     fileSystems = create cfg.underlays (name: ul: {
       name = ul.mountpoint;
