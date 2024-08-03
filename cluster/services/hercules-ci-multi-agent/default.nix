@@ -62,7 +62,7 @@
       lib.unique
       (map (x: "hci-agent-${x}"))
     ];
-  in {
+  in config.lib.forService "hercules-ci-multi-agent" {
     keys = lib.genAttrs hciAgentKeys (lib.const {});
     buckets.nix-store = {
       allow = lib.genAttrs hciAgentKeys (lib.const [ "read" "write" ]);
