@@ -95,7 +95,10 @@ in
   };
 
   garage = {
-    keys.storage-prophet = {};
+    keys.storage-prophet.locksmith = {
+      nodes = [ "prophet" ];
+      format = "s3ql";
+    };
     buckets.storage-prophet = {
       allow.storage-prophet = [ "read" "write" ];
     };
