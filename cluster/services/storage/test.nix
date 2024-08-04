@@ -18,19 +18,6 @@ in
       configuration = {
         services.garage = {
           layout.initial.${firstGarageNode}.capacity = lib.mkForce 2000;
-          keys.testKey.allow.createBucket = true;
-          buckets = {
-            bucket1 = {
-              allow.testKey = [ "read" "write" ];
-              quotas = {
-                maxObjects = 300;
-                maxSize = 400 * 1024 * 1024;
-              };
-            };
-            bucket2 = {
-              allow.testKey = [ "read" ];
-            };
-          };
         };
         system.ascensions.garage-layout.incantations = lib.mkForce (i: [
           (i.runGarage ''
@@ -68,10 +55,15 @@ in
         assert "1" in node.succeed("garage layout show | grep -w 2000 | wc -l")
         assert "2" in node.succeed("garage layout show | grep -w 1000 | wc -l")
 
+    consulConfig = json.loads(garage1.succeed("cat /etc/consul.json"))
+    addr = consulConfig["addresses"]["http"]
+    port = consulConfig["ports"]["http"]
+    setEnv = f"CONSUL_HTTP_ADDR={addr}:{port}"
     with subtest("should apply new layout from scratch"):
       for node in nodes:
         node.systemctl("stop garage.service")
         node.succeed("rm -rf /var/lib/garage-metadata")
+      garage1.succeed(f"{setEnv} consul kv delete --recurse services/incandescence/providers/garage")
 
       for node in nodes:
         node.systemctl("start garage.service")
@@ -85,21 +77,28 @@ in
       for node in nodes:
         node.wait_until_succeeds("garage layout show | grep -w 2000")
         assert "1" in node.succeed("garage layout show | grep -w 2000 | wc -l")
-        assert "2" in node.succeed("garage layout show | grep -w 1000 | wc -l")
+        assert "${toString ((lib.length nodes.garage) - 1)}" in node.succeed("garage layout show | grep -w 1000 | wc -l")
 
     with subtest("should create specified buckets and keys"):
       for node in nodes:
-        node.wait_until_succeeds('test "$(systemctl is-active garage-apply)" != activating')
-      garage1.succeed("garage key list | grep testKey")
-      garage1.succeed("garage bucket list | grep bucket1")
-      garage1.succeed("garage bucket list | grep bucket2")
+        node.wait_for_unit("incandescence-garage.target")
+      garage1.succeed("garage key list | grep testkey")
+      garage1.succeed("garage bucket list | grep testbucket")
 
-    with subtest("should delete unspecified buckets and keys"):
+    with subtest("should delete unspecified keys"):
       garage1.succeed("garage bucket create unwantedbucket")
       garage1.succeed("garage key new --name unwantedkey")
-      garage1.succeed("systemctl restart garage-apply.service")
-
+      garage1.succeed(f"{setEnv} consul kv put services/incandescence/providers/garage/formulae/key/unwantedkey/alive true")
+      garage1.succeed(f"{setEnv} consul kv put services/incandescence/providers/garage/formulae/bucket/unwantedbucket/alive true")
+      garage1.succeed("systemctl restart garage.service")
+      garage1.wait_for_unit("incandescence-garage.target")
       garage1.fail("garage key list | grep unwantedkey")
+      garage1.succeed("garage bucket list | grep unwantedbucket")
+
+    with subtest("should delete unspecified buckets after grace period"):
+      garage1.succeed(f"{setEnv} consul kv put services/incandescence/providers/garage/formulae/bucket/unwantedbucket/destroyOn 1")
+      garage1.succeed("systemctl restart garage.service")
+      garage1.wait_for_unit("incandescence-garage.target")
       garage1.fail("garage bucket list | grep unwantedbucket")
   '';
 }

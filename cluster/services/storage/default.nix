@@ -8,6 +8,7 @@ in
   imports = [
     ./options.nix
     ./incandescence.nix
+    ./simulacrum/test-data.nix
   ];
 
   services.storage = {
