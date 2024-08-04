@@ -7,6 +7,7 @@ in
 {
   imports = [
     ./options.nix
+    ./incandescence.nix
   ];
 
   services.storage = {
@@ -52,7 +53,7 @@ in
     };
     simulacrum = {
       enable = true;
-      deps = [ "wireguard" "consul" "locksmith" ];
+      deps = [ "wireguard" "consul" "locksmith" "incandescence" ];
       settings = ./test.nix;
     };
   };
