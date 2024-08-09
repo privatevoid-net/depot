@@ -109,7 +109,13 @@ in
         value = let
           isUnderlay = fs.underlay != null;
 
-          fsType = if isUnderlay then "local" else lib.head (lib.strings.match "([a-z0-9]*)://.*" fs.backend);
+          backendParts = lib.strings.match "([a-z0-9]*)://([^/]*)/([^/]*)(/.*)?" fs.backend;
+
+          fsType = if isUnderlay then "local" else lib.head backendParts;
+
+          s3Endpoint = assert fsType == "s3c4"; lib.elemAt backendParts 1;
+
+          s3Bucket = assert fsType == "s3c4"; lib.elemAt backendParts 2;
 
           localBackendPath = if isUnderlay then cfg.underlays.${fs.underlay}.mountpoint else lib.head (lib.strings.match "[a-z0-9]*://(/.*)" fs.backend);
         in {
@@ -132,8 +138,12 @@ in
             ExecStartPre = map lib.escapeShellArgs [
               [
                 (let
+                  authFile = if fs.locksmithSecret != null then
+                    "/run/locksmith/${fs.locksmithSecret}"
+                  else
+                    cfgAge.secrets."storageAuth-${name}".path;
                   mkfsEncrypted = ''
-                    ${pkgs.gnugrep}/bin/grep -m1 fs-passphrase: '${config.age.secrets."storageAuth-${name}".path}' \
+                    ${pkgs.gnugrep}/bin/grep -m1 fs-passphrase: '${authFile}' \
                       | cut -d' ' -f2- \
                       | ${s3ql}/bin/mkfs.s3ql ${lib.escapeShellArgs fs.commonArgs} -L '${name}' '${fs.backend}'
                   '';
@@ -144,6 +154,11 @@ in
 
                   detectFs = {
                     local = "test -e ${localBackendPath}/s3ql_metadata";
+                    s3c4 = pkgs.writeShellScript "detect-s3ql-filesystem" ''
+                      export AWS_ACCESS_KEY_ID="$(${pkgs.gnugrep}/bin/grep -m1 backend-login: '${authFile}' | cut -d' ' -f2-)"
+                      export AWS_SECRET_ACCESS_KEY="$(${pkgs.gnugrep}/bin/grep -m1 backend-password: '${authFile}' | cut -d' ' -f2-)"
+                      ${pkgs.s5cmd}/bin/s5cmd --endpoint-url https://${s3Endpoint}/ ls 's3://${s3Bucket}/s3ql_params' >/dev/null
+                    '';
                   }.${fsType} or null;
                 in pkgs.writeShellScript "create-s3ql-filesystem" (lib.optionalString (detectFs != null) ''
                   if ! ${detectFs}; then
