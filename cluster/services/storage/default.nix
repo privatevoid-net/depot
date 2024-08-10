@@ -54,7 +54,7 @@ in
     };
     simulacrum = {
       enable = true;
-      deps = [ "wireguard" "consul" "locksmith" "incandescence" ];
+      deps = [ "consul" "locksmith" "incandescence" "patroni" "ways" ];
       settings = ./test.nix;
     };
   };
