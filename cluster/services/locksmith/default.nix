@@ -14,5 +14,6 @@
         ./provider.nix
       ];
     };
+    simulacrum.deps = [ "chant" "consul" ];
   };
 }
