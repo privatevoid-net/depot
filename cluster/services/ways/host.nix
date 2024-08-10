@@ -69,11 +69,16 @@ in
         {
           source = let
             upstreams = lib.mapAttrsToList (_: cfg: ''
+              {{ if ne (len (service "${cfg.consulService}~_agent")) 0 }}
+              # ${cfg.consulService}
               upstream ${cfg.nginxUpstreamName} {
                 {{ range $i, $e := service "${cfg.consulService}~_agent" -}}
                 server {{ .Address }}:{{ .Port }}{{ if ne $i 0 }} backup{{ end }};
-                {{end}}
+                {{ end }}
               }
+              {{ else }}
+              # upstream ${cfg.nginxUpstreamName} (${cfg.consulService}): no servers available
+              {{ end }}
             '') consulServiceWays;
           in pkgs.writeText "ways-upstreams.ctmpl" (lib.concatStringsSep "\n" (lib.unique upstreams));
           destination = "/run/consul-template/nginx-ways-upstreams.conf";
