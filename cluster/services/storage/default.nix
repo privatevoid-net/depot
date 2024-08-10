@@ -32,6 +32,8 @@ in
       heresy = [
         ./heresy.nix
         ./s3ql-upgrades.nix
+      ] ++ lib.optionals config.simulacrum [
+        ./simulacrum/snakeoil-heresy-passphrase.nix
       ];
       garage = [
         ./garage.nix
