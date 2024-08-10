@@ -36,7 +36,8 @@
 
         proxyGhost = scheme: target: basic // {
           locations."/".extraConfig = ''
-            proxy_pass ${scheme}://${target};
+            set $nix_proxy_ghost_target "${scheme}://${target}";
+            proxy_pass $nix_proxy_ghost_target;
             proxy_set_header Host ${target};
             proxy_set_header Referer ${scheme}://${target};
             proxy_cookie_domain ${target} domain.invalid;
