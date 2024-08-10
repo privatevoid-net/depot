@@ -36,5 +36,6 @@
       PATRONI_REWIND_PASSWORD = default;
       metricsCredentials.nodes = nodes.worker;
     };
+    simulacrum.deps = [ "consul" "incandescence" "locksmith" ];
   };
 }
