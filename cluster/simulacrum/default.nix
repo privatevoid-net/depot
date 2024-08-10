@@ -4,8 +4,14 @@
 
 let
   serviceConfig = config.cluster.config.services.${service};
-  serviceList = [ service ] ++ serviceConfig.simulacrum.deps;
+  serviceList = getDepsRecursive [] service;
   allAugments = map (svc: config.cluster.config.services.${svc}.simulacrum.augments) serviceList;
+
+  getDepsRecursive = acc: service: let
+    deps = lib.subtractLists acc config.cluster.config.services.${service}.simulacrum.deps;
+    acc' = acc ++ [ service ];
+    recurse = getDepsRecursive acc';
+  in lib.unique (lib.flatten ([ service ] ++ map recurse deps));
 
   lift = config;
 
