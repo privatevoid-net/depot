@@ -6,5 +6,6 @@
     nixos.listener = [
       ./listener.nix
     ];
+    simulacrum.deps = [ "consul" ];
   };
 }
