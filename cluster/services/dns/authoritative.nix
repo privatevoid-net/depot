@@ -43,9 +43,6 @@ in {
   links.localAuthoritativeDNS = {};
 
   age.secrets = {
-    acmeDnsDbCredentials = {
-      file = ./acme-dns-db-credentials.age;
-    };
     acmeDnsDirectKey = {
       file = ./acme-dns-direct-key.age;
     };
@@ -78,8 +75,12 @@ in {
     };
   };
 
+  services.locksmith.waitForSecrets.acme-dns = [
+    "patroni-acmedns"
+  ];
+
   systemd.services.acme-dns.serviceConfig.EnvironmentFile = with config.age.secrets; [
-    acmeDnsDbCredentials.path
+    "/run/locksmith/patroni-acmedns"
     acmeDnsDirectKey.path
   ];
 
