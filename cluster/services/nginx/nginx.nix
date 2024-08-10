@@ -1,10 +1,6 @@
-{ config, depot, ... }:
+{ config, ... }:
 
-let
-  inherit (depot.lib.meta) adminEmail;
-in {
-  security.acme.defaults.email = adminEmail;
-  security.acme.acceptTerms = true;
+{
   services.nginx = {
     enable = true;
     recommendedProxySettings = true;
