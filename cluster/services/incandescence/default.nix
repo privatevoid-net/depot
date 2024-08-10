@@ -15,5 +15,6 @@
         ./provider-options.nix
       ];
     };
+    simulacrum.deps = [ "consul" ];
   };
 }
