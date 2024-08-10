@@ -81,8 +81,10 @@ in
             consul kv put ${lib.escapeShellArg path}/mode ${lib.escapeShellArg mode}
             consul kv put ${lib.escapeShellArg path}/owner ${lib.escapeShellArg owner}
             consul kv put ${lib.escapeShellArg path}/group ${lib.escapeShellArg group}
+            secret="$(mktemp -ut)"
+            (${command}) > "$secret"
             ${lib.concatStringsSep "\n" (map (node: ''
-              consul kv put ${lib.escapeShellArg path}/recipient/${node} "$( (${command}) | age --encrypt --armor -r ${lib.escapeShellArg depot.hours.${node}.ssh.id.publicKey})"
+              consul kv put ${lib.escapeShellArg path}/recipient/${node} "$(age < "$secret" --encrypt --armor -r ${lib.escapeShellArg depot.hours.${node}.ssh.id.publicKey})"
             '') nodes)}
           else
             echo Skipping update for ${lib.escapeShellArg path}
@@ -90,6 +92,7 @@ in
         '';
       in ''
         # create/update secrets
+        umask 77
         ${lib.pipe activeSecrets [
           (lib.mapAttrsToList (secretName: secretConfig: createSecret {
             path = "${providerRoot}-${secretName}";
