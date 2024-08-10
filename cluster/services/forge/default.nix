@@ -17,9 +17,11 @@
     };
   };
 
-  ways.forge.target = let
+  ways.forge = let
     host = builtins.head config.services.forge.nodes.server;
-  in config.lib.forService "forge" config.hostLinks.${host}.forge.url;
+  in config.lib.forService "forge" {
+    target = config.hostLinks.${host}.forge.url;
+  };
 
   garage = config.lib.forService "forge" {
     keys.forgejo.locksmith.nodes = config.services.forge.nodes.server;
