@@ -1,6 +1,11 @@
-{ config, lib, ... }:
+{ config, ... }:
 
 {
+  imports = [
+    ./options.nix
+    ./incandescence.nix
+  ];
+
   links = {
     patroni-pg-internal.ipv4 = "0.0.0.0";
     patroni-api.ipv4 = "0.0.0.0";
@@ -15,6 +20,7 @@
       worker = [
         ./worker.nix
         ./metrics.nix
+        ./create-databases.nix
       ];
       haproxy = ./haproxy.nix;
     };
