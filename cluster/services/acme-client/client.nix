@@ -32,7 +32,10 @@ in
     owner = "acme";
   };
 
+  security.acme.acceptTerms = true;
+  security.acme.maxConcurrentRenewals = 0;
   security.acme.defaults = {
+    email = depot.lib.meta.adminEmail;
     extraLegoFlags = lib.flatten [
       (map (x: [ "--dns.resolvers" x ]) authoritativeServers)
       "--dns-timeout" "30"
@@ -42,4 +45,38 @@ in
       EXEC_ENV_FILE=${config.age.secrets.acmeDnsApiKey.path}
     '';
   };
+
+  systemd.services = lib.mapAttrs' (name: value: {
+    name = "acme-${name}";
+    value = {
+      distributed.enable = value.dnsProvider != null;
+      preStart = let
+        serverList = lib.pipe authoritativeServers [
+          (map (x: "@${x}"))
+          (map (lib.replaceStrings [":53"] [""]))
+          lib.escapeShellArgs
+        ];
+        domainList = lib.pipe ([ value.domain ] ++ value.extraDomainNames) [
+          (map (x: "${x}."))
+          (map (lib.replaceStrings ["*"] ["x"]))
+          lib.unique
+          lib.escapeShellArgs
+        ];
+      in ''
+        echo Testing availability of authoritative DNS servers
+        for i in {1..60}; do
+          ${pkgs.dig}/bin/dig +short ${serverList} ${domainList} >/dev/null && break
+          echo Retry [$i/60]
+          sleep 10
+        done
+        echo Available
+      '';
+      serviceConfig = {
+        Restart = "on-failure";
+        RestartMaxDelaySec = 30;
+        RestartStesp = 5;
+        RestartMode = "direct";
+      };
+    };
+  }) config.security.acme.certs;
 }
