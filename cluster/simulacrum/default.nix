@@ -17,7 +17,8 @@ let
   };
 
   nodes = lib.attrNames config.gods.fromLight;
-  digits = lib.attrsets.listToAttrs (lib.zipListsWith lib.nameValuePair nodes (lib.range 1 255));
+  nodes' = lib.attrNames (config.gods.fromLight // { nowhere = null; });
+  digits = lib.attrsets.listToAttrs (lib.zipListsWith lib.nameValuePair nodes' (lib.range 1 255));
   depot' = extendModules {
     modules = [
       ({ config, ... }: {
@@ -51,6 +52,12 @@ testers.runNixOSTest {
 
   imports = [
     serviceConfig.simulacrum.settings
+    ./nowhere
+    {
+      nodes.nowhere.imports = [
+        config.flake.nixosModules.port-magic
+      ];
+    }
   ] ++ allAugments;
 
   _module.args = {
@@ -73,12 +80,15 @@ testers.runNixOSTest {
         ${hour.interfaces.primary.link} = {
           useDHCP = lib.mkForce false;
           virtual = true;
-          ipv4.addresses = lib.mkForce [
+          ipv4.addresses = lib.mkForce ([
             {
               address = hour.interfaces.primary.addr;
               prefixLength = 32;
             }
-          ];
+          ] ++ lib.optional hour.interfaces.primary.isNat {
+            address = hour.interfaces.primary.addrPublic;
+            prefixLength = 32;
+          });
         };
         eth1.ipv4.routes = lib.pipe nodes [
           (lib.filter (n: n != node))
@@ -95,6 +105,7 @@ testers.runNixOSTest {
       firewall.extraCommands = lib.mkAfter (lib.optionalString (hour.interfaces.primary.isNat) ''
         # self-nat
         iptables -t nat -A PREROUTING -d ${hour.interfaces.primary.addrPublic} -j DNAT --to-destination ${hour.interfaces.primary.addr}
+        iptables -t nat -A OUTPUT -d ${hour.interfaces.primary.addrPublic} -j DNAT --to-destination ${hour.interfaces.primary.addr}
         iptables -t nat -A POSTROUTING -s ${hour.interfaces.primary.addr} -j SNAT --to-source ${hour.interfaces.primary.addrPublic}
       '');
     };
