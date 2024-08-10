@@ -58,6 +58,16 @@ in
     };
   };
 
+  patroni = {
+    databases.acmedns = {};
+    users.acmedns = {
+      locksmith = {
+        nodes = config.services.dns.nodes.authoritative;
+        format = "envFile";
+      };
+    };
+  };
+
   dns.records = {
     securedns.consulService = "securedns";
     "acme-dns-challenge.internal".consulService = "acme-dns";
