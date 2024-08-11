@@ -13,7 +13,6 @@
         nodes = server;
         owner = "forgejo";
       };
-      dbCredentials.nodes = server;
     };
   };
 
@@ -21,6 +20,14 @@
     host = builtins.head config.services.forge.nodes.server;
   in config.lib.forService "forge" {
     forge.target = config.hostLinks.${host}.forge.url;
+  };
+
+  patroni = config.lib.forService "forge" {
+    databases.forge = {};
+    users.forge.locksmith = {
+      nodes = config.services.forge.nodes.server;
+      format = "raw";
+    };
   };
 
   garage = config.lib.forService "forge" {
