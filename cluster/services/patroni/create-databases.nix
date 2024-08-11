@@ -79,6 +79,10 @@ in
           echo "*:*:*:${user}:$(cat /run/keys/locksmith-provider-patroni-${user})"
           rm -f /run/keys/locksmith-provider-patroni-${user}
         '';
+        raw = ''
+          cat /run/keys/locksmith-provider-patroni-${user}
+          rm -f /run/keys/locksmith-provider-patroni-${user}
+        '';
       }.${userConfig.locksmith.format};
       checkUpdate = "test -e /run/keys/locksmith-provider-patroni-${user}";
       inherit (userConfig.locksmith) nodes;

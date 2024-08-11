@@ -26,7 +26,7 @@ in
               default = [];
             };
             format = mkOption {
-              type = enum [ "pgpass" "envFile" ];
+              type = enum [ "pgpass" "envFile" "raw" ];
               default = "pgpass";
             };
           };
