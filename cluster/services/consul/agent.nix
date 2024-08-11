@@ -10,6 +10,13 @@ let
 in
 
 {
+  system.extraIncantations = {
+    runConsul = i: script: i.execShellWith [ config.services.consul.package ] ''
+      export CONSUL_HTTP_ADDR='${config.links.consulAgent.tuple}'
+      ${script}
+    '';
+  };
+
   links.consulAgent.protocol = "http";
 
   services.consul = {
