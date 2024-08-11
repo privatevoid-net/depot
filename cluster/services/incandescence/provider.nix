@@ -125,4 +125,14 @@ in
     wantedBy = [ "incandescence-${provider}.target" ];
     after = [ "incandescence-${provider}.target" ];
   }) (filterAttrs (_: providerConfig: providerConfig.locksmith) cfg.providers);
+
+  system.ascensions = mapAttrs' (provider: providerConfig: {
+    name = "incandescence-${provider}";
+    value = {
+      distributed = true;
+      requiredBy = map (formula: "ignite-${provider}-${formula}-create.service") (lib.attrNames providerConfig.formulae);
+      before = map (formula: "ignite-${provider}-${formula}-create.service") (lib.attrNames providerConfig.formulae);
+      incantations = lib.mkDefault (i: []);
+    };
+  }) cfg.providers;
 }
