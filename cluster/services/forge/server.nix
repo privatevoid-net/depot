@@ -26,6 +26,7 @@ in
   services.locksmith.waitForSecrets.forgejo = [
     "garage-forgejo-id"
     "garage-forgejo-secret"
+    "patroni-forge"
   ];
 
   services.forgejo = {
@@ -39,7 +40,7 @@ in
       inherit (patroni) port;
       name = "forge";
       user = "forge";
-      passwordFile = secrets.dbCredentials.path;
+      passwordFile = "/run/locksmith/patroni-forge";
     };
     settings = {
       DEFAULT = {
