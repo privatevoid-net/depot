@@ -39,6 +39,7 @@ in
         ./garage.nix
         ./garage-options.nix
         ./garage-layout.nix
+        ./incandescence-ascensions.nix
       ] ++ lib.optionals config.simulacrum [
         ./simulacrum/snakeoil-rpc-secret.nix
       ];
