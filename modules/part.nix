@@ -29,7 +29,6 @@ in
     reflection = ./reflection;
     shell-config = ./shell-config;
     ssh = ./ssh;
-    system-info = ./system-info;
     system-recovery = ./system-recovery;
     systemd-extras = ./systemd-extras;
     tested = ./tested;
@@ -56,7 +55,6 @@ in
       motd
       networking
       nix-config-server
-      system-info
       system-recovery
       tested
     ];
