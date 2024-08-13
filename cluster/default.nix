@@ -16,6 +16,8 @@ lib.evalModules {
     ./lib/port-magic-multi.nix
     ./lib/mesh.nix
     ./lib/secrets.nix
+    ./lib/testing.nix
+    ./lib/lib.nix
 
     ./import-services.nix
   ];
