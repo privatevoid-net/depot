@@ -93,5 +93,9 @@ in
       nodes = config.services.wireguard.nodes.mesh;
       shared = false;
     };
+    simulacrum = {
+      enable = true;
+      settings = ./test.nix;
+    };
   };
 }
