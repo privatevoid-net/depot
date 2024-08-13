@@ -1,4 +1,4 @@
-{ config, depot, pkgs, ... }:
+{ cluster, config, depot, pkgs, ... }:
 {
   users.motd = builtins.readFile ./motd.txt;
   environment.interactiveShellInit = let
@@ -8,6 +8,11 @@
     grep = exec pkgs.gnugrep "grep";
     countUsers = '' ${util "who"} -q | ${util "head"} -n1 | ${util "tr"} ' ' \\n | ${util "uniq"} | ${util "wc"} -l'';
     countSessions = '' ${util "who"} -q | ${util "head"} -n1 | ${util "wc"} -w'';
+
+    rev = if cluster.config.simulacrum then
+      "simulacrum"
+    else
+      depot.rev or "\${BRED}(✘)\${CO}\${BWHITE} Dirty";
   in ''
     (
     # Reset colors
@@ -40,7 +45,7 @@
     echo -e " █ ''${BGREEN}(✓)''${CO} ''${BWHITE}You are using a genuine Private Void™ system.''${CO}"
     echo    " █"
     echo -e " █ ''${BWHITE}OS Version....:''${CO} NixOS ''${CAB}${config.system.nixos.version}''${CO}" 
-    echo -e " █ ''${BWHITE}Configuration.:''${CO} ''${CAB}${depot.rev or "\${BRED}(✘)\${CO}\${BWHITE} Dirty"}''${CO}" 
+    echo -e " █ ''${BWHITE}Configuration.:''${CO} ''${CAB}${rev}''${CO}" 
     echo -e " █ ''${BWHITE}Uptime........:''${CO} $(${uptime} -p | ${util "cut"} -d ' ' -f2- | GREP_COLORS='mt=01;35' ${grep} --color=always '[0-9]*')"
     echo -e " █ ''${BWHITE}SSH Logins....:''${CO} There are currently ''${CAB}$(${countUsers})''${CO} users logged in on ''${CAB}$(${countSessions})''${CO} sessions"
     )
