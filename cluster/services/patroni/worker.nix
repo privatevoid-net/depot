@@ -25,6 +25,10 @@ in
     "d '${baseDir}' 0700 patroni patroni - -"
     "d '${walDir}' 0700 patroni patroni - -"
   ];
+  systemd.services.patroni = {
+    requires = [ "consul-ready.service" ];
+    after = [ "consul-ready.service" ];
+  };
   services.patroni = {
     enable = true;
     name = hostName;
