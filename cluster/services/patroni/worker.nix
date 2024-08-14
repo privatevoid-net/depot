@@ -61,6 +61,7 @@ in
         };
         use_pg_rewind = true;
         use_slots = true;
+        synchronous_mode = true;
         authentication = {
           replication.username = "patronirep";
           rewind.username = "patronirew";
@@ -71,6 +72,7 @@ in
           wal_level = "replica";
           hot_standby_feedback = "on";
           unix_socket_directories = "/tmp";
+          synchronous_commit = "on";
         };
         pg_hba = [
           "host replication patronirep ${net} scram-sha-256"
