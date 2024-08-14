@@ -3,6 +3,7 @@
 {
   imports = [
     ./options.nix
+    ./simulacrum/test-data.nix
   ];
 
   services.incandescence = {
@@ -15,6 +16,10 @@
         ./provider-options.nix
       ];
     };
-    simulacrum.deps = [ "consul" ];
+    simulacrum = {
+      enable = true;
+      deps = [ "consul" "locksmith" ];
+      settings = ./simulacrum/test.nix;
+    };
   };
 }
