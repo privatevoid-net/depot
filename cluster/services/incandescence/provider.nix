@@ -70,8 +70,7 @@ in
           description = "Ignite Destruction: ${provider} - ${formula}";
           wantedBy = [ "incandescence-${provider}.target" ] ++ map (dep: "ignite-${provider}-${dep}-destroy.service") formulaConfig.deps;
           before = [ "incandescence-${provider}.target" ] ++ map (dep: "ignite-${provider}-${dep}-destroy.service") formulaConfig.deps;
-          wants = providerConfig.wants ++ [ "ignite-${provider}-${formula}-change.service" ];
-          after = providerConfig.after ++ [ "ignite-${provider}-${formula}-change.service" ];
+          inherit (providerConfig) wants after;
           serviceConfig.Type = "oneshot";
           distributed.enable = true;
           path = [ config.services.consul.package ] ++ providerConfig.packages;
