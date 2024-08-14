@@ -49,7 +49,9 @@ in
       user = {
         destroyAfterDays = 0;
         create = user: psqlSecret "${genPassword} ${user}" ''
-          CREATE USER ${user} PASSWORD '@SECRET@';
+          SELECT 'CREATE USER ${user}'
+          WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${user}')\gexec
+          ALTER USER ${user} PASSWORD '@SECRET@';
         '';
         destroy = psqlSecret "printenv OBJECT" ''
           DROP USER @SECRET@;
@@ -59,7 +61,11 @@ in
         destroyAfterDays = 30;
         deps = [ "user" ];
         create = db: psql ''
-          CREATE DATABASE ${db} OWNER ${cfg.databases.${db}.owner};
+          SELECT 'CREATE DATABASE ${db} OWNER ${cfg.databases.${db}.owner}'
+          WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${db}')\gexec
+        '';
+        change = db: psql ''
+          ALTER DATABASE ${db} OWNER TO ${cfg.databases.${db}.owner};
         '';
         destroy = psqlSecret "printenv OBJECT" ''
           DROP DATABASE @SECRET@;
