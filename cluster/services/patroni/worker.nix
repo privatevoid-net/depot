@@ -25,6 +25,10 @@ in
     "d '${baseDir}' 0700 patroni patroni - -"
     "d '${walDir}' 0700 patroni patroni - -"
   ];
+  systemd.services.patroni = {
+    requires = [ "consul-ready.service" ];
+    after = [ "consul-ready.service" ];
+  };
   services.patroni = {
     enable = true;
     name = hostName;
@@ -57,6 +61,7 @@ in
         };
         use_pg_rewind = true;
         use_slots = true;
+        synchronous_mode = true;
         authentication = {
           replication.username = "patronirep";
           rewind.username = "patronirew";
@@ -67,6 +72,7 @@ in
           wal_level = "replica";
           hot_standby_feedback = "on";
           unix_socket_directories = "/tmp";
+          synchronous_commit = "on";
         };
         pg_hba = [
           "host replication patronirep ${net} scram-sha-256"

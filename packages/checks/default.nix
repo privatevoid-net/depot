@@ -35,11 +35,6 @@ in
         inherit (self'.packages) keycloak;
       };
 
-      patroni = pkgs.callPackage ./patroni.nix {
-        inherit (self) nixosModules;
-        inherit (self'.packages) postgresql;
-      };
-
       s3ql-upgrade = pkgs.callPackage ./s3ql-upgrade.nix {
         inherit (self'.packages) s3ql;
         inherit (self) nixosModules;
