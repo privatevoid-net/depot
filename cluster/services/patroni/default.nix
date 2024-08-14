@@ -4,6 +4,7 @@
   imports = [
     ./options.nix
     ./incandescence.nix
+    ./simulacrum/test-data.nix
   ];
 
   links = {
@@ -36,6 +37,10 @@
       PATRONI_REWIND_PASSWORD = default;
       metricsCredentials.nodes = nodes.worker;
     };
-    simulacrum.deps = [ "consul" "incandescence" "locksmith" ];
+    simulacrum = {
+      enable = true;
+      deps = [ "consul" "incandescence" "locksmith" ];
+      settings = ./simulacrum/test.nix;
+    };
   };
 }
