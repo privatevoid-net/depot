@@ -87,5 +87,31 @@ in
         for client in clients:
             client.succeed(f"PGPASSFILE=/run/locksmith/patroni-testuser psql -h ${link.ipv4} -p ${link.portStr} -U testuser -d testdb --command='create table test_table_{client.name} as select * from generate_series(1, 10) as val;'")
             client.fail("PGPASSFILE=/run/locksmith/patroni-testuser psql -h ${link.ipv4} -p ${link.portStr} -U testuser -d postgres --command='select * from dummy;'")
+
+    with subtest("should take over existing databases and users via incandescence"):
+        for cmd in [
+            "drop database existingdb;",
+            "drop user existinguser;",
+            "create database existingdb owner postgres;",
+            "create user existinguser;"
+        ]:
+            clients[0].succeed(f"psql -h ${link.ipv4} -p ${link.portStr} -U postgres --command='{cmd}'")
+
+        for client in clients:
+            client.fail(f"PGPASSFILE=/run/locksmith/patroni-existinguser psql -h ${link.ipv4} -p ${link.portStr} -U existinguser -d existingdb --command='create table test_table_{client.name} as select * from generate_series(1, 10) as val;'")
+
+        consulConfig = json.loads(clients[0].succeed("cat /etc/consul.json"))
+        addr = consulConfig["addresses"]["http"]
+        port = consulConfig["ports"]["http"]
+        setEnv = f"CONSUL_HTTP_ADDR={addr}:{port}"
+        clients[0].succeed(f"{setEnv} consul kv delete --recurse services/incandescence/providers/patroni/formulae/database/existingdb")
+        clients[0].succeed(f"{setEnv} consul kv delete --recurse services/incandescence/providers/patroni/formulae/user/existinguser")
+
+        for node in nodes:
+            node.systemctl("restart incandescence-patroni.target")
+        clients[0].succeed("[[ $(psql -h ${link.ipv4} -p ${link.portStr} -U postgres --tuples-only --csv --command=\"SELECT pg_roles.rolname FROM pg_database JOIN pg_roles ON pg_database.datdba = pg_roles.oid WHERE pg_database.datname = 'existingdb'\") == existinguser ]]")
+        for client in clients:
+            client.succeed(f"PGPASSFILE=/run/locksmith/patroni-existinguser psql -h ${link.ipv4} -p ${link.portStr} -U existinguser -d existingdb --command='create table test_table_{client.name} as select * from generate_series(1, 10) as val;'")
+            client.fail("PGPASSFILE=/run/locksmith/patroni-existinguser psql -h ${link.ipv4} -p ${link.portStr} -U existinguser -d postgres --command='select * from dummy;'")
   '';
 }
