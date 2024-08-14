@@ -1,7 +1,7 @@
 { cluster, config, lib, ... }:
 
 let
-  inherit (lib) concatStringsSep escapeShellArg flatten filter filterAttrs length mapAttrs mapAttrs' mapAttrsToList mkIf mkMerge pipe stringToCharacters;
+  inherit (lib) concatStringsSep escapeShellArg flatten filter filterAttrs length mapAttrs mapAttrs' mapAttrsToList mkIf mkMerge optionalString pipe stringToCharacters;
 
   cfg = config.services.incandescence;
   clusterCfg = cluster.config.incandescence;
@@ -83,13 +83,15 @@ in
               (builtins.add 2)
               toString
             ];
+            needsFilter = clusterCfg.providers.${provider}.objects.${formula} != [];
             keyFilter = pipe clusterCfg.providers.${provider}.objects.${formula} [
               (map (x: escapeShellArg "^${x}$"))
               (concatStringsSep " \\\n  -e ")
             ];
             destroyAfterDays = toString formulaConfig.destroyAfterDays;
+            grep = optionalString needsFilter "grep -v -e ${keyFilter} |";
           in ''
-            consul kv get --keys ${kvRoot}/ | cut -d/ -f${fieldNum} | grep -v -e ${keyFilter} | while read object; do
+            consul kv get --keys ${kvRoot}/ | cut -d/ -f${fieldNum} | ${grep} while read object; do
               if consul kv get ${kvRoot}/$object/alive >/dev/null; then
                 destroyOn="$(consul kv get ${kvRoot}/$object/destroyOn || true)"
                 if [[ -z "$destroyOn" && "${destroyAfterDays}" -ne 0 ]]; then
