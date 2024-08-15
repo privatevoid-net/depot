@@ -83,7 +83,7 @@
     };
     
     hercules-ci-agent = {
-      url = "github:hercules-ci/hercules-ci-agent";
+      url = "github:nrabulinski/hercules-ci-agent/ifdless";
       inputs = {
         flake-parts.follows = "flake-parts";
       };
