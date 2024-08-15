@@ -73,6 +73,7 @@ in
           hot_standby_feedback = "on";
           unix_socket_directories = "/tmp";
           synchronous_commit = "on";
+          wal_keep_size = 2048;
         };
         pg_hba = [
           "host replication patronirep ${net} scram-sha-256"
