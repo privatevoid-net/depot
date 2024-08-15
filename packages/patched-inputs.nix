@@ -11,8 +11,6 @@
       nix-super = packages.nix-super.nix;
 
       agenix = packages.agenix.agenix.override { nix = nix-super; };
-
-      hci = packages.hercules-ci-agent.hercules-ci-cli;
     };
   };
 }
