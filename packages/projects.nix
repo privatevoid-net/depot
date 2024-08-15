@@ -59,7 +59,6 @@
         tools = with flakePkgs; [
           agenix
           graf
-          hci
           npins
           pin
           void
