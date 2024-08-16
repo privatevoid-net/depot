@@ -10,6 +10,9 @@ testers.runNixOSTest {
       nixosModules.systemd-extras
       ./modules/nixos/age-dummy-secrets
       ./modules/nixos/age-dummy-secrets/options.nix
+      {
+        options.services.locksmith = lib.mkSinkUndeclaredOptions { };
+      }
     ];
 
     _module.args.depot.packages = { inherit (previous.packages.${system}) s3ql; };
