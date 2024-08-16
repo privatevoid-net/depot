@@ -35,10 +35,13 @@ in
     ];
     before = [ "acme-securedns.${domain}.service" ];
     wants = [ "acme-finished-securedns.${domain}.target" ];
-    serviceConfig.LoadCredential = [
-      "dot-cert.pem:${dot.directory}/fullchain.pem"
-      "dot-key.pem:${dot.directory}/key.pem"
-    ];
+    serviceConfig = {
+      LoadCredential = [
+        "dot-cert.pem:${dot.directory}/fullchain.pem"
+        "dot-key.pem:${dot.directory}/key.pem"
+      ];
+      ExecReload = lib.mkForce [];
+    };
   };
 
   security.acme.certs."securedns.${domain}" = {

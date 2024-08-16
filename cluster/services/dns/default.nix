@@ -56,6 +56,21 @@ in
       coredns = ./coredns.nix;
       client = ./client.nix;
     };
+    simulacrum = {
+      enable = true;
+      deps = [ "consul" "acme-client" "patroni" ];
+      settings = ./test.nix;
+    };
+  };
+
+  patroni = {
+    databases.acmedns = {};
+    users.acmedns = {
+      locksmith = {
+        nodes = config.services.dns.nodes.authoritative;
+        format = "envFile";
+      };
+    };
   };
 
   dns.records = {
