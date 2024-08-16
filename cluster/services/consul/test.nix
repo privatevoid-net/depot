@@ -1,4 +1,8 @@
+{ lib, ... }:
+
 {
+  defaults.options.services.locksmith = lib.mkSinkUndeclaredOptions { };
+
   testScript = ''
     import json
 
