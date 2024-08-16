@@ -72,7 +72,7 @@ in
     };
   };
 
-  garage = {
+  garage = config.lib.forService "monitoring" {
     keys = {
       loki-ingest.locksmith = {
         nodes = config.services.monitoring.nodes.logging;
@@ -93,7 +93,7 @@ in
     };
   };
 
-  ways = {
+  ways = config.lib.forService "monitoring" {
     monitoring = {
       consulService = "grafana";
       extras.locations."/".proxyWebsockets = true;

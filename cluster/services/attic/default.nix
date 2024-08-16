@@ -33,7 +33,7 @@
     };
   };
 
-  garage = {
+  garage = config.lib.forService "attic" {
     keys.attic.locksmith = {
       nodes = config.services.attic.nodes.server;
       owner = "atticd";
@@ -48,14 +48,16 @@
     serverAddrs = map
       (node: depot.hours.${node}.interfaces.primary.addrPublic)
       config.services.attic.nodes.server;
-  in {
+  in config.lib.forService "attic" {
     cache.target = serverAddrs;
   };
 
-  ways.cache-api = {
-    consulService = "atticd";
-    extras.extraConfig = ''
-      client_max_body_size 4G;
-    '';
+  ways = config.lib.forService "attic" {
+    cache-api = {
+      consulService = "atticd";
+      extras.extraConfig = ''
+        client_max_body_size 4G;
+      '';
+    };
   };
 }
