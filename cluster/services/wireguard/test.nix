@@ -1,6 +1,8 @@
 { cluster, lib, ... }:
 
 {
+  defaults.options.services.locksmith = lib.mkSinkUndeclaredOptions { };
+
   testScript = ''
     start_all()
     ${lib.pipe cluster.config.services.wireguard.nodes.mesh [
