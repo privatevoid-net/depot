@@ -7,6 +7,7 @@ in
 {
   imports = [
     ./options.nix
+    ./incandescence.nix
   ];
 
   services.storage = {

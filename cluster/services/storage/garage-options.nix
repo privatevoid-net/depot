@@ -26,62 +26,6 @@ let
         sleep 1
       done
     }
-    # FIXME: returns bogus empty string when one of the lists is empty
-    diffAdded() {
-      comm -13 <(printf '%s\n' $1 | sort) <(printf '%s\n' $2 | sort)
-    }
-    diffRemoved() {
-      comm -23 <(printf '%s\n' $1 | sort) <(printf '%s\n' $2 | sort)
-    }
-    # FIXME: this does not handle list items with spaces
-    listKeys() {
-      garage key list | tail -n +2 | grep -ow '[^ ]*$' || true
-    }
-    ensureKeys() {
-      old="$(listKeys)"
-      if [[ -z "$1" ]]; then
-        for key in $old; do
-          garage key delete --yes "$key"
-        done
-      elif [[ -z "$old" ]]; then
-        for key in $1; do
-          # don't print secret key
-          garage key new --name "$key" >/dev/null
-          echo Key "$key" was created.
-        done
-      else
-        diffAdded "$old" "$1" | while read key; do
-          # don't print secret key
-          garage key new --name "$key" >/dev/null
-          echo Key "$key" was created.
-        done
-        diffRemoved "$old" "$1" | while read key; do
-          garage key delete --yes "$key"
-        done
-      fi
-    }
-    listBuckets() {
-      garage bucket list | tail -n +2 | grep -ow '^ *[^ ]*' | tr -d ' ' || true
-    }
-    ensureBuckets() {
-      old="$(listBuckets)"
-      if [[ -z "$1" ]]; then
-        for bucket in $old; do
-          garage bucket delete --yes "$bucket"
-        done
-      elif [[ -z "$old" ]]; then
-        for bucket in $1; do
-          garage bucket create "$bucket"
-        done
-      else
-        diffAdded "$old" "$1" | while read bucket; do
-          garage bucket create "$bucket"
-        done
-        diffRemoved "$old" "$1" | while read bucket; do
-          garage bucket delete --yes "$bucket"
-        done
-      fi
-    }
   '';
 in
 
@@ -203,9 +147,7 @@ in
           garage layout apply --version 1
         '';
       };
-      garage-apply = {
-        distributed.enable = true;
-        wantedBy = [ "garage.service" "multi-user.target" ];
+      garage-ready = {
         wants = [ "garage.service" ];
         after = [ "garage.service" "garage-layout-init.service" ];
         path = [ config.services.garage.package ];
@@ -219,54 +161,78 @@ in
         script = ''
           source ${garageShellLibrary}
           waitForGarageOperational
-
-          ensureKeys '${lib.concatStringsSep " " (lib.attrNames cfg.keys)}'
-          ensureBuckets '${lib.concatStringsSep " " (lib.attrNames cfg.buckets)}'
-
-          # key permissions
-          ${lib.pipe cfg.keys [
-            (lib.mapAttrsToList (key: kCfg: ''
-              garage key ${if kCfg.allow.createBucket then "allow" else "deny"} '${key}' --create-bucket >/dev/null
-            ''))
-            (lib.concatStringsSep "\n")
-          ]}
-
-          # bucket permissions
-          ${lib.pipe cfg.buckets [
-            (lib.mapAttrsToList (bucket: bCfg:
-              lib.mapAttrsToList (key: perms: ''
-                garage bucket allow '${bucket}' --key '${key}' ${lib.escapeShellArgs (map (x: "--${x}") perms)}
-                garage bucket deny '${bucket}' --key '${key}' ${lib.escapeShellArgs (map (x: "--${x}") (lib.subtractLists perms [ "read" "write" "owner" ]))}
-              '') bCfg.allow
-            ))
-            lib.flatten
-            (lib.concatStringsSep "\n")
-          ]}
-
-          # bucket quotas
-          ${lib.pipe cfg.buckets [
-            (lib.mapAttrsToList (bucket: bCfg: ''
-              garage bucket set-quotas '${bucket}' \
-                --max-objects '${if bCfg.quotas.maxObjects == null then "none" else toString bCfg.quotas.maxObjects}' \
-                --max-size '${if bCfg.quotas.maxSize == null then "none" else toString bCfg.quotas.maxSize}'
-            ''))
-            (lib.concatStringsSep "\n")
-          ]}
-
-          # bucket website access
-          ${lib.pipe cfg.buckets [
-            (lib.mapAttrsToList (bucket: bCfg: ''
-              garage bucket website ${if bCfg.web.enable then "--allow" else "--deny"} '${bucket}'
-            ''))
-            (lib.concatStringsSep "\n")
-          ]}
         '';
       };
     };
 
+    services.incandescence.providers.garage = {
+      locksmith = true;
+      wantedBy = [ "garage.service" "multi-user.target" ];
+      partOf = [ "garage.service" ];
+      wants = [ "garage-ready.service" ];
+      after = [ "garage-ready.service" ];
+
+      packages = [
+        config.services.garage.package
+      ];
+      formulae = {
+        key = {
+          destroyAfterDays = 0;
+          create = key: ''
+            if [[ "$(garage key info ${lib.escapeShellArg key} 2>&1 >/dev/null)" == "Error: 0 matching keys" ]]; then
+              # don't print secret key
+              garage key new --name ${lib.escapeShellArg key} >/dev/null
+              echo Key ${lib.escapeShellArg key} was created.
+            else
+              echo "Key already exists, assuming ownership"
+            fi
+          '';
+          destroy = ''
+            garage key delete --yes "$OBJECT"
+          '';
+          change = key: let
+            kCfg = cfg.keys.${key};
+          in ''
+            garage key ${if kCfg.allow.createBucket then "allow" else "deny"} ${lib.escapeShellArg key} --create-bucket >/dev/null
+          '';
+        };
+        bucket = {
+          deps = [ "key" ];
+          destroyAfterDays = 30;
+          create = bucket: ''
+            if [[ "$(garage bucket info ${lib.escapeShellArg bucket} 2>&1 >/dev/null)" == "Error: Bucket not found" ]]; then
+              garage bucket create ${lib.escapeShellArg bucket}
+            else
+              echo "Bucket already exists, assuming ownership"
+            fi
+          '';
+          destroy = ''
+            garage bucket delete --yes "$OBJECT"
+          '';
+          change = bucket: let
+            bCfg = cfg.buckets.${bucket};
+          in ''
+            # permissions
+            ${lib.concatStringsSep "\n" (lib.flatten (
+              lib.mapAttrsToList (key: perms: ''
+                garage bucket allow ${lib.escapeShellArg bucket} --key ${lib.escapeShellArg key} ${lib.escapeShellArgs (map (x: "--${x}") perms)}
+                garage bucket deny ${lib.escapeShellArg bucket} --key ${lib.escapeShellArg key} ${lib.escapeShellArgs (map (x: "--${x}") (lib.subtractLists perms [ "read" "write" "owner" ]))}
+              '') bCfg.allow
+            ))}
+
+            # quotas
+            garage bucket set-quotas ${lib.escapeShellArg bucket} \
+              --max-objects '${if bCfg.quotas.maxObjects == null then "none" else toString bCfg.quotas.maxObjects}' \
+              --max-size '${if bCfg.quotas.maxSize == null then "none" else toString bCfg.quotas.maxSize}'
+
+            # website access
+            garage bucket website ${if bCfg.web.enable then "--allow" else "--deny"} ${lib.escapeShellArg bucket}
+          '';
+        };
+      };
+    };
+
     services.locksmith.providers.garage = {
-      wantedBy = [ "garage-apply.service" ];
-      after = [ "garage-apply.service" ];
       secrets = lib.mkMerge (lib.mapAttrsToList (key: kCfg: let
         common = {
           inherit (kCfg.locksmith) mode owner group nodes;
