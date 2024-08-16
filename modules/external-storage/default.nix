@@ -8,6 +8,8 @@ let
   cfgAge = config.age;
 
   create = lib.flip lib.mapAttrs';
+
+  createFiltered = pred: attrs: f: create (lib.filterAttrs pred attrs) f;
 in
 
 {
@@ -20,12 +22,17 @@ in
       fileSystems = lib.mkOption {
         description = "S3QL-based filesystems on top of CIFS mountpoints.";
         default = {};
-        type = with lib.types; lazyAttrsOf (submodule ({ config, name, ... }: {
+        type = with lib.types; lazyAttrsOf (submodule ({ config, name, ... }: let
+          authFile = if config.locksmithSecret != null then
+            "/run/locksmith/${config.locksmithSecret}"
+          else
+            cfgAge.secrets."storageAuth-${name}".path;
+        in {
           imports = [ ./filesystem-type.nix ];
           backend = lib.mkIf (config.underlay != null) "local://${cfg.underlays.${config.underlay}.mountpoint}";
           commonArgs = [
             "--cachedir" config.cacheDir
-            "--authfile" cfgAge.secrets."storageAuth-${name}".path
+            "--authfile" authFile
           ] ++ (lib.optionals (config.backendOptions != []) [ "--backend-options" (lib.concatStringsSep "," config.backendOptions) ]);
         }));
       };
@@ -57,8 +64,13 @@ in
 
     age.secrets = lib.mkMerge [
       (create cfg.underlays (name: ul: lib.nameValuePair "cifsCredentials-${name}" { file = ul.credentialsFile; }))
-      (create cfg.fileSystems (name: fs: lib.nameValuePair "storageAuth-${name}" { file = fs.authFile; }))
+      (createFiltered (_: fs: fs.locksmithSecret == null) cfg.fileSystems (name: fs: lib.nameValuePair "storageAuth-${name}" { file = fs.authFile; }))
     ];
+
+    services.locksmith.waitForSecrets = createFiltered (_: fs: fs.locksmithSecret != null) cfg.fileSystems (name: fs: {
+      name = fs.unitName;
+      value = [ fs.locksmithSecret ];
+    });
 
     fileSystems = create cfg.underlays (name: ul: {
       name = ul.mountpoint;
@@ -97,7 +109,13 @@ in
         value = let
           isUnderlay = fs.underlay != null;
 
-          fsType = if isUnderlay then "local" else lib.head (lib.strings.match "([a-z0-9]*)://.*" fs.backend);
+          backendParts = lib.strings.match "([a-z0-9]*)://([^/]*)/([^/]*)(/.*)?" fs.backend;
+
+          fsType = if isUnderlay then "local" else lib.head backendParts;
+
+          s3Endpoint = assert fsType == "s3c4"; lib.elemAt backendParts 1;
+
+          s3Bucket = assert fsType == "s3c4"; lib.elemAt backendParts 2;
 
           localBackendPath = if isUnderlay then cfg.underlays.${fs.underlay}.mountpoint else lib.head (lib.strings.match "[a-z0-9]*://(/.*)" fs.backend);
         in {
@@ -120,8 +138,12 @@ in
             ExecStartPre = map lib.escapeShellArgs [
               [
                 (let
+                  authFile = if fs.locksmithSecret != null then
+                    "/run/locksmith/${fs.locksmithSecret}"
+                  else
+                    cfgAge.secrets."storageAuth-${name}".path;
                   mkfsEncrypted = ''
-                    ${pkgs.gnugrep}/bin/grep -m1 fs-passphrase: '${config.age.secrets."storageAuth-${name}".path}' \
+                    ${pkgs.gnugrep}/bin/grep -m1 fs-passphrase: '${authFile}' \
                       | cut -d' ' -f2- \
                       | ${s3ql}/bin/mkfs.s3ql ${lib.escapeShellArgs fs.commonArgs} -L '${name}' '${fs.backend}'
                   '';
@@ -132,6 +154,11 @@ in
 
                   detectFs = {
                     local = "test -e ${localBackendPath}/s3ql_metadata";
+                    s3c4 = pkgs.writeShellScript "detect-s3ql-filesystem" ''
+                      export AWS_ACCESS_KEY_ID="$(${pkgs.gnugrep}/bin/grep -m1 backend-login: '${authFile}' | cut -d' ' -f2-)"
+                      export AWS_SECRET_ACCESS_KEY="$(${pkgs.gnugrep}/bin/grep -m1 backend-password: '${authFile}' | cut -d' ' -f2-)"
+                      ${pkgs.s5cmd}/bin/s5cmd --endpoint-url https://${s3Endpoint}/ ls 's3://${s3Bucket}/s3ql_params' >/dev/null
+                    '';
                   }.${fsType} or null;
                 in pkgs.writeShellScript "create-s3ql-filesystem" (lib.optionalString (detectFs != null) ''
                   if ! ${detectFs}; then

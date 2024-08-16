@@ -11,6 +11,7 @@
       unitDescription = "Heresy Filesystem";
       authFile = ./secrets/heresy-encryption-key.age;
       underlay = "heresy";
+      encrypt = true;
     };
   };
 }

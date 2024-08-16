@@ -7,6 +7,8 @@ in
 {
   imports = [
     ./options.nix
+    ./incandescence.nix
+    ./simulacrum/test-data.nix
   ];
 
   services.storage = {
@@ -30,11 +32,15 @@ in
       heresy = [
         ./heresy.nix
         ./s3ql-upgrades.nix
+      ] ++ lib.optionals config.simulacrum [
+        ./simulacrum/snakeoil-heresy-passphrase.nix
       ];
       garage = [
         ./garage.nix
         ./garage-options.nix
         ./garage-layout.nix
+      ] ++ lib.optionals config.simulacrum [
+        ./simulacrum/snakeoil-rpc-secret.nix
       ];
       garageConfig = [
         ./garage-gateway.nix
@@ -47,6 +53,11 @@ in
       ];
       garageInternal = [ ./garage-internal.nix ];
       garageExternal = [ ./garage-external.nix ];
+    };
+    simulacrum = {
+      enable = true;
+      deps = [ "wireguard" "consul" "locksmith" "dns" "incandescence" ];
+      settings = ./simulacrum/test.nix;
     };
   };
 
@@ -86,7 +97,10 @@ in
   };
 
   garage = {
-    keys.storage-prophet = {};
+    keys.storage-prophet.locksmith = {
+      nodes = [ "prophet" ];
+      format = "s3ql";
+    };
     buckets.storage-prophet = {
       allow.storage-prophet = [ "read" "write" ];
     };

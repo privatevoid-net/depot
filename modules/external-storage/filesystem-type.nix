@@ -22,6 +22,10 @@ with lib;
     authFile = mkOption {
       type = types.path;
     };
+    locksmithSecret = mkOption {
+      type = with types; nullOr str;
+      default = null;
+    };
     cacheDir = mkOption {
       type = types.path;
       default = "/var/cache/remote-storage/${name}";
