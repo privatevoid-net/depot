@@ -56,6 +56,11 @@ in
       coredns = ./coredns.nix;
       client = ./client.nix;
     };
+    simulacrum = {
+      enable = true;
+      deps = [ "consul" "acme-client" "patroni" ];
+      settings = ./test.nix;
+    };
   };
 
   patroni = {
