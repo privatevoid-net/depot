@@ -28,6 +28,10 @@ in
       bootstrap_expect = builtins.length cfg.nodes.agent;
       addresses.http = config.links.consulAgent.ipv4;
       ports.http = config.links.consulAgent.port;
+      acl = {
+        enabled = true;
+        default_policy = "deny";
+      };
     };
   };
 
