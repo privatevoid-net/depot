@@ -45,14 +45,15 @@ in
       hasSpecialPrefix = elem (substring 0 1 ExecStart) [ "@" "-" ":" "+" "!" ];
     in assert !hasSpecialPrefix; pkgs.writeTextDir "etc/systemd/system/${n}.service.d/distributed.conf" ''
       [Unit]
-      Requires=consul-ready.service
-      After=consul-ready.service
+      Requires=consul-ready.target
+      After=consul-ready.target
 
       [Service]
       ExecStartPre=${waitForConsul} 'services/${n}%i'
       ExecStart=
       ExecStart=${consul}/bin/consul lock --name=${n} --n=${toString cfg.replicas} --shell=false --child-exit-code 'services/${n}%i' ${optionalString (cfg.registerServices != []) runWithRegistration} ${ExecStart}
       Environment="CONSUL_HTTP_ADDR=${consulHttpAddr}"
+      Environment="CONSUL_HTTP_TOKEN_FILE=/run/locksmith/consul-systemManagementToken"
       ${optionalString (v.serviceConfig ? RestrictAddressFamilies) "RestrictAddressFamilies=AF_NETLINK"}
       ${optionalString (cfg.registerServices != []) (lib.concatStringsSep "\n" (map (svc: "ExecStopPost=${svc.commands.deregister}") svcs))}
     ''))
