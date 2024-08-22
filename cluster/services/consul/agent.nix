@@ -35,7 +35,30 @@ in
     };
   };
 
-  systemd.services.consul.serviceConfig.Type = "notify";
+  systemd.services = {
+    consul.serviceConfig.Type = "notify";
+    consul-load-smt = {
+      wantedBy = [ "consul.service" ];
+      after = [ "consul.service" ];
+      environment.CONSUL_HTTP_ADDR = config.links.consulAgent.tuple;
+      path = [
+        config.services.consul.package
+      ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script = ''
+        while ! test -e /run/locksmith/consul-systemManagementToken; do
+          echo Waiting for System Management Token
+          systemctl start locksmith.service
+          sleep 5
+        done
+        export CONSUL_HTTP_TOKEN_FILE=/run/locksmith/consul-systemManagementToken
+        consul acl set-agent-token default "$(< /run/locksmith/consul-systemManagementToken)" # TODO: don't leak token on cmdline
+      '';
+    };
+  };
 
   services.grafana-agent.settings.integrations.consul_exporter = {
     enabled = true;
