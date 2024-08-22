@@ -14,6 +14,7 @@ in
     nodes = {
       agent = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
       ready = config.services.consul.nodes.agent;
+      bootstrap = [ "grail" "VEGAS" ];
     };
     nixos = {
       agent = [
@@ -21,10 +22,11 @@ in
         ./remote-api.nix
       ];
       ready = ./ready.nix;
+      bootstrap = ./bootstrap.nix;
     };
     simulacrum = {
       enable = true;
-      deps = [ "wireguard" ];
+      deps = [ "wireguard" "locksmith" ];
       settings = ./test.nix;
     };
   };
