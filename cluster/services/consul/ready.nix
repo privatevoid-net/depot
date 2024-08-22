@@ -51,4 +51,9 @@ in
       Type = "oneshot";
     };
   };
+
+  systemd.targets.consul-ready = {
+    description = "Consul is Ready";
+    requires = [ "consul-ready.service" ] ++ lib.optional config.services.consul.enable "consul-load-smt.service";
+  };
 }
