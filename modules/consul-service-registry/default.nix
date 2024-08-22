@@ -12,6 +12,7 @@ let
 
   consulRegisterScript = pkgs.writeShellScript "consul-register" ''
     export CONSUL_HTTP_ADDR='${consulHttpAddr}'
+    export CONSUL_HTTP_TOKEN_FILE=/run/locksmith/consul-systemManagementToken
     while ! ${consul} services register "$1"; do
       sleep 1
     done
@@ -19,6 +20,7 @@ let
 
   consulDeregisterScript = pkgs.writeShellScript "consul-deregister" ''
     export CONSUL_HTTP_ADDR='${consulHttpAddr}'
+    export CONSUL_HTTP_TOKEN_FILE=/run/locksmith/consul-systemManagementToken
     for i in {1..5}; do
       if ${consul} services deregister "$1"; then
         break
@@ -81,8 +83,8 @@ let
     }.${mode};
     value = {
       direct = {
-        after = [ "consul-ready.service" ];
-        requires = [ "consul-ready.service" ];
+        after = [ "consul-ready.target" ];
+        requires = [ "consul-ready.target" ];
         serviceConfig = {
           ExecStartPost = register servicesJson;
           ExecStopPost = deregister servicesJson;
