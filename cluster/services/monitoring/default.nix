@@ -66,10 +66,7 @@ in
         ./tracing.nix
       ];
     };
-    meshLinks.logging = {
-      name = "loki";
-      link.protocol = "http";
-    };
+    meshLinks.logging.loki.link.protocol = "http";
   };
 
   garage = config.lib.forService "monitoring" {

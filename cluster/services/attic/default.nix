@@ -16,10 +16,7 @@
         ./nar-serve.nix
       ];
     };
-    meshLinks.server = {
-      name = "attic";
-      link.protocol = "http";
-    };
+    meshLinks.server.attic.link.protocol = "http";
     secrets = let
       inherit (config.services.attic) nodes;
     in {

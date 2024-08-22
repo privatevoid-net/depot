@@ -4,10 +4,7 @@
   services.forge = {
     nodes.server = [ "VEGAS" ];
     nixos.server = ./server.nix;
-    meshLinks.server = {
-      name = "forge";
-      link.protocol = "http";
-    };
+    meshLinks.server.forge.link.protocol = "http";
     secrets = with config.services.forge.nodes; {
       oidcSecret = {
         nodes = server;

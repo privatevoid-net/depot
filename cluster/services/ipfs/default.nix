@@ -29,10 +29,7 @@
       io-tweaks = [ "VEGAS" ];
       remote-api = [ "VEGAS" ];
     };
-    meshLinks.gateway = {
-      name = "ipfsGateway";
-      link.protocol = "http";
-    };
+    meshLinks.gateway.ipfsGateway.link.protocol = "http";
     nixos = {
       node = [
         ./node.nix

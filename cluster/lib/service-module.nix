@@ -38,12 +38,8 @@ in
     };
     meshLinks = mkOption {
       description = "Create host links on the mesh network.";
-      type = types.attrsOf (types.submodule ({ name, ... }: {
+      type = types.attrsOf (types.attrsOf (types.submodule {
         options = {
-          name = mkOption {
-            type = types.str;
-            default = "${serviceName}-${name}";
-          };
           link = mkOption {
             type = types.deferredModule;
             default = {};
