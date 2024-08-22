@@ -35,6 +35,8 @@ in
     };
   };
 
+  systemd.services.consul.serviceConfig.Type = "notify";
+
   services.grafana-agent.settings.integrations.consul_exporter = {
     enabled = true;
     instance = hostName;
