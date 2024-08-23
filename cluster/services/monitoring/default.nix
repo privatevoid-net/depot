@@ -18,26 +18,6 @@ in
       protocol = "http";
       ipv4 = meshIpFor "server";
     };
-    tempo = {
-      protocol = "http";
-      ipv4 = meshIpFor "server";
-    };
-    tempo-grpc = {
-      protocol = "http";
-      ipv4 = "127.0.0.1";
-    };
-    tempo-otlp-http = {
-      protocol = "http";
-      ipv4 = meshIpFor "server";
-    };
-    tempo-otlp-grpc = {
-      protocol = "http";
-      ipv4 = meshIpFor "server";
-    };
-    tempo-zipkin-http = {
-      protocol = "http";
-      ipv4 = meshIpFor "server";
-    };
   };
   hostLinks = lib.genAttrs config.services.monitoring.nodes.grafana (name: {
     grafana = {
@@ -51,6 +31,7 @@ in
       blackbox = [ "checkmate" "grail" "prophet" ];
       grafana = [ "VEGAS" "prophet" ];
       logging = [ "VEGAS" "grail" ];
+      tracing = [ "VEGAS" "grail" ];
       server = [ "VEGAS" ];
     };
     nixos = {
@@ -61,12 +42,20 @@ in
         ./provisioning/dashboards.nix
       ];
       logging = ./logging.nix;
+      tracing = ./tracing.nix;
       server = [
         ./server.nix
-        ./tracing.nix
       ];
     };
-    meshLinks.logging.loki.link.protocol = "http";
+    meshLinks = {
+      logging.loki.link.protocol = "http";
+      tracing = {
+        tempo.link.protocol = "http";
+        tempo-otlp-http.link.protocol = "http";
+        tempo-otlp-grpc.link.protocol = "grpc";
+        tempo-zipkin-http.link.protocol = "http";
+      };
+    };
   };
 
   garage = config.lib.forService "monitoring" {
@@ -79,36 +68,51 @@ in
         nodes = config.services.monitoring.nodes.logging;
         format = "envFile";
       };
-      tempo = { };
+      tempo-ingest.locksmith = {
+        nodes = config.services.monitoring.nodes.tracing;
+        format = "envFile";
+      };
+      tempo-query.locksmith = {
+        nodes = config.services.monitoring.nodes.tracing;
+        format = "envFile";
+      };
     };
     buckets = {
       loki-chunks.allow = {
         loki-ingest = [ "read" "write" ];
         loki-query = [ "read" ];
       };
-      tempo-chunks.allow.tempo = [ "read" "write" ];
+      tempo-chunks.allow = {
+        tempo-ingest = [ "read" "write" ];
+        tempo-query = [ "read" ];
+      };
     };
   };
 
-  ways = config.lib.forService "monitoring" {
-    monitoring = {
-      consulService = "grafana";
-      extras.locations."/".proxyWebsockets = true;
-    };
-    monitoring-logs = {
+  ways = let
+    query = consulService: {
+      inherit consulService;
       internal = true;
-      consulService = "loki";
       extras.extraConfig = ''
         proxy_read_timeout 3600s;
       '';
     };
-    ingest-logs = {
+    ingest = consulService: {
+      inherit consulService;
       internal = true;
-      consulService = "loki";
       extras.extraConfig = ''
         client_max_body_size 4G;
         proxy_read_timeout 3600s;
       '';
     };
+  in config.lib.forService "monitoring" {
+    monitoring = {
+      consulService = "grafana";
+      extras.locations."/".proxyWebsockets = true;
+    };
+    monitoring-logs = query "loki";
+    monitoring-traces = query "tempo";
+    ingest-logs = ingest "loki";
+    ingest-traces-otlp = ingest "tempo-ingest-otlp-grpc" // { grpc = true; };
   };
 }
