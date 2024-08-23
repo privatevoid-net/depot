@@ -17,6 +17,11 @@ with lib;
           type = with types; nullOr str;
           default = null;
         };
+        registerServices = mkOption {
+          description = "Consul services to register when this service gets started.";
+          type = with types; listOf str;
+          default = if config.distributed.registerService == null then [ ] else [ config.distributed.registerService ];
+        };
       };
     }));
   };
