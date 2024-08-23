@@ -35,6 +35,12 @@ with lib;
       };
     };
 
+    grpc = mkOption {
+      description = "Whether this endpoint is a gRPC service.";
+      type = types.bool;
+      default = false;
+    };
+
     target = mkOption {
       type = types.str;
     };
@@ -101,7 +107,7 @@ with lib;
     (lib.mkIf options.consulService.isDefined {
       useConsul = true;
       nginxUpstreamName = "ways_upstream_${builtins.hashString "md5" options.consulService.value}";
-      target = "http://${options.nginxUpstreamName.value}";
+      target = "${if config.grpc then "grpc" else "http"}://${options.nginxUpstreamName.value}";
     })
     (lib.mkIf options.bucket.isDefined {
       consulService = "garage-web";

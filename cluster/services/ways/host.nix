@@ -25,7 +25,14 @@ in
             ];
             locations = lib.mkMerge [
               {
-                "/".proxyPass = cfg.target;
+                "/" = if cfg.grpc then {
+                  extraConfig = ''
+                    set $nix_proxy_grpc_target ${cfg.target};
+                    grpc_pass $nix_proxy_grpc_target;
+                  '';
+                } else {
+                  proxyPass = cfg.target;
+                };
                 "${cfg.healthCheckPath}".extraConfig = "access_log off;";
               }
               {
