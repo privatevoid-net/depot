@@ -33,6 +33,9 @@ in
       ldapbindaddress = "${ldapLink.ipv4}:${ldapLink.portStr}";
       origin = frontendLink.url;
       inherit domain;
+      online_backup = {
+        versions = 7;
+      };
     };
   };
 
