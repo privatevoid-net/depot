@@ -26,11 +26,13 @@ in
 
       cfg = v.distributed;
 
-      svc = config.consul.services.${cfg.registerService};
+      svcs = map (x: config.consul.services.${x}) cfg.registerServices;
 
       runWithRegistration = pkgs.writeShellScript "run-with-registration" ''
-        trap '${svc.commands.deregister}' EXIT
-        ${svc.commands.register}
+        trap '${lib.concatStringsSep ";" (map (svc: svc.commands.deregister) svcs)}' EXIT
+        ${lib.concatStringsSep "\n" (
+          map (svc: svc.commands.register) svcs
+        )}
         ''${@}
       '';
 
@@ -49,10 +51,10 @@ in
       [Service]
       ExecStartPre=${waitForConsul} 'services/${n}%i'
       ExecStart=
-      ExecStart=${consul}/bin/consul lock --name=${n} --n=${toString cfg.replicas} --shell=false --child-exit-code 'services/${n}%i' ${optionalString (cfg.registerService != null) runWithRegistration} ${ExecStart}
+      ExecStart=${consul}/bin/consul lock --name=${n} --n=${toString cfg.replicas} --shell=false --child-exit-code 'services/${n}%i' ${optionalString (cfg.registerServices != []) runWithRegistration} ${ExecStart}
       Environment="CONSUL_HTTP_ADDR=${consulHttpAddr}"
       ${optionalString (v.serviceConfig ? RestrictAddressFamilies) "RestrictAddressFamilies=AF_NETLINK"}
-      ${optionalString (cfg.registerService != null) "ExecStopPost=${svc.commands.deregister}"}
+      ${optionalString (cfg.registerServices != []) (lib.concatStringsSep "\n" (map (svc: "ExecStopPost=${svc.commands.deregister}") svcs))}
     ''))
   ];
 }
