@@ -80,6 +80,7 @@ in
     mode = if isMonolith then "manual" else "direct";
     definition = {
       name = "atticd";
+      id = "atticd-${config.services.atticd.mode}";
       address = link.ipv4;
       inherit (link) port;
       checks = [
