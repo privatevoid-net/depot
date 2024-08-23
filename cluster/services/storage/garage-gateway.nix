@@ -36,10 +36,9 @@ in
         inherit (linkWeb) port;
         checks = [
           {
-            name = "Garage Node";
-            id = "service:garage-web:node";
-            interval = "5s";
-            http = "${config.links.garageMetrics.url}/health";
+            name = "Garage Service Status";
+            id = "service:garage-web:garage";
+            alias_service = "garage";
           }
         ];
       };
