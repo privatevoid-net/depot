@@ -74,7 +74,7 @@ in
       serviceConfig = {
         Restart = "on-failure";
         RestartMaxDelaySec = 30;
-        RestartStesp = 5;
+        RestartSteps = 5;
         RestartMode = "direct";
       };
     };
