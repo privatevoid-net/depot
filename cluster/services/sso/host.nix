@@ -8,12 +8,10 @@ in
 {
   links.keycloak.protocol = "http";
 
-  age.secrets.keycloak-dbpass = {
-    file = ../../../secrets/keycloak-dbpass.age;
-    owner = "root";
-    group = "root";
-    mode = "0400";
-  };
+  services.locksmith.waitForSecrets.keycloak = [
+    "patroni-keycloak"
+  ];
+
   services.nginx.virtualHosts = { 
     "${login}" = lib.recursiveUpdate (vhosts.proxy kc.url) {
       locations = {
@@ -36,7 +34,7 @@ in
       host = patroni.ipv4;
       inherit (patroni) port;
       useSSL = false;
-      passwordFile = config.age.secrets.keycloak-dbpass.path;
+      passwordFile = "/run/locksmith/patroni-keycloak";
     };
     settings = {
       http-host = kc.ipv4;

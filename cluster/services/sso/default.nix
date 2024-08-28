@@ -1,4 +1,4 @@
-{ depot, ... }:
+{ config, depot, ... }:
 
 {
   services.sso = {
@@ -17,5 +17,13 @@
   in {
     login.target = ssoAddr;
     account.target = ssoAddr;
+  };
+
+  patroni = config.lib.forService "sso" {
+    databases.keycloak = {};
+    users.keycloak.locksmith = {
+      nodes = config.services.sso.nodes.host;
+      format = "raw";
+    };
   };
 }
