@@ -29,6 +29,7 @@
         "flake-compat": [
           "blank"
         ],
+        "flake-parts": "flake-parts",
         "flake-utils": [
           "repin-flake-utils"
         ],
@@ -40,11 +41,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1724542262,
-        "narHash": "sha256-1W9Cw4xw8jb5zAF4YXN1PoAmClR9zS0k+Yyt6E8gfmE=",
+        "lastModified": 1725300620,
+        "narHash": "sha256-IdM+pZ6BnmD3o1fTJZ2BD43k7dwi1BbVfLDLpM1nE5s=",
         "owner": "zhaofengli",
         "repo": "attic",
-        "rev": "c2354f658582f7c870316dfce612cf7454720abe",
+        "rev": "bea72d75b6165dfb529ba0c39cc6c7e9c7f0d234",
         "type": "github"
       },
       "original": {
@@ -190,6 +191,7 @@
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": [
+          "attic",
           "nixpkgs"
         ]
       },
@@ -208,6 +210,26 @@
       }
     },
     "flake-parts_2": {
+      "inputs": {
+        "nixpkgs-lib": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1725234343,
+        "narHash": "sha256-+ebgonl3NbiKD2UD0x4BszCZQ6sTfL4xioaM49o5B3Y=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "567b938d64d4b4112ee253b9274472dc3a346eb6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "flake-parts_3": {
       "inputs": {
         "nixpkgs-lib": [
           "nix-super",
@@ -430,7 +452,7 @@
     "nix-super": {
       "inputs": {
         "flake-compat": "flake-compat_2",
-        "flake-parts": "flake-parts_2",
+        "flake-parts": "flake-parts_3",
         "libgit2": "libgit2",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-regression": [
@@ -504,11 +526,11 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1724938759,
-        "narHash": "sha256-1fBHjcU/bh+ivx/uttMjgF5eTI1s9nyxyrZmgEeutns=",
+        "lastModified": 1725542439,
+        "narHash": "sha256-+c+ULwR2TVKrkkQZJcT1G85IWQwoCek+he4sMM74OIs=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "314ab2d44863ce4e5fd47b6575938b323804f1f4",
+        "rev": "8b16862469fc1e239f672ddd2e9af3fa9dd9352d",
         "type": "github"
       },
       "original": {
@@ -577,7 +599,7 @@
         "blank": "blank",
         "devshell": "devshell",
         "drv-parts": "drv-parts",
-        "flake-parts": "flake-parts",
+        "flake-parts": "flake-parts_2",
         "hercules-ci-agent": "hercules-ci-agent",
         "hercules-ci-effects": "hercules-ci-effects",
         "hyprspace": "hyprspace",
