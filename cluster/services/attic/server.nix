@@ -15,7 +15,7 @@ in
     enable = true;
     package = depot.inputs.attic.packages.attic-server;
 
-    credentialsFile = secrets.serverToken.path;
+    environmentFile = secrets.serverToken.path;
     mode = if isMonolith then "monolithic" else "api-server";
 
     settings = {
