@@ -9,10 +9,6 @@ let
 in
 
 {
-  imports = [
-    depot.inputs.attic.nixosModules.atticd
-  ];
-
   services.locksmith.waitForSecrets.atticd = [ "garage-attic" ];
 
   services.atticd = {
