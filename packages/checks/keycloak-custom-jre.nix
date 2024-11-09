@@ -7,7 +7,8 @@ nixosTest {
     package = keycloak;
     database.passwordFile = builtins.toFile "keycloak-test-password" "kcnixostest1234";
     settings = {
-      proxy = "edge";
+      http-enabled = true;
+      proxy-headers = "xforwarded";
       hostname = "keycloak.local";
     };
   };

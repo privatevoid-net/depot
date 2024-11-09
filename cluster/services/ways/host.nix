@@ -89,11 +89,11 @@ in
             '') consulServiceWays;
           in pkgs.writeText "ways-upstreams.ctmpl" (lib.concatStringsSep "\n" (lib.unique upstreams));
           destination = "/run/consul-template/nginx-ways-upstreams.conf";
-          exec.command = [
-            "${config.services.nginx.package}/bin/nginx"
-            "-s" "reload"
-            "-g" "pid /run/nginx/nginx.pid;"
-          ];
+          exec.command = lib.singleton (pkgs.writeShellScript "ways-reload" ''
+            if ${config.systemd.package}/bin/systemctl is-active nginx.service; then
+              exec ${config.services.nginx.package}/bin/nginx -s reload -g 'pid /run/nginx/nginx.pid;'
+            fi
+          '');
         }
       ];
     };

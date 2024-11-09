@@ -54,7 +54,6 @@
         nixpkgs.follows = "nixpkgs";
         nixpkgs-stable.follows = "nixpkgs";
         flake-compat.follows = "blank";
-        flake-utils.follows = "repin-flake-utils";
       };
     };
 

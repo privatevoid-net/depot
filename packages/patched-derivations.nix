@@ -18,6 +18,10 @@ super: rec {
     };
   };
 
+  jitsi-meet-insecure = let
+    olm-insecure = assert builtins.length super.olm.meta.knownVulnerabilities > 0; super.olm.overrideAttrs (o: { meta = o.meta // { knownVulnerabilities = []; }; });
+  in super.jitsi-meet.override { olm = olm-insecure; };
+
   jre17_standard = let
     jre = super.jre_minimal.override {
       jdk = super.jdk17_headless;
@@ -46,7 +50,7 @@ super: rec {
 
   prometheus-jitsi-exporter = patch super.prometheus-jitsi-exporter "patches/base/prometheus-jitsi-exporter";
 
-  s3ql = (patch super.s3ql "patches/base/s3ql").overrideAttrs (old: {
+  s3ql = super.s3ql.overrideAttrs (old: {
     propagatedBuildInputs = old.propagatedBuildInputs ++ [
       super.python3Packages.packaging
       super.python3Packages.systemd

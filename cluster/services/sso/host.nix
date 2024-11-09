@@ -37,10 +37,11 @@ in
       passwordFile = "/run/locksmith/patroni-keycloak";
     };
     settings = {
+      http-enabled = true;
       http-host = kc.ipv4;
       http-port = kc.port;
       hostname = login;
-      proxy = "edge";
+      proxy-headers = "xforwarded";
       # for backcompat, TODO: remove
       http-relative-path = "/auth";
     };

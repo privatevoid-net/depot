@@ -1,25 +1,28 @@
-diff --git a/unix_integration/src/idprovider/kanidm.rs b/unix_integration/src/idprovider/kanidm.rs
-index 6fc015756..31593f03e 100644
---- a/unix_integration/src/idprovider/kanidm.rs
-+++ b/unix_integration/src/idprovider/kanidm.rs
-@@ -4,6 +4,7 @@ use kanidm_client::{ClientError, KanidmClient, StatusCode};
- use kanidm_proto::internal::OperationError;
+diff --git a/unix_integration/resolver/src/idprovider/kanidm.rs b/unix_integration/resolver/src/idprovider/kanidm.rs
+index 63cedb4d5..35c45fb0e 100644
+--- a/unix_integration/resolver/src/idprovider/kanidm.rs
++++ b/unix_integration/resolver/src/idprovider/kanidm.rs
+@@ -7,6 +7,7 @@ use kanidm_proto::internal::OperationError;
  use kanidm_proto::v1::{UnixGroupToken, UnixUserToken};
- use tokio::sync::{broadcast, RwLock};
+ use std::collections::BTreeSet;
+ use std::time::{Duration, SystemTime};
 +use std::env;
+ use tokio::sync::{broadcast, Mutex};
  
- use super::interface::{
-     // KeyStore,
-@@ -25,12 +26,28 @@ const TAG_IDKEY: &str = "idkey";
- 
- pub struct KanidmProvider {
-     client: RwLock<KanidmClient>,
+ use kanidm_lib_crypto::CryptoPolicy;
+@@ -38,6 +39,8 @@ struct KanidmProviderInternal {
+     hmac_key: HmacKey,
+     crypto_policy: CryptoPolicy,
+     pam_allow_groups: BTreeSet<String>,
 +    auth_name: Option<String>,
 +    auth_password: Option<String>,
  }
  
- impl KanidmProvider {
-     pub fn new(client: KanidmClient) -> Self {
+ pub struct KanidmProvider {
+@@ -102,6 +105,19 @@ impl KanidmProvider {
+             .map(|GroupMap { local, with }| (local, Id::Name(with)))
+             .collect();
+ 
 +        let env_username: Option<String>;
 +        let env_password: Option<String>;
 +        match (env::var_os("KANIDM_NAME"), env::var_os("KANIDM_PASSWORD")) {
@@ -32,23 +35,29 @@ index 6fc015756..31593f03e 100644
 +                env_password = None;
 +            }
 +        }
-         KanidmProvider {
-             client: RwLock::new(client),
-+            auth_name: env_username,
-+            auth_password: env_password,
-         }
++
+         Ok(KanidmProvider {
+             inner: Mutex::new(KanidmProviderInternal {
+                 state: CacheState::OfflineNextCheck(now),
+@@ -109,6 +125,8 @@ impl KanidmProvider {
+                 hmac_key,
+                 crypto_policy,
+                 pam_allow_groups,
++                auth_name: env_username,
++                auth_password: env_password
+             }),
+             map_group,
+         })
+@@ -256,7 +274,11 @@ impl KanidmProviderInternal {
      }
- }
-@@ -118,7 +135,11 @@ impl IdProvider for KanidmProvider {
  
-     // Needs .read on all types except re-auth.
-     async fn provider_authenticate(&self, _tpm: &mut tpm::BoxedDynTpm) -> Result<(), IdpError> {
--        match self.client.write().await.auth_anonymous().await {
+     async fn attempt_online(&mut self, _tpm: &mut tpm::BoxedDynTpm, now: SystemTime) -> bool {
+-        match self.client.auth_anonymous().await {
 +        let auth_method = match (&self.auth_name, &self.auth_password) {
-+            (Some(name), Some(password)) => self.client.write().await.auth_simple_password(name, password).await,
-+            _ => self.client.write().await.auth_anonymous().await
++            (Some(name), Some(password)) => self.client.auth_simple_password(name, password).await,
++            _ => self.client.auth_anonymous().await
 +        };
 +        match auth_method {
-             Ok(_uat) => Ok(()),
-             Err(err) => {
-                 error!(?err, "Provider authentication failed");
+             Ok(_uat) => {
+                 self.state = CacheState::Online;
+                 true

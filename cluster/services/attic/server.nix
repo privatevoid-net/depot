@@ -9,17 +9,13 @@ let
 in
 
 {
-  imports = [
-    depot.inputs.attic.nixosModules.atticd
-  ];
-
   services.locksmith.waitForSecrets.atticd = [ "garage-attic" ];
 
   services.atticd = {
     enable = true;
     package = depot.inputs.attic.packages.attic-server;
 
-    credentialsFile = secrets.serverToken.path;
+    environmentFile = secrets.serverToken.path;
     mode = if isMonolith then "monolithic" else "api-server";
 
     settings = {
