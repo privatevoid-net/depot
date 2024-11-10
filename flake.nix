@@ -30,9 +30,10 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
 
     nix-super = {
-      url = "gitlab:max/nix-super?host=git.privatevoid.net";
+      url = "https://forge.privatevoid.net/max/nix-super/archive/master.tar.gz";
       inputs = {
         nixpkgs-regression.follows = "blank";
+        nixpkgs-23-11.follows = "blank";
       };
     };
 
