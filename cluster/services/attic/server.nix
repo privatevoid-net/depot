@@ -65,6 +65,7 @@ in
     serviceConfig = {
       DynamicUser = lib.mkForce false;
       RestrictAddressFamilies = [ "AF_INET" "AF_INET6" "AF_UNIX" "AF_NETLINK" ];
+      SystemCallFilter = lib.mkAfter [ "@resources" ];
     };
     environment = {
       AWS_SHARED_CREDENTIALS_FILE = "/run/locksmith/garage-attic";
