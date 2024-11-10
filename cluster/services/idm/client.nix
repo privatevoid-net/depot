@@ -1,4 +1,4 @@
-{ cluster, config, pkgs, utils, ... }:
+{ cluster, config, lib, pkgs, utils, ... }:
 
 let
   frontendLink = cluster.config.links.idm;
@@ -39,9 +39,8 @@ in
   security = {
     pam.services.sudo = { config, ... }: {
       rules.auth.rssh = {
+        enable = lib.mkForce true;
         order = config.rules.auth.unix.order - 10;
-        control = "sufficient";
-        modulePath = "${pkgs.pam_rssh}/lib/libpam_rssh.so";
         settings = {
           authorized_keys_command = "/etc/ssh/authorized_keys_command_kanidm";
           authorized_keys_command_user = "nobody";
