@@ -58,6 +58,10 @@ with lib;
       type = types.str;
     };
 
+    static = mkOption {
+      type = with types; functionTo (coercedTo package (package: "${package.webroot or package}") str);
+    };
+
     healthCheckPath = mkOption {
       type = types.path;
       default = "/.well-known/ways/internal-health-check";
@@ -69,10 +73,10 @@ with lib;
       default = "https://${name}.${config.domainSuffix}";
     };
 
-    useConsul = mkOption {
-      type = types.bool;
+    mode = mkOption {
+      type = types.enum [ "simple" "consul" "static" ];
       internal = true;
-      default = false;
+      default = "simple";
     };
 
     nginxUpstreamName = mkOption {
@@ -105,12 +109,15 @@ with lib;
 
   config = lib.mkMerge [
     (lib.mkIf options.consulService.isDefined {
-      useConsul = true;
+      mode = "consul";
       nginxUpstreamName = "ways_upstream_${builtins.hashString "md5" options.consulService.value}";
       target = "${if config.grpc then "grpc" else "http"}://${options.nginxUpstreamName.value}";
     })
     (lib.mkIf options.bucket.isDefined {
       consulService = "garage-web";
+    })
+    (lib.mkIf options.static.isDefined {
+      mode = "static";
     })
   ];
 }
