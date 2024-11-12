@@ -14,7 +14,7 @@
       experimental-features = nix-command flakes cgroups
       use-cgroups = true
       builders-use-substitutes = true
-      flake-registry = https://git.${depot.lib.meta.domain}/private-void/registry/-/raw/master/registry.json
+      flake-registry = https://registry.${depot.lib.meta.domain}/flake-registry.json
       
       # For Hercules CI agent
       narinfo-cache-negative-ttl = 0
