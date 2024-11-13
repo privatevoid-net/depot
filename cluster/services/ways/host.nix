@@ -1,11 +1,15 @@
-{ cluster, config, lib, pkgs, ... }:
+{ cluster, config, depot, lib, pkgs, ... }:
 
 let
   externalWays = lib.filterAttrs (_: cfg: !cfg.internal) cluster.config.ways;
 
   internalWays = lib.filterAttrs (_: cfg: cfg.internal) cluster.config.ways;
 
-  consulServiceWays = lib.filterAttrs (_: cfg: cfg.useConsul) cluster.config.ways;
+  byMode = lib.pipe cluster.config.ways [
+    (lib.attrsToList)
+    (lib.groupBy (way: way.value.mode))
+    (lib.mapAttrs (n: v: lib.listToAttrs v))
+  ];
 in
 
 {
@@ -25,7 +29,13 @@ in
             ];
             locations = lib.mkMerge [
               {
-                "/" = if cfg.grpc then {
+                "/" = if cfg.mode == "static" then {
+                  root = cfg.static {
+                    inherit depot;
+                    inherit pkgs;
+                    inherit (pkgs) system;
+                  };
+                } else if cfg.grpc then {
                   extraConfig = ''
                     set $nix_proxy_grpc_target ${cfg.target};
                     grpc_pass $nix_proxy_grpc_target;
@@ -47,7 +57,7 @@ in
       };
     }) cluster.config.ways;
 
-    appendHttpConfig = lib.mkIf (consulServiceWays != {}) ''
+    appendHttpConfig = lib.mkIf (byMode.consul != {}) ''
       include /run/consul-template/nginx-ways-*.conf;
     '';
   };
@@ -67,7 +77,7 @@ in
     value.distributed.enable = true;
   }) externalWays;
 
-  services.consul-template.instances.ways = lib.mkIf (consulServiceWays != {}) {
+  services.consul-template.instances.ways = lib.mkIf (byMode.consul != {}) {
     user = "nginx";
     group = "nginx";
     settings = {
@@ -86,7 +96,7 @@ in
               {{ else }}
               # upstream ${cfg.nginxUpstreamName} (${cfg.consulService}): no servers available
               {{ end }}
-            '') consulServiceWays;
+            '') byMode.consul;
           in pkgs.writeText "ways-upstreams.ctmpl" (lib.concatStringsSep "\n" (lib.unique upstreams));
           destination = "/run/consul-template/nginx-ways-upstreams.conf";
           exec.command = lib.singleton (pkgs.writeShellScript "ways-reload" ''
