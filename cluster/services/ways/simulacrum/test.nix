@@ -20,7 +20,7 @@ in
         };
       };
     }
-    (lib.genAttrs cluster.config.services.ways.nodes.host (lib.const {
+    (lib.genAttrs cluster.config.services.ways.simulacrum.availableNodes (lib.const {
       services.nginx.upstreams.nowhere.servers = {
         "${(builtins.head config.nodes.nowhere.networking.interfaces.eth1.ipv4.addresses).address}:8080" = {};
       };

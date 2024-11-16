@@ -13,6 +13,7 @@
       enable = true;
       deps = [ "nginx" "acme-client" "dns" "certificates" "consul" ];
       settings = ./simulacrum/test.nix;
+      availableNodes = lib.take 3 config.services.ways.nodes.host;
     };
   };
 
