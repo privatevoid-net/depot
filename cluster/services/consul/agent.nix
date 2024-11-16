@@ -25,7 +25,7 @@ in
       bind_addr = hl.ipv4;
       ports.serf_lan = hl.port;
       retry_join = map (hostName: hostLinks.${hostName}.consul.tuple) (cfg.otherNodes.agent hostName);
-      bootstrap_expect = builtins.length cfg.nodes.agent;
+      bootstrap_expect = 3;
       addresses.http = config.links.consulAgent.ipv4;
       ports.http = config.links.consulAgent.port;
     };
