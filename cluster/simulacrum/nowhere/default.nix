@@ -52,6 +52,8 @@ let
   genHostCert = hostname: genCert [ "--hostname=${hostname}" ] { CN = hostname; };
 
   getNodeAddr = node: (builtins.head config.nodes.${node}.networking.interfaces.eth1.ipv4.addresses).address;
+
+  filterActiveNodes = lib.filterAttrs (node: _: config.nodes ? ${node});
 in
 
 {
@@ -79,7 +81,7 @@ in
         address = hour.interfaces.primary.addrPublic;
         prefixLength = 32;
         via = getNodeAddr name;
-      }) depot.gods.fromLight;
+      }) (filterActiveNodes depot.gods.fromLight);
       nameservers = map (name: depot.hours.${name}.interfaces.primary.addrPublic) cluster.config.services.dns.nodes.authoritative;
     };
     services.nginx = {
