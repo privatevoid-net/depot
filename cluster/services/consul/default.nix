@@ -26,6 +26,7 @@ in
       enable = true;
       deps = [ "wireguard" ];
       settings = ./test.nix;
+      availableNodes = lib.take 3 cfg.nodes.agent;
     };
   };
 
