@@ -58,6 +58,7 @@ in
       enable = true;
       deps = [ "wireguard" "consul" "locksmith" "dns" "incandescence" "ways" ];
       settings = ./simulacrum/test.nix;
+      availableNodes = config.services.storage.nodes.garage;
     };
   };
 
