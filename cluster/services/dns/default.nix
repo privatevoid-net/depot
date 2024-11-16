@@ -60,6 +60,7 @@ in
       enable = true;
       deps = [ "consul" "acme-client" "patroni" ];
       settings = ./test.nix;
+      availableNodes = cfg.nodes.authoritative;
     };
   };
 
