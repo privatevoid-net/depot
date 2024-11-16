@@ -22,8 +22,10 @@ let
     };
   };
 
-  nodes = lib.attrNames config.gods.fromLight;
-  nodes' = lib.attrNames (config.gods.fromLight // { nowhere = null; });
+  nodesConfigured = config.cluster.config.services.${service}.simulacrum.availableNodes;
+  availableNodes = if nodesConfigured == null then config.gods.fromLight else lib.genAttrs nodesConfigured (_: throw "unreachable");
+  nodes = lib.attrNames availableNodes;
+  nodes' = lib.attrNames (availableNodes // { nowhere = null; });
   digits = lib.attrsets.listToAttrs (lib.zipListsWith lib.nameValuePair nodes' (lib.range 1 255));
   depot' = extendModules {
     modules = [

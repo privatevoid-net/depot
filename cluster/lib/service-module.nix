@@ -1,9 +1,8 @@
-{ config, lib, name, ... }:
+{ config, lib, ... }:
 with lib;
 
 let
   filterGroup = group: hostName: builtins.filter (x: x != hostName) group;
-  serviceName = name;
 in
 
 {
@@ -64,6 +63,11 @@ in
         description = "Cluster augments (will be propagated).";
         type = types.deferredModule;
         default = {};
+      };
+      availableNodes = mkOption {
+        description = "Nodes to include in the scenario.";
+        type = with types; nullOr (listOf str);
+        default = null;
       };
     };
   };
