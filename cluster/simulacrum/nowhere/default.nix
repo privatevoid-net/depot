@@ -53,7 +53,7 @@ let
 
   getNodeAddr = node: (builtins.head config.nodes.${node}.networking.interfaces.eth1.ipv4.addresses).address;
 
-  filterActiveNodes = lib.filterAttrs (node: _: config.nodes ? node);
+  filterActiveNodes = lib.filterAttrs (node: _: config.nodes ? ${node});
 in
 
 {
