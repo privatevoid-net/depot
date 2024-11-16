@@ -50,9 +50,8 @@ super: rec {
 
   prometheus-jitsi-exporter = patch super.prometheus-jitsi-exporter "patches/base/prometheus-jitsi-exporter";
 
-  s3ql = super.s3ql.overrideAttrs (old: {
+  s3ql = (patch super.s3ql "patches/base/s3ql").overrideAttrs (old: {
     propagatedBuildInputs = old.propagatedBuildInputs ++ [
-      super.python3Packages.packaging
       super.python3Packages.systemd
     ];
   });

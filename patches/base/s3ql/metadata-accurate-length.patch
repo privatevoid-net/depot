@@ -1,0 +1,13 @@
+diff --git a/src/s3ql/database.py b/src/s3ql/database.py
+index 1c6df119..f3a47781 100644
+--- a/src/s3ql/database.py
++++ b/src/s3ql/database.py
+@@ -677,7 +677,7 @@ def upload_metadata(
+             )
+             obj = METADATA_OBJ_NAME % (blockno, params.seq_no)
+             fh.seek(blockno * blocksize)
+-            backend.write_fh(obj, fh, len_=blocksize)
++            backend.write_fh(obj, fh, len_=min(blocksize, db_size - blockno * blocksize))
+ 
+         if not update_params:
+             return
