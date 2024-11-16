@@ -41,6 +41,7 @@
       enable = true;
       deps = [ "consul" "incandescence" "locksmith" ];
       settings = ./simulacrum/test.nix;
+      availableNodes = config.services.patroni.nodes.worker;
     };
   };
 }
