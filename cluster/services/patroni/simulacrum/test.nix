@@ -1,8 +1,9 @@
-{ cluster, ... }:
+{ cluster, lib, ... }:
 
 let
   clusterName = "poseidon";
   link = cluster.config.links.patroni-pg-access;
+  expectedReplicas = (lib.length cluster.config.services.patroni.nodes.worker) - 1;
 in
 {
   defaults = { depot, pkgs, ... }: {
@@ -26,7 +27,7 @@ in
     def booted(nodes):
       return filter(lambda node: node.booted, nodes)
 
-    def wait_for_all_nodes_ready(expected_replicas=2):
+    def wait_for_all_nodes_ready(expected_replicas=${toString expectedReplicas}):
         booted_nodes = booted(nodes)
         for node in booted_nodes:
             node.wait_for_unit("patroni.service")
@@ -71,7 +72,7 @@ in
 
         for node in nodes:
             node.crash()
-            wait_for_all_nodes_ready(1)
+            wait_for_all_nodes_ready(${toString (expectedReplicas - 1)})
 
             # Execute some queries while a node is down.
             run_dummy_queries()
