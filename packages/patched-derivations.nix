@@ -2,6 +2,13 @@ let
   tools = import ./lib/tools.nix;
   pins = import ./sources;
 
+  acceptVulnerabilities = drv:
+    assert drv.meta ? knownVulnerabilities && builtins.length drv.meta.knownVulnerabilities > 0;
+    drv.overrideAttrs (old: {
+      meta = old.meta // {
+        knownVulnerabilities = [];
+      };
+    });
 in with tools;
 super: rec {
   acme-dns = patch super.acme-dns "patches/base/acme-dns";
@@ -19,7 +26,7 @@ super: rec {
   };
 
   jitsi-meet-insecure = let
-    olm-insecure = assert builtins.length super.olm.meta.knownVulnerabilities > 0; super.olm.overrideAttrs (o: { meta = o.meta // { knownVulnerabilities = []; }; });
+    olm-insecure = acceptVulnerabilities super.olm;
   in super.jitsi-meet.override { olm = olm-insecure; };
 
   jre17_standard = let
