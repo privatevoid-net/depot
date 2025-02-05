@@ -62,4 +62,26 @@ super: rec {
       super.python3Packages.systemd
     ];
   });
+
+  sonarr5 = let
+    version = "5.0.0.12";
+    src = super.fetchFromGitHub {
+      owner = "Sonarr";
+      repo = "Sonarr";
+      tag = "v${version}";
+      hash = "sha256-Pw+dvXNp0kQSwK+y3xZzcDivy45zgpqfZe1OUM8GOqY=";
+    };
+  in super.sonarr.override {
+    buildDotnetModule = args: super.buildDotnetModule (args // {
+      inherit version src;
+      nugetDeps = ./servers/sonarr/deps.json;
+      dotnet-sdk = super.dotnetCorePackages.sdk_8_0;
+      dotnet-runtime = super.dotnetCorePackages.aspnetcore_8_0;
+      dotnetFlags = map (builtins.replaceStrings ["net6.0" super.sonarr.version] ["net8.0" version]) args.dotnetFlags;
+    });
+    fetchYarnDeps = args: super.fetchYarnDeps (args // {
+      yarnLock = "${src}/yarn.lock";
+      hash = "sha256-ckaU3me5fGcOhK0m8BzMWaXc+zPpYyu+GhUHLts9edY=";
+    });
+  };
 }
