@@ -56,7 +56,6 @@ testers.runNixOSTest {
     machine.succeed("echo HelloWorld > /srv/test/hello/world.txt")
 
     with subtest("should upgrade"):
-      machine.succeed("systemctl stop remote-storage-test.service")
       machine.succeed("/run/current-system/specialisation/upgrade/bin/switch-to-configuration test")
       machine.wait_for_unit("remote-storage-test.service")
       machine.succeed("systemctl is-active remote-storage-test.service")
