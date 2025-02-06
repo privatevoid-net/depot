@@ -10,7 +10,6 @@
       homeserver = [
         ./homeserver.nix
         ./coturn.nix
-        ./bridges/discord.nix
       ];
       static = [
         ./federation.nix
