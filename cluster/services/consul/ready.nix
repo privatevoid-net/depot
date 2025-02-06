@@ -49,6 +49,7 @@ in
       DynamicUser = true;
       TimeoutStartSec = "5m";
       Type = "oneshot";
+      StartLimitBurst = 25;
     };
   };
 }
