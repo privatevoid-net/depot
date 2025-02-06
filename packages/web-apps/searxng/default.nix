@@ -50,6 +50,9 @@ toPythonModule (buildPythonApplication rec {
     fasttext-predict
     pybind11
     pytomlpp
+    msgspec
+    typer
+    isodate
     (callPackage ./deps/chompjs.nix {})
   ];
 

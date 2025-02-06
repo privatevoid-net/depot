@@ -77,9 +77,6 @@ in {
       # HACK: upstream has a weird assertion that doesn't work with our HAProxy setup
       # this host gets overridden by dbConfigOut
       database = lib.recursiveUpdate dbConfig.database { args.host = "_patroni.local"; };
-      app_service_config_files =  [
-        "/etc/synapse/discord-registration.yaml"
-      ];
       turn_uris = let
         combinations = lib.cartesianProduct {
           proto = [ "udp" "tcp" ];
@@ -115,7 +112,7 @@ in {
     };
   };
   systemd.services = lib.mkMerge [
-    (lib.genAttrs [ "coturn" "matrix-appservice-discord" "matrix-synapse" ] (_: {
+    (lib.genAttrs [ "coturn" "matrix-synapse" ] (_: {
       serviceConfig = {
         Slice = "communications.slice";
       };

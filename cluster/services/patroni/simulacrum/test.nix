@@ -108,6 +108,8 @@ in
         clients[0].succeed(f"{setEnv} consul kv delete --recurse services/incandescence/providers/patroni/formulae/database/existingdb")
         clients[0].succeed(f"{setEnv} consul kv delete --recurse services/incandescence/providers/patroni/formulae/user/existinguser")
 
+        for client in clients:
+            node.systemctl("start locksmith.service")
         for node in nodes:
             node.systemctl("restart incandescence-patroni.target")
         clients[0].succeed("[[ $(psql -h ${link.ipv4} -p ${link.portStr} -U postgres --tuples-only --csv --command=\"SELECT pg_roles.rolname FROM pg_database JOIN pg_roles ON pg_database.datdba = pg_roles.oid WHERE pg_database.datname = 'existingdb'\") == existinguser ]]")

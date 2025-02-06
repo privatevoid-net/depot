@@ -1,5 +1,5 @@
 diff --git a/unix_integration/resolver/src/idprovider/kanidm.rs b/unix_integration/resolver/src/idprovider/kanidm.rs
-index 63cedb4d5..35c45fb0e 100644
+index d0a6a8159..7ebc0449d 100644
 --- a/unix_integration/resolver/src/idprovider/kanidm.rs
 +++ b/unix_integration/resolver/src/idprovider/kanidm.rs
 @@ -7,6 +7,7 @@ use kanidm_proto::internal::OperationError;
@@ -10,7 +10,7 @@ index 63cedb4d5..35c45fb0e 100644
  use tokio::sync::{broadcast, Mutex};
  
  use kanidm_lib_crypto::CryptoPolicy;
-@@ -38,6 +39,8 @@ struct KanidmProviderInternal {
+@@ -39,6 +40,8 @@ struct KanidmProviderInternal {
      hmac_key: HmacKey,
      crypto_policy: CryptoPolicy,
      pam_allow_groups: BTreeSet<String>,
@@ -19,7 +19,7 @@ index 63cedb4d5..35c45fb0e 100644
  }
  
  pub struct KanidmProvider {
-@@ -102,6 +105,19 @@ impl KanidmProvider {
+@@ -103,6 +106,19 @@ impl KanidmProvider {
              .map(|GroupMap { local, with }| (local, Id::Name(with)))
              .collect();
  
@@ -39,7 +39,7 @@ index 63cedb4d5..35c45fb0e 100644
          Ok(KanidmProvider {
              inner: Mutex::new(KanidmProviderInternal {
                  state: CacheState::OfflineNextCheck(now),
-@@ -109,6 +125,8 @@ impl KanidmProvider {
+@@ -110,6 +126,8 @@ impl KanidmProvider {
                  hmac_key,
                  crypto_policy,
                  pam_allow_groups,
@@ -48,16 +48,16 @@ index 63cedb4d5..35c45fb0e 100644
              }),
              map_group,
          })
-@@ -256,7 +274,11 @@ impl KanidmProviderInternal {
-     }
- 
-     async fn attempt_online(&mut self, _tpm: &mut tpm::BoxedDynTpm, now: SystemTime) -> bool {
--        match self.client.auth_anonymous().await {
-+        let auth_method = match (&self.auth_name, &self.auth_password) {
-+            (Some(name), Some(password)) => self.client.auth_simple_password(name, password).await,
-+            _ => self.client.auth_anonymous().await
-+        };
-+        match auth_method {
-             Ok(_uat) => {
-                 self.state = CacheState::Online;
-                 true
+@@ -262,7 +280,11 @@ impl KanidmProviderInternal {
+         let mut max_attempts = 3;
+         while max_attempts > 0 {
+             max_attempts -= 1;
+-            match self.client.auth_anonymous().await {
++            let auth_method = match (&self.auth_name, &self.auth_password) {
++                (Some(name), Some(password)) => self.client.auth_simple_password(name, password).await,
++                _ => self.client.auth_anonymous().await
++            };
++            match auth_method {
+                 Ok(_uat) => {
+                     debug!("provider is now online");
+                     self.state = CacheState::Online;
