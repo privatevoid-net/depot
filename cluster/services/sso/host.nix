@@ -46,15 +46,5 @@ in
       http-relative-path = "/auth";
     };
   };
-  systemd.services.keycloak.environment = {
-    JAVA_OPTS = builtins.concatStringsSep " " [
-      "-javaagent:${depot.packages.opentelemetry-java-agent-bin}"
-      "-Dotel.resource.attributes=service.name=keycloak"
-      "-Dotel.traces.exporter=otlp"
-    ];
-    OTEL_EXPORTER_OTLP_PROTOCOL = "grpc";
-    OTEL_EXPORTER_OTLP_ENDPOINT = cluster.config.ways.ingest-traces-otlp.url;
-    OTEL_TRACES_SAMPLER = "parentbased_traceidratio";
-    OTEL_TRACES_SAMPLER_ARG = "0.50";
-  };
+  systemd.services.keycloak.serviceConfig.TimeoutStartSec = 300;
 }
