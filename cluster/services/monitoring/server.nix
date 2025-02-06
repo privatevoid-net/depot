@@ -7,7 +7,7 @@ in
     enable = true;
     listenAddress = prometheus-ingest.ipv4;
     inherit (prometheus-ingest) port;
-    extraFlags = [ "--enable-feature=remote-write-receiver" ];
+    extraFlags = [ "--web.enable-remote-write-receiver" ];
     globalConfig = {
       scrape_interval = "60s";
     };
