@@ -40,6 +40,14 @@
     module = "https2xx";
   };
 
+  garage = config.lib.forService "matrix" {
+    keys.synapse.locksmith = {
+      nodes = config.services.matrix.nodes.homeserver;
+      owner = "matrix-synapse";
+    };
+    buckets.matrix-media.allow.synapse = [ "read" "write" ];
+  };
+
   dns.records = let
     homeserverAddrs = map
       (node: depot.hours.${node}.interfaces.primary.addrPublic)
