@@ -49,16 +49,36 @@ let
       cp_max = 10;
     };
   };
+  s3Config = {
+    module = "s3_storage_provider.S3StorageProviderBackend";
+    store_local = true;
+    store_remote = true;
+    store_synchronous = true;
+    config = {
+      bucket = "matrix-media";
+      region_name = "us-east-1";
+      endpoint_url = cluster.config.links.garageS3.url;
+    };
+  };
+
   clientConfigJSON = pkgs.writeText "matrix-client-config.json" (builtins.toJSON clientConfig);
   logConfigJSON = pkgs.writeText "matrix-log-config.json" (builtins.toJSON logConfig);
-  dbConfigJSON = pkgs.writeText "matrix-log-config.json" (builtins.toJSON dbConfig);
+  dbConfigJSON = pkgs.writeText "matrix-db-config.json" (builtins.toJSON dbConfig);
   dbPasswordFile = secrets.dbConfig.path;
-  dbConfigOut = "${cfg.dataDir}/synapse-db-config-generated.yml";
+  dbConfigOut = "${cfg.dataDir}/synapse-db-config-generated.json";
+
+  s3ConfigJSON = pkgs.writeText "matrix-s3-config.json" (builtins.toJSON s3Config);
+  s3ConfigOut = "${cfg.dataDir}/synapse-s3-config-generated.json";
+
   cfg = config.services.matrix-synapse;
+  serviceCfg = config.systemd.services.matrix-synapse.serviceConfig;
 in {
   services.matrix-synapse = {
     enable = true;
-    plugins = [ pkgs.matrix-synapse-plugins.matrix-synapse-ldap3 ];
+    plugins = with config.services.matrix-synapse.package.plugins; [
+      matrix-synapse-ldap3
+      matrix-synapse-s3-storage-provider
+    ];
     dataDir = "/srv/storage/private/matrix";
 
     settings = {
@@ -90,7 +110,7 @@ in {
       "ldap"
       "turn"
       "keys"
-    ]) ++ [ dbConfigOut ];
+    ]) ++ [ dbConfigOut s3ConfigOut ];
   };
 
   services.nginx.virtualHosts = depot.lib.nginx.mappers.mapSubdomains {
@@ -120,7 +140,60 @@ in {
     {
       matrix-synapse.preStart = ''
         ${pkgs.jq}/bin/jq -c --slurp '.[0] * .[1]' ${dbConfigJSON} '${dbPasswordFile}' | install -Dm400 /dev/stdin '${dbConfigOut}'
+        ${pkgs.jq}/bin/jq -c < ${s3ConfigJSON} \
+          --rawfile accessKey /run/locksmith/garage-synapse-id \
+          --rawfile secretKey /run/locksmith/garage-synapse-secret '{
+          media_storage_providers: [
+            (. * {
+              config: {
+                access_key_id: $accessKey | gsub("\\n"; ""),
+                secret_access_key: $secretKey | gsub("\\n"; "")
+              }
+            })
+          ]
+        }' | install -Dm400 /dev/stdin '${s3ConfigOut}'
       '';
     }
+    {
+      matrix-synapse.serviceConfig.TimeoutStartSec = 600;
+    }
+    {
+      matrix-media-upload = {
+        after = [ cfg.serviceUnit ];
+        requires = [ cfg.serviceUnit ];
+        serviceConfig = {
+          Type = "oneshot";
+          inherit (serviceCfg) User Group WorkingDirectory;
+          PrivateTmp = true;
+        };
+        path = [
+          pkgs.jq
+          cfg.package.plugins.matrix-synapse-s3-storage-provider
+        ];
+        script = ''
+          jq < '${dbConfigOut}' '{
+            database: .database.args.database,
+            host: .database.args.host,
+            port: .database.args.port,
+            user: .database.args.user,
+            password: .database.args.password
+          }' | install -Dm400 /dev/stdin database.yaml
+          export AWS_ACCESS_KEY_ID="$(cat /run/locksmith/garage-synapse-id)"
+          export AWS_SECRET_ACCESS_KEY="$(cat /run/locksmith/garage-synapse-secret)"
+          s3_media_upload --no-progress update-db 1d --homeserver-config-path '${dbConfigOut}'
+          s3_media_upload --no-progress check-deleted media
+          s3_media_upload --no-progress upload --delete media matrix-media --endpoint-url '${cluster.config.links.garageS3.url}'
+        '';
+      };
+    }
   ];
+
+  systemd.timers.matrix-media-upload = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "24h";
+      OnUnitActiveSec = "24h";
+      RandomizedDelaySec = "6h";
+    };
+  };
 }

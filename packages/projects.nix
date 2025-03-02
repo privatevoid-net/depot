@@ -40,6 +40,8 @@
 
       opentelemetry-java-agent-bin = pkgs.callPackage ./monitoring/opentelemetry-java-agent-bin { };
 
+      out-of-your-element = pkgs.callPackage ./servers/out-of-your-element { };
+
       pin = pkgs.callPackage ./tools/pin {
         inherit npins;
         nix = nix-super;

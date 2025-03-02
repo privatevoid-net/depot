@@ -31,13 +31,24 @@
         nodes = nodes.homeserver;
         owner = "turnserver";
       };
-      discordAppServiceToken.nodes = nodes.homeserver;
+      discordBridgeToken = {
+        nodes = nodes.homeserver;
+        owner = "matrix-synapse";
+      };
     };
   };
 
   monitoring.blackbox.targets.matrix = {
     address = "https://matrix.${depot.lib.meta.domain}/_matrix/federation/v1/version";
     module = "https2xx";
+  };
+
+  garage = config.lib.forService "matrix" {
+    keys.synapse.locksmith = {
+      nodes = config.services.matrix.nodes.homeserver;
+      owner = "matrix-synapse";
+    };
+    buckets.matrix-media.allow.synapse = [ "read" "write" ];
   };
 
   dns.records = let
@@ -48,6 +59,7 @@
     matrix.target = homeserverAddrs;
     stun.target = homeserverAddrs;
     turn.target = homeserverAddrs;
+    "discord.bridges.matrix".target = homeserverAddrs;
     chat.consulService = "static-lb";
   };
 }
