@@ -31,7 +31,10 @@
         nodes = nodes.homeserver;
         owner = "turnserver";
       };
-      discordAppServiceToken.nodes = nodes.homeserver;
+      discordBridgeToken = {
+        nodes = nodes.homeserver;
+        owner = "matrix-synapse";
+      };
     };
   };
 
@@ -56,6 +59,7 @@
     matrix.target = homeserverAddrs;
     stun.target = homeserverAddrs;
     turn.target = homeserverAddrs;
+    "discord.bridges.matrix".target = homeserverAddrs;
     chat.consulService = "static-lb";
   };
 }
