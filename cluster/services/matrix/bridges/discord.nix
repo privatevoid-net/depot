@@ -52,7 +52,7 @@ in
   };
   systemd.services = {
     ooye-init = {
-      description = "Out Of Your Element Setup";
+      description = "Out Of Your Element Init";
       before = [ synapse.serviceUnit ];
       wantedBy = [ synapse.serviceUnit ];
       serviceConfig = {
@@ -60,10 +60,9 @@ in
         Type = "oneshot";
         RemainAfterExit = true;
         WorkingDirectory = stateDir;
-        ExecStart = "${out-of-your-element}/bin/out-of-your-element-setup";
       };
       restartTriggers = [ secretFile ];
-      preStart = let
+      script = let
         genSecret = "head -c1024 /dev/urandom | sha256sum | head -c64";
       in ''
         if ! test -e secrets.json; then
@@ -75,10 +74,22 @@ in
         ${pkgs.jq}/bin/jq -c --slurp '.[0] * .[1] * .[2]' ${registrationJson} secrets.json '${secrets.discordBridgeToken.path}' > '${registrationOut}'
       '';
     };
-    ooye = {
-      description = "Out Of Your Element";
+    ooye-setup = {
+      description = "Out Of Your Element Setup";
       after = [ "ooye-init.service" synapse.serviceUnit ];
       requires = [ "ooye-init.service" synapse.serviceUnit ];
+      serviceConfig = {
+        inherit (synapseService) User Group;
+        Type = "oneshot";
+        WorkingDirectory = stateDir;
+        ExecStart = "${out-of-your-element}/bin/out-of-your-element-setup";
+      };
+      restartTriggers = [ registrationJson secretFile ];
+    };
+    ooye = {
+      description = "Out Of Your Element";
+      after = [ "ooye-setup.service" synapse.serviceUnit ];
+      requires = [ "ooye-setup.service" synapse.serviceUnit ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         inherit (synapseService) User Group;
