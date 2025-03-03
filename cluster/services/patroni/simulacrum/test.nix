@@ -112,6 +112,7 @@ in
             node.systemctl("start locksmith.service")
         for node in nodes:
             node.systemctl("restart incandescence-patroni.target")
+            node.succeed("[[ \"$(systemctl is-active locksmith.service)\" != activating ]] || systemctl start locksmith.service")
         clients[0].succeed("[[ $(psql -h ${link.ipv4} -p ${link.portStr} -U postgres --tuples-only --csv --command=\"SELECT pg_roles.rolname FROM pg_database JOIN pg_roles ON pg_database.datdba = pg_roles.oid WHERE pg_database.datname = 'existingdb'\") == existinguser ]]")
         for client in clients:
             client.succeed(f"PGPASSFILE=/run/locksmith/patroni-existinguser psql -h ${link.ipv4} -p ${link.portStr} -U existinguser -d existingdb --command='create table test_table_{client.name} as select * from generate_series(1, 10) as val;'")
