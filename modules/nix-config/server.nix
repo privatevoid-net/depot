@@ -8,7 +8,6 @@
 
     settings = {
       trusted-users = [ "root" "@wheel" "@admins" ];
-      substituters = [ "https://cache.${depot.lib.meta.domain}" ];
       trusted-public-keys = [ "cache.privatevoid.net:SErQ8bvNWANeAvtsOESUwVYr2VJynfuc9JRwlzTTkVg=" ];
     };
 
