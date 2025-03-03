@@ -92,7 +92,7 @@ in {
         chaos "Private Void DNS" info@privatevoid.net
         cache {
           success 4000 86400
-          denial 0
+          disable denial
           prefetch 3
           serve_stale 86400s verify
         }
