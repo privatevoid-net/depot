@@ -1,8 +1,10 @@
-{ depot, ... }:
+{ depot, lib, ... }:
 
 {
   nix = {
-    package = depot.inputs.nix-super.packages.default;
+    package = let
+      nix = depot.inputs.nix-super.packages.default;
+    in { version = lib.getVersion nix.name; } // nix;
 
     settings = {
       trusted-users = [ "root" "@wheel" "@admins" ];
@@ -15,7 +17,7 @@
       use-cgroups = true
       builders-use-substitutes = true
       flake-registry = https://registry.${depot.lib.meta.domain}/flake-registry.json
-      
+
       # For Hercules CI agent
       narinfo-cache-negative-ttl = 0
     '';
