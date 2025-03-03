@@ -62,7 +62,7 @@ in
   hostLinks = lib.genAttrs allNodes (host: {
     builderCache = rec {
       hostname = "${lib.toLower host}.builder-cache.${depot.lib.meta.domain}";
-      tuple = hostname;
+      tuple = lib.mkForce hostname;
       protocol = "https";
     };
   });
