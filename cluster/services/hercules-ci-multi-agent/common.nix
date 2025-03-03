@@ -20,6 +20,7 @@ in
 {
   imports = [
     ./modules/multi-agent-refactored
+    ./builder-cache.nix
   ];
 
   systemd.services = mergeMap (_: _: {
