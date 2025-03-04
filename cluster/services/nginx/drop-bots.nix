@@ -20,6 +20,7 @@
       ~*DotBot 1;
       ~*GPTBot 1;
       ~*Googlebot 1;
+      ~*ImagesiftBot 1;
       ~*MJ12Bot 1;
       ~*OAI-SearchBot 1;
       ~*SemrushBot 1;
