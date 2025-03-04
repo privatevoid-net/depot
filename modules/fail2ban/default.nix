@@ -1,5 +1,9 @@
 { config, ... }:
 {
+  imports = [
+    ./xdp.nix
+  ];
+
   services.fail2ban = {
     enable = true;
     banaction = "iptables-multiport[blocktype=DROP]";
