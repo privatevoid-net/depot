@@ -3,6 +3,12 @@
 let
   kvRoot = "secrets/locksmith";
   activeProvders = lib.filterAttrs (_: cfg: lib.any (secret: secret.nodes != []) (lib.attrValues cfg.secrets)) config.services.locksmith.providers;
+  refreshProviders = lib.filterAttrs (_: cfg: lib.pipe cfg.secrets [
+    lib.attrValues
+    (map (x: x.updateInterval))
+    (lib.filter lib.isInt)
+    (xs: xs != [])
+  ]) activeProvders;
 in
 
 {
@@ -31,6 +37,10 @@ in
                 checkUpdate = mkOption {
                   type = types.coercedTo types.package (package: "${package}") types.str;
                   default = "true";
+                };
+                updateInterval = mkOption {
+                  type = types.nullOr types.ints.unsigned;
+                  default = null;
                 };
                 owner = mkOption {
                   type = types.str;
@@ -112,4 +122,20 @@ in
       '';
     };
   }) activeProvders;
+
+  config.systemd.timers = lib.mapAttrs' (providerName: providerConfig: {
+    name = "locksmith-refresh-${providerName}";
+    value = {
+      description = "Locksmith Refresh | ${providerName}";
+      timerConfig = {
+        Unit = "locksmith-provider-${providerName}.service";
+        OnUnitActiveSec = lib.pipe providerConfig.secrets [
+          lib.attrValues
+          (map (x: x.updateInterval))
+          (lib.filter lib.isInt)
+          (lib.foldl' lib.min (365 * 86400))
+        ];
+      };
+    };
+  }) refreshProviders;
 }
