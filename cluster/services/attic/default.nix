@@ -5,6 +5,7 @@
     nodes = {
       monolith = [ "VEGAS" "prophet" ];
       server = [ "VEGAS" "grail" "prophet" ];
+      cache-client = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
     };
     nixos = {
       monolith = [
@@ -14,6 +15,11 @@
         ./server.nix
         ./binary-cache.nix
         ./nar-serve.nix
+      ];
+      cache-client = [
+        ./builder-cache-client.nix
+        ./attic-cache-client.nix
+        ./s3-cache-client.nix
       ];
     };
     meshLinks.server.attic.link.protocol = "http";

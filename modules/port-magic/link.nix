@@ -75,6 +75,6 @@ in
     port = mkDefault (portHash "${cfg.hostname}:${name}");
     portStr = toString cfg.port;
     tuple = "${cfg.hostname}:${cfg.portStr}";
-    url = "${cfg.protocol}://${cfg.hostname}:${cfg.portStr}${if cfg.path == null then "" else cfg.path}";
+    url = "${cfg.protocol}://${cfg.tuple}${if cfg.path == null then "" else cfg.path}";
   };
 }

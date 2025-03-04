@@ -1,5 +1,9 @@
-{ config, lib, ... }:
+{ config, depot, lib, ... }:
 
+let
+  inherit (config.services.hercules-ci-multi-agent) nodes;
+  allNodes = lib.unique (lib.concatLists (lib.attrValues nodes));
+in
 {
   services.hercules-ci-multi-agent = {
     nodes = {
@@ -27,10 +31,7 @@
         ./common.nix
       ];
     };
-    secrets = let
-      inherit (config.services.hercules-ci-multi-agent) nodes;
-      allNodes = lib.unique (lib.concatLists (lib.attrValues nodes));
-    in {
+    secrets = {
       cacheConfig = {
         nodes = allNodes;
         mode = "0440";
@@ -41,6 +42,9 @@
         shared = false;
         mode = "0440";
         group = "hercules-ci-agent";
+      };
+      cacheSigningKey = {
+        nodes = allNodes;
       };
       effectsSecrets = {
         nodes = nodes.private-void;
@@ -55,13 +59,20 @@
       };
     }) nodes;
   };
+  hostLinks = lib.genAttrs allNodes (host: {
+    builderCache = rec {
+      hostname = "${lib.toLower host}.builder-cache.${depot.lib.meta.domain}";
+      tuple = lib.mkForce hostname;
+      protocol = "https";
+    };
+  });
+  dns = config.lib.forService "hercules-ci-multi-agent" {
+    records = lib.listToAttrs (map (host: lib.nameValuePair "${lib.toLower host}.builder-cache" {
+      target = [ depot.hours.${host}.interfaces.primary.addrPublic ];
+    }) allNodes);
+  };
   garage = let
-    hciAgentKeys = lib.pipe config.services.hercules-ci-multi-agent.nodes [
-      (lib.collect lib.isList)
-      lib.flatten
-      lib.unique
-      (map (x: "hci-agent-${x}"))
-    ];
+    hciAgentKeys = map (x: "hci-agent-${x}") allNodes;
   in config.lib.forService "hercules-ci-multi-agent" {
     keys = lib.genAttrs hciAgentKeys (lib.const {});
     buckets.nix-store = {
