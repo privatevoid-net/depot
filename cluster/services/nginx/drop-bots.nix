@@ -41,6 +41,8 @@
     services.fail2ban.jails.nginx.settings = {
       filter = "nginx-drop-status-444";
       banaction = "xdp";
+      findtime = "3600";
+      maxretry = "2";
     };
   };
 }
