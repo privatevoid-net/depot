@@ -4,7 +4,10 @@
       "list": [
         {
           "builtIn": 1,
-          "datasource": "-- Grafana --",
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
           "enable": true,
           "hide": true,
           "iconColor": "rgba(0, 211, 255, 1)",
@@ -18,10 +21,15 @@
           "type": "dashboard"
         },
         {
-          "datasource": "Loki",
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
           "enable": false,
-          "expr": "{syslog_identifier=~\"fail2ban.observer\",systemd_unit=\"fail2ban.service\"} |= \"incr\" | pattern \"<_> IP <f2b_target_ip> is bad: <_> - incr <_> to <f2b_bantime_post_h>:<_>\" | f2b_bantime_post_h > 5",
+          "expr": "{syslog_identifier=~\"fail2ban.observer\",systemd_unit=\"fail2ban.service\"} |= \"incr\" | pattern \"<_> IP <f2b_target_ip> is bad: <_> - incr <_> to <f2b_bt_raw>\" | label_format f2b_bt=\"{{ .f2b_bt_raw | replace \\\" \\\" \\\"\\\" | duration_seconds }}\" | f2b_bt > 18000",
+          "hide": false,
           "iconColor": "red",
+          "instant": false,
           "name": "Large ban annotations",
           "target": {},
           "titleFormat": ""
@@ -31,9 +39,8 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 991,
+    "id": 1526,
     "links": [],
-    "liveNow": false,
     "panels": [
       {
         "datasource": {
@@ -73,22 +80,36 @@
         "id": 9,
         "options": {
           "displayMode": "lcd",
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": false
+          },
+          "maxVizHeight": 300,
+          "minVizHeight": 16,
+          "minVizWidth": 8,
+          "namePlacement": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
             "calcs": [],
             "fields": "",
             "values": true
           },
-          "showUnfilled": false
+          "showUnfilled": false,
+          "sizing": "auto",
+          "valueMode": "color"
         },
-        "pluginVersion": "8.4.7",
+        "pluginVersion": "11.5.1",
         "targets": [
           {
             "datasource": {
               "type": "loki",
               "uid": "P8E80F9AEF21F6940"
             },
-            "expr": "topk (8,\n   max by (banned_ip_addr) (\n    max_over_time (\n      {syslog_identifier=~\"fail2ban.observer\",systemd_unit=\"fail2ban.service\"}\n      | pattern \"<_> IP <banned_ip_addr> is bad: <_> - incr <_> to <f2b_bt_h>:<f2b_bt_m>:<f2b_bt_s>\"\n      | label_format f2b_bt=\"{{ add (mul .f2b_bt_h 3600) (mul .f2b_bt_m 60) .f2b_bt_s }}\"\n      | unwrap f2b_bt [$__range]\n    )\n  )\n)",
+            "direction": "backward",
+            "editorMode": "code",
+            "expr": "topk (8,\n   max by (banned_ip_addr) (\n    max_over_time (\n      {syslog_identifier=~\"fail2ban.observer\",systemd_unit=\"fail2ban.service\"} |= \" - incr \"\n      | pattern \"<_> IP <banned_ip_addr> is bad: <_> - incr <_> to <f2b_bt_raw>\"\n      | label_format f2b_bt=\"{{ .f2b_bt_raw | replace \\\" \\\" \\\"\\\" | duration_seconds }}\"\n      | unwrap f2b_bt [$__range]\n    )\n  )\n)",
             "legendFormat": "{{ banned_ip_addr }}",
             "queryType": "instant",
             "refId": "A"
@@ -134,15 +155,27 @@
         "id": 3,
         "options": {
           "displayMode": "lcd",
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": false
+          },
+          "maxVizHeight": 300,
+          "minVizHeight": 16,
+          "minVizWidth": 8,
+          "namePlacement": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
             "calcs": [],
             "fields": "",
             "values": true
           },
-          "showUnfilled": true
+          "showUnfilled": true,
+          "sizing": "auto",
+          "valueMode": "color"
         },
-        "pluginVersion": "8.4.7",
+        "pluginVersion": "11.5.1",
         "targets": [
           {
             "datasource": {
@@ -191,6 +224,16 @@
         "id": 4,
         "options": {
           "displayMode": "lcd",
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": false
+          },
+          "maxVizHeight": 300,
+          "minVizHeight": 16,
+          "minVizWidth": 8,
+          "namePlacement": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
             "calcs": [],
@@ -198,9 +241,11 @@
             "values": true
           },
           "showUnfilled": true,
-          "text": {}
+          "sizing": "auto",
+          "text": {},
+          "valueMode": "color"
         },
-        "pluginVersion": "8.4.7",
+        "pluginVersion": "11.5.1",
         "targets": [
           {
             "datasource": {
@@ -227,9 +272,13 @@
               "mode": "palette-classic"
             },
             "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
               "axisLabel": "",
               "axisPlacement": "auto",
               "barAlignment": 0,
+              "barWidthFactor": 0.6,
               "drawStyle": "line",
               "fillOpacity": 0,
               "gradientMode": "none",
@@ -238,6 +287,7 @@
                 "tooltip": false,
                 "viz": false
               },
+              "insertNulls": false,
               "lineInterpolation": "smooth",
               "lineWidth": 1,
               "pointSize": 5,
@@ -282,13 +332,16 @@
           "legend": {
             "calcs": [],
             "displayMode": "list",
-            "placement": "bottom"
+            "placement": "bottom",
+            "showLegend": true
           },
           "tooltip": {
+            "hideZeros": false,
             "mode": "multi",
             "sort": "none"
           }
         },
+        "pluginVersion": "11.5.1",
         "targets": [
           {
             "datasource": {
@@ -340,15 +393,27 @@
         "id": 2,
         "options": {
           "displayMode": "lcd",
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": false
+          },
+          "maxVizHeight": 300,
+          "minVizHeight": 16,
+          "minVizWidth": 8,
+          "namePlacement": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
             "calcs": [],
             "fields": "",
             "values": true
           },
-          "showUnfilled": false
+          "showUnfilled": false,
+          "sizing": "auto",
+          "valueMode": "color"
         },
-        "pluginVersion": "8.4.7",
+        "pluginVersion": "11.5.1",
         "targets": [
           {
             "datasource": {
@@ -401,15 +466,27 @@
         "id": 10,
         "options": {
           "displayMode": "lcd",
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": false
+          },
+          "maxVizHeight": 300,
+          "minVizHeight": 16,
+          "minVizWidth": 8,
+          "namePlacement": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
             "calcs": [],
             "fields": "",
             "values": true
           },
-          "showUnfilled": false
+          "showUnfilled": false,
+          "sizing": "auto",
+          "valueMode": "color"
         },
-        "pluginVersion": "8.4.7",
+        "pluginVersion": "11.5.1",
         "targets": [
           {
             "datasource": {
@@ -437,9 +514,13 @@
               "mode": "palette-classic"
             },
             "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
               "axisLabel": "",
               "axisPlacement": "auto",
               "barAlignment": 0,
+              "barWidthFactor": 0.6,
               "drawStyle": "line",
               "fillOpacity": 0,
               "gradientMode": "none",
@@ -448,6 +529,7 @@
                 "tooltip": false,
                 "viz": false
               },
+              "insertNulls": false,
               "lineInterpolation": "smooth",
               "lineWidth": 1,
               "pointSize": 5,
@@ -492,13 +574,16 @@
           "legend": {
             "calcs": [],
             "displayMode": "list",
-            "placement": "bottom"
+            "placement": "bottom",
+            "showLegend": true
           },
           "tooltip": {
+            "hideZeros": false,
             "mode": "multi",
             "sort": "none"
           }
         },
+        "pluginVersion": "11.5.1",
         "targets": [
           {
             "datasource": {
@@ -524,9 +609,13 @@
               "mode": "palette-classic"
             },
             "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
               "axisLabel": "",
               "axisPlacement": "auto",
               "barAlignment": 0,
+              "barWidthFactor": 0.6,
               "drawStyle": "line",
               "fillOpacity": 0,
               "gradientMode": "none",
@@ -535,6 +624,7 @@
                 "tooltip": false,
                 "viz": false
               },
+              "insertNulls": false,
               "lineInterpolation": "smooth",
               "lineWidth": 1,
               "pointSize": 5,
@@ -579,13 +669,16 @@
           "legend": {
             "calcs": [],
             "displayMode": "list",
-            "placement": "bottom"
+            "placement": "bottom",
+            "showLegend": true
           },
           "tooltip": {
+            "hideZeros": false,
             "mode": "multi",
             "sort": "none"
           }
         },
+        "pluginVersion": "11.5.1",
         "targets": [
           {
             "datasource": {
@@ -601,22 +694,22 @@
         "type": "timeseries"
       }
     ],
+    "preload": false,
     "refresh": "5m",
-    "schemaVersion": 35,
-    "style": "dark",
+    "schemaVersion": 40,
     "tags": [],
     "templating": {
       "list": []
     },
     "time": {
-      "from": "now-7d",
+      "from": "now-24h",
       "to": "now"
     },
     "timepicker": {},
     "timezone": "",
     "title": "fail2ban",
     "uid": "DoU6WSXnk",
-    "version": 1,
+    "version": 3,
     "weekStart": ""
   },
   "folderId": 0,
