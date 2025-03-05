@@ -29,7 +29,6 @@ in
       # hercules-ci-agent-restarter should take care of this
       restartIfChanged = false;
       environment = {
-        AWS_SHARED_CREDENTIALS_FILE = secrets.cacheCredentials.path;
         AWS_EC2_METADATA_DISABLED = "true";
       };
       serviceConfig.Slice = "builder.slice";
@@ -41,7 +40,7 @@ in
     package = depot.inputs.hercules-ci-agent.packages.hercules-ci-agent;
     settings = {
       clusterJoinTokenPath = secrets."clusterJoinToken-${org}".path;
-      binaryCachesPath = secrets.cacheConfig.path;
+      binaryCachesPath = builtins.toFile "binary-caches.json" "{}";
       concurrentTasks = lib.pipe config.reflection.hardware.cpu.cores [
         (lib.flip builtins.div 2)
         builtins.floor

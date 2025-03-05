@@ -32,17 +32,6 @@ in
       ];
     };
     secrets = {
-      cacheConfig = {
-        nodes = allNodes;
-        mode = "0440";
-        group = "hercules-ci-agent";
-      };
-      cacheCredentials = {
-        nodes = allNodes;
-        shared = false;
-        mode = "0440";
-        group = "hercules-ci-agent";
-      };
       cacheSigningKey = {
         nodes = allNodes;
       };
