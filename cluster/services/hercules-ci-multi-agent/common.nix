@@ -21,6 +21,7 @@ in
   imports = [
     ./modules/multi-agent-refactored
     ./builder-cache.nix
+    ./attic-uploader.nix
   ];
 
   systemd.services = mergeMap (_: _: {
