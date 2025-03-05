@@ -2,7 +2,7 @@
 
 {
   services.locksmith.providers.attic = {
-    wantedBy = [ "atticd.service" ];
+    wantedBy = [ "atticd.service" "multi-user.target" ];
     after = [ "atticd.service" ];
     secrets = lib.mapAttrs (name: token: {
       command = let
