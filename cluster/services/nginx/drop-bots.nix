@@ -43,6 +43,9 @@
       banaction = "xdp";
       findtime = "3600";
       maxretry = "2";
+      "bantime.maxtime" = "672h";
+      "bantime.rndtime" = "10m";
+      "bantime.factor" = "16";
     };
   };
 }
