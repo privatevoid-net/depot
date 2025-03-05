@@ -1,6 +1,10 @@
 { config, depot, ... }:
 
 {
+  imports = [
+    ./options.nix
+  ];
+
   services.attic = {
     nodes = {
       monolith = [ "VEGAS" "prophet" ];
@@ -10,6 +14,7 @@
     nixos = {
       monolith = [
         ./server.nix
+        ./token-provider.nix
       ];
       server = [
         ./server.nix
