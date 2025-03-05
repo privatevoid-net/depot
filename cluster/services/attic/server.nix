@@ -9,7 +9,7 @@ let
 in
 
 {
-  services.locksmith.waitForSecrets.atticd = [ "garage-attic" ];
+  services.locksmith.waitForSecrets.atticd = [ "garage-attic" "patroni-attic" ];
 
   services.atticd = {
     enable = true;
@@ -69,7 +69,7 @@ in
     };
     environment = {
       AWS_SHARED_CREDENTIALS_FILE = "/run/locksmith/garage-attic";
-      PGPASSFILE = secrets.dbCredentials.path;
+      PGPASSFILE = "/run/locksmith/patroni-attic";
     };
   };
 

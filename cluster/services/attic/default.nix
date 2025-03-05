@@ -29,10 +29,6 @@
       serverToken = {
         nodes = nodes.server;
       };
-      dbCredentials = {
-        nodes = nodes.server;
-        owner = "atticd";
-      };
     };
   };
 
@@ -44,6 +40,14 @@
     };
     buckets.attic = {
       allow.attic = [ "read" "write" ];
+    };
+  };
+
+  patroni = config.lib.forService "attic" {
+    databases.attic = {};
+    users.attic.locksmith = {
+      nodes = config.services.attic.nodes.server;
+      owner = "atticd";
     };
   };
 
