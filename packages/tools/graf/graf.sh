@@ -16,7 +16,7 @@ cmd_export() {
 }
 
 cmd_import() {
-  dashboardUid="$(cat cluster/services/monitoring/dashboards/dashboard-*.json | jq -r '"\(.dashboard.uid) | \(.dashboard.title)"' | gum choose | cut -d " " -f1)"
+  dashboardUid="$(cat "$GRAF_DASHBOARDS_DIR"/dashboard-*.json | jq -r '"\(.dashboard.uid) | \(.dashboard.title)"' | gum choose | cut -d " " -f1)"
   dashboardLoc="$GRAF_DASHBOARDS_DIR/dashboard-$dashboardUid.json"
   dashboardUrl="$(api /dashboards/import -H "Content-Type: application/json" --data @"$dashboardLoc" | jq -r .importedUrl)"
   gum format "## Successfully imported dashboard to ${GRAFANA_HOST}${dashboardUrl}"
