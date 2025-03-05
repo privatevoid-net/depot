@@ -30,6 +30,18 @@ in
               type = enum [ "pgpass" "envFile" "raw" ];
               default = "pgpass";
             };
+            owner = mkOption {
+              type = str;
+              default = "root";
+            };
+            group = mkOption {
+              type = str;
+              default = "root";
+            };
+            mode = mkOption {
+              type = str;
+              default = "0400";
+            };
           };
         };
       }));

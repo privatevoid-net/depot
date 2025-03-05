@@ -91,7 +91,7 @@ in
         '';
       }.${userConfig.locksmith.format};
       checkUpdate = "test -e /run/keys/locksmith-provider-patroni-${user}";
-      inherit (userConfig.locksmith) nodes;
+      inherit (userConfig.locksmith) nodes owner group mode;
     }) cfg.users;
   };
 }
