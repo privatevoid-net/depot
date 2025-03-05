@@ -69,4 +69,10 @@ in
       web.enable = true;
     };
   };
+  attic = config.lib.forService "hercules-ci-agent" {
+    tokens.uploadToken = {
+      push = [ "nix-store" ];
+      locksmith.nodes = allNodes;
+    };
+  };
 }
