@@ -29,7 +29,7 @@
 
       ipfs = pkgs.callPackage ./networking/ipfs { };
 
-      npins = pkgs.callPackage ./tools/npins {
+      npins = pkgs.npins.override {
         nix = nix-super;
         nix-prefetch-git = pkgs.nix-prefetch-git.override {
           nix = nix-super;
