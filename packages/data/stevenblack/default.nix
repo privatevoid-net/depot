@@ -1,7 +1,7 @@
-{ stdenvNoCC, npins, pins }:
+{ stdenvNoCC, mkNpinsSource, pins }:
 
 let
-  src = npins.mkSource pins.stevenblack-hosts;
+  src = mkNpinsSource pins.stevenblack-hosts;
 in
 
 stdenvNoCC.mkDerivation {
