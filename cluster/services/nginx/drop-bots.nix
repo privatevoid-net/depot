@@ -16,6 +16,7 @@
       map $http_user_agent $drop_ua {
         default 0;
         ~*Amazonbot 1;
+        ~*BacklinksExtendedBot 1;
         ~*Bytespider 1;
         ~*ClaudeBot 1;
         ~*DataForSeoBot 1;
