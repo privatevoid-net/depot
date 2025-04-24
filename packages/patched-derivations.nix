@@ -61,7 +61,7 @@ super: rec {
   kanidm = patch super.kanidm "patches/base/kanidm";
 
   keycloak = super.keycloak.override {
-    jre = jre17_standard;
+    jre_headless = jre17_standard;
   };
 
   postgresql = super.postgresql_14;
