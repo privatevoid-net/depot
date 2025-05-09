@@ -3,7 +3,7 @@
 , mkYarnPackage
 , fetchYarnDeps
 , fixup_yarn_lock
-, npins
+, mkNpinsSource
 , pins
 }:
 
@@ -18,7 +18,7 @@ let
     REACT_APP_FIREBASE_CONFIG = "";
     REACT_APP_GOOGLE_ANALYTICS_ID = "";
 
-    src = npins.mkSource excalidraw;
+    src = mkNpinsSource excalidraw;
 
     packageJSON = "${excalidraw}/package.json";
 

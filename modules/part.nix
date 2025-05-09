@@ -15,7 +15,6 @@ in
     fail2ban = ./fail2ban;
     hyprspace = ./hyprspace;
     ipfs = ./ipfs;
-    ipfs-cluster = ./ipfs-cluster;
     maintenance = ./maintenance;
     minimal = ./minimal;
     motd = ./motd;

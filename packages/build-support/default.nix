@@ -13,6 +13,8 @@
       hydrateAssetDirectory = pkgs.callPackage ./hydrate-asset-directory {
         inherit fetchAsset;
       };
+
+      mkNpinsSource = pkgs.callPackage ./make-npins-source { };
     };
   };
 }

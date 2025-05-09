@@ -11,10 +11,6 @@ let
   pinSvcSocket = "/run/ipfs-cluster/ipfs-pinning-service-api.sock";
   proxySocket = "/run/ipfs-cluster/ipfs-api-proxy.sock";
 in {
-  imports = [
-    depot.nixosModules.ipfs-cluster
-  ];
-
   system.ascensions.ipfs-cluster = {
     requiredBy = [ "ipfs-cluster.service" ];
     incantations = i: [ ];
