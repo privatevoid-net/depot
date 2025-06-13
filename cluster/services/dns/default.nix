@@ -75,6 +75,15 @@ in
 
   dns.records = {
     securedns.consulService = "securedns";
+    securedns-CAA = {
+      name = "securedns";
+      type = "CAA";
+      target = [
+        "0 issue \"buypass.no\""
+        "0 issuewild \";\""
+        "0 iodef \"mailto:${depot.lib.meta.adminEmail}\""
+      ];
+    };
     "acme-dns-challenge.internal".consulService = "acme-dns";
   };
 }

@@ -37,6 +37,7 @@ let
     rewrite stop type DS DS
     rewrite stop type NS NS
     rewrite stop type SOA SOA
+    rewrite stop type CAA CAA
     ${lib.concatStringsSep "\n" rewrites}
   '';
 in {
