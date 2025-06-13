@@ -10,7 +10,7 @@
     ./websites/landing/project.nix
     ./websites/stop-using-nix-env/project.nix
   ];
-  perSystem = { config, filters, pkgs, self', ... }:
+  perSystem = { builders, config, filters, pkgs, self', ... }:
   let
     inherit (self'.packages) nix-super;
 
@@ -23,17 +23,17 @@
 
       consul = pkgs.callPackage ./servers/consul { };
 
-      excalidraw = pkgs.callPackage ./web-apps/excalidraw { inherit pins; };
+      excalidraw = pkgs.callPackage ./web-apps/excalidraw {
+        inherit pins;
+        inherit (builders) mkNpinsSource;
+      };
 
       graf = pkgs.callPackage ./tools/graf { };
 
       ipfs = pkgs.callPackage ./networking/ipfs { };
 
-      npins = pkgs.callPackage ./tools/npins {
+      npins = pkgs.npins.override {
         nix = nix-super;
-        nix-prefetch-git = pkgs.nix-prefetch-git.override {
-          nix = nix-super;
-        };
       };
 
       openbao = pkgs.callPackage ./projects/openbao { };
@@ -47,9 +47,15 @@
         nix = nix-super;
       };
 
-      searxng = pkgs.callPackage ./web-apps/searxng { inherit pins; };
+      searxng = pkgs.callPackage ./web-apps/searxng {
+        inherit pins;
+        inherit (builders) mkNpinsSource;
+      };
 
-      stevenblack-hosts = pkgs.callPackage ./data/stevenblack { inherit pins; };
+      stevenblack-hosts = pkgs.callPackage ./data/stevenblack {
+        inherit pins;
+        inherit (builders) mkNpinsSource;
+      };
 
       void = pkgs.callPackage ./tools/void { };
     };
