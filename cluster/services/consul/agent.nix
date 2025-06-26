@@ -31,9 +31,9 @@ in
     };
   };
 
-  services.grafana-agent.settings.integrations.consul_exporter = {
-    enabled = true;
-    instance = hostName;
-    server = config.links.consulAgent.url;
+  services.alloy.metrics.integrations.consul_exporter = {
+    exporter = "consul";
+    labels.instance = hostName;
+    settings.server = config.links.consulAgent.url;
   };
 }
