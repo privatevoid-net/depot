@@ -19,12 +19,13 @@
         ];
 
         block = set: map (as: ''
-          ${pkgs.jq}/bin/jq < ${as} --raw-output0 '.[]' | xargs --no-run-if-empty -0 -n1 ${pkgs.ipset}/bin/ipset add ${lib.escapeShellArg set}
+          ${pkgs.jq}/bin/jq < ${as} --raw-output0 '.[]' | xargs --no-run-if-empty -0 -n1 ${pkgs.ipset}/bin/ipset -exist add ${lib.escapeShellArg set}
         '');
 
         rules4 = block "geoblockv4new" [
           # scrapers with generic user agents
           ./ranges/v4/as136907.json # huawei
+          ./ranges/v4/as55990.json # huawei
           ./ranges/v4/as45102.json # alibaba
           ./ranges/v4/as132203.json # tencent
         ];
