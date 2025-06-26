@@ -31,7 +31,14 @@ in {
     package = depot.packages.grafana-alloy;
     metrics = {
       receiver.url = "${cluster.config.links.prometheus-ingest.url}/api/v1/write";
-      integrations.agent.exporter = "self";
+      integrations = {
+        agent.exporter = "self";
+        node_exporter = {
+          exporter = "unix";
+          labels.instance = config.networking.hostName;
+          settings.enable_collectors = [ "systemd" ];
+        };
+      };
     };
     extraFlags = [
       "--disable-reporting" # fuck you grafana
@@ -99,13 +106,6 @@ in {
     settings = {
       metrics.global.remote_write = singleton {
         url = "${cluster.config.links.prometheus-ingest.url}/api/v1/write";
-      };
-      integrations.node_exporter = {
-        enabled = true;
-        instance = config.networking.hostName;
-        enable_collectors = [
-          "systemd"
-        ];
       };
       logs.configs = singleton {
         name = "logging";
