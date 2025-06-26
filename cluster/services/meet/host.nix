@@ -60,14 +60,8 @@ in
     inherit (links.jitsi-exporter) port;
   };
 
-  services.grafana-agent.settings.metrics.configs = lib.singleton {
-    name = "metrics-jitsi";
-    scrape_configs = lib.singleton {
-      job_name = "jitsi";
-      static_configs = lib.singleton {
-        targets = lib.singleton links.jitsi-exporter.tuple;
-        labels.instance = config.services.jitsi-meet.hostName;
-      };
-    };
+  services.alloy.metrics.targets.jitsi = {
+    address = links.jitsi-exporter.tuple;
+    labels.instance = config.services.jitsi-meet.hostName;
   };
 }
