@@ -80,17 +80,11 @@ in {
 
   networking.firewall.trustedInterfaces = [ "hyprspace" ];
 
-  services.grafana-agent.settings.metrics.configs = lib.singleton {
-    name = "metrics-hyprspace";
-    scrape_configs = lib.singleton {
-      job_name = "hyprspace";
-      static_configs = lib.singleton {
-        targets = lib.singleton config.links.hyprspaceMetrics.tuple;
-        labels = {
-          instance = hostName;
-          peer_id = myNode.hyprspace.id;
-        };
-      };
+  services.alloy.metrics.targets.hyprspace = {
+    address = config.links.hyprspaceMetrics.tuple;
+    labels = {
+      instance = hostName;
+      peer_id = myNode.hyprspace.id;
     };
   };
 }
