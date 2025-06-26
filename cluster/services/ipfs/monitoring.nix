@@ -15,15 +15,9 @@ in
     };
   };
 
-  services.grafana-agent.settings.metrics.configs = lib.singleton {
-    name = "metrics-ipfs";
-    scrape_configs = lib.singleton {
-      job_name = "ipfs";
-      metrics_path = links.ipfsMetrics.path;
-      static_configs = lib.singleton {
-        targets = lib.singleton links.ipfsMetrics.tuple;
-        labels.instance = config.networking.hostName;
-      };
-    };
+  services.alloy.metrics.targets.ipfs = {
+    address = links.ipfsMetrics.tuple;
+    metricsPath = links.ipfsMetrics.path;
+    labels.instance = config.networking.hostName;
   };
 }
