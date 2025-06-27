@@ -6,6 +6,7 @@ in
 
 {
   flake.nixosModules = with config.flake.nixosModules; {
+    alloy-structured-metrics = ./alloy-structured-metrics;
     ascensions = ./ascensions;
     consul-distributed-services = ./consul-distributed-services;
     consul-service-registry = ./consul-service-registry;
@@ -46,6 +47,7 @@ in
 
     serverBase = group [
       machineBase
+      alloy-structured-metrics
       ascensions
       consul-distributed-services
       consul-service-registry

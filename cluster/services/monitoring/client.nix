@@ -11,10 +11,6 @@ let
     (lib.concatStringsSep "\n\n")
   ];
 in {
-  imports = [
-    ./options/alloy.nix
-  ];
-
   links.alloy.protocol = "http";
 
   services.journald.extraConfig = "Storage=volatile";
