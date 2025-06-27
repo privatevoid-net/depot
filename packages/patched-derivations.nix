@@ -19,6 +19,17 @@ super: rec {
 
   garage = patch super.garage_0_8 "patches/base/garage";
 
+  grafana-alloy = super.grafana-alloy.overrideAttrs (old: assert old.proxyVendor; {
+    preBuild = ''
+      go mod download
+      pushd ../go/pkg/mod/github.com/grafana/postgres_exporter@*/
+      chmod +w -R .
+      patch -p1 <${../patches/base/grafana-alloy/98f75c7e7ea3a02b974cfeda736cf7dbc091b18e.patch}
+      popd
+      ${old.preBuild or ""}
+    '';
+  });
+
   jellyfin = super.jellyfin.override {
     jellyfin-ffmpeg = super.ffmpeg.override {
       withMfx = true;
