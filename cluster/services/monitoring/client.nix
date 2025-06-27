@@ -1,12 +1,5 @@
 { cluster, config, depot, lib, pkgs, ... }:
 let
-  inherit (lib) singleton;
-
-  relabel = from: to: {
-    source_labels = [ from ];
-    target_label = to;
-  };
-
   cfg = config.services.alloy;
 
   toAlloyValue = value: let
@@ -98,38 +91,39 @@ in {
             scrape_timeout = ${toAlloyValue "${toString value.scrapeTimeout}s"}
           }
       '')}
-    '';
-  };
 
-  services.grafana-agent = {
-    enable = true;
-    settings = {
-      metrics.global.remote_write = singleton {
-        url = "${cluster.config.links.prometheus-ingest.url}/api/v1/write";
-      };
-      logs.configs = singleton {
-        name = "logging";
-        positions.filename = "\${STATE_DIRECTORY:/tmp}/logging-positions.yaml";
-        clients = singleton {
-          url = "${cluster.config.ways.ingest-logs.url}/loki/api/v1/push";
-        };
-        scrape_configs = singleton {
-          job_name = "journal";
-          journal = {
-            max_age = "12h";
-            labels.host = config.networking.hostName;
+      loki.relabel "journal" {
+        forward_to = []
+        ${let
+          relabels = {
+            __journal__systemd_unit = "systemd_unit";
+            __journal__hostname = "machine_name";
+            __journal__exe = "executable";
+            __journal__comm = "command";
+            __journal__boot_id = "systemd_boot_id";
+            __journal__systemd_cgroup = "systemd_cgroup";
+            __journal_syslog_identifier = "syslog_identifier";
           };
-          relabel_configs = [
-            (relabel "__journal__systemd_unit" "systemd_unit")
-            (relabel "__journal__hostname" "machine_name")
-            (relabel "__journal__exe" "executable")
-            (relabel "__journal__comm" "command")
-            (relabel "__journal__boot_id" "systemd_boot_id")
-            (relabel "__journal__systemd_cgroup" "systemd_cgroup")
-            (relabel "__journal_syslog_identifier" "syslog_identifier")
-          ];
-        };
-      };
-    };
+        in toAlloyBlocks relabels (from: to: ''
+          rule {
+            source_labels = [${toAlloyValue from}]
+            target_label = ${toAlloyValue to}
+          }
+        '')}
+      }
+
+      loki.source.journal "journal" {
+        forward_to = [loki.write.logging.receiver]
+        relabel_rules = loki.relabel.journal.rules
+        labels = ${toAlloyValue { host = config.networking.hostName; }}
+        max_age = "12h"
+      }
+
+      loki.write "logging" {
+        endpoint {
+          url = "${cluster.config.ways.ingest-logs.url}/loki/api/v1/push"
+        }
+      }
+    '';
   };
 }
