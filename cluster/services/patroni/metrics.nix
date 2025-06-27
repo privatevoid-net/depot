@@ -8,17 +8,18 @@ let
 in
 
 {
-  services.grafana-agent = {
-    settings.integrations.postgres_exporter = {
-      enabled = true;
-      instance = config.networking.hostName;
+  systemd.services.alloy.serviceConfig.EnvironmentFile = [ secrets.metricsCredentials.path ];
+
+  services.alloy.metrics.integrations.postgres_exporter = {
+    exporter = "postgres";
+    labels.instance = config.networking.hostName;
+    configText = ''
       data_source_names = [
-        "postgresql://metrics:\${PG_METRICS_DB_PASSWORD}@${getMeshIp config.networking.hostName}:${links.patroni-pg-internal.portStr}/postgres?sslmode=disable"
-      ];
-      autodiscover_databases = true;
-    };
-    credentials = {
-      PG_METRICS_DB_PASSWORD = secrets.metricsCredentials.path;
-    };
+        string.format("postgresql://metrics:%s@${getMeshIp config.networking.hostName}:${links.patroni-pg-internal.portStr}/postgres?sslmode=disable",sys.env("PG_METRICS_DB_PASSWORD")),
+      ]
+      autodiscovery {
+        enabled = true
+      }
+    '';
   };
 }
