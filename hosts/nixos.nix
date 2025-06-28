@@ -9,7 +9,9 @@ let
     modules = [
       host.nixos
       (withSystem host.system ({ config, pkgs, ... }: {
-        nixpkgs.pkgs = pkgs // config.shadows;
+        nixpkgs.pkgs = assert pkgs.buildPlatform == pkgs.hostPlatform; pkgs // {
+          __splicedPackages = pkgs.__splicedPackages // config.shadows;
+        };
       }))
     ] ++ config.cluster.config.out.injectNixosConfig name;
   };
