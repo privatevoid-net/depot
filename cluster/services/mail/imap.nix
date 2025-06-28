@@ -36,6 +36,11 @@ in {
 
   networking.firewall.allowedTCPPorts = [ 143 993 ];
 
+  # who came up with this shit?
+  environment.systemPackages = [
+    pkgs.dovecot_pigeonhole
+  ];
+
   services.dovecot2 = {
     enable = true;
     enableLmtp = true;
@@ -45,8 +50,6 @@ in {
     mailGroup = "vmail";
     sslServerCert = "${certDir}/fullchain.pem";
     sslServerKey = "${certDir}/key.pem";
-
-    modules = [ pkgs.dovecot_pigeonhole ];
 
     sieve = {
       extensions = [
