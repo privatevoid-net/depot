@@ -11,7 +11,7 @@ index 63454a6..e7ba7ea 100644
  	AllowFrom cidrslice
  }
 diff --git a/api.go b/api.go
-index 864256c..beb16c4 100644
+index 59f4ecb..b2a6936 100644
 --- a/api.go
 +++ b/api.go
 @@ -82,15 +82,15 @@ func webUpdatePost(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
@@ -65,7 +65,7 @@ index c09f8b4..c91214d 100644
  		user, err := getUserFromRequest(r)
  		if err == nil {
 diff --git a/db.go b/db.go
-index 3534728..4a389ac 100644
+index 301ac81..87a3ff8 100644
 --- a/db.go
 +++ b/db.go
 @@ -35,7 +35,7 @@ var userTable = `
@@ -86,10 +86,19 @@ index 3534728..4a389ac 100644
  		Value   TEXT NOT NULL DEFAULT '',
  		LastUpdate INT
  	);`
+@@ -191,7 +191,7 @@ func (d *acmedb) Register(afrom cidrslice) (ACMETxt, error) {
+         Username,
+         Password,
+         Subdomain,
+-		AllowFrom) 
++		AllowFrom)
+         values($1, $2, $3, $4)`
+ 	if Config.Database.Engine == "sqlite3" {
+ 		regSQL = getSQLiteStmt(regSQL)
 @@ -250,7 +250,6 @@ func (d *acmedb) GetByUsername(u uuid.UUID) (ACMETxt, error) {
  func (d *acmedb) GetTXTForDomain(domain string) ([]string, error) {
- 	d.Lock()
- 	defer d.Unlock()
+ 	d.Mutex.Lock()
+ 	defer d.Mutex.Unlock()
 -	domain = sanitizeString(domain)
  	var txts []string
  	getSQL := `

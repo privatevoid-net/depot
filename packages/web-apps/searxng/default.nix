@@ -1,4 +1,4 @@
-{ lib, nixosTests, python3, python3Packages, npins, pins }:
+{ python3, python3Packages, mkNpinsSource, pins }:
 
 let
   pin = pins.searxng;
@@ -9,7 +9,7 @@ toPythonModule (buildPythonApplication rec {
   pname = "searxng";
   version = "1.0.0pre_${builtins.substring 0 7 pin.revision}";
 
-  src = npins.mkSource pins.searxng;
+  src = mkNpinsSource pins.searxng;
 
   postPatch = ''
     sed -i \

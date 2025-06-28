@@ -18,6 +18,10 @@ let
     "/dev/null";
 in {
 
+  disabledModules = [
+    "services/network-filesystems/ipfs-cluster.nix"
+  ];
+
   ###### interface
 
   options = {

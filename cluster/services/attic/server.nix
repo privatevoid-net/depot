@@ -13,8 +13,6 @@ in
 
   services.atticd = {
     enable = true;
-    package = depot.inputs.attic.packages.attic-server;
-
     environmentFile = secrets.serverToken.path;
     mode = if isMonolith then "monolithic" else "api-server";
 

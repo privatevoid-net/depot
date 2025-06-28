@@ -40,9 +40,9 @@ super: rec {
     olm-insecure = acceptVulnerabilities super.olm;
   in super.jitsi-meet.override { olm = olm-insecure; };
 
-  jre17_standard = let
+  jre= let
     jre = super.jre_minimal.override {
-      jdk = super.jdk17_headless;
+      jdk = super.jdk21_headless;
       modules = [
           "java.se"
           "jdk.naming.dns"
@@ -54,14 +54,15 @@ super: rec {
           "jdk.sctp"
           "jdk.management"
           "jdk.dynalink"
+          "jdk.jfr"
       ];
     };
-  in jre // { meta = jre.meta // { inherit (super.jdk17_headless.meta) platforms; }; };
+  in jre // { meta = jre.meta // { inherit (super.jdk21_headless.meta) platforms; }; };
 
   kanidm = patch super.kanidm "patches/base/kanidm";
 
   keycloak = super.keycloak.override {
-    jre = jre17_standard;
+    jre_headless = jre;
   };
 
   postgresql = super.postgresql_14;

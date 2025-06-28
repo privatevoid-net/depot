@@ -86,14 +86,22 @@ in
   services.pdns-recursor = {
     enable = true;
     dnssecValidation = "process";
-    forwardZones = {
-      # optimize queries against our own domain
-      "${domain}" = lib.concatStringsSep ";" authoritativeServers;
-    };
     dns = {
       inherit (backend) port;
-      address = backend.ipv4;
+      address = [ backend.ipv4 ];
       allowFrom = [ "127.0.0.1" cluster.config.vars.meshNet.cidr "10.100.3.0/24" ];
+    };
+
+    # ew
+    yaml-settings = {
+      recursor = {
+        forward_zones = [
+          {
+            zone = domain;
+            forwarders = authoritativeServers;
+          }
+        ];
+      };
     };
   };
 
