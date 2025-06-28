@@ -30,9 +30,6 @@ in
     origin = domain;
     recipientDelimiter = "+";
 
-    sslCert = "${certDir}/fullchain.pem";
-    sslKey = "${certDir}/key.pem";
-
     setSendmail = true;
 
     # TODO: un-hardcode
@@ -52,6 +49,8 @@ in
         interfaces.primary.addr
         interfaces.vstub.addr
       ];
+
+      smtpd_tls_chain_files = [ "${certDir}/full.pem" ];
 
       disable_vrfy_command = true;
 
