@@ -9,8 +9,6 @@ let
       token = "@atticToken@";
     };
   };
-
-  inherit (depot.inputs.attic.packages) attic;
 in
 
 {
@@ -29,7 +27,7 @@ in
       ${pkgs.replace-secret}/bin/replace-secret '@atticToken@' "$CREDENTIALS_DIRECTORY/uploadToken" "$XDG_CONFIG_HOME/attic/config.toml"
     '';
     serviceConfig = {
-      ExecStart = "${attic}/bin/attic watch-store nix-store";
+      ExecStart = "${pkgs.attic-client}/bin/attic watch-store nix-store";
       Restart = "always";
       RestartSec = "30s";
       DynamicUser = true;

@@ -49,15 +49,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    attic = {
-      url = "github:zhaofengli/attic";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        nixpkgs-stable.follows = "nixpkgs";
-        flake-compat.follows = "blank";
-      };
-    };
-
     nar-serve = {
       url = "github:numtide/nar-serve";
       inputs = {
@@ -71,7 +62,7 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
-    
+
     mms = {
       url = "github:mkaito/nixos-modded-minecraft-servers";
       inputs = {
@@ -81,7 +72,7 @@
         flake-utils.follows = "repin-flake-utils";
       };
     };
-    
+
     hercules-ci-agent = {
       url = "github:hercules-ci/hercules-ci-agent";
       inputs = {
@@ -102,7 +93,7 @@
     };
 
     nix-filter.url = "github:numtide/nix-filter";
-    
+
     repin-flake-utils = {
       url = "github:numtide/flake-utils";
       inputs.systems.follows = "systems";
