@@ -54,6 +54,7 @@ super: rec {
           "jdk.sctp"
           "jdk.management"
           "jdk.dynalink"
+          "jdk.jfr"
       ];
     };
   in jre // { meta = jre.meta // { inherit (super.jdk21_headless.meta) platforms; }; };
