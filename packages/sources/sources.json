@@ -9,6 +9,8 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
+      "release_prefix": null,
+      "submodules": false,
       "version": "v4.4.0",
       "revision": "d70ca86d7cf56eec375ac4290086737a2bf9907d",
       "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v4.4.0",
@@ -22,6 +24,7 @@
         "repo": "excalidraw"
       },
       "branch": "master",
+      "submodules": false,
       "revision": "302664e500c7f2ee44a1f107d8f4680c0254305b",
       "url": "https://github.com/excalidraw/excalidraw/archive/302664e500c7f2ee44a1f107d8f4680c0254305b.tar.gz",
       "hash": "02a9jy73lqgmb8h2zcs37h932gzxg7ky2pvb65wd7kcqrcybpp6n"
@@ -34,6 +37,7 @@
         "repo": "searxng"
       },
       "branch": "master",
+      "submodules": false,
       "revision": "6324a9752a2b21a1dcb709c7fb643e361189163e",
       "url": "https://github.com/searxng/searxng/archive/6324a9752a2b21a1dcb709c7fb643e361189163e.tar.gz",
       "hash": "0b2wy613mds5xl5pqizrb8ncbhk1m8xcbnnsycqks1vypyvr00q4"
@@ -47,11 +51,13 @@
       },
       "pre_releases": false,
       "version_upper_bound": null,
+      "release_prefix": null,
+      "submodules": false,
       "version": "3.15.15",
       "revision": "a39424667f67c4f9836126fefa2fb25fe83839b6",
       "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.15.15",
       "hash": "0kpha475jsw8fbq2z1mn4m94a6a5skgmkia0q6w8sh8lba30y9y3"
     }
   },
-  "version": 2
+  "version": 5
 }
