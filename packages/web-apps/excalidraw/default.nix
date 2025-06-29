@@ -27,7 +27,7 @@ let
     offlineCache = fetchYarnDeps {
       name = "excalidraw-yarn-cache-${builtins.hashString "sha256" (builtins.readFile "${excalidraw}/yarn.lock")}";
       yarnLock = src + "/yarn.lock";
-      hash = "sha256-SthMtDZtGGTVRYYRHIPUbQe8ixZ9XSFMAl35MMN4JHY=";
+      hash = "sha256-m1OQli7DdbjcjIYnpXIobV3w2Zu7ZjWB2/1u9A4WiMc=";
     };
 
     configurePhase = ''
