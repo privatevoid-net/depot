@@ -36,4 +36,9 @@ in
     labels.instance = hostName;
     settings.server = config.links.consulAgent.url;
   };
+
+  system.extraIncantations.runConsul = i: script: i.execShellWith [ config.services.consul.package ] ''
+    export CONSUL_HTTP_ADDR='${config.links.consulAgent.tuple}'
+    ${script}
+  '';
 }
