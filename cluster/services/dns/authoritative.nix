@@ -31,13 +31,18 @@ let
 
   rewrites = map (record: let
     maybeEscapeRegex = str: if record.rewrite.type == "regex" then "${lib.escapeRegex str}$" else str;
-  in "rewrite stop name ${record.rewrite.type} ${record.name}${maybeEscapeRegex ".${record.root}."} ${record.rewrite.target}. answer auto") recordsPartitioned.wrong;
+    fqdn = if record.rewrite.type == "exact" && record.name == "@" then "${record.root}."
+      else "${record.name}${maybeEscapeRegex ".${record.root}."}";
+  in "rewrite stop name ${record.rewrite.type} ${fqdn} ${record.rewrite.target}. answer auto") recordsPartitioned.wrong;
 
   rewriteConf = pkgs.writeText "coredns-rewrites.conf" ''
     rewrite stop type DS DS
     rewrite stop type NS NS
     rewrite stop type SOA SOA
     rewrite stop type CAA CAA
+    rewrite stop type MX MX
+    rewrite stop type TXT TXT
+    rewrite stop type CNAME CNAME
     ${lib.concatStringsSep "\n" rewrites}
   '';
 in {
