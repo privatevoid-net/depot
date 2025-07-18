@@ -20,10 +20,22 @@ in
     group = "garage";
   };
 
-  system.ascensions.garage-layout = {
-    distributed = true;
-    requiredBy = [ "garage.service" ];
-    after = [ "garage.service" "garage-layout-init.service" ];
+  system.ascensions = {
+    garage-layout = {
+      distributed = true;
+      requiredBy = [ "garage.service" ];
+      after = [ "garage.service" "garage-layout-init.service" ];
+    };
+    garage-pre-upgrade = {
+      distributed = true;
+      requiredBy = [ "garage.service" ];
+      before = [ "garage.service" ];
+    };
+    garage-post-upgrade = {
+      distributed = true;
+      requiredBy = [ "garage.service" ];
+      after = [ "garage.service" "garage-layout-init.service" ];
+    };
   };
 
   services.garage = {
