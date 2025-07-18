@@ -58,10 +58,9 @@ in
       consulService = "static-lb";
     }))
     {
-      CNAME = {
+      top-level = {
         name = "@";
-        type = "CNAME";
-        target = [ "www.${domain}." ];
+        consulService = "static-lb";
       };
 
       autoconfig.target = oldStaticAddr;
