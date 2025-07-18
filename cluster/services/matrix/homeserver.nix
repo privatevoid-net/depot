@@ -52,8 +52,8 @@ let
   s3Config = {
     module = "s3_storage_provider.S3StorageProviderBackend";
     store_local = true;
-    store_remote = true;
-    store_synchronous = true;
+    store_remote = false;
+    store_synchronous = false;
     config = {
       bucket = "matrix-media";
       region_name = "us-east-1";
@@ -189,7 +189,6 @@ in {
   ];
 
   systemd.timers.matrix-media-upload = {
-    wantedBy = [ "timers.target" ];
     timerConfig = {
       OnBootSec = "24h";
       OnUnitActiveSec = "24h";
