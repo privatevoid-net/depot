@@ -25,6 +25,12 @@ in
             http = "${config.links.garageMetrics.url}/health";
           }
         ];
+        tags = let
+          inherit (config.services.garage) package;
+          versionTag = if lib.versionOlder package.version "1"
+            then lib.versions.majorMinor package.version
+            else lib.versions.major package.version;
+        in [ "v${versionTag}" ];
       };
     };
     garage-web = {
