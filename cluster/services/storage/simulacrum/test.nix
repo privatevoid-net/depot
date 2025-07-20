@@ -28,6 +28,7 @@ in
     services.garage = {
       layout.initial = lib.genAttrs nodes.garage (_: {
         capacity = lib.mkOverride 51 1000;
+        zone = lib.mkForce "eu-central";
       });
       package = let
         prev = getPreviousVersion depot.packages.garage.version;
