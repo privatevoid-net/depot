@@ -12,7 +12,6 @@ in
 
   consul.services = {
     garage = {
-      mode = "external";
       definition = {
         name = "garage";
         address = linkS3.ipv4;
@@ -34,7 +33,6 @@ in
       };
     };
     garage-web = {
-      mode = "external";
       unit = "garage";
       definition = {
         name = "garage-web";
