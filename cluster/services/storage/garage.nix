@@ -29,6 +29,7 @@ in
   services.garage = {
     enable = true;
     package = depot.packages.garage;
+    logLevel = "warn";
     settings = {
       replication_mode = "3";
       block_size = 16 * 1024 * 1024;
