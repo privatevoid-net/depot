@@ -9,7 +9,7 @@ let
     options = {
       incantations = mkOption {
         type = with types; functionTo (listOf package);
-        default = [];
+        default = i: [];
       };
       distributed = mkOption {
         type = types.bool;
