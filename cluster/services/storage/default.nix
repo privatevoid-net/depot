@@ -38,10 +38,11 @@ in
       garage = [
         ./garage.nix
         ./garage-options.nix
-        ./garage-layout.nix
-      ] ++ lib.optionals config.simulacrum [
+      ] ++ (if config.simulacrum then [
         ./simulacrum/snakeoil-rpc-secret.nix
-      ];
+      ] else [
+        ./garage-layout.nix
+      ]);
       garageConfig = [
         ./garage-gateway.nix
         ./garage-metrics.nix

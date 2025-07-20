@@ -12,7 +12,6 @@ in
 
   consul.services = {
     garage = {
-      mode = "external";
       definition = {
         name = "garage";
         address = linkS3.ipv4;
@@ -25,10 +24,15 @@ in
             http = "${config.links.garageMetrics.url}/health";
           }
         ];
+        tags = let
+          inherit (config.services.garage) package;
+          versionTag = if lib.versionOlder package.version "1"
+            then lib.versions.majorMinor package.version
+            else lib.versions.major package.version;
+        in [ "v${versionTag}" ];
       };
     };
     garage-web = {
-      mode = "external";
       unit = "garage";
       definition = {
         name = "garage-web";

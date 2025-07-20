@@ -140,8 +140,10 @@ in
             exit 0
           fi
 
-          ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: layout: ''
-            garage layout assign -z '${layout.zone}' -c '${toString layout.capacity}' "$(getNodeId '${name}')"
+          ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: layout: let
+              unit = lib.optionalString (lib.versionAtLeast cfg.package.version "0.9") "GB";
+          in ''
+            garage layout assign -z '${layout.zone}' -c '${toString layout.capacity}${unit}' "$(getNodeId '${name}')"
           '') cfg.layout.initial)}
 
           garage layout apply --version 1
@@ -163,6 +165,26 @@ in
           waitForGarageOperational
         '';
       };
+      garage-repair = {
+        wantedBy = [ "multi-user.target" ];
+        wants = [ "garage.service" ];
+        after = [ "garage-ready.service" ];
+        path = [ config.services.garage.package ];
+        restartTriggers = [ config.services.garage.package ];
+
+        serviceConfig = {
+          Type = "oneshot";
+          TimeoutStartSec = "300s";
+          Restart = "on-failure";
+          RestartSec = "10s";
+          RemainAfterExit = true;
+        };
+
+        script = ''
+          garage repair --yes tables
+          garage repair --yes blocks
+        '';
+      };
     };
 
     services.incandescence.providers.garage = {
@@ -181,7 +203,7 @@ in
           create = key: ''
             if [[ "$(garage key info ${lib.escapeShellArg key} 2>&1 >/dev/null)" == "Error: 0 matching keys" ]]; then
               # don't print secret key
-              garage key new --name ${lib.escapeShellArg key} >/dev/null
+              garage ${if lib.versionAtLeast cfg.package.version "0.9" then "key create" else "key new --name"} ${lib.escapeShellArg key} >/dev/null
               echo Key ${lib.escapeShellArg key} was created.
             else
               echo "Key already exists, assuming ownership"
@@ -200,7 +222,7 @@ in
           deps = [ "key" ];
           destroyAfterDays = 30;
           create = bucket: ''
-            if [[ "$(garage bucket info ${lib.escapeShellArg bucket} 2>&1 >/dev/null)" == "Error: Bucket not found" ]]; then
+            if [[ "$(garage bucket info ${lib.escapeShellArg bucket} 2>&1 >/dev/null)" == "Error: Bucket not found"* ]]; then
               garage bucket create ${lib.escapeShellArg bucket}
             else
               echo "Bucket already exists, assuming ownership"
