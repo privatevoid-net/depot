@@ -96,7 +96,7 @@ in
       for node in nodes:
         node.wait_until_succeeds("garage layout show | grep -w 'eu-central  *2\\.0 TB'")
         assert "1" in node.succeed("garage layout show | grep -w 'eu-central  *2\\.0 TB' | wc -l")
-        assert "2" in node.succeed("garage layout show | grep -w 'eu-central  *1073\\.7 GB' | wc -l")
+        assert "2" in node.succeed("garage layout show | grep -w 'eu-central  *1000\\.0 GB' | wc -l")
 
     consulConfig = json.loads(garage1.succeed("cat /etc/consul.json"))
     addr = consulConfig["addresses"]["http"]
