@@ -165,6 +165,26 @@ in
           waitForGarageOperational
         '';
       };
+      garage-repair = {
+        wantedBy = [ "multi-user.target" ];
+        wants = [ "garage.service" ];
+        after = [ "garage-ready.service" ];
+        path = [ config.services.garage.package ];
+        restartTriggers = [ config.services.garage.package ];
+
+        serviceConfig = {
+          Type = "oneshot";
+          TimeoutStartSec = "300s";
+          Restart = "on-failure";
+          RestartSec = "10s";
+          RemainAfterExit = true;
+        };
+
+        script = ''
+          garage repair --yes tables
+          garage repair --yes blocks
+        '';
+      };
     };
 
     services.incandescence.providers.garage = {
