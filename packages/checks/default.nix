@@ -21,7 +21,6 @@ in
       };
 
       jellyfin-stateless = pkgs.callPackage ./jellyfin-stateless.nix {
-        inherit (self'.packages) jellyfin;
         inherit (config) cluster;
       };
 
