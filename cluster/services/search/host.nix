@@ -8,7 +8,6 @@ in
   services.searx = {
     enable = true;
     runInUwsgi = true;
-    package = depot.packages.searxng;
     environmentFile = cluster.config.services.search.secrets.default.path;
     settings = {
       server = {
