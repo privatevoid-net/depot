@@ -1,10 +1,9 @@
-{ config, depot, lib, pkgs, ... }:
+{ config, depot, lib, ... }:
 with depot.lib.nginx;
 {
   # TODO: not a whole lot to configure, maybe add some autoconfig stuff
   services.jellyfin = {
     enable = true;
-    package = depot.packages.jellyfin;
   };
   services.nginx.virtualHosts."warehouse.${depot.lib.meta.domain}" = lib.mkMerge [
     (vhosts.proxy "http://127.0.0.1:8096")
@@ -13,7 +12,7 @@ with depot.lib.nginx;
         proxy_buffering off;
       '';
       locations."/socket" = {
-        inherit (config.services.nginx.virtualHosts."warehouse.${depot.lib.meta.domain}".locations."/") proxyPass; 
+        inherit (config.services.nginx.virtualHosts."warehouse.${depot.lib.meta.domain}".locations."/") proxyPass;
         proxyWebsockets = true;
       };
       # TODO: video cache
@@ -22,7 +21,6 @@ with depot.lib.nginx;
 
   hardware.graphics = {
     enable = true;
-    package = pkgs.intel-media-driver;
   };
   systemd.services.jellyfin = {
     # if EncoderAppPath is manually set in the web UI, it can never be updated through --ffmpeg
