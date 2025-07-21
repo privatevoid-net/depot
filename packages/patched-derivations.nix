@@ -30,12 +30,6 @@ super: rec {
     '';
   });
 
-  jellyfin = super.jellyfin.override {
-    jellyfin-ffmpeg = super.ffmpeg.override {
-      withMfx = true;
-    };
-  };
-
   jitsi-meet-insecure = let
     olm-insecure = acceptVulnerabilities super.olm;
   in super.jitsi-meet.override { olm = olm-insecure; };
