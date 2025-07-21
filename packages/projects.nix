@@ -47,11 +47,6 @@
         nix = nix-super;
       };
 
-      searxng = pkgs.callPackage ./web-apps/searxng {
-        inherit pins;
-        inherit (builders) mkNpinsSource;
-      };
-
       stevenblack-hosts = pkgs.callPackage ./data/stevenblack {
         inherit pins;
         inherit (builders) mkNpinsSource;

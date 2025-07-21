@@ -29,19 +29,6 @@
       "url": "https://github.com/excalidraw/excalidraw/archive/c1415004005d74961d43f7bc80cd0a3f2e1ab0cb.tar.gz",
       "hash": "1c0q95ip34q0pr6dm5gr68y7hz634hkly25j28wl5pinyf3487xz"
     },
-    "searxng": {
-      "type": "Git",
-      "repository": {
-        "type": "GitHub",
-        "owner": "searxng",
-        "repo": "searxng"
-      },
-      "branch": "master",
-      "submodules": false,
-      "revision": "df76647c52b56101f152c5dec7c1d08f1732ceb7",
-      "url": "https://github.com/searxng/searxng/archive/df76647c52b56101f152c5dec7c1d08f1732ceb7.tar.gz",
-      "hash": "03g7y2da49fhy3lf8cmc7gabhlx4f0gg7065w7z0rjab67c7h67i"
-    },
     "stevenblack-hosts": {
       "type": "GitRelease",
       "repository": {
