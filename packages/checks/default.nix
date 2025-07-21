@@ -33,10 +33,6 @@ in
         inherit (self) nixosModules;
         previous = timeMachine.preUnstable;
       };
-
-      searxng = pkgs.callPackage ./searxng.nix {
-        inherit (self'.packages) searxng;
-      };
     };
   };
 }
