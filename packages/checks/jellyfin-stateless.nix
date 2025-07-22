@@ -1,12 +1,10 @@
-{ nixosTest, cluster, jellyfin }:
+{ nixosTest, cluster }:
 
 nixosTest {
   name = "jellyfin-stateless";
   nodes = {
     machine = {
       imports = cluster.config.services.warehouse.nixos.host;
-
-      _module.args.depot.packages.jellyfin = jellyfin;
     };
   };
   testScript = /*python*/ ''

@@ -21,7 +21,6 @@ in
       };
 
       jellyfin-stateless = pkgs.callPackage ./jellyfin-stateless.nix {
-        inherit (self'.packages) jellyfin;
         inherit (config) cluster;
       };
 
@@ -33,10 +32,6 @@ in
         inherit (self'.packages) s3ql;
         inherit (self) nixosModules;
         previous = timeMachine.preUnstable;
-      };
-
-      searxng = pkgs.callPackage ./searxng.nix {
-        inherit (self'.packages) searxng;
       };
     };
   };

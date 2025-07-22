@@ -90,7 +90,7 @@ in {
     '';
   };
 
-  systemd.services.dovecot2.serviceConfig.ExecStartPre = [ "${writeLdapConfig}/bin/write-ldap-config" ];
+  systemd.services.dovecot.serviceConfig.ExecStartPre = [ "${writeLdapConfig}/bin/write-ldap-config" ];
 
   services.fail2ban.jails.dovecot = {};
 }

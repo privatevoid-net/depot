@@ -33,7 +33,8 @@ in
       package = let
         prev = getPreviousVersion depot.packages.garage.version;
         attr = "garage_${prev.attr}";
-      in lib.mkOverride 51 (depot.packages.${attr} or pkgs.${attr});
+        package = depot.packages.${attr} or pkgs.${attr};
+      in lib.mkOverride 51 (depot.lib.ignoreVulnerabilities package);
     };
     specialisation = {
       upgrade = {
