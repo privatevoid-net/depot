@@ -8,6 +8,7 @@
     ./nginx.nix
     ./identity.nix
     ./catalog.nix
+    ./packages.nix
   ];
 
   options.lib = lib.mkOption {
