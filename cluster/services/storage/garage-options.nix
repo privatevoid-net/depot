@@ -260,7 +260,7 @@ in
           inherit (kCfg.locksmith) mode owner group nodes;
         };
         getKeyID = "${cfg.package}/bin/garage key info ${lib.escapeShellArg key} | grep -m1 'Key ID:' | cut -d ' ' -f3";
-        getSecretKey = "${cfg.package}/bin/garage key info ${lib.escapeShellArg key} | grep -m1 'Secret key:' | cut -d ' ' -f3";
+        getSecretKey = "${cfg.package}/bin/garage key info --show-secret ${lib.escapeShellArg key} | grep -m1 'Secret key:' | cut -d ' ' -f3";
       in if kCfg.locksmith.format == "files" then {
         "${key}-id" = common // {
           command = getKeyID;
