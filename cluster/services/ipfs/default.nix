@@ -82,7 +82,7 @@
     ipfs = {
       consulService = "ipfs-gateway";
       wildcard = true;
-      extras.extraConfig = ''
+      extras.locations."/".extraConfig = ''
         add_header X-Content-Type-Options "";
         add_header Access-Control-Allow-Origin *;
       '';
@@ -90,7 +90,7 @@
     ipns = {
       consulService = "ipfs-gateway";
       wildcard = true;
-      extras.extraConfig = ''
+      extras.locations."/".extraConfig = ''
         add_header X-Content-Type-Options "";
         add_header Access-Control-Allow-Origin *;
       '';
