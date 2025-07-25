@@ -50,6 +50,7 @@ in
     };
   };
   services.nginx.virtualHosts."${config.services.nextcloud.hostName}" = {
+    countersiege.enable = false;
     addSSL = true;
     enableACME = true;
   };
