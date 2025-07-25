@@ -1,7 +1,11 @@
+{ config, ... }:
+
 {
-  garage = {
+  garage = config.lib.forService "content-delivery" {
     buckets.content-delivery.web.enable = true;
   };
 
-  ways.cdn.bucket = "content-delivery";
+  ways = config.lib.forService "content-delivery" {
+    cdn.bucket = "content-delivery";
+  };
 }
