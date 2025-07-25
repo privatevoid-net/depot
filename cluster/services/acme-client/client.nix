@@ -43,6 +43,7 @@ in
     credentialsFile = pkgs.writeText "acme-exec-config" ''
       EXEC_PATH=${execScript}
       EXEC_ENV_FILE=${config.age.secrets.acmeDnsApiKey.path}
+      EXEC_SEQUENCE_INTERVAL=0
     '';
   };
 
