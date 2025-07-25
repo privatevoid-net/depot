@@ -69,7 +69,7 @@
     pin.consulService = "ipfs-gateway";
   };
 
-  ways = {
+  ways = config.lib.forService "ipfs" {
     p2p = {
       consulService = "ipfs-gateway";
       extras.locations."/" = {
