@@ -74,6 +74,7 @@ in
       '';
       serviceConfig = {
         Restart = "on-failure";
+        RestartSec = lib.mkForce "100ms";
         RestartMaxDelaySec = 30;
         RestartSteps = 5;
         RestartMode = "direct";
