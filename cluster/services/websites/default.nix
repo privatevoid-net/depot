@@ -16,7 +16,14 @@ in
 
 {
   services.websites = {
-    nodes.host = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
+    nodes = {
+      host = [ "checkmate" "thunderskin" "VEGAS" "prophet" ];
+      oldStatic = [ "VEGAS" ];
+    };
+    nixos.oldStatic = [
+      ./old-static
+      ./old-static/jokes.nix
+    ];
     nixos.host = { config, depot, ... }: let
 
       importWebsites = expr: import expr {
