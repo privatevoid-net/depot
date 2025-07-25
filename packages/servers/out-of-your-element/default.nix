@@ -7,17 +7,17 @@
 
 buildNpmPackage rec {
   pname = "out-of-your-element";
-  version = "3.0";
+  version = "3.1+unstable";
 
   src = fetchFromGitea {
     domain = "gitdab.com";
     owner = "cadence";
     repo = "out-of-your-element";
-    tag = "v${version}";
-    hash = "sha256-fPAJuWVclFMslc0SaaCwcQTuD1oJE+AbPU9FDmUtuns=";
+    rev = "9a33ba3ed2d4bdfc88d31a9199f03bc2405bd0d1";
+    hash = "sha256-0APRIMqrQQFdhnljW7qyjuJpmtdxGgeDtOCJB3V4CzY=";
   };
 
-  npmDepsHash = "sha256-pSyEhTnBY++FETfrkAy7wXqu36u8nD6pUMuOfl2dII4=";
+  npmDepsHash = "sha256-HNHEGez8X7CsoGYXqzB49o1pcCImfmGYIw9QKF2SbHo=";
   dontNpmBuild = true;
 
   nativeBuildInputs = [ makeWrapper ];
