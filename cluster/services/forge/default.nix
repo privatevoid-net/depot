@@ -16,7 +16,16 @@
   ways = let
     host = builtins.head config.services.forge.nodes.server;
   in config.lib.forService "forge" {
-    forge.target = config.hostLinks.${host}.forge.url;
+    forge = {
+      target = config.hostLinks.${host}.forge.url;
+      extras.countersiege.locations = [
+        "~ ^/.*/.*/commit/.*/"
+        "~ ^/.*/.*/src/commit/.*/"
+        "~ ^/.*/.*/raw/commit/.*/"
+        "~ ^/.*/.*/commits/commit/.*/"
+        "~ ^/.*/.*/blame/commit/.*/"
+      ];
+    };
   };
 
   patroni = config.lib.forService "forge" {
