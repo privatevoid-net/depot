@@ -1,6 +1,10 @@
 { depot, ... }:
 
 {
+  services.cdn-shield = {
+    nodes.host = [ "VEGAS" ];
+    nixos.host = ./host.nix;
+  };
   dns.records = let
     cdnShieldAddr = [ depot.hours.VEGAS.interfaces.primary.addrPublic ];
   in {

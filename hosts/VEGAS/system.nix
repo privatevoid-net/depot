@@ -14,7 +14,6 @@
 
       # Services
       ./services/backbone-routing
-      ./services/cdn-shield
       ./services/minecraft
       depot.nixosModules.hyprspace
       depot.nixosModules.nix-builder
