@@ -36,7 +36,7 @@
     environment.etc."fail2ban/filter.d/nginx-drop-status-444.conf".text = ''
       [Definition]
       journalmatch = _SYSTEMD_UNIT=nginx.service + _COMM=nginx + SYSLOG_IDENTIFIER=nginx_access
-      failregex = host=.* remote_addr=<ADDR> .* status=444 .*
+      failregex = class=default vhost=.* remote_addr=<ADDR> .* status=444 .*
     '';
 
     services.fail2ban.jails.nginx.settings = {
