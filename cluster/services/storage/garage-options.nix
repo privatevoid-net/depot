@@ -201,7 +201,7 @@ in
         key = {
           destroyAfterDays = 0;
           create = key: ''
-            if [[ "$(garage key info ${lib.escapeShellArg key} 2>&1 >/dev/null)" == "Error: 0 matching keys" ]]; then
+            if [[ "$(garage key info ${lib.escapeShellArg key} 2>&1 >/dev/null)" == *" 0 matching keys"* ]]; then
               # don't print secret key
               garage ${if lib.versionAtLeast cfg.package.version "0.9" then "key create" else "key new --name"} ${lib.escapeShellArg key} >/dev/null
               echo Key ${lib.escapeShellArg key} was created.
@@ -222,7 +222,7 @@ in
           deps = [ "key" ];
           destroyAfterDays = 30;
           create = bucket: ''
-            if [[ "$(garage bucket info ${lib.escapeShellArg bucket} 2>&1 >/dev/null)" == "Error: Bucket not found"* ]]; then
+            if [[ "$(garage bucket info ${lib.escapeShellArg bucket} 2>&1 >/dev/null)" == *"Bucket not found"* ]]; then
               garage bucket create ${lib.escapeShellArg bucket}
             else
               echo "Bucket already exists, assuming ownership"
@@ -259,8 +259,8 @@ in
         common = {
           inherit (kCfg.locksmith) mode owner group nodes;
         };
-        getKeyID = "${cfg.package}/bin/garage key info ${lib.escapeShellArg key} | grep -m1 'Key ID:' | cut -d ' ' -f3";
-        getSecretKey = "${cfg.package}/bin/garage key info --show-secret ${lib.escapeShellArg key} | grep -m1 'Secret key:' | cut -d ' ' -f3";
+        getKeyID = "${cfg.package}/bin/garage key info ${lib.escapeShellArg key} | grep -m1 'Key ID:' | tr -d ' ' | cut -d : -f2";
+        getSecretKey = "${cfg.package}/bin/garage key info --show-secret ${lib.escapeShellArg key} | grep -m1 'Secret key:' | tr -d ' ' | cut -d : -f2";
       in if kCfg.locksmith.format == "files" then {
         "${key}-id" = common // {
           command = getKeyID;
