@@ -67,6 +67,7 @@ in
     };
     environment = {
       AWS_SHARED_CREDENTIALS_FILE = "/run/locksmith/garage-attic";
+      AWS_REQUEST_CHECKSUM_CALCULATION = "WHEN_REQUIRED";
       PGPASSFILE = "/run/locksmith/patroni-attic";
     };
   };
