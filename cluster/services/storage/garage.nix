@@ -31,7 +31,7 @@ in
     package = depot.packages.garage;
     logLevel = "warn";
     settings = {
-      replication_mode = "3";
+      replication_factor = 3;
       block_size = 16 * 1024 * 1024;
       db_engine = "lmdb";
       metadata_dir = "/var/lib/garage-metadata";
