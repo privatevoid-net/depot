@@ -17,7 +17,7 @@ super: rec {
 
   forgejo = patch super.forgejo "patches/base/forgejo";
 
-  garage = super.garage_1;
+  garage = super.garage_2;
 
   grafana-alloy = super.grafana-alloy.overrideAttrs (old: assert old.proxyVendor; {
     preBuild = ''
