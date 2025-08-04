@@ -14,26 +14,30 @@ let
     (lib.concatStringsSep " ")
   ];
 
-  recordsList = lib.mapAttrsToList (lib.const lib.id) cluster.config.dns.records;
-  recordsPartitioned = lib.partition (record: record.rewrite.target == null) recordsList;
+  toList = lib.mapAttrsToList (lib.const lib.id);
 
-  staticRecords = let
-    escape = type: {
-      TXT = builtins.toJSON;
-    }.${type} or lib.id;
+  zoneRecordsByType = lib.mapAttrs (_: zone: let
+    partitioned = lib.partition (record: record.rewrite.target == null) (toList zone.records);
+  in {
+    static = partitioned.right;
+    rewrite = partitioned.wrong;
+  }) cluster.config.dns.zones;
 
-    recordName = record: {
-      "@" = "${record.root}.";
-    }.${record.name} or "${record.name}.${record.root}.";
-  in lib.flatten (
-    map (record: map (target: "${recordName record} ${record.type} ${escape record.type target}") record.target) recordsPartitioned.right
-  );
+  escapeRecordContent = type: {
+    TXT = builtins.toJSON;
+  }.${type} or lib.id;
 
-  rewrites = map (record: let
+  rewrites = let
+    allRewriteRecords = lib.pipe zoneRecordsByType [
+      (lib.mapAttrs (_: records: records.rewrite))
+      lib.attrValues
+      lib.flatten
+    ];
+  in map (record: let
     maybeEscapeRegex = str: if record.rewrite.type == "regex" then "${lib.escapeRegex str}$" else str;
     fqdn = if record.rewrite.type == "exact" && record.name == "@" then "${record.root}."
       else "${record.name}${maybeEscapeRegex ".${record.root}."}";
-  in "rewrite stop name ${record.rewrite.type} ${fqdn} ${record.rewrite.target}. answer auto") recordsPartitioned.wrong;
+  in "rewrite stop name ${record.rewrite.type} ${fqdn} ${record.rewrite.target}. answer auto") allRewriteRecords;
 
   rewriteConf = pkgs.writeText "coredns-rewrites.conf" ''
     rewrite stop type DS DS
@@ -44,6 +48,19 @@ let
     rewrite stop type TXT TXT
     rewrite stop type CNAME CNAME
     ${lib.concatStringsSep "\n" rewrites}
+  '';
+
+  mkZoneRecords = { name, ttl, type, target, ... }: lib.concatStringsSep "\n" (map
+    (targetInstance: "${name} ${toString ttl} IN ${type} ${escapeRecordContent type targetInstance}")
+  target);
+
+  mkZoneFile = zoneDomain: records: pkgs.writeText "${zoneDomain}.zone" ''
+    $ORIGIN ${zoneDomain}.
+    @ 3600 IN SOA eu1.ns.${domain}. hostmaster.${domain}. 2025010100 28800 7200 604800 86400
+
+    ${lib.concatStringsSep "\n" (
+      map mkZoneRecords records
+    )}
   '';
 in {
   links.localAuthoritativeDNS = {};
@@ -68,7 +85,7 @@ in {
         inherit domain;
         nsadmin = "hostmaster.${domain}";
         nsname = "eu1.ns.${domain}";
-        records = staticRecords;
+        records = [];
       };
       api = {
         ip = acmeDnsApi.ipv4;
@@ -107,6 +124,14 @@ in {
         }
         forward service.eu-central.sd-magic.${domain} 127.0.0.1:8600
         forward addr.eu-central.sd-magic.${domain} 127.0.0.1:8600
+        ${lib.concatStringsSep "\n" (
+          lib.mapAttrsToList (name: records: ''
+            file ${mkZoneFile name records.static} ${name} {
+              reload 0
+              fallthrough
+            }
+          '') zoneRecordsByType
+        )}
         import ${rewriteConf}
         forward . ${config.links.localAuthoritativeDNS.tuple} ${otherDnsServers} {
           policy sequential

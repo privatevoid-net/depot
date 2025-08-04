@@ -1,9 +1,10 @@
-{ depot, lib, ... }:
+{ config, depot, lib, ... }:
 
 with lib;
 
 let
-  recordType = types.submodule ({ config, name, ... }: {
+  recordType = types.submodule recordModule;
+  recordModule = { config, name, ... }: {
     options = {
       root = mkOption {
         type = types.str;
@@ -48,7 +49,7 @@ let
     config = {
       rewrite.target = mkIf (config.consulService != null) "${config.consulService}.${config.consulServicesRoot}";
     };
-  });
+  };
 in
 
 {
@@ -57,5 +58,17 @@ in
       type = with types; attrsOf recordType;
       default = {};
     };
+    zones = mkOption {
+      type = types.attrsOf (types.submodule ({ name, ...}: {
+        options.records = mkOption {
+          type = types.attrsOf (types.submodule {
+            imports = [ recordModule ];
+            root = mkDefault name;
+          });
+        };
+      }));
+    };
   };
+
+  config.dns.zones."${depot.lib.meta.domain}" = { inherit (config.dns) records; };
 }
