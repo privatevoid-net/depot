@@ -77,7 +77,7 @@ in
       non_smtpd_milters = dkimSocket;
 
       # delivery
-      virtual_mailbox_domains = [ domain "max.admin.${domain}" ];
+      virtual_mailbox_domains = [ domain "max.admin.${domain}" "schizo.cooking" ];
       virtual_transport = lmtpSocket;
       mailbox_transport = lmtpSocket;
       virtual_mailbox_maps = postfixLdapMailboxes;
