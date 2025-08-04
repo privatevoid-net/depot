@@ -9,6 +9,7 @@ in
     ./options.nix
     ./nodes.nix
     ./ns-records.nix
+    ./zones/schizo.cooking.nix
   ];
 
   links = {
