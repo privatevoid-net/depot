@@ -1,4 +1,4 @@
-{ config, lib, depot, ... }:
+{ config, lib, depot, pkgs, ... }:
 let
   inherit (config) links;
 
@@ -39,6 +39,10 @@ in
       publicAddress = interfaces.primary.addrPublic;
     };
   };
+
+  # https://github.com/NixOS/nixpkgs/pull/429837
+  services.prosody.package = pkgs.prosody;
+
   services.nginx.virtualHosts."meet.${depot.lib.meta.domain}" = {
     enableACME = true;
     forceSSL = true;
