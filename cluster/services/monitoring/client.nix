@@ -17,7 +17,6 @@ in {
 
   services.alloy = {
     enable = true;
-    package = depot.packages.grafana-alloy;
     metrics = {
       receiver.url = "${cluster.config.links.prometheus-ingest.url}/api/v1/write";
       integrations = {
