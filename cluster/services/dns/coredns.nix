@@ -31,10 +31,10 @@ in
 
   systemd.services.coredns = {
     after = (lib.optional (interfaces ? vstub) "network-addresses-vstub.service") ++ [
-      "acme-selfsigned-securedns.${domain}.service"
+      "acme-securedns.${domain}.service"
     ];
-    before = [ "acme-securedns.${domain}.service" ];
-    wants = [ "acme-finished-securedns.${domain}.target" ];
+    before = [ "acme-order-renew-securedns.${domain}.service" ];
+    wants = [ "acme-securedns.${domain}.service" ];
     serviceConfig = {
       LoadCredential = [
         "dot-cert.pem:${dot.directory}/fullchain.pem"

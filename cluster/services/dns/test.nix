@@ -1,16 +1,24 @@
-{ cluster, ... }:
+{ cluster, lib, ... }:
 
 let
   inherit (cluster._module.specialArgs.depot.lib.meta) domain;
 in
 {
-  nodes.nowhere = { pkgs, ... }: {
-    passthru = cluster;
-    environment.systemPackages = [
-      pkgs.knot-dns
-      pkgs.openssl
-    ];
-  };
+  nodes = {
+    nowhere = { pkgs, ... }: {
+      passthru = cluster;
+      environment.systemPackages = [
+        pkgs.knot-dns
+        pkgs.openssl
+      ];
+    };
+  } // (lib.genAttrs cluster.config.services.dns.nodes.coredns (_: {
+    systemd.targets.test-acme-ready = {
+      wantedBy = [ "multi-user.target" ];
+      wants = [ "acme-order-renew-securedns.${domain}.service" ];
+      after = [ "acme-order-renew-securedns.${domain}.service"];
+    };
+  }));
 
   testScript = ''
     import json
@@ -29,7 +37,7 @@ in
 
     with subtest("should have valid certificate on DoT endpoint"):
       for node in dotServers:
-        node.wait_for_unit("acme-finished-securedns.${domain}.target")
+        node.wait_for_unit("test-acme-ready.target")
       nowhere.wait_until_succeeds("openssl </dev/null s_client -connect securedns.${domain}:853 -verify_return_error -strict -verify_hostname securedns.${domain}", timeout=60)
   '';
 }
