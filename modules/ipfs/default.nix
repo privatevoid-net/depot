@@ -59,8 +59,8 @@ in
 
       package = mkOption {
         type = types.package;
-        default = pkgs.ipfs;
-        defaultText = literalExpression "pkgs.ipfs";
+        default = pkgs.kubo;
+        defaultText = literalExpression "pkgs.kubo";
         description = lib.mdDoc "Which IPFS package to use.";
       };
 
