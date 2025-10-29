@@ -1,6 +1,6 @@
-{ nixosTest, cluster }:
+{ testers, cluster }:
 
-nixosTest {
+testers.nixosTest {
   name = "jellyfin-stateless";
   nodes = {
     machine = {
