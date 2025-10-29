@@ -1,6 +1,10 @@
 { depot, lib, pkgs, ... }:
 
 {
+  disabledModules = [
+    "hardware/facter/system.nix"
+  ];
+  
   imports = [
     depot.inputs.nixpkgs.nixosModules.readOnlyPkgs
   ];
