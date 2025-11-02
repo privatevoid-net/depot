@@ -5,6 +5,7 @@ testers.nixosTest {
   nodes = {
     machine = {
       imports = cluster.config.services.warehouse.nixos.host;
+      virtualisation.diskSize = 4096;
     };
   };
   testScript = /*python*/ ''
