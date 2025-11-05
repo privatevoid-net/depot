@@ -33,6 +33,11 @@ in
           port = 8080;
         };
       };
+      systemd.targets.test-acme-ready = {
+        wantedBy = [ "multi-user.target" ];
+        wants = [ "acme-order-renew-ways-test-simple.${domain}.service" ];
+        after = [ "acme-order-renew-ways-test-consul.${domain}.service"];
+      };
     }))
   ];
 
@@ -45,6 +50,7 @@ in
     nowhere.wait_for_unit("multi-user.target")
     for node in nodes:
       node.wait_for_unit("multi-user.target")
+      node.wait_for_unit("test-acme-ready.target")
 
     with subtest("single-target service"):
       nowhere.succeed("curl -f https://ways-test-simple.${domain}")
