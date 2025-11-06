@@ -39,7 +39,7 @@ in
     };
   };
 
-  systemd.services.kanidm.after = [ "acme-selfsigned-internal.${domain}.service" ];
+  systemd.services.kanidm.after = [ "acme-internal.${domain}.service" ];
 
   services.nginx.virtualHosts."idm.${domain}" = lib.recursiveUpdate (depot.lib.nginx.vhosts.proxy backendLink.url) {
     locations."/".extraConfig = ''

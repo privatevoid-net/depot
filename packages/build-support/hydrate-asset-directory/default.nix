@@ -1,4 +1,4 @@
-{ lib, fetchAsset, runCommandNoCC }:
+{ lib, fetchAsset, runCommand }:
 
 rootDir: let
 
@@ -25,7 +25,7 @@ rootDir: let
 
   installDvc = dvc: "install -Dm644 ${dvc.dvc} $out/${dvc.installPath}";
 
-in runCommandNoCC (builtins.baseNameOf rootDir) {} ''
+in runCommand (builtins.baseNameOf rootDir) {} ''
   cd ${rootDir}
   mkdir $out
   ${lib.concatStringsSep "\n" (map installFile filesRaw)}

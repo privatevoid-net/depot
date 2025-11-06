@@ -32,10 +32,6 @@
 
       ipfs = pkgs.callPackage ./networking/ipfs { };
 
-      npins = pkgs.npins.override {
-        nix = nix-super;
-      };
-
       openbao = pkgs.callPackage ./projects/openbao { };
 
       opentelemetry-java-agent-bin = pkgs.callPackage ./monitoring/opentelemetry-java-agent-bin { };
@@ -43,7 +39,6 @@
       out-of-your-element = pkgs.callPackage ./servers/out-of-your-element { };
 
       pin = pkgs.callPackage ./tools/pin {
-        inherit npins;
         nix = nix-super;
       };
 
@@ -62,11 +57,11 @@
         tools = with flakePkgs; [
           agenix
           graf
-          npins
           pin
           void
           pkgs.deadnix
           pkgs.statix
+          pkgs.npins
         ];
 
         env.NPINS_DIRECTORY.eval = "$REPO_ROOT/packages/sources";

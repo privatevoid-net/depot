@@ -1,6 +1,6 @@
-{ nixosTest, keycloak }:
+{ testers, keycloak }:
 
-nixosTest {
+testers.nixosTest {
   name = "keycloak";
   nodes.machine.services.keycloak = {
     enable = true;

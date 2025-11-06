@@ -59,8 +59,8 @@ in
 
       package = mkOption {
         type = types.package;
-        default = pkgs.ipfs;
-        defaultText = literalExpression "pkgs.ipfs";
+        default = pkgs.kubo;
+        defaultText = literalExpression "pkgs.kubo";
         description = lib.mdDoc "Which IPFS package to use.";
       };
 
@@ -226,7 +226,7 @@ in
         uid = config.ids.uids.ipfs;
         description = "IPFS daemon user";
         packages = [
-          pkgs.ipfs-migrator
+          pkgs.kubo-migrator
         ];
       };
     };
@@ -258,7 +258,7 @@ in
           # After an unclean shutdown this file may exist which will cause the config command to attempt to talk to the daemon. This will hang forever if systemd is holding our sockets open.
           rm -vf "$IPFS_PATH/api"
       '' + optionalString cfg.autoMigrate ''
-        ${pkgs.ipfs-migrator}/bin/fs-repo-migrations -to '${cfg.package.repoVersion}' -y
+        ${pkgs.kubo-migrator}/bin/fs-repo-migrations -to '${cfg.package.repoVersion}' -y
       '' + ''
           [[ ! -e "$IPFS_PATH/profile-nixos" || $(cat "$IPFS_PATH/profile-nixos") != "${profile}" ]] && \
             ipfs --offline config profile apply ${profile} >/dev/null

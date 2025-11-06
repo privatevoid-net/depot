@@ -35,6 +35,7 @@ testers.runNixOSTest {
     machine.wait_for_unit("ipfs-cluster.service")
     machine.succeed("ipfs-cluster-ctl add -r -n TestPin123 /var/empty")
     
+    machine.wait_for_unit("default.target")
     machine.succeed("systemctl stop ipfs-cluster.service")
     machine.succeed("/run/current-system/specialisation/upgrade/bin/switch-to-configuration test")
 

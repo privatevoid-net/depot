@@ -1,10 +1,11 @@
-{ nixosTest, cluster }:
+{ testers, cluster }:
 
-nixosTest {
+testers.nixosTest {
   name = "jellyfin-stateless";
   nodes = {
     machine = {
       imports = cluster.config.services.warehouse.nixos.host;
+      virtualisation.diskSize = 4096;
     };
   };
   testScript = /*python*/ ''
