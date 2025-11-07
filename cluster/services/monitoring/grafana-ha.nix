@@ -73,16 +73,6 @@ in
           inherit (cluster.config.ways.monitoring-logs) url;
           type = "loki";
         }
-        {
-          name = "Tempo";
-          uid = "P214B5B846CF3925F";
-          inherit (cluster.config.ways.monitoring-traces) url;
-          type = "tempo";
-          jsonData = {
-            serviceMap.datasourceUid = "PBFA97CFB590B2093";
-            nodeGraph.enabled = true;
-          };
-        }
       ];
     };
   };

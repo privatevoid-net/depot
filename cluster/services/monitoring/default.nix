@@ -31,7 +31,6 @@ in
       blackbox = [ "checkmate" "grail" "prophet" ];
       grafana = [ "VEGAS" "prophet" ];
       logging = [ "VEGAS" "grail" ];
-      tracing = [ "VEGAS" "grail" ];
       server = [ "VEGAS" ];
     };
     nixos = {
@@ -42,19 +41,12 @@ in
         ./provisioning/dashboards.nix
       ];
       logging = ./logging.nix;
-      tracing = ./tracing.nix;
       server = [
         ./server.nix
       ];
     };
     meshLinks = {
       logging.loki.link.protocol = "http";
-      tracing = {
-        tempo.link.protocol = "http";
-        tempo-otlp-http.link.protocol = "http";
-        tempo-otlp-grpc.link.protocol = "grpc";
-        tempo-zipkin-http.link.protocol = "http";
-      };
     };
   };
 
@@ -68,23 +60,11 @@ in
         nodes = config.services.monitoring.nodes.logging;
         format = "envFile";
       };
-      tempo-ingest.locksmith = {
-        nodes = config.services.monitoring.nodes.tracing;
-        format = "envFile";
-      };
-      tempo-query.locksmith = {
-        nodes = config.services.monitoring.nodes.tracing;
-        format = "envFile";
-      };
     };
     buckets = {
       loki-chunks.allow = {
         loki-ingest = [ "read" "write" ];
         loki-query = [ "read" ];
-      };
-      tempo-chunks.allow = {
-        tempo-ingest = [ "read" "write" ];
-        tempo-query = [ "read" ];
       };
     };
   };
@@ -111,8 +91,6 @@ in
       extras.locations."/".proxyWebsockets = true;
     };
     monitoring-logs = query "loki";
-    monitoring-traces = query "tempo";
     ingest-logs = ingest "loki";
-    ingest-traces-otlp = ingest "tempo-ingest-otlp-grpc" // { grpc = true; };
   };
 }
