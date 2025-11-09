@@ -42,6 +42,8 @@
         nix = nix-super;
       };
 
+      quickie = pkgs.callPackage ./servers/quickie { };
+      
       stevenblack-hosts = pkgs.callPackage ./data/stevenblack {
         inherit pins;
         inherit (builders) mkNpinsSource;
