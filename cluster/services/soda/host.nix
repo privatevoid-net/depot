@@ -7,10 +7,17 @@
     hostBridge = "vmdefault";
     localAddress = "${depot.hours.soda.interfaces.primary.addr}/24";
     autoStart = true;
-    bindMounts.sodaDir = {
-      hostPath = "/srv/storage/www/soda";
-      mountPoint = "/soda";
-      isReadOnly = false;
+    bindMounts = {
+      sodaDir = {
+        hostPath = "/srv/storage/www/soda";
+        mountPoint = "/soda";
+        isReadOnly = false;
+      };
+      schizoDir = {
+        hostPath = "/srv/storage/www/schizo.cooking";
+        mountPoint = "/schizo";
+        isReadOnly = false;
+      };
     };
   };
 
