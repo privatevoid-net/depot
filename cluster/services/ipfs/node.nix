@@ -159,6 +159,10 @@ in
         cluster.config.vars.meshNet.cidr
       ];
     };
+    preStart = lib.mkBefore ''
+      rm --verbose --force /run/ipfs/ipfs-api.sock
+      umount --quiet --verbose /ipfs /ipns || true
+    '';
     postStart = "chmod 660 /run/ipfs/ipfs-api.sock";
   };
 
