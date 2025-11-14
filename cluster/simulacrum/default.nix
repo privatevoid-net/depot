@@ -1,8 +1,10 @@
-{ testers, config, extendModules, lib, system }:
+{ testers, config, extendModules, lib, stdenv }:
 
 { service }:
 
 let
+  inherit (stdenv.hostPlatform) system;
+
   serviceConfig = config.cluster.config.services.${service};
   serviceList = getDepsRecursive [] service;
   allAugments = map (svc: config.cluster.config.services.${svc}.simulacrum.augments) serviceList;
