@@ -54,7 +54,7 @@ super: rec {
 
   s3ql = (patch super.s3ql "patches/base/s3ql").overrideAttrs (old: {
     propagatedBuildInputs = old.propagatedBuildInputs ++ [
-      super.python3Packages.systemd
+      super.python3Packages.systemd-python
     ];
   });
 
