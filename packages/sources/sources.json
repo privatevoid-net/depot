@@ -11,10 +11,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "v4.8.1",
-      "revision": "3ed826087727c01074302b5663c78f856f6968a8",
-      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v4.8.1",
-      "hash": "0khd6n8ryq07jags6hl47yivp9z85f7n14f7m3fdn2hzf0l3spnl"
+      "version": "v4.10.2",
+      "revision": "c88cb4bca93e3a376836b8880e5e4c1fa5c7eba2",
+      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v4.10.2",
+      "hash": "0y9q5dqhg4irqj7ms063dqdrg0mcwv0cv6myz1b76ijcxjm49wa4"
     },
     "excalidraw": {
       "type": "Git",
@@ -25,9 +25,9 @@
       },
       "branch": "master",
       "submodules": false,
-      "revision": "c1415004005d74961d43f7bc80cd0a3f2e1ab0cb",
-      "url": "https://github.com/excalidraw/excalidraw/archive/c1415004005d74961d43f7bc80cd0a3f2e1ab0cb.tar.gz",
-      "hash": "1c0q95ip34q0pr6dm5gr68y7hz634hkly25j28wl5pinyf3487xz"
+      "revision": "7f66e1fe897873713ba04410534be2d97b9139af",
+      "url": "https://github.com/excalidraw/excalidraw/archive/7f66e1fe897873713ba04410534be2d97b9139af.tar.gz",
+      "hash": "0ivfdaaa6a1jjm7cygcsn7g6gjzxhymq56rgn8l2cw4szaln4gm7"
     },
     "stevenblack-hosts": {
       "type": "GitRelease",
@@ -40,10 +40,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "3.15.50",
-      "revision": "efa4626c76af826c9ddffe37243c86a1b9593efc",
-      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.15.50",
-      "hash": "03rhjisgishffp0j683sd008hhrfzjjpscf6pvnmva8jp7addjwn"
+      "version": "3.16.33",
+      "revision": "0cb749132cd3b5250013fcd364c1a6a0896013bf",
+      "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.16.33",
+      "hash": "0xa6cgg60ma0sr780gi42043rgh1qllcm88bv2ldgfcjwn1bzqig"
     }
   },
   "version": 5

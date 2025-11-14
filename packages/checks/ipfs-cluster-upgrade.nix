@@ -1,4 +1,4 @@
-{ testers, nixosModules, lib, ipfs-cluster, previous, system }:
+{ testers, nixosModules, lib, ipfs-cluster, previous, stdenv }:
 
 testers.runNixOSTest {
   name = "ipfs-cluster-upgrade";
@@ -18,7 +18,7 @@ testers.runNixOSTest {
       enable = true;
       openSwarmPort = true;
       consensus = "crdt";
-      package = previous.packages.${system}.ipfs-cluster;
+      package = previous.packages.${stdenv.hostPlatform.system}.ipfs-cluster;
     };
     specialisation.upgrade = {
       inheritParentConfig = true;

@@ -48,7 +48,7 @@ in
   };
 
   systemd.services = lib.mapAttrs' (name: value: {
-    name = "acme-${name}";
+    name = "acme-order-renew-${name}";
     value = {
       distributed.enable = value.dnsProvider != null;
       preStart = let
