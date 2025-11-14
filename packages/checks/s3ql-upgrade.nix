@@ -1,4 +1,4 @@
-{ testers, nixosModules, lib, s3ql, previous, system }:
+{ testers, nixosModules, lib, s3ql, previous, stdenv }:
 
 testers.runNixOSTest {
   name = "s3ql-upgrade";
@@ -15,7 +15,7 @@ testers.runNixOSTest {
       }
     ];
 
-    _module.args.depot.packages = { inherit (previous.packages.${system}) s3ql; };
+    _module.args.depot.packages = { inherit (previous.packages.${stdenv.hostPlatform.system}) s3ql; };
 
     services.external-storage = {
       fileSystems.test = {
