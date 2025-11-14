@@ -11,7 +11,7 @@
 
   options.nixpkgs.system = lib.mkOption {
     type = lib.types.str;
-    default = pkgs.system;
+    default = pkgs.stdenv.hostPlatform.system;
     readOnly = true;
   };
 
