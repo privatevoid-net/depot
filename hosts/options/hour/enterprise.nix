@@ -6,7 +6,7 @@ with lib;
     subdomain = mkOption {
       description = "Host FQDN subdomain.";
       type = types.str;
-      default = "services";
+      default = "node";
     };
   };
 }
