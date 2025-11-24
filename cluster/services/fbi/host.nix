@@ -30,7 +30,6 @@ with depot.lib.nginx;
     };
     sonarr = {
       enable = true;
-      package = depot.packages.sonarr5;
     };
     prowlarr = {
       enable = true;
