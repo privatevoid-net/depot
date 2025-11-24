@@ -14,6 +14,7 @@ let
   snakeoilPublicKeys = {
     checkmate = "TESTtbFybW5YREwtd18a1A4StS4YAIUS5/M1Lv0jHjA=";
     grail = "TEsTh7bthkaDh9A1CpqDi/F121ao5lRZqIJznLH8mB4=";
+    thousandman = "testhvaTz+LAVV/i96iyJ762nV6Gr3dFucDa7L+Cd3k=";
     thunderskin = "tEST6afFmVN18o+EiWNFx+ax3MJwdQIeNfJSGEpffXw=";
     VEGAS = "tEsT6s7VtM5C20eJBaq6UlQydAha8ATlmrTRe9T5jnM=";
     prophet = "TEstYyb5IoqSL53HbSQwMhTaR16sxcWcMmXIBPd+1gE=";
@@ -48,6 +49,15 @@ in
         extraRoutes = [];
       };
     };
+    thousandman.mesh = {
+      ipv4 = getExtAddr hours.thousandman;
+      extra = {
+        meshIp = "10.1.1.100";
+        inherit meshNet;
+        pubKey = grease "thousandman" "kwRlT6gJ6lopCzurc+qFvn0vX0QGXTzSiZqdOL8vhEU=";
+        extraRoutes = [];
+      };
+    };
     thunderskin.mesh = {
       ipv4 = getExtAddr hours.thunderskin;
       extra = {
@@ -78,7 +88,7 @@ in
   };
   services.wireguard = {
     nodes = {
-      mesh = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
+      mesh = [ "checkmate" "grail" "thousandman" "thunderskin" "VEGAS" "prophet" ];
       storm = [ "VEGAS" ];
     };
     nixos = {
