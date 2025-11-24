@@ -18,6 +18,8 @@ in with tools.dns;
       prophet = import ./prophet tools;
 
       grail = import ./grail tools;
+      
+      thousandman = import ./thousandman tools;
     };
 
     fromFlesh = {
