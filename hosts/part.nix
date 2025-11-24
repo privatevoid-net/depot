@@ -1,6 +1,6 @@
 let
   tools = import ./tools.nix;
-in with tools.dns;
+in
 {
   imports = [
     ./deploy.nix
