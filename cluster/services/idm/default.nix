@@ -18,7 +18,7 @@
   services.idm = {
     nodes = {
       server = [ "VEGAS" ];
-      client = [ "checkmate" "grail" "VEGAS" "prophet" "soda" "thunderskin" ];
+      client = [ "checkmate" "grail" "VEGAS" "prophet" "soda" "thousandman" "thunderskin" ];
       client-soda = [ "soda" ];
     };
     nixos = {
