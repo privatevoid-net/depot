@@ -1,6 +1,6 @@
 let
   tools = import ./tools.nix;
-in with tools.dns;
+in
 {
   imports = [
     ./deploy.nix
@@ -33,13 +33,11 @@ in with tools.dns;
       TITAN.hyprspace = {
         enable = true;
         id = "QmfJ5Tv2z9jFv9Aocevyn6QqRcfm9eYQZhvYvmAVfACfuM";
-        # addr = "10.100.3.7";
       };
 
       jericho.hyprspace = {
         enable = true;
         id = "QmccBLgGP3HR36tTkwSYZX3KDv2EXb1MvYwGVs6PbpbHv9";
-        # addr = "10.100.3.13";
       };
     };
   };
