@@ -1,6 +1,6 @@
 {
   services.cachix-deploy-agent = { config, ... }: {
-    nodes.agent = [ "checkmate" "grail" "prophet" "VEGAS" "thunderskin" ];
+    nodes.agent = [ "checkmate" "grail" "prophet" "VEGAS" "thousandman" "thunderskin" ];
     nixos.agent = ./agent.nix;
     secrets.token = {
       nodes = config.nodes.agent;
