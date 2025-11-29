@@ -48,6 +48,8 @@
       };
 
       void = pkgs.callPackage ./tools/void { };
+      
+      zerofs = pkgs.callPackage ./projects/zerofs { };
     };
 
     projectShells = {
