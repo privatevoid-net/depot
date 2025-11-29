@@ -46,8 +46,6 @@ in
 
   security.acme.certs."securedns.${domain}" = {
     dnsProvider = "exec";
-    # using a different ACME provider because Android Private DNS is fucky
-    server = "https://api.buypass.com/acme/directory";
     reloadServices = [
       "coredns.service"
     ];

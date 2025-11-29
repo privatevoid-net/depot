@@ -80,7 +80,7 @@ in
       name = "securedns";
       type = "CAA";
       target = [
-        "0 issue \"buypass.no\""
+        "0 issue \"letsencrypt.org\""
         "0 issuewild \";\""
         "0 iodef \"mailto:${depot.lib.meta.adminEmail}\""
       ];
