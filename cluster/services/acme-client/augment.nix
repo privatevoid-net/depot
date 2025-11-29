@@ -7,7 +7,6 @@ in
 {
   nowhere.names = {
     "acme-v02.api.letsencrypt.org" = "stepCa";
-    "api.buypass.com" = "stepCa";
   };
 
   nodes.nowhere = { config, ... }: {
@@ -46,9 +45,6 @@ in
       nginx.virtualHosts = {
         "acme-v02.api.letsencrypt.org".locations."/".extraConfig = ''
           rewrite /directory /acme/snakeoil/directory break;
-        '';
-        "api.buypass.com".locations."/".extraConfig = ''
-          rewrite /acme/directory /acme/snakeoil/directory break;
         '';
       };
     };
