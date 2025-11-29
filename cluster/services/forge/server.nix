@@ -20,7 +20,12 @@ in
     incantations = i: [
       (i.execShell "chown -R forgejo:forgejo /srv/storage/private/forge")
       (i.execShell "rm -rf /srv/storage/private/forge/data/{attachments,lfs,avatars,repo-avatars,repo-archive,packages,actions_log,actions_artifacts}")
+      (i.move "/srv/storage/private/forge" "/srv/planetarium/private/forge")
     ];
+  };
+
+  systemd.services.ascend-forgejo.unitConfig = {
+    RequiresMountsFor = config.services.forgejo.stateDir;
   };
 
   services.locksmith.waitForSecrets.forgejo = [
@@ -32,7 +37,7 @@ in
   services.forgejo = {
     enable = true;
     package = depot.packages.forgejo;
-    stateDir = "/srv/storage/private/forge";
+    stateDir = "/srv/planetarium/private/forge";
     database = {
       createDatabase = false;
       type = "postgres";
