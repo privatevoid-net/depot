@@ -50,7 +50,7 @@ in
     nodes = {
       authoritative = [ "VEGAS" "checkmate" "prophet" ];
       coredns = [ "checkmate" "VEGAS" ];
-      client = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" ];
+      client = [ "checkmate" "grail" "thousandman" "thunderskin" "VEGAS" "prophet" ];
     };
     nixos = {
       authoritative = ./authoritative.nix;
