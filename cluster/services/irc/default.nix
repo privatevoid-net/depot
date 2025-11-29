@@ -6,7 +6,7 @@ let
   inherit (depot.lib.meta) domain;
 
   subDomains = {
-    VEGAS = "eu1";
+    grail = "eu1";
     prophet = "eu2";
   };
 in
@@ -38,7 +38,7 @@ in
   };
   services.irc = {
     nodes = {
-      host = [ "VEGAS" "prophet" ];
+      host = [ "grail" "prophet" ];
     };
     nixos = {
       host = [
