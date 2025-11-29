@@ -34,6 +34,11 @@ in
     "patroni-forge"
   ];
 
+  users = {
+    users.forgejo.uid = 955;
+    groups.forgejo.gid = 949;
+  };
+
   services.forgejo = {
     enable = true;
     package = depot.packages.forgejo;
