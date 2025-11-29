@@ -2,7 +2,7 @@
 
 {
   services.search = {
-    nodes.host = [ "VEGAS" ];
+    nodes.host = [ "grail" ];
     nixos.host = ./host.nix;
     secrets.default.nodes = config.services.search.nodes.host;
   };
