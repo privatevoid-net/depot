@@ -49,7 +49,7 @@ in
   services.dns = {
     nodes = {
       authoritative = [ "VEGAS" "checkmate" "prophet" ];
-      coredns = [ "checkmate" "VEGAS" ];
+      coredns = [ "checkmate" "grail" "VEGAS" ];
       client = [ "checkmate" "grail" "thousandman" "thunderskin" "VEGAS" "prophet" ];
     };
     nixos = {
