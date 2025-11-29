@@ -30,6 +30,8 @@
         ~*YandexBot 1;
         ~*bingbot 1;
         ~*meta-externalagent 1;
+        "~*Windows NT 6\.1" 1;
+        "~*Android [56]\.0" 1;
         }
     '';
 
