@@ -94,8 +94,8 @@ in {
     '';
   };
   systemd.services.ngircd = {
-    after = [ "acme-finished-${serverName}.target" "dhparams-gen-ngircd.service" ];
-    wants = [ "acme-finished-${serverName}.target" "dhparams-gen-ngircd.service" ];
+    after = [ "acme-order-renew-${serverName}.service" "dhparams-gen-ngircd.service" ];
+    wants = [ "acme-order-renew-${serverName}.service" "dhparams-gen-ngircd.service" ];
     serviceConfig.RuntimeDirectory = "ngircd";
     preStart = ''
       install -d -m700 /run/ngircd/secrets
