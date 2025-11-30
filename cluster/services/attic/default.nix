@@ -24,7 +24,6 @@
       cache-client = [
         ./builder-cache-client.nix
         ./attic-cache-client.nix
-        ./s3-cache-client.nix
       ];
     };
     meshLinks.server.attic.link.protocol = "http";
