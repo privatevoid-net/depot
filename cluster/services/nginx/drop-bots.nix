@@ -32,6 +32,7 @@
         ~*meta-externalagent 1;
         "~*Windows NT 6\.1" 1;
         "~*Android [56]\.0" 1;
+        "~*Chrome/[3-9][0-9]\." 1;
         }
     '';
 
