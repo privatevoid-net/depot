@@ -36,6 +36,7 @@
         ~*Brightbot 1;
         ~*AhrefsBot 1;
         ~*TerraCotta 1;
+        "~*Hello from Palo Alto Networks" 1;
         }
     '';
 
