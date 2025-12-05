@@ -324,11 +324,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1751407610,
-        "narHash": "sha256-Lv/Mb7vj1bUj5TajIdM6bu8299y+B3sZfE6xlA6sXcM=",
+        "lastModified": 1764509331,
+        "narHash": "sha256-xHvTds5zlqlEawN+iOwpxQWSBWyAuu0jCk9J/L2pwSo=",
         "owner": "hyprspace",
         "repo": "hyprspace",
-        "rev": "8f5778dffe153c0e9fda807dc488c4182359e512",
+        "rev": "e994260bdb9da287933b3b41061f7e53d99bfb20",
         "type": "github"
       },
       "original": {
@@ -477,11 +477,11 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1764288690,
-        "narHash": "sha256-7B7easQXR1V7ALUS0+LtqNYBVo4bQHA+TZoePRCxQLQ=",
+        "lastModified": 1764854611,
+        "narHash": "sha256-VgKiNaoL9dA0oxuetR+STr3rMV6sS/T3yGc9/KPheg8=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e621b82a26181e7b30f9db2119722b1c00157b47",
+        "rev": "3a4b875aef660bbd148e86b92cffea2a360c3275",
         "type": "github"
       },
       "original": {
