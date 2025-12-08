@@ -13,6 +13,7 @@
         peerId = {
           VEGAS = "Qmd7QHZU8UjfYdwmjmq1SBh9pvER9AwHpfwQvnvNo3HBBo";
           prophet = "12D3KooWQWsHPUUeFhe4b6pyCaD1hBoj8j6Z7S7kTznRTh1p1eVt";
+          thousandman = "12D3KooWSB19CiWdkVZFYVJpyTgiZG7R2ZU4K9sthBJFCgwJh4t9";
         }.${name} or null;
         multiaddrs = [
           "/ip4/${self.ipv4}/udp/${self.portStr}/quic-v1"
