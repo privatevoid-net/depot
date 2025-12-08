@@ -13,7 +13,7 @@
   };
 
   dns.records = let
-    ssoAddr = [ depot.hours.VEGAS.interfaces.primary.addrPublic ];
+    ssoAddr = map (host: depot.hours.${host}.interfaces.primary.addrPublic) config.services.sso.nodes.host;
   in {
     login.target = ssoAddr;
     account.target = ssoAddr;
