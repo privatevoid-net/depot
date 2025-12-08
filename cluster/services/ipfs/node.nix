@@ -4,6 +4,7 @@ let
   cfg = config.services.ipfs;
   apiAddress = "/unix/run/ipfs/ipfs-api.sock";
   ipfsApi = pkgs.writeTextDir "api" apiAddress;
+  hasGateway = cluster.config.hostLinks.${config.networking.hostName} ? ipfsGateway;
   gw = cluster.config.hostLinks.${config.networking.hostName}.ipfsGateway;
   ipfsPort = 110;
   nameservers = lib.unique config.networking.nameservers;
@@ -32,7 +33,7 @@ in
       "/ip4/0.0.0.0/udp/4001/quic-v1"
     ];
     inherit apiAddress;
-    gatewayAddress = "/ip4/${gw.ipv4}/tcp/${gw.portStr}";
+    gatewayAddress = lib.mkIf hasGateway "/ip4/${gw.ipv4}/tcp/${gw.portStr}";
     dataDir = "/srv/storage/ipfs/repo";
     localDiscovery = false;
 
