@@ -3,7 +3,7 @@
 {
   services.sso = {
     nodes = {
-      host = [ "VEGAS" ];
+      host = [ "grail" ];
       oauth2-proxy = [ "VEGAS" ];
     };
     nixos = {
