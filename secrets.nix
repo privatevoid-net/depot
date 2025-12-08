@@ -5,7 +5,7 @@ let
   systemKeys = x: x.ssh.id.publicKey or null;
 in with hosts;
 {
-  "cluster/services/dns/acme-dns-direct-key.age".publicKeys = max ++ map systemKeys [ checkmate grail thunderskin VEGAS prophet ];
+  "cluster/services/dns/acme-dns-direct-key.age".publicKeys = max ++ map systemKeys [ checkmate grail thunderskin thousandman VEGAS prophet ];
   "cluster/services/dns/acme-dns-db-credentials.age".publicKeys = max ++ map systemKeys [ checkmate VEGAS prophet ];
   "cluster/services/monitoring/secrets/grafana-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/monitoring/secrets/grafana-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
