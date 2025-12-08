@@ -6,13 +6,10 @@ let
 in with hosts;
 {
   "cluster/services/dns/acme-dns-direct-key.age".publicKeys = max ++ map systemKeys [ checkmate grail thunderskin thousandman VEGAS prophet ];
-  "cluster/services/dns/acme-dns-db-credentials.age".publicKeys = max ++ map systemKeys [ checkmate VEGAS prophet ];
   "cluster/services/monitoring/secrets/grafana-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/monitoring/secrets/grafana-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/monitoring/secrets/secret-monitoring/blackbox.age".publicKeys = max ++ map systemKeys [ checkmate grail prophet ];
-  "cluster/services/monitoring/secrets/tempo-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "cluster/services/storage/secrets/heresy-encryption-key.age".publicKeys = max ++ map systemKeys [ VEGAS ];
-  "cluster/services/storage/secrets/external-storage-auth-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "cluster/services/storage/secrets/garage-rpc-secret.age".publicKeys = max ++ map systemKeys [ grail VEGAS prophet ];
   "cluster/services/storage/secrets/storage-box-credentials.age".publicKeys = max ++ map systemKeys [ grail VEGAS prophet ];
   "secrets/dovecot-ldap-token.age".publicKeys = max ++ map systemKeys [ VEGAS ];
@@ -21,7 +18,6 @@ in with hosts;
   "secrets/hyprspace-key-thunderskin.age".publicKeys = max ++ map systemKeys [ thunderskin ];
   "secrets/hyprspace-key-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/hyprspace-key-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
-  "secrets/keycloak-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/nextcloud-adminpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/nextcloud-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/oauth2_proxy-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];
