@@ -61,7 +61,7 @@ in
           ID = extra.peerId;
           Addrs = extra.multiaddrs;
         })
-        (cluster.config.services.ipfs.otherNodes.node config.networking.hostName);
+        (lib.filter (name: cluster.config.hostLinks.${name}.ipfs.extra.peerId != null) (cluster.config.services.ipfs.otherNodes.node config.networking.hostName));
       Gateway = {
         Writable = false;
         ExposeRoutingAPI = true;
