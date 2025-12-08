@@ -6,7 +6,6 @@
     ./modules/devshell.nix
     ./build-support
 
-    ./servers/reflex-cache/project.nix
     ./websites/landing/project.nix
     ./websites/stop-using-nix-env/project.nix
   ];
