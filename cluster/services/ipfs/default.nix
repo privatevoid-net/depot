@@ -23,11 +23,11 @@
   });
   services.ipfs = {
     nodes = {
-      node = [ "VEGAS" "prophet" ];
+      node = [ "VEGAS" "prophet" "thousandman" ];
       clusterPeer = [ "VEGAS" "prophet" ];
-      gateway = [ "VEGAS" "prophet" ];
+      gateway = [ "prophet" "thousandman" ];
       io-tweaks = [ "VEGAS" ];
-      remote-api = [ "VEGAS" ];
+      remote-api = [ "thousandman" ];
     };
     meshLinks.gateway.ipfsGateway.link.protocol = "http";
     nixos = {
