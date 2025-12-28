@@ -18,13 +18,6 @@
   in config.lib.forService "forge" {
     forge = {
       target = config.hostLinks.${host}.forge.url;
-      extras.countersiege.locations = [
-        "~ ^/.*/.*/commit/.*/"
-        "~ ^/.*/.*/src/commit/.*/"
-        "~ ^/.*/.*/raw/commit/.*/"
-        "~ ^/.*/.*/commits/commit/.*/"
-        "~ ^/.*/.*/blame/commit/.*/"
-      ];
     };
   };
 
