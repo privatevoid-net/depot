@@ -30,7 +30,7 @@
         ~*YandexBot 1;
         ~*bingbot 1;
         ~*meta-externalagent 1;
-        "~*Windows NT 6\.1" 1;
+        "~*Windows NT 6\.[0-9]" 1;
         "~*Android [56]\.0" 1;
         "~*Chrome/[0-9][0-9]\." 1;
         "~*Chrome/[0-9]\." 1;
