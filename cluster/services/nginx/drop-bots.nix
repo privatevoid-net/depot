@@ -34,6 +34,8 @@
         "~*Android [56]\.0" 1;
         "~*Chrome/[0-9][0-9]\." 1;
         "~*Chrome/[0-9]\." 1;
+        "~*Firefox/[0-9][0-9]\." 1;
+        "~*Firefox/[0-9]\." 1;
         ~*Brightbot 1;
         ~*AhrefsBot 1;
         ~*TerraCotta 1;
