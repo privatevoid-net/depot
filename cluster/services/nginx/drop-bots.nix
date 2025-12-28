@@ -41,6 +41,7 @@
         ~*TerraCotta 1;
         "~*Hello from Palo Alto Networks" 1;
         "~*Edg/[0-9]" 1;
+        "~*Trident/[0-9]" 1;
         }
     '';
 
