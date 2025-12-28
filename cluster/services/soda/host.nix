@@ -65,7 +65,7 @@
           SocketBindDeny = "any";
           SystemCallArchitectures = "native";
           SystemCallFilter = [ "@system-service" "~@privileged" "~@resources" ];
-          TasksMax = 1;
+          TasksMax = 2;
           UMask = "0077";
 
           InaccessiblePaths = [
