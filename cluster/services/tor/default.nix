@@ -1,5 +1,5 @@
 {
-  services.tor-client = {
+  services.tor = {
     nodes.client = [ "VEGAS" "grail" ];
     nixos.client = ./client.nix;
   };
