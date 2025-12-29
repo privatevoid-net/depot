@@ -55,9 +55,10 @@
       filter = "nginx-drop-status-444";
       banaction = "xdp";
       findtime = "3600";
-      maxretry = "2";
+      maxretry = "1";
+      bantime = "24h";
       "bantime.maxtime" = "672h";
-      "bantime.rndtime" = "10m";
+      "bantime.rndtime" = "1h";
       "bantime.factor" = "16";
     };
   };
