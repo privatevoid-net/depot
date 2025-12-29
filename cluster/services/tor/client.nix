@@ -14,4 +14,6 @@
       };
     };
   };
+
+  services.hyprspace.settings.services.tor = "/tcp/${config.links.torSocks.portStr}";
 }
