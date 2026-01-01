@@ -9,7 +9,7 @@ with lib;
         options = {
           mountPoint = mkOption {
             type = types.path;
-            default = "/srv/${name}";
+            default = "/srv/shared/${name}";
           };
 
           s3BucketPath = mkOption {
