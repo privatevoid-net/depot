@@ -28,6 +28,12 @@ in
     ];
   };
 
+  storage.planetarium.fileSystems.forge = {
+    inherit (config.users.users.forgejo) uid;
+    inherit (config.users.groups.forgejo) gid;
+    keyFile = secrets.planetariumKey.path;
+  };
+
   systemd.services.ascend-forgejo.unitConfig = {
     RequiresMountsFor = config.services.forgejo.stateDir;
   };
@@ -46,7 +52,7 @@ in
   services.forgejo = {
     enable = true;
     package = depot.packages.forgejo;
-    stateDir = "${cluster.config.storage.zerofs.fileSystems.planetarium.mountPoint}/private/forge";
+    stateDir = config.storage.planetarium.fileSystems.forge.mountPoint;
     database = {
       createDatabase = false;
       type = "postgres";

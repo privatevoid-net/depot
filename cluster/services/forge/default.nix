@@ -10,6 +10,10 @@
         nodes = server;
         owner = "forgejo";
       };
+      planetariumKey = {
+        nodes = server;
+        owner = "root";
+      };
     };
   };
 
