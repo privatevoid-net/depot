@@ -19,6 +19,11 @@ with depot.lib.nginx;
   services.nginx.virtualHosts = mappers.mapSubdomains {
     keychain = vhosts.proxy config.links.bitwarden.url;
   };
+  
+  users = {
+    users.vaultwarden.uid = 988;
+    groups.vaultwarden.gid = 982;
+  };
 
   services.vaultwarden = {
     enable = true;
