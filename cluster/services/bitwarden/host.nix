@@ -7,6 +7,11 @@ with depot.lib.nginx;
 {
   links.bitwarden.protocol = "http";
 
+  system.ascensions.vaultwarden-data = {
+    requiredBy = [ "vaultwarden.service" ];
+    before = [ "vaultwarden.service" ];
+  };
+
   services.locksmith.waitForSecrets.vaultwarden = [
     "patroni-vaultwarden"
   ];
