@@ -46,7 +46,7 @@ in
   services.forgejo = {
     enable = true;
     package = depot.packages.forgejo;
-    stateDir = "/srv/planetarium/private/forge";
+    stateDir = "${cluster.config.storage.zerofs.fileSystems.planetarium.mountPoint}/private/forge";
     database = {
       createDatabase = false;
       type = "postgres";
