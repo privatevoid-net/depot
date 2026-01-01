@@ -161,7 +161,7 @@ in
           what = "/run/zerofs/${name}/zerofs.sock";
           where = fs.${type};
           type = "9p";
-          options = "trans=unix,version=9p2000.L";
+          options = "trans=unix,version=9p2000.L,cache=mmap";
         }) config.storage.planetarium.fileSystems;
       in lib.mkMerge [
         (createMount "mountPoint")
