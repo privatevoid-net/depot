@@ -93,7 +93,7 @@ in
         MINIO_USE_SSL = true;
         MINIO_BUCKET_LOOKUP = "path";
       };
-      log."logger.xorm.MODE" = "";
+      log.LOGGER_XORM_MODE = "";
       # enabling this will leak secrets to the log
       database.LOG_SQL = false;
     };
