@@ -15,7 +15,7 @@ testers.runNixOSTest {
       }
     ];
 
-    _module.args.depot.packages = { inherit (previous.packages.${stdenv.hostPlatform.system}) s3ql; };
+    _module.args.depot'.packages = { inherit (previous.packages.${stdenv.hostPlatform.system}) s3ql; };
 
     services.external-storage = {
       fileSystems.test = {

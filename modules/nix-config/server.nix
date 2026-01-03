@@ -1,9 +1,9 @@
-{ depot, lib, ... }:
+{ depot, depot', lib, ... }:
 
 {
   nix = {
     package = let
-      nix = depot.inputs.nix-super.packages.default;
+      nix = depot'.inputs.nix-super.packages.default;
     in { version = lib.getVersion nix.name; } // nix;
 
     settings = {

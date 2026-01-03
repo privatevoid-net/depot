@@ -24,11 +24,11 @@ in
       ./old-static
       ./old-static/jokes.nix
     ];
-    nixos.host = { config, depot, ... }: let
+    nixos.host = { config, depot, depot', ... }: let
 
       importWebsites = expr: import expr {
         tools = depot.lib.nginx;
-        inherit (depot) inputs packages;
+        inherit (depot') inputs packages;
       };
 
       websites = depot.lib.nginx.mappers.mapSubdomains (importWebsites ./websites.nix);

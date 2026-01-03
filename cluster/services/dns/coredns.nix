@@ -1,4 +1,4 @@
-{ cluster, config, depot, lib, ... }:
+{ cluster, config, depot, depot', lib, ... }:
 
 let
   inherit (config.reflection) interfaces;
@@ -17,7 +17,7 @@ let
     (node: cluster.config.hostLinks.${node}.dnsAuthoritative.tuple)
     cluster.config.services.dns.nodes.authoritative;
 
-  inherit (depot.packages) stevenblack-hosts;
+  inherit (depot'.packages) stevenblack-hosts;
   dot = config.security.acme.certs."securedns.${domain}";
 in
 

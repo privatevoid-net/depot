@@ -18,22 +18,22 @@ let
       attr = lib.concatStringsSep "_" previousVersion;
     };
 
-  useCurrentGarage = { depot, ... }: {
-    services.garage.package = lib.mkForce depot.packages.garage;
+  useCurrentGarage = { depot', ... }: {
+    services.garage.package = lib.mkForce depot'.packages.garage;
   };
 in
 
 {
-  nodes = lib.genAttrs nodes.garage (node: { depot, pkgs, ... }: {
+  nodes = lib.genAttrs nodes.garage (node: { depot, depot', pkgs, ... }: {
     services.garage = {
       layout.initial = lib.genAttrs nodes.garage (_: {
         capacity = lib.mkOverride 51 1000;
         zone = lib.mkForce "eu-central";
       });
       package = let
-        prev = getPreviousVersion depot.packages.garage.version;
+        prev = getPreviousVersion depot'.packages.garage.version;
         attr = "garage_${prev.attr}";
-        package = depot.packages.${attr} or pkgs.${attr};
+        package = depot'.packages.${attr} or pkgs.${attr};
       in lib.mkOverride 51 (depot.lib.ignoreVulnerabilities package);
     };
     specialisation = {

@@ -1,5 +1,5 @@
-{ depot, ... }:
+{ depot', ... }:
 
 {
-  services.kanidm.package = depot.packages.kanidm;
+  services.kanidm.package = depot'.packages.kanidm;
 }

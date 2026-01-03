@@ -1,4 +1,4 @@
-{ config, cluster, depot, ... }:
+{ config, cluster, depot, depot', ... }:
 
 let
   inherit (depot.lib.meta) domain;
@@ -15,7 +15,7 @@ in
   services.consul = {
     enable = true;
     webUi = true;
-    package = depot.packages.consul;
+    package = depot'.packages.consul;
     extraConfig = {
       datacenter = "eu-central";
       domain = "sd-magic.${domain}.";

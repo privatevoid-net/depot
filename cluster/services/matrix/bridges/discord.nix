@@ -1,7 +1,7 @@
-{ cluster, config, depot, lib, pkgs, ... }:
+{ cluster, config, depot, depot', lib, pkgs, ... }:
 let
   inherit (depot.lib.meta) domain;
-  inherit (depot.packages) out-of-your-element;
+  inherit (depot'.packages) out-of-your-element;
   inherit (cluster.config.services.matrix) secrets;
   secretFile = config.age.secrets.cluster-matrix-discordBridgeToken.file;
   synapse = config.services.matrix-synapse;

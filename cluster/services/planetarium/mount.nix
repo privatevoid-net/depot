@@ -1,4 +1,4 @@
-{ cluster, config, depot, lib, pkgs, ... }:
+{ cluster, config, depot', lib, pkgs, ... }:
 
 let
   inherit (cluster.config.services.planetarium) secrets;
@@ -82,7 +82,7 @@ in
             };
 
             storage = {
-              url = "${fs.storagePath}/${lib.versions.majorMinor depot.packages.zerofs.version}/";
+              url = "${fs.storagePath}/${lib.versions.majorMinor depot'.packages.zerofs.version}/";
               encryption_password = "\${ZEROFS_KEY}";
             };
 
@@ -121,7 +121,7 @@ in
               done
               systemd-notify --ready
               ) & disown
-              exec ${depot.packages.zerofs}/bin/zerofs run --config ${zerofsConfig}
+              exec ${depot'.packages.zerofs}/bin/zerofs run --config ${zerofsConfig}
             '';
           };
         }) config.storage.planetarium.fileSystems)

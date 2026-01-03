@@ -1,4 +1,4 @@
-{ cluster, config, depot, lib, pkgs, ... }:
+{ cluster, config, depot, depot', lib, pkgs, ... }:
 let
   inherit (depot.lib.meta) domain;
   cfg = config.services.ipfs;
@@ -21,7 +21,7 @@ in
 
   services.ipfs = {
     enable = true;
-    package = depot.packages.ipfs;
+    package = depot'.packages.ipfs;
     startWhenNeeded = false;
     autoMount = true;
     autoMigrate = false;

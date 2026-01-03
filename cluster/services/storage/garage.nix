@@ -1,4 +1,4 @@
-{ cluster, config, depot, lib, ... }:
+{ cluster, config, depot', lib, ... }:
 
 let
   inherit (cluster.config) vars;
@@ -28,7 +28,7 @@ in
 
   services.garage = {
     enable = true;
-    package = depot.packages.garage;
+    package = depot'.packages.garage;
     logLevel = "warn";
     settings = {
       replication_factor = 3;

@@ -6,10 +6,10 @@ let
   expectedReplicas = (lib.length cluster.config.services.patroni.nodes.worker) - 1;
 in
 {
-  defaults = { depot, pkgs, ... }: {
+  defaults = { depot, depot', pkgs, ... }: {
     environment.systemPackages = [
       pkgs.jq
-      depot.packages.postgresql
+      depot'.packages.postgresql
     ];
     services.patroni.settings.postgresql.pg_hba = [
       "host postgres postgres 0.0.0.0/0 trust"

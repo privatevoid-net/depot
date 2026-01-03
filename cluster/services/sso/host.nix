@@ -1,4 +1,4 @@
-{ cluster, config, depot, lib, ... }:
+{ cluster, config, depot, depot', lib, ... }:
 with depot.lib.nginx;
 let
   login = "login.${depot.lib.meta.domain}";
@@ -27,7 +27,7 @@ in
   };
   services.keycloak = {
     enable = true;
-    package = depot.packages.keycloak;
+    package = depot'.packages.keycloak;
     database = {
       createLocally = false;
       type = "postgresql";

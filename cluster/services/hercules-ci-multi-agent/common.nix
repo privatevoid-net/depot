@@ -1,4 +1,4 @@
-{ cluster, config, depot, lib, ... }:
+{ cluster, config, depot', lib, ... }:
 
 let
   inherit (cluster.config.services.hercules-ci-multi-agent) nodes secrets;
@@ -37,7 +37,7 @@ in
 
   services.hercules-ci-agents = lib.genAttrs (lib.attrNames nodes) (org: {
     enable = true;
-    package = depot.inputs.hercules-ci-agent.packages.hercules-ci-agent;
+    package = depot'.inputs.hercules-ci-agent.packages.hercules-ci-agent;
     settings = {
       clusterJoinTokenPath = secrets."clusterJoinToken-${org}".path;
       binaryCachesPath = builtins.toFile "binary-caches.json" "{}";

@@ -1,4 +1,4 @@
-{ cluster, config, depot, ... }:
+{ cluster, config, depot, depot', ... }:
 
 {
   links = {
@@ -32,7 +32,7 @@
 
       quickie = {
         serviceConfig = {
-          ExecStart = "${depot.packages.quickie}/bin/quickie -b ${config.links.quickieInternal.ipv4} -p ${config.links.quickieInternal.portStr} -m /tmp/resources -o /tmp -c /resources/asylum-v1.css";
+          ExecStart = "${depot'.packages.quickie}/bin/quickie -b ${config.links.quickieInternal.ipv4} -p ${config.links.quickieInternal.portStr} -m /tmp/resources -o /tmp -c /resources/asylum-v1.css";
           WorkingDirectory = "/tmp";
 
           CPUQuota = "10%";

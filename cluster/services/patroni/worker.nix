@@ -1,4 +1,4 @@
-{ cluster, config, depot, lib, ... }:
+{ cluster, config, depot, depot', lib, ... }:
 
 let
   inherit (cluster.config) vars;
@@ -9,7 +9,7 @@ let
 
   net = vars.meshNet.cidr;
 
-  pg = depot.packages.postgresql;
+  pg = depot'.packages.postgresql;
 
   baseDir = "/srv/storage/database/postgres-ha";
 

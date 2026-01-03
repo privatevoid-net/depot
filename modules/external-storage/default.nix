@@ -1,7 +1,7 @@
-{ config, depot, lib, pkgs, ... }:
+{ config, depot', lib, pkgs, ... }:
 
 let
-  inherit (depot.packages) s3ql;
+  inherit (depot'.packages) s3ql;
 
   cfg = config.services.external-storage;
 

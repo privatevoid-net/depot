@@ -1,7 +1,7 @@
-{ depot, lib, pkgs, ... }:
+{ depot, depot', lib, pkgs, ... }:
 let
   inherit (depot.lib.nginx) domain vhosts;
-  inherit (depot.packages) cinny;
+  inherit (depot'.packages) cinny;
 in
 {
   services.nginx.virtualHosts."chat.${domain}" = lib.recursiveUpdate

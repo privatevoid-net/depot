@@ -1,4 +1,4 @@
-{ cluster, config, depot, lib, pkgs, ... }:
+{ cluster, config, depot', lib, pkgs, ... }:
 
 let
   inherit (cluster.config.services.zerofs) secrets;
@@ -19,7 +19,7 @@ in
         };
 
         storage = {
-          url = "${fs.s3BucketPath}/${lib.versions.majorMinor depot.packages.zerofs.version}/";
+          url = "${fs.s3BucketPath}/${lib.versions.majorMinor depot'.packages.zerofs.version}/";
           encryption_password = "\${ZEROFS_KEY}";
         };
 
@@ -40,7 +40,7 @@ in
         wantedBy = [ "multi-user.target" ];
         distributed.enable = true;
         serviceConfig = {
-          ExecStart = "${depot.packages.zerofs}/bin/zerofs run --config ${zerofsConfig}";
+          ExecStart = "${depot'.packages.zerofs}/bin/zerofs run --config ${zerofsConfig}";
           DynamicUser = true;
           CacheDirectory = "zerofs-${name}";
           EnvironmentFile = secrets."storageCredentials-${name}".path;
