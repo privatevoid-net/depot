@@ -1,15 +1,7 @@
-{ config, inputs, lib, self, withSystem, ... }:
-
-let
-  inherit (lib) const mapAttrs;
-in
+{ config, inputs, self, ... }:
 
 {
-  lib.summon = system: f: let
-    lift = config;
-  in withSystem system ({ config, inputs', self', ... }: f {
-    depot = self // self' // lift // config // {
-      inputs = mapAttrs (name: const (inputs.${name} // inputs'.${name})) inputs;
-    };
-  });
+  lib.hours.specialArgs = {
+    depot = { inherit inputs; } // self // config;
+  };
 }
