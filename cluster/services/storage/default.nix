@@ -55,6 +55,12 @@ in
       garageInternal = [ ./garage-internal.nix ];
       garageExternal = [ ./garage-external.nix ];
     };
+    secrets = with config.services.storage.nodes; {
+      externalStoragePlanetariumKey = {
+        nodes = external;
+        shared = false;
+      };
+    };
     simulacrum = {
       enable = true;
       deps = [ "wireguard" "consul" "locksmith" "dns" "incandescence" "ways" ];
