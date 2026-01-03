@@ -1,17 +1,28 @@
-{ rustPlatform, fetchFromGitHub }:
+{ rustPlatform, fetchFromGitHub, cmake, pkg-config, openssl }:
 
-rustPlatform.buildRustPackage {
+rustPlatform.buildRustPackage rec {
   pname = "zerofs";
-  version = "0.18.0";
+  version = "0.22.10";
 
   src = fetchFromGitHub {
     owner = "Barre";
     repo = "ZeroFS";
-    rev = "d20defb22f9fbd38a6fd0b0709873c155d2bc95a";
-    sha256 = "sha256-G+kXAlPfo3YhAGy9nkKCL7384dWUvPr4cZ+WIX99OSc=";
+    rev = "v${version}";
+    sha256 = "sha256-hg0vHnaqG375S5x9xTm5+d6+0Qyn7AqmNzOjfONObBk=";
   };
+
+  nativeBuildInputs = [
+    cmake
+    # pkg-config
+  ];
+
+  buildInputs = [
+    # openssl
+  ];
+
+  env.RUSTFLAGS = "--cfg tokio_unstable";
 
   postUnpack = "sourceRoot=$sourceRoot/zerofs";
 
-  cargoHash = "sha256-XbjtlWQkXanOo7SbbgsZNXj5SKy0PQAd2eRM/9f9gLs=";
+  cargoHash = "sha256-En898CWUGVC6Jc7h4ZvGObs6TZihSw57nUrmlJY9mpE=";
 }
