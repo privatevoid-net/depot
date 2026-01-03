@@ -14,7 +14,7 @@ in
   services.storage = {
     nodes = {
       internal = lib.subtractLists config.services.storage.nodes.external (lib.attrNames depot.gods.fromLight);
-      external = [ "prophet" ];
+      external = lib.optionals (!config.simulacrum) [ "prophet" ];
       heresy = [ "VEGAS" ];
       garage = [ "grail" "prophet" "VEGAS" ];
       garageConfig = [ "grail" "prophet" "VEGAS" ];
