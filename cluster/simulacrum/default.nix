@@ -52,7 +52,7 @@ let
       })
     ];
   };
-  specialArgs = depot'.config.lib.summon system lib.id;
+  inherit (depot'.config.lib.hours) specialArgs;
 in
 
 testers.runNixOSTest {
