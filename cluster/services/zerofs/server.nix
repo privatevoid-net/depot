@@ -19,7 +19,7 @@ in
         };
 
         storage = {
-          url = fs.s3BucketPath;
+          url = "${fs.s3BucketPath}/${lib.versions.majorMinor depot.packages.zerofs.version}/";
           encryption_password = "\${ZEROFS_KEY}";
         };
 
