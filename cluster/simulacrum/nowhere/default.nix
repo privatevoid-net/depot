@@ -73,6 +73,9 @@ in
   };
 
   nodes.nowhere = { config, depot, ... }: {
+    imports = [
+      depot.nixosModules.reflection
+    ];
     networking = {
       firewall.allowedTCPPorts = [ 443 ];
       interfaces.eth1.ipv4.routes = lib.mapAttrsToList (name: hour: {
