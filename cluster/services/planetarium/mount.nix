@@ -47,7 +47,7 @@ in
 
           storagePath = mkOption {
             type = types.str;
-            default = "s3://ib92eldmnvv1ofyrja5dmyizsfkivw4f-privatevoid-net-zerofs/P/${name}/";
+            default = "s3://ib92eldmnvv1ofyrja5dmyizsfkivw4f-privatevoid-net-zerofs/P/${name}";
           };
 
           s3Endpoint = mkOption {
@@ -82,7 +82,7 @@ in
             };
 
             storage = {
-              url = fs.storagePath;
+              url = "${fs.storagePath}/${lib.versions.majorMinor depot.packages.zerofs.version}/";
               encryption_password = "\${ZEROFS_KEY}";
             };
 
