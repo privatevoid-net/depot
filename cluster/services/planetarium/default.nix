@@ -2,7 +2,7 @@
 
 {
   services.planetarium = {
-    nodes.mount = [ "VEGAS" ];
+    nodes.mount = [ "VEGAS" "prophet" ];
     nixos.mount = ./mount.nix;
 
     secrets.storageCredentials = with config.services.planetarium.nodes; {
