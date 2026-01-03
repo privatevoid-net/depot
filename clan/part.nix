@@ -1,6 +1,10 @@
 { depot, ... }:
 
 {
+  imports = [
+    ./adapter.nix
+  ];
+
   clan = {
     meta = {
       name = "void";
