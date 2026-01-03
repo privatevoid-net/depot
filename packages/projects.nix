@@ -10,7 +10,7 @@
     ./websites/ldap-entry-point/project.nix
     ./websites/stop-using-nix-env/project.nix
   ];
-  perSystem = { builders, config, filters, pkgs, self', ... }:
+  perSystem = { builders, config, filters, pkgs, inputs', self', ... }:
   let
     inherit (self'.packages) nix-super;
 
@@ -64,6 +64,7 @@
           pkgs.deadnix
           pkgs.statix
           pkgs.npins
+          inputs'.clan.packages.clan-cli
         ];
 
         env.NPINS_DIRECTORY.eval = "$REPO_ROOT/packages/sources";
