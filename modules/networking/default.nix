@@ -14,4 +14,6 @@ in
       ];
     };
   };
+
+  networking.defaultGateway.interface = interfaces.primary.link;
 }
