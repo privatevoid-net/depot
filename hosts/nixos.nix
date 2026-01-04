@@ -4,13 +4,20 @@ let
   inherit (lib) mapAttrs nixosSystem;
   inherit (config) gods;
 
+  nixpkgsInstances = lib.genAttrs config.systems (system:
+    withSystem system ({ config, pkgs, ... }:
+      assert pkgs.stdenv.buildPlatform == pkgs.stdenv.hostPlatform; pkgs // {
+        __splicedPackages = pkgs.__splicedPackages // config.shadows;
+      } // config.shadows
+    )
+  );
+
   collectModules = name: host: [
     host.nixos
-    (withSystem host.system ({ config, pkgs, ... }: {
-      nixpkgs.pkgs = assert pkgs.stdenv.buildPlatform == pkgs.stdenv.hostPlatform; pkgs // {
-        __splicedPackages = pkgs.__splicedPackages // config.shadows;
-      } // config.shadows;
-    }))
+    {
+      nixpkgs.hostPlatform = lib.mkDefault host.system;
+      nixpkgs.instances = nixpkgsInstances;
+    }
   ] ++ config.cluster.config.out.injectNixosConfig name;
 
   mkNixOS = name: host: nixosSystem {
