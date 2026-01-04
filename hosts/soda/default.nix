@@ -10,6 +10,8 @@ tools: {
       addr = "10.10.2.206";
       addrPublic = "95.216.8.12";
       link = "eth0";
+      prefixLength = 24;
+      gatewayAddr = "10.10.2.1";
     };
   };
 

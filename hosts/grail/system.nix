@@ -26,19 +26,5 @@ in
 
   time.timeZone = "Europe/Helsinki";
 
-  networking = {
-    defaultGateway = "172.31.1.1";
-    useDHCP = false;
-    dhcpcd.enable = false;
-    interfaces = {
-      ${primary.link} = {
-        ipv4.addresses = [
-          { address = primary.addr; prefixLength = 32; }
-        ];
-        ipv4.routes = [ { address = "172.31.1.1"; prefixLength = 32; } ];
-      };
-    };
-  };
-
   system.stateVersion = "23.05";
 }

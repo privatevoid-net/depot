@@ -26,18 +26,5 @@ in
 
   time.timeZone = "Europe/Berlin";
 
-  networking = {
-    defaultGateway = "159.195.32.1";
-    useDHCP = false;
-    dhcpcd.enable = false;
-    interfaces = {
-      ${primary.link} = {
-        ipv4.addresses = [
-          { address = primary.addr; prefixLength = 22; }
-        ];
-      };
-    };
-  };
-
   system.stateVersion = "25.11";
 }

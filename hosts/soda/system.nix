@@ -10,10 +10,6 @@
 
   boot.isContainer = true;
 
-  networking.useDHCP = false;
-
-  networking.interfaces.${config.reflection.interfaces.primary.link}.useDHCP = true;
-
   networking.nameservers = [ depot.hours.VEGAS.interfaces.vstub.addr ];
 
   networking.resolvconf.extraConfig = "local_nameservers='${depot.hours.VEGAS.interfaces.vstub.addr}'";

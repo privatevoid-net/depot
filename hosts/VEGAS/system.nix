@@ -33,9 +33,6 @@
 
   time.timeZone = "Europe/Helsinki";
 
-  networking.useDHCP = false;
-  networking.interfaces.${config.reflection.interfaces.primary.link}.useDHCP = true;
-
   i18n.defaultLocale = "en_US.UTF-8";
 
   services.openssh.enable = true;

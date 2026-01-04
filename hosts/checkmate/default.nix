@@ -10,6 +10,8 @@ tools: rec {
       addr = "10.0.243.198";
       addrPublic = "152.67.73.164";
       link = "ens3";
+      prefixLength = 24;
+      gatewayAddr = "10.0.243.1";
     };
     vstub = {
       addr = "10.1.0.32";

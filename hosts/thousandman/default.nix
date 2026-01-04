@@ -9,6 +9,8 @@ tools: rec {
     primary = {
       addr = "159.195.33.251";
       link = "ens3";
+      prefixLength = 22;
+      gatewayAddr = "159.195.32.1";
     };
     vstub = {
       addr = "10.1.0.100";

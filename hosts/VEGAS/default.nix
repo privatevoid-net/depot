@@ -9,6 +9,8 @@ tools: rec {
     primary = {
       addr = "95.216.8.12";
       link = "enp0s31f6";
+      prefixLength = 26;
+      gatewayAddr = "95.216.8.1";
     };
     vstub = {
       addr = "10.1.0.1";
