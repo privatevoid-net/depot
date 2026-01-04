@@ -28,7 +28,7 @@ in
   environment.etc."ssh/authorized_keys_command_kanidm" = {
     mode = "0755";
     text = ''
-      #!/bin/sh
+      #!${pkgs.runtimeShell}
       exec ${config.services.kanidm.package}/bin/kanidm_ssh_authorizedkeys "$@"
     '';
   };
