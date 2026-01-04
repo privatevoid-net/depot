@@ -102,6 +102,8 @@ in
           name = "zerofs-${name}";
           value = {
             description = "ZeroFS: ${name}";
+            requires = [ "network.target" ];
+            after = [ "network.target" ];
             serviceConfig = {
               DynamicUser = true;
               Type = "notify";
@@ -161,7 +163,7 @@ in
           what = "/run/zerofs/${name}/zerofs.sock";
           where = fs.${type};
           type = "9p";
-          options = "trans=unix,version=9p2000.L,cache=mmap";
+          options = "trans=unix,version=9p2000.L,cache=mmap,_netdev";
         }) config.storage.planetarium.fileSystems;
       in lib.mkMerge [
         (createMount "mountPoint")
