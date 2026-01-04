@@ -15,6 +15,17 @@ let
         default = config.addr;
       };
 
+      prefixLength = mkOption {
+        description = "Network prefix length.";
+        type = types.ints.between 0 32;
+        default = 32;
+      };
+
+      gatewayAddr = mkOption {
+        description = "IP address of the default gateway.";
+        type = types.str;
+      };
+
       link = mkOption {
         description = "Interface link name.";
         type = types.str;
