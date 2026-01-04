@@ -1,6 +1,3 @@
-let
-  tools = import ./tools.nix;
-in
 {
   imports = [
     ./deploy.nix
@@ -9,21 +6,21 @@ in
   ];
   gods = {
     fromLight = {
-      checkmate = import ./checkmate tools;
+      checkmate = ./checkmate;
 
-      thunderskin = import ./thunderskin tools;
+      thunderskin = ./thunderskin;
 
-      VEGAS = import ./VEGAS tools;
+      VEGAS = ./VEGAS;
 
-      prophet = import ./prophet tools;
+      prophet = ./prophet;
 
-      grail = import ./grail tools;
-      
-      thousandman = import ./thousandman tools;
+      grail = ./grail;
+
+      thousandman = ./thousandman;
     };
 
     fromFlesh = {
-      soda = import ./soda tools;
+      soda = ./soda;
     };
 
     fromNowhere = {

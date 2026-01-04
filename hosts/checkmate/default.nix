@@ -1,4 +1,4 @@
-tools: rec {
+rec {
   ssh = {
     enable = true;
     id.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINImnMfEzUBU5qiuu05DMPrddTGypOtr+cL1/yQN2GFn";
