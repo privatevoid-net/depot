@@ -63,6 +63,7 @@ in
 
     containerBase = group [
       machineBase
+      networking
       nix-config-server
     ];
 
