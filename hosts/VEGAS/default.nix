@@ -1,8 +1,7 @@
 tools: rec {
-  ssh.enable = true;
-  ssh.id = with tools.dns; {
-    publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICz2nGA+Y4OxhMKsV6vKIns3hOoBkK557712h7FfWXcE";
-    hostNames = subResolve "vegas" "backbone";
+  ssh = {
+    enable = true;
+    id.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICz2nGA+Y4OxhMKsV6vKIns3hOoBkK557712h7FfWXcE";
   };
 
   interfaces = {

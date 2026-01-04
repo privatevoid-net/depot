@@ -1,8 +1,7 @@
 tools: {
-  ssh.enable = true;
-  ssh.id = with tools.dns; {
-    publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDShq3dbZy9SARsH8aSjfMQ+/eTW44eZuHVCLvgtDNKw";
-    hostNames = subResolve "soda" "int";
+  ssh = {
+    enable = true;
+    id.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDShq3dbZy9SARsH8aSjfMQ+/eTW44eZuHVCLvgtDNKw";
   };
 
   interfaces = {

@@ -1,8 +1,7 @@
 tools: rec {
-  ssh.enable = true;
-  ssh.id = with tools.dns; {
-    publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGV8TbMvGXfAp9R2I9GdR7aLlGjxh2CW1pCZjQSB4TJp";
-    hostNames = subResolve "thunderskin" "node";
+  ssh = {
+    enable = true;
+    id.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGV8TbMvGXfAp9R2I9GdR7aLlGjxh2CW1pCZjQSB4TJp";
   };
 
   interfaces = {

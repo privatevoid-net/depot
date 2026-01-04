@@ -11,12 +11,6 @@ with lib;
         type = with types; nullOr str;
         default = null;
       };
-
-      hostNames = mkOption {
-        description = "Hostnames through which this host can be reached over SSH.";
-        type = with types; listOf str;
-        default = [];
-      };
     };
 
     extraConfig = mkOption {

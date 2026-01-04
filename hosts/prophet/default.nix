@@ -1,8 +1,7 @@
 tools: rec {
-  ssh.enable = true;
-  ssh.id = with tools.dns; {
-    publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAUG/ubwo68tt2jMP5ia0Sa4mnkWtlKVN5n4Y50U2nTC";
-    hostNames = subResolve "prophet" "node";
+  ssh = {
+    enable = true;
+    id.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAUG/ubwo68tt2jMP5ia0Sa4mnkWtlKVN5n4Y50U2nTC";
   };
 
   interfaces = {
