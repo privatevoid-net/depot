@@ -26,7 +26,5 @@
   zramSwap.enable = true;
   zramSwap.algorithm = "zstd";
 
-  system.stateVersion = "21.11";
-
 }
 
