@@ -26,29 +26,28 @@ in
     enable = true;
     enableSubmission = true;
     enableSubmissions = true;
-    inherit domain;
-    origin = domain;
-    recipientDelimiter = "+";
-
     setSendmail = true;
-
-    # TODO: un-hardcode
-    networks = [
-      "localhost"
-      "${interfaces.vstub.addr}/32"
-      "10.10.0.0/16"
-      "10.100.0.0/16"
-    ];
-
     aliasFiles.genericAliases = ./generic-aliases;
 
-    config = {
+    settings.main = {
       myhostname = "mx.${domain}";
+      myorigin = domain;
+      mydomain = domain;
       inet_interfaces = [
         "localhost"
         interfaces.primary.addr
         interfaces.vstub.addr
       ];
+
+      # TODO: un-hardcode
+      mynetworks = [
+        "localhost"
+        "${interfaces.vstub.addr}/32"
+        "10.10.0.0/16"
+        "10.100.0.0/16"
+      ];
+
+      recipient_delimiter = "+";
 
       smtpd_tls_chain_files = [ "${certDir}/full.pem" ];
 
