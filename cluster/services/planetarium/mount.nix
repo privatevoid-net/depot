@@ -138,12 +138,19 @@ in
             serviceConfig = {
               Type = "oneshot";
               ProtectSystem = "strict";
-              CapabilityBoundingSet = [ "CAP_CHOWN" "CAP_FOWNER" ];
+              CapabilityBoundingSet = [ "CAP_DAC_OVERRIDE" "CAP_CHOWN" "CAP_FOWNER" ];
               ReadWritePaths = [ setupDir ];
+              BindPaths = [ "${fs.setupMountPoint}:/tmp/planetarium${fs.mountPoint}" ];
+              BindReadOnlyPaths = map (dir: "${dir}:/tmp/planetarium${dir}") [
+                "/etc/tmpfiles.d"
+                "/etc/static"
+                builtins.storeDir
+              ];
             };
             script = ''
               chmod ${lib.escapeShellArg fs.mode} ${fs.setupMountPoint}
               chown ${toString fs.uid}:${toString fs.gid} ${fs.setupMountPoint}
+              systemd-tmpfiles --create --root=/tmp/planetarium --prefix=${fs.mountPoint}
             '';
           };
         }) config.storage.planetarium.fileSystems)

@@ -34,13 +34,20 @@ in
           ZEROFS_KEY=simulacrum
         '';
       };
-      systemd.tmpfiles.settings.simulacrum."/var/cache/zerofs-test/backend".d.mode = "0777";
+      systemd.tmpfiles.settings.simulacrum = {
+        "/var/cache/zerofs-test/backend".d.mode = "0777";
+        "${testDir}/via-tmpfiles.txt".f.argument = "hello from systemd-tmpfiles";
+      };
     };
   };
   testScript = ''
     machine = ${firstNode}
     machine.start()
     machine.wait_for_unit("multi-user.target")
+    with subtest("should work with systemd-tmpfiles"):
+      output = machine.succeed("runuser --user testuser1 -- cat ${testDir}/via-tmpfiles.txt")
+      assert "hello from systemd-tmpfiles" in output
+
     with subtest("should enforce permissions"):
       machine.succeed("echo test | runuser --user testuser1 -- tee -a ${testDir}/test.txt")
 
