@@ -142,8 +142,7 @@ in
               ReadWritePaths = [ setupDir ];
               BindPaths = [ "${fs.setupMountPoint}:/tmp/planetarium${fs.mountPoint}" ];
               BindReadOnlyPaths = map (dir: "${dir}:/tmp/planetarium${dir}") [
-                "/etc/tmpfiles.d"
-                "/etc/static"
+                "/etc"
                 builtins.storeDir
               ];
             };

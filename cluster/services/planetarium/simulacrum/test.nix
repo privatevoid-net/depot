@@ -36,7 +36,11 @@ in
       };
       systemd.tmpfiles.settings.simulacrum = {
         "/var/cache/zerofs-test/backend".d.mode = "0777";
-        "${testDir}/via-tmpfiles.txt".f.argument = "hello from systemd-tmpfiles";
+        "${testDir}/via-tmpfiles.txt".f = {
+          argument = "hello from systemd-tmpfiles";
+          user = "testuser1";
+          mode = "0444";
+        };
       };
     };
   };
