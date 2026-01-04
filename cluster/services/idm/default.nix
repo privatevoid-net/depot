@@ -40,6 +40,8 @@
     secrets.serviceAccountCredentials = {
       nodes = config.services.idm.nodes.client;
       shared = false;
+      owner = "kanidm-unixd";
+      services = [ "kanidm-unixd" ];
     };
   };
 

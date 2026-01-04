@@ -2,11 +2,13 @@
 
 let
   frontendLink = cluster.config.links.idm;
+  inherit (cluster.config.services.idm.secrets) serviceAccountCredentials;
 in
 
 {
-  systemd.services.kanidm-unixd.serviceConfig = {
-    EnvironmentFile = cluster.config.services.idm.secrets.serviceAccountCredentials.path;
+  systemd.services.kanidm-unixd = {
+    serviceConfig.BindReadOnlyPaths = [ serviceAccountCredentials.path ];
+    environment.KANIDM_SERVICE_ACCOUNT_TOKEN_PATH = serviceAccountCredentials.path;
   };
 
   services.kanidm = {
