@@ -6,11 +6,11 @@
 
   interfaces = {
     primary = {
-      addr = "10.10.2.206";
+      addr = "10.10.3.2";
       addrPublic = "95.216.8.12";
       link = "eth0";
-      prefixLength = 24;
-      gatewayAddr = "10.10.2.1";
+      prefixLength = 30;
+      gatewayAddr = "10.10.3.1";
     };
   };
 

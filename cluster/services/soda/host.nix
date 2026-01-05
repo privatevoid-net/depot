@@ -1,5 +1,9 @@
 { cluster, config, depot, depot', ... }:
 
+let
+  inherit (depot.hours.soda) interfaces;
+in
+
 {
   links = {
     quickieInternal.protocol = "http";
@@ -9,8 +13,8 @@
   containers.soda = {
     path = depot.nixosConfigurations.soda.config.system.build.toplevel;
     privateNetwork = true;
-    hostBridge = "vmdefault";
-    localAddress = "${depot.hours.soda.interfaces.primary.addr}/24";
+    hostAddress = interfaces.primary.gatewayAddr;
+    localAddress = interfaces.primary.addr;
     autoStart = true;
     bindMounts = {
       sodaDir = {
@@ -28,8 +32,6 @@
 
   systemd = {
     services = {
-      "container@soda".after = [ "libvirtd.service" "sys-devices-virtual-net-vmdefault.device" ];
-
       quickie = {
         serviceConfig = {
           ExecStart = "${depot'.packages.quickie}/bin/quickie -b ${config.links.quickieInternal.ipv4} -p ${config.links.quickieInternal.portStr} -m /tmp/resources -o /tmp -c /resources/asylum-v1.css";
