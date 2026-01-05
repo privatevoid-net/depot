@@ -44,15 +44,26 @@ in
         '';
       };
       hostPlatform = mkOption {
+        type = lib.types.either lib.types.str lib.types.attrs;
         description = ''
           The platform of the machine that is running the NixOS configuration.
         '';
+        apply = lib.systems.elaborate;
       };
       buildPlatform = mkOption {
+        type = lib.types.either lib.types.str lib.types.attrs;
         description = ''
           The platform of the machine that built the NixOS configuration.
         '';
         default = cfg.hostPlatform;
+        apply = lib.flip lib.pipe [
+          lib.systems.elaborate
+          (platform:
+            if lib.systems.equals platform cfg.hostPlatform
+              then cfg.hostPlatform
+              else platform
+          )
+        ];
       };
     };
   };
@@ -61,6 +72,6 @@ in
     nixpkgs.overlays = lib.mkForce [];
     _module.args.pkgs =
       assert cfg.buildPlatform == cfg.hostPlatform;
-        cfg.instances.${cfg.hostPlatform};
+        cfg.instances.${cfg.hostPlatform.system};
   };
 }
