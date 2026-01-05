@@ -3,6 +3,7 @@
 {
   imports = [
     ./adapter.nix
+    ./inventory/admin.nix
   ];
 
   clan = {
