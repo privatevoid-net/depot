@@ -6,6 +6,7 @@ in
 
 {
   flake.nixosModules = with config.flake.nixosModules; {
+    agenix = ./agenix;
     alloy-structured-metrics = ./alloy-structured-metrics;
     ascensions = ./ascensions;
     consul-distributed-services = ./consul-distributed-services;
@@ -35,6 +36,7 @@ in
     tested = ./tested;
 
     machineBase = group [
+      agenix
       enterprise
       maintenance
       minimal
