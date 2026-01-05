@@ -8,7 +8,6 @@
 
       # Plumbing
       ./modules/redis
-      ./modules/virtualisation
       depot.inputs.mms.module
 
       # Services
