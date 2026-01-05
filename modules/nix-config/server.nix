@@ -11,6 +11,20 @@
       trusted-public-keys = [ "cache.privatevoid.net:SErQ8bvNWANeAvtsOESUwVYr2VJynfuc9JRwlzTTkVg=" ];
     };
 
+    registry = {
+      default.to = {
+        id = "depot-nixpkgs";
+        type = "indirect";
+      };
+      nixpkgs = {
+        exact = false;
+        to = {
+          id = "depot-nixpkgs";
+          type = "indirect";
+        };
+      };
+    };
+
     extraOptions = ''
       experimental-features = nix-command flakes cgroups
       use-cgroups = true
