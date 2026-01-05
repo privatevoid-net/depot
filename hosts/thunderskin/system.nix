@@ -6,8 +6,6 @@
       # Hardware
       ./hardware-configuration.nix
 
-      depot.inputs.agenix.nixosModules.age
-
       depot.nixosModules.hyprspace
       depot.nixosModules.serverBase
     ];

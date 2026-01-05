@@ -8,8 +8,6 @@ in
   imports = [
     ./hardware-configuration.nix
 
-    depot.inputs.agenix.nixosModules.age
-
     depot.nixosModules.serverBase
 
     # depot.nixosModules.hyprspace

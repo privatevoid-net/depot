@@ -9,7 +9,6 @@
       # Plumbing
       ./modules/redis
       ./modules/virtualisation
-      depot.inputs.agenix.nixosModules.age
       depot.inputs.mms.module
 
       # Services
