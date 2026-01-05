@@ -3,7 +3,9 @@
 let
   inherit (cluster.config.services.hercules-ci-multi-agent) nodes secrets;
 
-  mapAgents = lib.flip lib.mapAttrs nodes;
+  agents = lib.filterAttrs (_: nodes: lib.elem config.networking.hostName nodes) nodes;
+
+  mapAgents = lib.flip lib.mapAttrs agents;
 
   mergeMap = f: let
     outputs = mapAgents f;
@@ -35,7 +37,7 @@ in
     };
   });
 
-  services.hercules-ci-agents = lib.genAttrs (lib.attrNames nodes) (org: {
+  services.hercules-ci-agents = lib.genAttrs (lib.attrNames agents) (org: {
     enable = true;
     package = depot'.inputs.hercules-ci-agent.packages.hercules-ci-agent;
     settings = {
@@ -55,5 +57,5 @@ in
     (lib.max 1)
   ];
 
-  users.groups.hercules-ci-agent.members = map (org: "hci-${org}") (lib.attrNames nodes);
+  users.groups.hercules-ci-agent.members = map (org: "hci-${org}") (lib.attrNames agents);
 }
