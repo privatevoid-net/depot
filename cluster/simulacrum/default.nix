@@ -1,4 +1,4 @@
-{ testers, config, extendModules, lib, stdenv }:
+{ testers, config, extendModules, lib, pkgs, stdenv }:
 
 { service }:
 
@@ -82,6 +82,10 @@ testers.runNixOSTest {
       ../../packages/checks/modules/nixos/external-storage.nix
     ] ++ depot'.config.cluster.config.out.injectNixosConfigForServices serviceList node;
 
+    nixpkgs = {
+      hostPlatform = system;
+      instances.${system} = pkgs;
+    };
     boot.kernel.sysctl."net.ipv4.ip_forward" = "1";
     networking = {
       interfaces = {
