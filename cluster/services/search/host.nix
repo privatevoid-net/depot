@@ -7,7 +7,7 @@ in
 
   services.searx = {
     enable = true;
-    runInUwsgi = true;
+    configureUwsgi = true;
     environmentFile = cluster.config.services.search.secrets.default.path;
     settings = {
       server = {
