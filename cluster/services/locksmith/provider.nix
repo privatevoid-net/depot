@@ -20,6 +20,10 @@ in
             type = types.listOf types.str;
             default = [];
           };
+          before = mkOption {
+            type = types.listOf types.str;
+            default = [];
+          };
           after = mkOption {
             type = types.listOf types.str;
             default = [];
@@ -71,7 +75,7 @@ in
     in {
       description = "Locksmith Provider | ${providerName}";
       distributed.enable = true;
-      inherit (providerConfig) wantedBy after;
+      inherit (providerConfig) wantedBy before after;
       serviceConfig = {
         Type = "oneshot";
         PrivateTmp = true;
