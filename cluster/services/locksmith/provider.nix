@@ -91,7 +91,15 @@ in
         secretNames = map (name: "${providerRoot}-${name}/") (lib.attrNames activeSecrets);
 
         createSecret = { path, nodes, owner, mode, group, command, checkUpdate }: ''
-          if (${checkUpdate}); then
+          checkUpdateForce() {
+            ${lib.concatStringsSep "\n" (map (node: ''
+              if ! consul kv get ${lib.escapeShellArg path}/recipient/${node} >/dev/null; then
+                return 0
+              fi
+            '') nodes)}
+            return 1
+          }
+          if checkUpdateForce || (${checkUpdate}); then
             consul kv put ${lib.escapeShellArg path}/mode ${lib.escapeShellArg mode}
             consul kv put ${lib.escapeShellArg path}/owner ${lib.escapeShellArg owner}
             consul kv put ${lib.escapeShellArg path}/group ${lib.escapeShellArg group}
