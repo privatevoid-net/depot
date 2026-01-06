@@ -2,7 +2,7 @@
 
 {
   services.forge = {
-    nodes.server = [ "VEGAS" ];
+    nodes.server = [ "grail" ];
     nixos.server = ./server.nix;
     meshLinks.server.forge.link.protocol = "http";
     secrets = with config.services.forge.nodes; {
