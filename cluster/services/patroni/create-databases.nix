@@ -11,7 +11,7 @@ let
 
   psqlRunFile = file: ''
     export PGPASSWORD="$(< ${secrets.PATRONI_SUPERUSER_PASSWORD.path})"
-    while ! ${config.services.patroni.postgresqlPackage}/bin/psql 'host=${patroni.ipv4} port=${patroni.portStr} dbname=postgres user=postgres' --tuples-only --csv --file="${file}"; do
+    while ! ${config.services.patroni.postgresqlPackage}/bin/psql 'host=${patroni.ipv4} port=${patroni.portStr} dbname=postgres user=postgres' --tuples-only --csv --file="${file}" >&2; do
       sleep 3
     done
   '';
