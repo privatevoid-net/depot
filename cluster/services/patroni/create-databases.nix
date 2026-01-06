@@ -32,8 +32,7 @@ let
   '';
 
   genPassword = pkgs.writeShellScript "patroni-generate-user-password" ''
-    umask 77
-    base64 -w0 /dev/urandom | tr -d /+ | head -c256 | tee "/run/keys/locksmith-provider-patroni-$1"
+    base64 -w0 /dev/urandom | tr -d /+ | head -c256
   '';
 in
 
@@ -48,10 +47,9 @@ in
     formulae = {
       user = {
         destroyAfterDays = 0;
-        create = user: psqlSecret "${genPassword} ${user}" ''
+        create = user: psql ''
           SELECT 'CREATE USER ${user}'
           WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${user}')\gexec
-          ALTER USER ${user} PASSWORD '@SECRET@';
         '';
         destroy = psqlSecret "printenv OBJECT" ''
           DROP USER @SECRET@;
@@ -78,19 +76,25 @@ in
     secrets = lib.mapAttrs (user: userConfig: {
       command = {
         envFile = ''
-          echo "PGPASSWORD=$(cat /run/keys/locksmith-provider-patroni-${user})"
-          rm -f /run/keys/locksmith-provider-patroni-${user}
+          ${psqlSecret genPassword ''
+            ALTER USER ${user} PASSWORD '@SECRET@';
+          ''}
+          echo "PGPASSWORD=$(cat "$secretFile")"
         '';
         pgpass = ''
-          echo "*:*:*:${user}:$(cat /run/keys/locksmith-provider-patroni-${user})"
-          rm -f /run/keys/locksmith-provider-patroni-${user}
+          ${psqlSecret genPassword ''
+            ALTER USER ${user} PASSWORD '@SECRET@';
+          ''}
+          echo "*:*:*:${user}:$(cat "$secretFile")"
         '';
         raw = ''
-          cat /run/keys/locksmith-provider-patroni-${user}
-          rm -f /run/keys/locksmith-provider-patroni-${user}
+          ${psqlSecret genPassword ''
+            ALTER USER ${user} PASSWORD '@SECRET@';
+          ''}
+          cat "$secretFile"
         '';
       }.${userConfig.locksmith.format};
-      checkUpdate = "test -e /run/keys/locksmith-provider-patroni-${user}";
+      checkUpdate = "false";
       inherit (userConfig.locksmith) nodes owner group mode;
     }) cfg.users;
   };
