@@ -130,7 +130,15 @@ in
 
   services.locksmith.providers = mapAttrs (provider: providerConfig: {
     wantedBy = [ "incandescence-${provider}.target" ];
-    after = [ "incandescence-${provider}.target" ];
+    before = [ "incandescence-${provider}.target" ];
+    after = pipe providerConfig.formulae [
+      (mapAttrsToList (formula: formulaConfig: [
+        "ignite-${provider}-${formula}-create.service"
+        "ignite-${provider}-${formula}-change.service"
+        "ignite-${provider}-${formula}-destroy.service"
+      ]))
+      flatten
+    ];
   }) (filterAttrs (_: providerConfig: providerConfig.locksmith) cfg.providers);
 
   system.ascensions = mapAttrs' (provider: providerConfig: {
