@@ -18,7 +18,7 @@
   };
 
   ways = let
-    host = builtins.head config.services.forge.nodes.server;
+    host = builtins.head config.services.soda.nodes.host;
   in config.lib.forService "soda" {
     schizo = {
       target = config.hostLinks.${host}.quickie.url;
