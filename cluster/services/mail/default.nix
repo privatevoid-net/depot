@@ -63,5 +63,8 @@
     "schizo.cooking".records = {
       inherit (defaultZone.records) MX;
     };
+    "bomed.lol".records = {
+      inherit (defaultZone.records) MX;
+    };
   };
 }
