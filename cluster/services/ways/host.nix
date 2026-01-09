@@ -1,4 +1,4 @@
-{ cluster, config, depot, lib, pkgs, ... }:
+{ cluster, config, depot, depot', lib, pkgs, ... }:
 
 let
   externalWays = lib.filterAttrs (_: cfg: !cfg.internal) cluster.config.ways;
@@ -32,6 +32,7 @@ in
                 "/" = if cfg.mode == "static" then {
                   root = cfg.static {
                     inherit depot;
+                    inherit depot';
                     inherit pkgs;
                     inherit (pkgs) system;
                   };
