@@ -2,20 +2,16 @@
 
 stdenv.mkDerivation {
   pname = "quickie";
-  version = "1.1";
+  version = "1.2";
 
   src = fetchFromGitHub {
     owner = "schizo-org";
     repo = "schizo.cooking";
-    rev = "690349a92f60dd3dd10af3bf26c1f99ee83349b8";
-    sha256 = "sha256-1RzDsISk6E+XUxVY9fHPSjOExzkLykhtpaBeFHpFEb4=";
+    rev = "db4211873ae6c1abe9fc1365b37ff5800b6a99d7";
+    sha256 = "sha256-Ih2BgkPEBA6tciPyCx3hfSXoHYlqSUmwGmCQ1Cg08bE=";
   };
-  
-  postPatch = ''
-    substituteInPlace quickie/quickie.c --replace-fail IN_NONBLOCK 0
-  '';
 
   makeFlags = [ "quickie" ];
-  
+
   installFlags = [ "-C" "quickie" "install" "PREFIX=${placeholder "out"}" ];
 }
