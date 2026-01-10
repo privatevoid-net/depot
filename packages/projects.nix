@@ -7,6 +7,7 @@
     ./build-support
 
     ./websites/landing/project.nix
+    ./websites/ldap-entry-point/project.nix
     ./websites/stop-using-nix-env/project.nix
   ];
   perSystem = { builders, config, filters, pkgs, self', ... }:
@@ -40,14 +41,14 @@
       };
 
       quickie = pkgs.callPackage ./servers/quickie { };
-      
+
       stevenblack-hosts = pkgs.callPackage ./data/stevenblack {
         inherit pins;
         inherit (builders) mkNpinsSource;
       };
 
       void = pkgs.callPackage ./tools/void { };
-      
+
       zerofs = pkgs.callPackage ./projects/zerofs { };
     };
 
