@@ -1,4 +1,4 @@
-{ depot, lib, ... }:
+{ config, depot, lib, ... }:
 
 let
   inherit (depot.lib.meta) domain;
@@ -81,4 +81,11 @@ in
       wunschnachricht.target = oldStaticAddr;
     }
   ];
+
+  ways = config.lib.forService "websites" {
+    bomed = {
+      static = { depot', ... }: depot'.packages.ldap-entry-point.webroot;
+      domainSuffix = "lol";
+    };
+  };
 }
