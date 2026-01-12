@@ -87,5 +87,10 @@ in
       static = { depot', ... }: depot'.packages.ldap-entry-point.webroot;
       domainSuffix = "lol";
     };
+    zedless = {
+      static = { pkgs, ... }: pkgs.emptyDirectory;
+      extras.locations."/".return = "301 https://github.com/zedless-editor/zedless";
+      domainSuffix = "org";
+    };
   };
 }
