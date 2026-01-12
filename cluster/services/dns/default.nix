@@ -11,6 +11,7 @@ in
     ./ns-records.nix
     ./zones/bomed.lol.nix
     ./zones/schizo.cooking.nix
+    ./zones/zedless.org.nix
   ];
 
   links = {
