@@ -89,7 +89,7 @@ in
     };
     zedless = {
       static = { pkgs, ... }: pkgs.emptyDirectory;
-      extras.locations."/".return = "301 https://github.com/zedless-editor/zedless";
+      extras.locations."/".return = "302 https://github.com/zedless-editor/zedless";
       domainSuffix = "org";
     };
   };
