@@ -14,7 +14,7 @@
 
   dns.records = {
     soda.target = [ depot.hours.VEGAS.interfaces.primary.addrPublic ];
-    "soda.int".target = [ "10.10.2.206" ];
+    "soda.int".target = [ depot.hours.soda.interfaces.primary.addr ];
   };
 
   ways = let
