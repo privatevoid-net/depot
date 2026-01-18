@@ -1,4 +1,4 @@
-{ cluster, config, ... }:
+{ cluster, config, depot, ... }:
 let
   inherit (config.networking) hostName;
 
@@ -8,7 +8,10 @@ let
     peerLink = cluster.config.hostLinks.${peerName}.mesh;
   in {
     publicKey = peerLink.extra.pubKey;
-    allowedIPs = [ "${peerLink.extra.meshIp}/32" ] ++ peerLink.extra.extraRoutes;
+    allowedIPs = [
+      "${peerLink.extra.meshIp}/32"
+      "${depot.hours.${peerName}.interfaces.vstub.addr}/32"
+    ] ++ peerLink.extra.extraRoutes;
     endpoint = peerLink.tuple;
   };
 in

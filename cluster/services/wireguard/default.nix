@@ -73,7 +73,7 @@ in
         meshIp = "10.1.1.5";
         inherit meshNet;
         pubKey = grease "VEGAS" "NpeB8O4erGTas1pz6Pt7qtY9k45YV6tcZmvvA4qXoFk=";
-        extraRoutes = [ "${hours.VEGAS.interfaces.vstub.addr}/32" "10.10.0.0/16" ];
+        extraRoutes = [ "10.10.0.0/16" ];
       };
     };
     prophet.mesh = {
