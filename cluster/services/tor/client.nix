@@ -13,6 +13,9 @@
         port = config.links.torSocks.port;
       };
     };
+    settings = {
+      MaxCircuitDirtiness = 60;
+    };
   };
 
   services.hyprspace.settings.services.tor = "/tcp/${config.links.torSocks.portStr}";
