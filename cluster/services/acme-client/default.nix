@@ -1,6 +1,6 @@
 {
   services.acme-client = {
-    nodes.client = [ "checkmate" "grail" "thunderskin" "thousandman" "VEGAS" "prophet" ];
+    nodes.client = [ "checkmate" "grail" "thousandman" "VEGAS" "prophet" ];
     nixos.client = ./client.nix;
     simulacrum.augments = ./augment.nix;
   };

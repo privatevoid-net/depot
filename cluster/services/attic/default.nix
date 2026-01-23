@@ -9,7 +9,7 @@
     nodes = {
       monolith = [ "VEGAS" "prophet" ];
       server = [ "VEGAS" "grail" "prophet" ];
-      cache-client = [ "checkmate" "grail" "thousandman" "thunderskin" "VEGAS" "prophet" ];
+      cache-client = [ "checkmate" "grail" "thousandman" "VEGAS" "prophet" ];
     };
     nixos = {
       monolith = [

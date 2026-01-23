@@ -8,8 +8,6 @@
     fromLight = {
       checkmate = ./checkmate;
 
-      thunderskin = ./thunderskin;
-
       VEGAS = ./VEGAS;
 
       prophet = ./prophet;
