@@ -12,7 +12,7 @@ in
   });
   services.consul = {
     nodes = {
-      agent = [ "checkmate" "grail" "thunderskin" "VEGAS" "prophet" "thousandman" ];
+      agent = [ "checkmate" "grail" "VEGAS" "prophet" "thousandman" ];
       ready = config.services.consul.nodes.agent;
     };
     nixos = {

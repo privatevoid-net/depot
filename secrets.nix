@@ -5,7 +5,7 @@ let
   systemKeys = x: x.ssh.id.publicKey or null;
 in with hosts;
 {
-  "cluster/services/dns/acme-dns-direct-key.age".publicKeys = max ++ map systemKeys [ checkmate grail thunderskin thousandman VEGAS prophet ];
+  "cluster/services/dns/acme-dns-direct-key.age".publicKeys = max ++ map systemKeys [ checkmate grail thousandman VEGAS prophet ];
   "cluster/services/monitoring/secrets/grafana-db-credentials.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/monitoring/secrets/grafana-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS prophet ];
   "cluster/services/monitoring/secrets/secret-monitoring/blackbox.age".publicKeys = max ++ map systemKeys [ checkmate grail prophet ];
@@ -15,7 +15,6 @@ in with hosts;
   "secrets/dovecot-ldap-token.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/hyprspace-key-checkmate.age".publicKeys = max ++ map systemKeys [ checkmate ];
   "secrets/hyprspace-key-grail.age".publicKeys = max ++ map systemKeys [ grail ];
-  "secrets/hyprspace-key-thunderskin.age".publicKeys = max ++ map systemKeys [ thunderskin ];
   "secrets/hyprspace-key-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/hyprspace-key-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
   "secrets/nextcloud-adminpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
