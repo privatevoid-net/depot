@@ -1,7 +1,7 @@
 { lib, ... }:
 
 {
-  services.kanidm.unixSettings = {
+  services.kanidm.unix.settings.kanidm = {
     pam_allowed_login_groups = [
       "infra_admins"
     ];
