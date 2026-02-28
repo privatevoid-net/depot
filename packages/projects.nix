@@ -32,8 +32,6 @@
 
       ipfs = pkgs.callPackage ./networking/ipfs { };
 
-      openbao = pkgs.callPackage ./projects/openbao { };
-
       out-of-your-element = pkgs.callPackage ./servers/out-of-your-element { };
 
       pin = pkgs.callPackage ./tools/pin {
