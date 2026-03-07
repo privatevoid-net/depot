@@ -132,11 +132,6 @@ in {
     };
   };
   systemd.services = lib.mkMerge [
-    (lib.genAttrs [ "coturn" "matrix-synapse" ] (_: {
-      serviceConfig = {
-        Slice = "communications.slice";
-      };
-    }))
     {
       matrix-synapse.preStart = ''
         ${pkgs.jq}/bin/jq -c --slurp '.[0] * .[1]' ${dbConfigJSON} '${dbPasswordFile}' | install -Dm400 /dev/stdin '${dbConfigOut}'
