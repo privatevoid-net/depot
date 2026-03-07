@@ -1,13 +1,25 @@
-diff --git a/dns.go b/dns.go
-index a01fb9c..9a3b06b 100644
---- a/dns.go
-+++ b/dns.go
-@@ -51,7 +51,7 @@ func (d *DNSServer) Start(errorChannel chan error) {
+From d9d4e4da7cf46f9250f33ca9f57ce3c468a24bbe Mon Sep 17 00:00:00 2001
+From: Max <max@privatevoid.net>
+Date: Mon, 4 Dec 2023 01:41:02 +0100
+Subject: [PATCH 1/2] no lowercase records
+
+---
+ pkg/nameserver/parseconfig.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pkg/nameserver/parseconfig.go b/pkg/nameserver/parseconfig.go
+index 86c3379..b46adcc 100644
+--- a/pkg/nameserver/parseconfig.go
++++ b/pkg/nameserver/parseconfig.go
+@@ -11,7 +11,7 @@ import (
  // ParseRecords parses a slice of DNS record string
- func (d *DNSServer) ParseRecords(config DNSConfig) {
- 	for _, v := range config.General.StaticRecords {
+ func (n *Nameserver) ParseRecords() {
+ 	for _, v := range n.Config.General.StaticRecords {
 -		rr, err := dns.NewRR(strings.ToLower(v))
 +		rr, err := dns.NewRR(v)
  		if err != nil {
- 			log.WithFields(log.Fields{"error": err.Error(), "rr": v}).Warning("Could not parse RR from config")
- 			continue
+ 			n.Logger.Errorw("Could not parse RR from config",
+ 				"error", err.Error(),
+-- 
+2.53.0
+
