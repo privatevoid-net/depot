@@ -1,42 +1,34 @@
-diff --git a/acmetxt.go b/acmetxt.go
-index 63454a6..e7ba7ea 100644
---- a/acmetxt.go
-+++ b/acmetxt.go
-@@ -12,6 +12,7 @@ import (
+From 2ba8d16003b2be7f8c5692ff68dd3464256e3f9a Mon Sep 17 00:00:00 2001
+From: Max <max@privatevoid.net>
+Date: Fri, 6 Mar 2026 01:57:49 +0100
+Subject: [PATCH 2/2] direct
+
+---
+ pkg/acmedns/types.go      |  1 +
+ pkg/api/auth.go           | 16 ++++++++++++++++
+ pkg/api/update.go         |  6 +++---
+ pkg/database/db.go        | 15 ++++++++-------
+ pkg/database/db_test.go   |  7 -------
+ pkg/nameserver/handler.go | 10 +++-------
+ pkg/nameserver/util.go    |  4 ++++
+ 7 files changed, 35 insertions(+), 24 deletions(-)
+
+diff --git a/pkg/acmedns/types.go b/pkg/acmedns/types.go
+index 53f73a3..e2dcbab 100644
+--- a/pkg/acmedns/types.go
++++ b/pkg/acmedns/types.go
+@@ -61,6 +61,7 @@ type logconfig struct {
  type ACMETxt struct {
  	Username uuid.UUID
  	Password string
 +	Direct bool
  	ACMETxtPost
- 	AllowFrom cidrslice
+ 	AllowFrom Cidrslice
  }
-diff --git a/api.go b/api.go
-index 59f4ecb..b2a6936 100644
---- a/api.go
-+++ b/api.go
-@@ -82,15 +82,15 @@ func webUpdatePost(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
- 	// NOTE: An invalid subdomain should not happen - the auth handler should
- 	// reject POSTs with an invalid subdomain before this handler. Reject any
- 	// invalid subdomains anyway as a matter of caution.
--	if !validSubdomain(a.Subdomain) {
-+	if !a.Direct && !validSubdomain(a.Subdomain) {
- 		log.WithFields(log.Fields{"error": "subdomain", "subdomain": a.Subdomain, "txt": a.Value}).Debug("Bad update data")
- 		updStatus = http.StatusBadRequest
- 		upd = jsonError("bad_subdomain")
--	} else if !validTXT(a.Value) {
-+	} else if !a.Direct && !validTXT(a.Value) {
- 		log.WithFields(log.Fields{"error": "txt", "subdomain": a.Subdomain, "txt": a.Value}).Debug("Bad update data")
- 		updStatus = http.StatusBadRequest
- 		upd = jsonError("bad_txt")
--	} else if validSubdomain(a.Subdomain) && validTXT(a.Value) {
-+	} else if a.Direct || (validSubdomain(a.Subdomain) && validTXT(a.Value)) {
- 		err := DB.Update(a.ACMETxtPost)
- 		if err != nil {
- 			log.WithFields(log.Fields{"error": err.Error()}).Debug("Error while trying to update record")
-diff --git a/auth.go b/auth.go
-index c09f8b4..c91214d 100644
---- a/auth.go
-+++ b/auth.go
+diff --git a/pkg/api/auth.go b/pkg/api/auth.go
+index 27ae7c3..26fa0b6 100644
+--- a/pkg/api/auth.go
++++ b/pkg/api/auth.go
 @@ -6,6 +6,7 @@ import (
  	"fmt"
  	"net"
@@ -44,17 +36,20 @@ index c09f8b4..c91214d 100644
 +	"os"
  
  	"github.com/julienschmidt/httprouter"
- 	log "github.com/sirupsen/logrus"
-@@ -20,6 +21,18 @@ const ACMETxtKey key = 0
- func Auth(update httprouter.Handle) httprouter.Handle {
+ 
+@@ -21,6 +22,21 @@ const ACMETxtKey key = 0
+ func (a *AcmednsAPI) Auth(update httprouter.Handle) httprouter.Handle {
  	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
- 		postData := ACMETxt{}
+ 		postData := acmedns.ACMETxt{}
 +		directKey := r.Header.Get("X-Direct-Key")
 +		if directKey != "" && directKey == os.Getenv("ACME_DNS_DIRECT_STATIC_KEY") {
 +			dec := json.NewDecoder(r.Body)
 +			err := dec.Decode(&postData)
 +			if err != nil {
-+				log.WithFields(log.Fields{"error": "json_error", "string": err.Error()}).Error("Decode error")
++				a.Logger.Errorw(
++					"Decode error",
++					"error", err.Error(),
++				)
 +			}
 +			postData.Direct = true
 +			ctx := context.WithValue(r.Context(), ACMETxtKey, postData)
@@ -62,13 +57,42 @@ index c09f8b4..c91214d 100644
 +			return
 +		}
  		userOK := false
- 		user, err := getUserFromRequest(r)
+ 		user, err := a.getUserFromRequest(r)
  		if err == nil {
-diff --git a/db.go b/db.go
-index 301ac81..87a3ff8 100644
---- a/db.go
-+++ b/db.go
-@@ -35,7 +35,7 @@ var userTable = `
+diff --git a/pkg/api/update.go b/pkg/api/update.go
+index 55c6152..5671963 100644
+--- a/pkg/api/update.go
++++ b/pkg/api/update.go
+@@ -20,21 +20,21 @@ func (a *AcmednsAPI) webUpdatePost(w http.ResponseWriter, r *http.Request, _ htt
+ 	// NOTE: An invalid subdomain should not happen - the auth handler should
+ 	// reject POSTs with an invalid subdomain before this handler. Reject any
+ 	// invalid subdomains anyway as a matter of caution.
+-	if !validSubdomain(atxt.Subdomain) {
++	if !atxt.Direct && !validSubdomain(atxt.Subdomain) {
+ 		a.Logger.Errorw("Bad update data",
+ 			"error", "subdomain",
+ 			"subdomain", atxt.Subdomain,
+ 			"txt", atxt.Value)
+ 		updStatus = http.StatusBadRequest
+ 		upd = jsonError("bad_subdomain")
+-	} else if !validTXT(atxt.Value) {
++	} else if !atxt.Direct && !validTXT(atxt.Value) {
+ 		a.Logger.Errorw("Bad update data",
+ 			"error", "txt",
+ 			"subdomain", atxt.Subdomain,
+ 			"txt", atxt.Value)
+ 		updStatus = http.StatusBadRequest
+ 		upd = jsonError("bad_txt")
+-	} else if validSubdomain(atxt.Subdomain) && validTXT(atxt.Value) {
++	} else if atxt.Direct || validSubdomain(atxt.Subdomain) && validTXT(atxt.Value) {
+ 		err := a.DB.Update(atxt.ACMETxtPost)
+ 		if err != nil {
+ 			a.Logger.Errorw("Error while trying to update record",
+diff --git a/pkg/database/db.go b/pkg/database/db.go
+index 00f60ef..c6df186 100644
+--- a/pkg/database/db.go
++++ b/pkg/database/db.go
+@@ -45,7 +45,7 @@ var userTable = `
  
  var txtTable = `
      CREATE TABLE IF NOT EXISTS txt(
@@ -77,7 +101,7 @@ index 301ac81..87a3ff8 100644
  		Value   TEXT NOT NULL DEFAULT '',
  		LastUpdate INT
  	);`
-@@ -43,7 +43,7 @@ var txtTable = `
+@@ -53,7 +53,7 @@ var txtTable = `
  var txtTablePG = `
      CREATE TABLE IF NOT EXISTS txt(
  		rowid SERIAL,
@@ -86,24 +110,24 @@ index 301ac81..87a3ff8 100644
  		Value   TEXT NOT NULL DEFAULT '',
  		LastUpdate INT
  	);`
-@@ -191,7 +191,7 @@ func (d *acmedb) Register(afrom cidrslice) (ACMETxt, error) {
+@@ -206,7 +206,7 @@ func (d *acmednsdb) Register(afrom acmedns.Cidrslice) (acmedns.ACMETxt, error) {
          Username,
          Password,
          Subdomain,
 -		AllowFrom) 
 +		AllowFrom)
          values($1, $2, $3, $4)`
- 	if Config.Database.Engine == "sqlite3" {
+ 	if d.Config.Database.Engine == "sqlite" {
  		regSQL = getSQLiteStmt(regSQL)
-@@ -250,7 +250,6 @@ func (d *acmedb) GetByUsername(u uuid.UUID) (ACMETxt, error) {
- func (d *acmedb) GetTXTForDomain(domain string) ([]string, error) {
+@@ -266,7 +266,6 @@ func (d *acmednsdb) GetByUsername(u uuid.UUID) (acmedns.ACMETxt, error) {
+ func (d *acmednsdb) GetTXTForDomain(domain string) ([]string, error) {
  	d.Mutex.Lock()
  	defer d.Mutex.Unlock()
--	domain = sanitizeString(domain)
+-	domain = acmedns.SanitizeString(domain)
  	var txts []string
  	getSQL := `
  	SELECT Value FROM txt WHERE Subdomain=$1 LIMIT 2
-@@ -289,9 +288,11 @@ func (d *acmedb) Update(a ACMETxtPost) error {
+@@ -305,9 +304,11 @@ func (d *acmednsdb) Update(a acmedns.ACMETxtPost) error {
  	timenow := time.Now().Unix()
  
  	updSQL := `
@@ -116,13 +140,13 @@ index 301ac81..87a3ff8 100644
 +			Value = excluded.Value,
 +			LastUpdate = excluded.LastUpdate;
  	`
- 	if Config.Database.Engine == "sqlite3" {
+ 	if d.Config.Database.Engine == "sqlite" {
  		updSQL = getSQLiteStmt(updSQL)
-diff --git a/db_test.go b/db_test.go
-index beca9c1..b775cf4 100644
---- a/db_test.go
-+++ b/db_test.go
-@@ -251,19 +251,12 @@ func TestGetTXTForDomain(t *testing.T) {
+diff --git a/pkg/database/db_test.go b/pkg/database/db_test.go
+index 6e27372..24009a1 100644
+--- a/pkg/database/db_test.go
++++ b/pkg/database/db_test.go
+@@ -257,19 +257,12 @@ func TestGetTXTForDomain(t *testing.T) {
  		t.Errorf("No rows returned for GetTXTForDomain [%s]", reg.Subdomain)
  	}
  
@@ -142,43 +166,43 @@ index beca9c1..b775cf4 100644
  	if !val2found {
  		t.Errorf("No TXT value found for val2")
  	}
-diff --git a/dns.go b/dns.go
-index 9a3b06b..6e8b3d8 100644
---- a/dns.go
-+++ b/dns.go
-@@ -195,16 +195,12 @@ func (d *DNSServer) answer(q dns.Question) ([]dns.RR, int, bool, error) {
- 	var err error
+diff --git a/pkg/nameserver/handler.go b/pkg/nameserver/handler.go
+index 18bf2af..fe03e02 100644
+--- a/pkg/nameserver/handler.go
++++ b/pkg/nameserver/handler.go
+@@ -57,16 +57,12 @@ func (n *Nameserver) answer(q dns.Question) ([]dns.RR, int, bool, error) {
  	var txtRRs []dns.RR
- 	var authoritative = d.isAuthoritative(q)
--	if !d.isOwnChallenge(q.Name) && !d.answeringForDomain(q.Name) {
-+	if !d.answeringForDomain(q.Name) {
+ 	loweredName := strings.ToLower(q.Name)
+ 	var authoritative = n.isAuthoritative(loweredName)
+-	if !n.isOwnChallenge(loweredName) && !n.answeringForDomain(loweredName) {
++	if !n.answeringForDomain(loweredName) {
  		rcode = dns.RcodeNameError
  	}
- 	r, _ := d.getRecord(q)
+ 	r, _ := n.getRecord(loweredName, q.Qtype)
  	if q.Qtype == dns.TypeTXT {
--		if d.isOwnChallenge(q.Name) {
--			txtRRs, err = d.answerOwnChallenge(q)
+-		if n.isOwnChallenge(loweredName) {
+-			txtRRs, err = n.answerOwnChallenge(q)
 -		} else {
--			txtRRs, err = d.answerTXT(q)
+-			txtRRs, err = n.answerTXT(q)
 -		}
-+		txtRRs, err = d.answerTXT(q)
++		txtRRs, err = n.answerTXT(q)
  		if err == nil {
  			r = append(r, txtRRs...)
  		}
-@@ -219,7 +215,7 @@ func (d *DNSServer) answer(q dns.Question) ([]dns.RR, int, bool, error) {
+@@ -84,7 +80,7 @@ func (n *Nameserver) answer(q dns.Question) ([]dns.RR, int, bool, error) {
  
- func (d *DNSServer) answerTXT(q dns.Question) ([]dns.RR, error) {
+ func (n *Nameserver) answerTXT(q dns.Question) ([]dns.RR, error) {
  	var ra []dns.RR
 -	subdomain := sanitizeDomainQuestion(q.Name)
-+	subdomain, _ := strings.CutSuffix(sanitizeDomainQuestion(q.Name), "."+d.Domain)
- 	atxt, err := d.DB.GetTXTForDomain(subdomain)
++	subdomain, _ := strings.CutSuffix(sanitizeDomainQuestion(q.Name), "."+n.OwnDomain)
+ 	atxt, err := n.DB.GetTXTForDomain(subdomain)
  	if err != nil {
- 		log.WithFields(log.Fields{"error": err.Error()}).Debug("Error while trying to get record")
-diff --git a/util.go b/util.go
-index 163683d..007907d 100644
---- a/util.go
-+++ b/util.go
-@@ -83,6 +83,10 @@ func generatePassword(length int) string {
+ 		n.Logger.Errorw("Error while trying to get record",
+diff --git a/pkg/nameserver/util.go b/pkg/nameserver/util.go
+index bbae3e0..6940a4a 100644
+--- a/pkg/nameserver/util.go
++++ b/pkg/nameserver/util.go
+@@ -4,6 +4,10 @@ import "strings"
  
  func sanitizeDomainQuestion(d string) string {
  	dom := strings.ToLower(d)
@@ -189,3 +213,6 @@ index 163683d..007907d 100644
  	firstDot := strings.Index(d, ".")
  	if firstDot > 0 {
  		dom = dom[0:firstDot]
+-- 
+2.53.0
+
