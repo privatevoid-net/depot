@@ -6,7 +6,6 @@ let
   receivePolicy = [ "permit_sasl_authenticated" "permit_mynetworks" "reject_unauth_destination" ];
   spamPolicy = [ "reject_sender_login_mismatch" "permit_sasl_authenticated" "pcre:${./known-spam-domains}" ];
 
-  dkimSocket = builtins.replaceStrings ["local:"] ["unix:"] config.services.opendkim.socket;
   lmtpSocket = "lmtp:unix:/run/dovecot2/lmtp";
   postfixLdapMailboxes = "ldap:${config.age.secrets."postfix-ldap-mailboxes.cf".path}";
 
@@ -71,9 +70,6 @@ in
       smtpd_sasl_tls_security_options = "noanonymous";
       smtpd_sasl_authenticated_header = true;
       broken_sasl_auth_clients = false;
-
-      smtpd_milters = dkimSocket;
-      non_smtpd_milters = dkimSocket;
 
       # delivery
       virtual_mailbox_domains = [ domain "max.admin.${domain}" "schizo.cooking" "bomed.lol" ];

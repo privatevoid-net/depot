@@ -9,13 +9,19 @@
     nixos = {
       smtp = [
         ./postfix.nix
-        ./opendkim.nix
+        ./rspamd.nix
         ./certificate.nix
       ];
       imap = [
         ./imap.nix
         ./certificate.nix
       ];
+    };
+    secrets = with config.services.mail.nodes; {
+      dkimKey = {
+        nodes = smtp;
+        owner = "rspamd";
+      };
     };
   };
 
