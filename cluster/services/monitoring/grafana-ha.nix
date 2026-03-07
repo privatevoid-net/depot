@@ -50,6 +50,8 @@ in
       security = {
         cookie_secure = true;
         disable_gravatar = true;
+        # default key, provides no security
+        secret_key = "SW2YcwTIb9zpOOhoPsMm";
       };
       feature_toggles.enable = iniList [
         "tempoSearch"
