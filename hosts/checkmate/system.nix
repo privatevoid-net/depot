@@ -1,4 +1,4 @@
-{ config, depot, ... }:
+{ depot, pkgs, ... }:
 
 {
   imports =
@@ -9,6 +9,8 @@
       depot.nixosModules.hyprspace
       depot.nixosModules.serverBase
     ];
+
+  boot.kernelPackages = pkgs.linuxPackages_6_12;
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -29,4 +31,3 @@
   system.stateVersion = "21.11";
 
 }
-
