@@ -14,7 +14,7 @@
       "version": "v4.10.5",
       "revision": "6347640a35d85a60a4794879e11c8a11e065005a",
       "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v4.10.5",
-      "hash": "1cvimyaba6g0scdxldp8vcv0azaknn5dwqf07pci0b9c0zf75aim"
+      "hash": "sha256-Napy3AcsLRDZPcBh3oq1U30FNtvoNtob0+AZtZSvcbM="
     },
     "excalidraw": {
       "type": "Git",
@@ -27,7 +27,7 @@
       "submodules": false,
       "revision": "60b275880da7d1eb7dff3782e8d491188790597a",
       "url": "https://github.com/excalidraw/excalidraw/archive/60b275880da7d1eb7dff3782e8d491188790597a.tar.gz",
-      "hash": "02s4xfpd1cxxbavms7k2f3y4yks54qvghbfmrpcc072id0cr3ndf"
+      "hash": "sha256-rtmRGWhRHMDYzdUt+DYmRU9P/HBiHl23Wr2z0K7rRAs="
     },
     "stevenblack-hosts": {
       "type": "GitRelease",
@@ -43,8 +43,8 @@
       "version": "3.16.65",
       "revision": "28564e1b7f0d97afad1edc46535ab0daa5af67a9",
       "url": "https://api.github.com/repos/StevenBlack/hosts/tarball/3.16.65",
-      "hash": "1l9sy05md3rv86jc2pspmyapadd5qgvj1vyf03nqfdbf7b3dbcxm"
+      "hash": "sha256-tbPVxjpuNYftAM7vIPfDpTV1la9XX8GkQTuPVgvwOtE="
     }
   },
-  "version": 5
+  "version": 7
 }
