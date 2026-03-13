@@ -52,6 +52,14 @@ in
                   extraConfig = "access_log off;";
                 };
               }
+              (lib.mapAttrs (_: generate: {
+                alias = "${generate {
+                  inherit depot;
+                  inherit depot';
+                  inherit pkgs;
+                  inherit (pkgs) system;
+                }}/";
+              }) cfg.staticLocations)
             ];
           }
         ];

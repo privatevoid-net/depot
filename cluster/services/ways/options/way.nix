@@ -62,6 +62,11 @@ with lib;
       type = with types; functionTo (coercedTo package (package: "${package.webroot or package}") str);
     };
 
+    staticLocations = mkOption {
+      type = with types; attrsOf (functionTo (coercedTo package (package: "${package.webroot or package}") str));
+      default = { };
+    };
+
     healthCheckPath = mkOption {
       type = types.path;
       default = "/.well-known/ways/internal-health-check";
