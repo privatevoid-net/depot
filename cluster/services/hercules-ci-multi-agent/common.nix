@@ -42,6 +42,7 @@ in
     package = depot'.inputs.hercules-ci-agent.packages.hercules-ci-agent;
     settings = {
       clusterJoinTokenPath = secrets."clusterJoinToken-${org}".path;
+      secretsJsonPath = lib.mkDefault "${builtins.toFile "hercules-ci-empty-secrets.json" "{}"}";
       binaryCachesPath = builtins.toFile "binary-caches.json" "{}";
       concurrentTasks = lib.pipe config.reflection.hardware.cpu.cores [
         (lib.flip builtins.div 2)
