@@ -34,6 +34,11 @@
 
       out-of-your-element = pkgs.callPackage ./servers/out-of-your-element { };
 
+      phanpy-trvke-social = pkgs.callPackage ./web-apps/phanpy-trvke-social {
+        inherit pins;
+        inherit (builders) mkNpinsSource;
+      };
+
       pin = pkgs.callPackage ./tools/pin {
         nix = nix-super;
       };
