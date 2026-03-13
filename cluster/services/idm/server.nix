@@ -28,7 +28,7 @@ in
     serverSettings = {
       tls_chain = "${certDir}/fullchain.pem";
       tls_key = "${certDir}/key.pem";
-      role = "WriteReplicaNoUI";
+      role = "WriteReplica";
       bindaddress = backendLink.tuple;
       ldapbindaddress = "${ldapLink.ipv4}:${ldapLink.portStr}";
       origin = frontendLink.url;
