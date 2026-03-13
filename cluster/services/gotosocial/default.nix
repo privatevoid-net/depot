@@ -19,6 +19,11 @@
     trvke = {
       target = config.hostLinks.${host}.gotosocial.url;
       domainSuffix = "social";
+      extras.locations = {
+        "/".proxyWebsockets = true;
+        "= /app".return = "301 /app/";
+      };
+      staticLocations."/app/" = { depot', ... }: depot'.packages.phanpy-trvke-social;
     };
   };
 }
