@@ -19,6 +19,8 @@ super: rec {
 
   garage = super.garage_2;
 
+  gotosocial = patch super.gotosocial "patches/base/gotosocial";
+
   jitsi-meet-insecure = let
     olm-insecure = acceptVulnerabilities super.olm;
   in super.jitsi-meet.override { olm = olm-insecure; };

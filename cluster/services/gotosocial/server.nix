@@ -1,4 +1,4 @@
-{ cluster, config, depot, pkgs, ... }:
+{ cluster, config, depot, depot', pkgs, ... }:
 
 let
   inherit (depot.lib.meta) domain;
@@ -25,6 +25,7 @@ in
       oidc-admin-groups = [ "/trvkesocialadmins@${domain}" ];
     };
     environmentFile = secrets.secrets.path;
+    package = depot'.packages.gotosocial;
   };
 
   services.postgresql = {

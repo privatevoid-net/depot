@@ -1,0 +1,26 @@
+From 3d2000c3f99eea2b4e792753ecd2a2bf7a34ba51 Mon Sep 17 00:00:00 2001
+From: Max <max@privatevoid.net>
+Date: Fri, 13 Mar 2026 20:05:47 +0100
+Subject: [PATCH] remove emojis in footer
+
+---
+ web/template/page_footer.tmpl | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/web/template/page_footer.tmpl b/web/template/page_footer.tmpl
+index c205327fd..fff5e009e 100644
+--- a/web/template/page_footer.tmpl
++++ b/web/template/page_footer.tmpl
+@@ -35,9 +35,7 @@
+                 rel="nofollow noreferrer noopener"
+                 target="_blank"
+             >
+-                <span aria-hidden="true">🦥🏳️‍🌈</span>
+                 Source - GoToSocial {{ .instance.Version }}
+-                <span aria-hidden="true">🏳️‍⚧️🦥</span>
+             </a>
+         </li>
+         {{- if .instance.ContactAccount }} 
+-- 
+2.53.0
+
