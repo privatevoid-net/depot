@@ -15,6 +15,7 @@ in
     enterprise = ./enterprise;
     external-storage = ./external-storage;
     fail2ban = ./fail2ban;
+    hercules-ci-multi-agent-refactored = ./hercules-ci-multi-agent-refactored;
     hyprspace = ./hyprspace;
     ipfs = ./ipfs;
     ipfs-cluster = ./ipfs-cluster;

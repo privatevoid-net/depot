@@ -1,4 +1,4 @@
-{ cluster, config, depot', lib, ... }:
+{ cluster, config, depot, depot', lib, ... }:
 
 let
   inherit (cluster.config.services.hercules-ci-multi-agent) nodes secrets;
@@ -21,7 +21,7 @@ let
 in
 {
   imports = [
-    ./modules/multi-agent-refactored
+    depot.nixosModules.hercules-ci-multi-agent-refactored
     ./builder-cache.nix
     ./attic-uploader.nix
   ];
