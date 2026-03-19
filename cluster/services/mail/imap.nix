@@ -50,16 +50,13 @@ in {
     mailGroup = "vmail";
     sslServerCert = "${certDir}/fullchain.pem";
     sslServerKey = "${certDir}/key.pem";
+    mailPlugins.perProtocol.lmtp.enable = [ "sieve" ];
 
     sieve = {
       extensions = [
-        "variables"
-        "envelope"
         "fileinto"
-        "subaddress"
-        "mailbox"
       ];
-      scripts.after = ./sieve;
+      scripts.before = ./sieve/spam.sieve;
     };
 
     extraConfig = with config.services.dovecot2; ''
