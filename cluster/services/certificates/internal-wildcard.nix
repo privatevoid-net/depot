@@ -4,7 +4,7 @@ let
   inherit (depot.lib.meta) domain;
 
   extraGroups = [ "nginx" ]
-    ++ lib.optional config.services.kanidm.enableServer "kanidm";
+    ++ lib.optional config.services.kanidm.server.enable "kanidm";
 in
 
 {

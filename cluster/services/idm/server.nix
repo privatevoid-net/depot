@@ -24,17 +24,19 @@ in
   };
 
   services.kanidm = {
-    enableServer = true;
-    serverSettings = {
-      tls_chain = "${certDir}/fullchain.pem";
-      tls_key = "${certDir}/key.pem";
-      role = "WriteReplica";
-      bindaddress = backendLink.tuple;
-      ldapbindaddress = "${ldapLink.ipv4}:${ldapLink.portStr}";
-      origin = frontendLink.url;
-      inherit domain;
-      online_backup = {
-        versions = 7;
+    server = {
+      enable = true;
+      settings = {
+        tls_chain = "${certDir}/fullchain.pem";
+        tls_key = "${certDir}/key.pem";
+        role = "WriteReplica";
+        bindaddress = backendLink.tuple;
+        ldapbindaddress = "${ldapLink.ipv4}:${ldapLink.portStr}";
+        origin = frontendLink.url;
+        inherit domain;
+        online_backup = {
+          versions = 7;
+        };
       };
     };
   };
