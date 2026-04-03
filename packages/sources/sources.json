@@ -11,10 +11,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "v4.10.5",
-      "revision": "6347640a35d85a60a4794879e11c8a11e065005a",
-      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/v4.10.5",
-      "hash": "sha256-Napy3AcsLRDZPcBh3oq1U30FNtvoNtob0+AZtZSvcbM="
+      "version": "v4.11.1",
+      "revision": "6a05ff58406755d5613e48dc3cf4f39f1033764a",
+      "url": "https://api.github.com/repos/cinnyapp/cinny/tarball/refs/tags/v4.11.1",
+      "hash": "sha256-dwI3zNey/ukF3t2fhH/ePf4o4iBDwZyLWMYebPgXmWU="
     },
     "excalidraw": {
       "type": "Git",
