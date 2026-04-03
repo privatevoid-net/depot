@@ -90,8 +90,7 @@ in
       allowFrom = [ "127.0.0.1" cluster.config.vars.meshNet.cidr "10.100.3.0/24" ];
     };
 
-    # ew
-    yaml-settings = {
+    settings = {
       recursor = {
         forward_zones = [
           {
