@@ -12,16 +12,18 @@ in
   };
 
   services.kanidm = {
-    enableClient = true;
-    clientSettings = {
-      uri = frontendLink.url;
+    client = {
+      enable = true;
+      settings.uri = frontendLink.url;
     };
-    enablePam = true;
-    unixSettings = {
-      default_shell = utils.toShellPath config.users.defaultUserShell;
-      home_alias = "name";
-      uid_attr_map = "name";
-      gid_attr_map = "name";
+    unix = {
+      enable = true;
+      settings = {
+        default_shell = utils.toShellPath config.users.defaultUserShell;
+        home_alias = "name";
+        uid_attr_map = "name";
+        gid_attr_map = "name";
+      };
     };
   };
 
