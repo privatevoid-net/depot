@@ -1,5 +1,8 @@
 let
-  max = (import ./users/max/userinfo.nix null).sshKeys;
+  max = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL5C7mC5S2gM0K6x0L/jNwAeQYbFSzs16Q73lONUlIkL max@TITAN"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMmdWfmAs/0rno8zJlhBFMY2SumnHbTNdZUXJqxgd9ON max@jericho"
+  ];
   hosts = builtins.mapAttrs (_: v: v.config.reflection)
     (builtins.getFlake "git+file://${builtins.getEnv "PWD"}").nixosConfigurations;
   systemKeys = x: x.ssh.id.publicKey or null;
