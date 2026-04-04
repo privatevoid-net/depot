@@ -26,6 +26,10 @@ buildNpmPackage rec {
   postPatch = ''
     substituteInPlace src/matrix/read-registration.js \
       --replace-fail 'catch (e) {}' 'catch (e) { console.log(e); }'
+    substituteInPlace scripts/setup.js \
+      --replace-fail \
+        'https://cadence.moe/friends/out_of_your_element.png' \
+        'https://cdn.privatevoid.net/img/ooye.png'
   '';
 
   postInstall = ''
