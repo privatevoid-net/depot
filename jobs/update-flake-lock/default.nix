@@ -5,6 +5,10 @@
     autoMergeMethod = "merge";
     forgeType = "github";
     updateBranch = "pr-flake-update";
+    baseMerge = {
+      enable = true;
+      method = "reset";
+    };
     when = {
       dayOfWeek = "Fri";
       hour = 2;
