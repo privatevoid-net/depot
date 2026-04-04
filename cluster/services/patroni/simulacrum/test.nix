@@ -58,6 +58,7 @@ in
 
     with subtest("should restart after all nodes are crashed"):
         for node in nodes:
+            node.systemctl("stop consul.service")
             node.crash()
         for node in nodes:
             node.start()
@@ -71,6 +72,7 @@ in
         nodes.append(nodes.pop(masterNodeIndex))
 
         for node in nodes:
+            node.systemctl("stop consul.service")
             node.crash()
             wait_for_all_nodes_ready(${toString (expectedReplicas - 1)})
 
