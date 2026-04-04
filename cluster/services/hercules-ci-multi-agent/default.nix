@@ -7,7 +7,7 @@ in
 {
   services.hercules-ci-multi-agent = {
     nodes = {
-      private-void = [ "VEGAS" "prophet" ];
+      private-void = [ "prophet" ];
       nixpak = [ "prophet" "thousandman" ];
       max = [ "VEGAS" "prophet" ];
       hyprspace = [ "prophet" "thousandman" ];
