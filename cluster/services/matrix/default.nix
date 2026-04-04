@@ -3,13 +3,12 @@
 {
   services.matrix = {
     nodes = {
-      homeserver = [ "VEGAS" ];
+      homeserver = [ "thousandman" ];
       static = config.services.websites.nodes.host;
     };
     nixos = {
       homeserver = [
         ./homeserver.nix
-        ./coturn.nix
         ./bridges/discord.nix
       ];
       static = [
@@ -25,13 +24,7 @@
       };
     in {
       ldapConfig = default;
-      dbConfig = default;
-      turnConfig = default;
       keysConfig = default;
-      coturnStaticAuth = {
-        nodes = nodes.homeserver;
-        owner = "turnserver";
-      };
       discordBridgeToken = {
         nodes = nodes.homeserver;
         owner = "matrix-synapse";
