@@ -306,6 +306,7 @@ in
       DynamicUser = true;
       ExecStart = lib.escapeShellArgs [
         "${pkgs.go-away}/bin/go-away"
+        "--challenge-template" "forgejo"
         "--bind" protectionLink.tuple
         "--backend" "${host}=${backendLink.url}"
         "--client-ip-header" "X-Forwarded-For"
