@@ -9,7 +9,6 @@ in
     nodes = {
       private-void = [ "prophet" ];
       nixpak = [ "prophet" "thousandman" ];
-      max = [ "VEGAS" "prophet" ];
       hyprspace = [ "prophet" "thousandman" ];
     };
     nixos = {
@@ -22,9 +21,6 @@ in
         }
       ];
       nixpak = [
-        ./common.nix
-      ];
-      max = [
         ./common.nix
       ];
       hyprspace = [
