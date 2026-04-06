@@ -23,7 +23,8 @@ rec {
   };
 
   hyprspace = {
-    enable = false;
+    enable = true;
+    id = "12D3KooWJes58aASZZAHgeekMWft2zBXg4RpaDZzm9UoiQxeEAsy";
     listenPort = 995;
     routes = [
       "${interfaces.vstub.addr}/32"

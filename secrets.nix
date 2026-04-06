@@ -20,6 +20,7 @@ in with hosts;
   "secrets/hyprspace-key-grail.age".publicKeys = max ++ map systemKeys [ grail ];
   "secrets/hyprspace-key-VEGAS.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/hyprspace-key-prophet.age".publicKeys = max ++ map systemKeys [ prophet ];
+  "secrets/hyprspace-key-thousandman.age".publicKeys = max ++ map systemKeys [ thousandman ];
   "secrets/nextcloud-adminpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/nextcloud-dbpass.age".publicKeys = max ++ map systemKeys [ VEGAS ];
   "secrets/oauth2_proxy-secrets.age".publicKeys = max ++ map systemKeys [ VEGAS ];

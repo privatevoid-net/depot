@@ -10,7 +10,7 @@ in
 
     depot.nixosModules.serverBase
 
-    # depot.nixosModules.hyprspace
+    depot.nixosModules.hyprspace
   ];
 
   zramSwap.enable = true;
