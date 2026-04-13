@@ -21,8 +21,8 @@ in
     import json
     nodeNames = json.loads('${builtins.toJSON cluster.config.services.patroni.nodes.worker}')
     clientNames = json.loads('${builtins.toJSON cluster.config.services.patroni.nodes.haproxy}')
-    nodes = [ n for n in machines if n.name in nodeNames ]
-    clients = [ n for n in machines if n.name in clientNames ]
+    nodes = [ n for n in machines_qemu if n.name in nodeNames ]
+    clients = [ n for n in machines_qemu if n.name in clientNames ]
 
     def booted(nodes):
       return filter(lambda node: node.booted, nodes)

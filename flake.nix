@@ -27,7 +27,7 @@
   inputs = {
     systems.url = "github:privatevoid-net/nix-systems-default-linux";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nix-super = {
       url = "https://forge.privatevoid.net/max/nix-super/archive/master.tar.gz";
