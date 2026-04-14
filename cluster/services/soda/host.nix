@@ -102,7 +102,10 @@ in
 
     sockets.quickie-proxy = {
       wantedBy = [ "sockets.target" ];
-      socketConfig.ListenStream = "${cluster.config.hostLinks.${config.networking.hostName}.quickie.tuple}";
+      socketConfig = {
+        ListenStream = "${cluster.config.hostLinks.${config.networking.hostName}.quickie.tuple}";
+        FreeBind = true;
+      };
     };
   };
 
