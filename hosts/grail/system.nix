@@ -23,6 +23,4 @@ in
   services.openssh.enable = true;
 
   time.timeZone = "Europe/Helsinki";
-
-  system.stateVersion = "23.05";
 }
