@@ -80,47 +80,7 @@
         "type": "github"
       }
     },
-    "drv-parts": {
-      "inputs": {
-        "flake-compat": "flake-compat",
-        "flake-parts": [
-          "flake-parts"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1690881582,
-        "narHash": "sha256-DKJucaTOmnsJV3ZC68yzpyMb+OHWCDT9Z2fB2GPErck=",
-        "owner": "DavHau",
-        "repo": "drv-parts",
-        "rev": "77bbde0616b445e06c8ad4621643983250e0e4f1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "DavHau",
-        "repo": "drv-parts",
-        "type": "github"
-      }
-    },
     "flake-compat": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1673956053,
-        "narHash": "sha256-4gtG9iQuiKITOjNQQeQIpoIB6b16fm+504Ch3sNKLd8=",
-        "owner": "edolstra",
-        "repo": "flake-compat",
-        "rev": "35bb57c0c8d8b62bbfd284272c928ceb64ddbde9",
-        "type": "github"
-      },
-      "original": {
-        "owner": "edolstra",
-        "repo": "flake-compat",
-        "type": "github"
-      }
-    },
-    "flake-compat_2": {
       "flake": false,
       "locked": {
         "lastModified": 1767039857,
@@ -404,7 +364,7 @@
     },
     "nix-super": {
       "inputs": {
-        "flake-compat": "flake-compat_2",
+        "flake-compat": "flake-compat",
         "flake-parts": "flake-parts_2",
         "git-hooks-nix": "git-hooks-nix",
         "nixpkgs": "nixpkgs_3",
@@ -513,7 +473,6 @@
         "agenix": "agenix",
         "blank": "blank",
         "devshell": "devshell",
-        "drv-parts": "drv-parts",
         "flake-parts": "flake-parts",
         "hercules-ci-agent": "hercules-ci-agent",
         "hercules-ci-effects": "hercules-ci-effects",

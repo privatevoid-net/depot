@@ -13,7 +13,6 @@
 
       imports = [
         inputs.hercules-ci-effects.flakeModule
-        inputs.drv-parts.modules.flake-parts.drv-parts
         ./hosts/part.nix
         ./modules/part.nix
         ./packages/part.nix
@@ -100,13 +99,5 @@
     };
 
     blank.url = "github:divnix/blank";
-
-    drv-parts = {
-      url = "github:DavHau/drv-parts";
-      inputs = {
-        flake-parts.follows = "flake-parts";
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
   };
 }

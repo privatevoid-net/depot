@@ -1,7 +1,4 @@
 {
-  imports = [
-    ./drv-parts
-  ];
   perSystem = { pkgs, ... }: {
     imports = [
       ./options.nix
