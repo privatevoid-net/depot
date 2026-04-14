@@ -13,6 +13,7 @@
 
       imports = [
         inputs.hercules-ci-effects.flakeModule
+        inputs.clan.flakeModules.clan
         ./hosts/part.nix
         ./modules/part.nix
         ./packages/part.nix
@@ -20,6 +21,7 @@
         ./lib/part.nix
         ./cluster/part.nix
         ./catalog/part.nix
+        ./clan/part.nix
       ];
     };
 
