@@ -13,10 +13,6 @@ let
   backendLink = config.links.forgejoBackend;
 
   exe = lib.getExe config.services.forgejo.package;
-
-  go-away = pkgs.go-away.override {
-    buildGoModule = pkgs.buildGo125Module;
-  };
 in
 
 {
@@ -309,12 +305,12 @@ in
     serviceConfig = {
       DynamicUser = true;
       ExecStart = lib.escapeShellArgs [
-        "${go-away}/bin/go-away"
+        "${pkgs.go-away}/bin/go-away"
         "--challenge-template" "forgejo"
         "--bind" protectionLink.tuple
         "--backend" "${host}=${backendLink.url}"
         "--client-ip-header" "X-Forwarded-For"
-        "--policy-snippets" "${go-away}/lib/go-away/snippets"
+        "--policy-snippets" "${pkgs.go-away}/lib/go-away/snippets"
         "--policy" policy
       ];
     };
