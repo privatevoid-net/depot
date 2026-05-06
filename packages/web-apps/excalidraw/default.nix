@@ -1,16 +1,19 @@
-{ lib
-, fetchFromGitHub
-, mkYarnPackage
-, fetchYarnDeps
-, fixup_yarn_lock
-, mkNpinsSource
-, pins
+{
+  lib,
+  fetchFromGitHub,
+  fetchYarnDeps,
+  mkNpinsSource,
+  nodejs,
+  pins,
+  stdenv,
+  yarnBuildHook,
+  yarnConfigHook
 }:
 
 let
   inherit (pins) excalidraw;
 
-  app = mkYarnPackage rec {
+  app = stdenv.mkDerivation rec {
     pname = "excalidraw";
     version = "0.0.0+${builtins.substring 0 7 excalidraw.revision}";
 
@@ -22,29 +25,17 @@ let
 
     packageJSON = "${excalidraw}/package.json";
 
-    nativeBuildInputs = [ fixup_yarn_lock ];
+    nativeBuildInputs = [
+      yarnConfigHook
+      yarnBuildHook
+      nodejs
+    ];
 
     offlineCache = fetchYarnDeps {
       name = "excalidraw-yarn-cache-${builtins.hashString "sha256" (builtins.readFile "${excalidraw}/yarn.lock")}";
       yarnLock = src + "/yarn.lock";
       hash = "sha256-v2ycGVq0q/Rs3UaSh/mExmf3ehWaCQg+CeWS2qQ/674=";
     };
-
-    configurePhase = ''
-      runHook preConfigure
-
-      export HOME="$TMPDIR"
-      yarn config --offline set yarn-offline-mirror "$offlineCache"
-      fixup_yarn_lock yarn.lock
-      yarn install --offline --frozen-lockfile --ignore-platform --ignore-scripts --no-progress --non-interactive
-      patchShebangs node_modules/
-
-      runHook postConfigure
-    '';
-
-    buildPhase = ''
-      yarn --offline build:app
-    '';
 
     installPhase = ''
       distRoot=$out/share/www
@@ -53,8 +44,6 @@ let
       mv excalidraw-app/build $dist
       find $dist -type f -name "*.map" -delete
     '';
-
-    doDist = false;
 
     passthru.webroot = "${app}/share/www/excalidraw";
 
