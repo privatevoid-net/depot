@@ -1,0 +1,48 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index 3ff6d5a0..7d9ebef5 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -119,6 +119,7 @@ reqwest = { version = "0.13", default-features = false, features = [
+     "rustls-no-provider",
+     "json",
+ ] }
++rustls = { version = "0.23", default-features = false, features = ["ring"] }
+ 
+ form_urlencoded = "1.2"
+ http = "1.4"
+diff --git a/src/rpc/Cargo.toml b/src/rpc/Cargo.toml
+index 20c71fdc..f75d8b51 100644
+--- a/src/rpc/Cargo.toml
++++ b/src/rpc/Cargo.toml
+@@ -41,6 +41,7 @@ kube = { workspace = true, optional = true }
+ k8s-openapi = { workspace = true, optional = true }
+ schemars = { workspace = true, optional = true }
+ reqwest = { workspace = true, optional = true }
++rustls = { workspace = true, optional = true, features = ["ring"] }
+ 
+ pnet_datalink.workspace = true
+ 
+@@ -50,7 +51,7 @@ opentelemetry.workspace = true
+ 
+ [features]
+ kubernetes-discovery = ["kube", "k8s-openapi", "schemars"]
+-consul-discovery = ["reqwest", "thiserror"]
++consul-discovery = ["reqwest", "thiserror", "rustls"]
+ system-libs = ["sodiumoxide/use-pkg-config"]
+ 
+ [lints]
+diff --git a/src/rpc/consul.rs b/src/rpc/consul.rs
+index 54d46679..07e486c3 100644
+--- a/src/rpc/consul.rs
++++ b/src/rpc/consul.rs
+@@ -80,6 +80,10 @@ pub struct ConsulDiscovery {
+ 
+ impl ConsulDiscovery {
+ 	pub fn new(config: ConsulDiscoveryConfig) -> Result<Self, ConsulError> {
++		// rustls-no-provider requires an explicit crypto provider.
++		// Install ring so reqwest can use it for TLS.
++		let _ = rustls::crypto::ring::default_provider().install_default();
++
+ 		let mut builder: reqwest::ClientBuilder = reqwest::Client::builder().use_rustls_tls();
+ 		if config.tls_skip_verify {
+ 			builder = builder.danger_accept_invalid_certs(true);

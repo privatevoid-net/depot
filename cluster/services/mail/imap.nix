@@ -43,14 +43,44 @@ in {
 
   services.dovecot2 = {
     enable = true;
-    enableLmtp = true;
-    enableImap = true;
     enablePAM = false;
     mailUser = "vmail";
     mailGroup = "vmail";
-    sslServerCert = "${certDir}/fullchain.pem";
-    sslServerKey = "${certDir}/key.pem";
     mailPlugins.perProtocol.lmtp.enable = [ "sieve" ];
+
+    settings = {
+      protocols = {
+        imap = true;
+        lmtp = true;
+      };
+      ssl_cert = "${certDir}/fullchain.pem";
+      ssl_key = "${certDir}/key.pem";
+      auth_username_format = "%n";
+      namespace = {
+        inbox = true;
+        separator = "/";
+      };
+      userdb = {
+        driver = "static";
+        args = [
+          "allow_all_users=yes"
+          "uid=${config.services.dovecot2.mailUser}"
+          "gid=${config.services.dovecot2.mailGroup}"
+          "home=/var/mail/virtual/%d/%n"
+        ];
+      };
+
+      passdb = {
+        driver = "ldap";
+        args = ldapConfig;
+      };
+      "service auth" = {
+        "unix_listener auth" = {
+          mode = "0660";
+          inherit (postfixCfg) user group;
+        };
+      };
+    };
 
     sieve = {
       extensions = [
@@ -58,33 +88,6 @@ in {
       ];
       scripts.before = ./sieve/spam.sieve;
     };
-
-    extraConfig = with config.services.dovecot2; ''
-      auth_username_format = %n
-
-      namespace {
-        inbox = yes
-        separator = /
-      }
-      userdb {
-        driver = static
-        args = allow_all_users=yes uid=${mailUser} gid=${mailUser} home=/var/mail/virtual/%d/%n
-      }
-      passdb {
-        driver = ldap
-        args = ${ldapConfig}
-      }
-
-      service auth {
-        unix_listener auth {
-          mode = 0660
-          user = ${postfixCfg.user}
-          group = ${postfixCfg.group}
-        }
-      }
-
-      auth_mechanisms = plain login
-    '';
   };
 
   systemd.services.dovecot.serviceConfig.ExecStartPre = [ "${writeLdapConfig}/bin/write-ldap-config" ];

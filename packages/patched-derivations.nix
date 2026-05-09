@@ -17,7 +17,7 @@ super: rec {
 
   forgejo = patch super.forgejo "patches/base/forgejo";
 
-  garage = super.garage_2;
+  garage = patch super.garage_2 "patches/base/garage";
 
   gotosocial = patch super.gotosocial "patches/base/gotosocial";
 

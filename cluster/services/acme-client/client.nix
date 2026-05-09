@@ -40,11 +40,11 @@ in
       (map (x: [ "--dns.resolvers" x ]) authoritativeServers)
       "--dns-timeout" "30"
     ];
-    credentialsFile = pkgs.writeText "acme-exec-config" ''
+    environmentFile = pkgs.writeText "acme-exec-config" ''
       EXEC_PATH=${execScript}
-      EXEC_ENV_FILE=${config.age.secrets.acmeDnsApiKey.path}
       EXEC_SEQUENCE_INTERVAL=0
     '';
+    credentialFiles.EXEC_ENV_FILE = config.age.secrets.acmeDnsApiKey.path;
   };
 
   systemd.services = lib.mapAttrs' (name: value: {

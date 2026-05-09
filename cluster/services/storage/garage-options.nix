@@ -141,7 +141,7 @@ in
           fi
 
           ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: layout: let
-              unit = lib.optionalString (lib.versionAtLeast cfg.package.version "0.9") "GB";
+              unit = lib.optionalString (lib.versionAtLeast cfg.package.version "0.9") "GiB";
           in ''
             garage layout assign -z '${layout.zone}' -c '${toString layout.capacity}${unit}' "$(getNodeId '${name}')"
           '') cfg.layout.initial)}
@@ -201,7 +201,7 @@ in
         key = {
           destroyAfterDays = 0;
           create = key: ''
-            if [[ "$(garage key info ${lib.escapeShellArg key} 2>&1 >/dev/null)" == *" 0 matching keys"* ]]; then
+            if [[ "$(garage key info ${lib.escapeShellArg key} 2>&1 >/dev/null)" == *"Access key not found"* ]]; then
               # don't print secret key
               garage ${if lib.versionAtLeast cfg.package.version "0.9" then "key create" else "key new --name"} ${lib.escapeShellArg key} >/dev/null
               echo Key ${lib.escapeShellArg key} was created.

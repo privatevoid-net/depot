@@ -50,7 +50,7 @@ in
           };
           system.ascensions.garage-layout.incantations = lib.mkForce (i: [
             (i.runGarage ''
-              garage layout assign -z eu-central -c 2000GB "$(garage node id -q | cut -d@ -f1)"
+              garage layout assign -z eu-central -c 2TiB "$(garage node id -q | cut -d@ -f1)"
               garage layout apply --version 2
             '')
           ]);
@@ -95,9 +95,9 @@ in
         node.succeed("/run/booted-system/specialisation/modifiedLayout/bin/switch-to-configuration test")
 
       for node in nodes:
-        node.wait_until_succeeds("garage layout show | grep -w 'eu-central  *2\\.0 TB'")
-        assert "1" in node.succeed("garage layout show | grep -w 'eu-central  *2\\.0 TB' | wc -l")
-        assert "2" in node.succeed("garage layout show | grep -w 'eu-central  *1000\\.0 GB' | wc -l")
+        node.wait_until_succeeds("garage layout show | grep -w 'eu-central  *2\\.0 TiB'")
+        assert "1" in node.succeed("garage layout show | grep -w 'eu-central  *2\\.0 TiB' | wc -l")
+        assert "2" in node.succeed("garage layout show | grep -w 'eu-central  *1000\\.0 GiB' | wc -l")
 
     consulConfig = json.loads(garage1.succeed("cat /etc/consul.json"))
     addr = consulConfig["addresses"]["http"]
@@ -119,9 +119,9 @@ in
         node.wait_until_fails("garage status | grep 'NO ROLE ASSIGNED'")
 
       for node in nodes:
-        node.wait_until_succeeds("garage layout show | grep -w 'eu-central  *2\\.0 TB'")
-        assert "1" in node.succeed("garage layout show | grep -w 'eu-central  *2\\.0 TB' | wc -l")
-        assert "${toString ((lib.length nodes.garage) - 1)}" in node.succeed("garage layout show | grep -w 'eu-central  *1000\\.0 GB' | wc -l")
+        node.wait_until_succeeds("garage layout show | grep -w 'eu-central  *2\\.0 TiB'")
+        assert "1" in node.succeed("garage layout show | grep -w 'eu-central  *2\\.0 TiB' | wc -l")
+        assert "${toString ((lib.length nodes.garage) - 1)}" in node.succeed("garage layout show | grep -w 'eu-central  *1000\\.0 GiB' | wc -l")
 
     with subtest("should create specified buckets and keys"):
       for node in nodes:
