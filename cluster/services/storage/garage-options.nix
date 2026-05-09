@@ -141,7 +141,7 @@ in
           fi
 
           ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: layout: let
-              unit = lib.optionalString (lib.versionAtLeast cfg.package.version "0.9") "GB";
+              unit = lib.optionalString (lib.versionAtLeast cfg.package.version "0.9") "GiB";
           in ''
             garage layout assign -z '${layout.zone}' -c '${toString layout.capacity}${unit}' "$(getNodeId '${name}')"
           '') cfg.layout.initial)}
