@@ -18,7 +18,6 @@ in
     hercules-ci-multi-agent-refactored = ./hercules-ci-multi-agent-refactored;
     hyprspace = ./hyprspace;
     ipfs = ./ipfs;
-    ipfs-cluster = ./ipfs-cluster;
     maintenance = ./maintenance;
     minimal = ./minimal;
     motd = ./motd;
