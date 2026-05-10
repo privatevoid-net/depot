@@ -30,8 +30,6 @@
 
       graf = pkgs.callPackage ./tools/graf { };
 
-      ipfs = pkgs.callPackage ./networking/ipfs { };
-
       out-of-your-element = pkgs.callPackage ./servers/out-of-your-element { };
 
       phanpy-trvke-social = pkgs.callPackage ./web-apps/phanpy-trvke-social {
