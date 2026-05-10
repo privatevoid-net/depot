@@ -10,36 +10,42 @@ in
       address = interfaces.primary.gatewayAddr;
       interface = interfaces.primary.link;
     };
-    interfaces = lib.mkMerge [
-      {
-        ${interfaces.primary.link} = {
-          ipv4 = {
-            addresses = [
-              {
-                address = interfaces.primary.addr;
-                inherit (interfaces.primary) prefixLength;
-              }
-            ];
-            routes = lib.mkIf (interfaces.primary.prefixLength == 32) [
-              {
-                address = interfaces.primary.gatewayAddr;
-                prefixLength = 32;
-              }
-            ];
-          };
-        };
-      }
-      (lib.mkIf (interfaces ? vstub) {
-        ${interfaces.vstub.link} = {
-          virtual = true;
-          ipv4.addresses = [
+    interfaces = {
+      ${interfaces.primary.link} = {
+        ipv4 = {
+          addresses = [
             {
-              address = interfaces.vstub.addr;
+              address = interfaces.primary.addr;
+              inherit (interfaces.primary) prefixLength;
+            }
+          ];
+          routes = lib.mkIf (interfaces.primary.prefixLength == 32) [
+            {
+              address = interfaces.primary.gatewayAddr;
               prefixLength = 32;
             }
           ];
         };
-      })
-    ];
+      };
+    };
   };
+  systemd.network = lib.mkMerge [
+    { enable = !config.boot.isContainer; }
+    (lib.mkIf (interfaces ? vstub) {
+      netdevs."30-vstub" = {
+        netdevConfig = {
+          Name = "vstub";
+          Kind = "dummy";
+        };
+      };
+      networks."30-vstub" = {
+        matchConfig.Name = interfaces.vstub.link;
+        networkConfig = {
+          DHCP = false;
+          ConfigureWithoutCarrier = true;
+          Address = "${interfaces.vstub.addr}/32";
+        };
+      };
+    })
+  ];
 }
