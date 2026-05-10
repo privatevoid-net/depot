@@ -38,7 +38,7 @@ in {
 
   # who came up with this shit?
   environment.systemPackages = [
-    pkgs.dovecot_pigeonhole
+    pkgs.dovecot_pigeonhole_0_5
   ];
 
   services.dovecot2 = {
