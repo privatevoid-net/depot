@@ -25,7 +25,6 @@
   services.ipfs = {
     nodes = {
       node = [ "VEGAS" "prophet" "thousandman" ];
-      clusterPeer = [ "VEGAS" "prophet" ];
       gateway = [ "prophet" "thousandman" ];
       io-tweaks = [ "VEGAS" ];
       remote-api = [ "thousandman" ];
@@ -39,22 +38,8 @@
         ./gateway.nix
         ./monitoring.nix
       ];
-      clusterPeer = [
-        ./cluster.nix
-      ];
       io-tweaks = ./io-tweaks.nix;
       remote-api = ./remote-api.nix;
-    };
-    secrets = let
-      inherit (config.services.ipfs) nodes;
-    in {
-      clusterSecret = {
-        nodes = nodes.clusterPeer;
-      };
-      pinningServiceCredentials = {
-        nodes = nodes.clusterPeer;
-        owner = "ipfs";
-      };
     };
   };
 
