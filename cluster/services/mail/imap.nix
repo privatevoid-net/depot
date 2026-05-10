@@ -49,12 +49,10 @@ in {
     mailPlugins.perProtocol.lmtp.enable = [ "sieve" ];
 
     settings = {
-      protocols = {
-        imap = true;
-        lmtp = true;
-      };
-      ssl_cert = "${certDir}/fullchain.pem";
-      ssl_key = "${certDir}/key.pem";
+      protocols = [ "imap" "lmtp" ];
+      mail_location = "maildir:/var/spool/mail/%u";
+      ssl_cert = "<${certDir}/fullchain.pem";
+      ssl_key = "<${certDir}/key.pem";
       auth_username_format = "%n";
       namespace = {
         inbox = true;
