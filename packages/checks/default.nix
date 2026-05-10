@@ -15,11 +15,6 @@ in
         inherit (config) cluster;
       };
 
-      ipfs-cluster-upgrade = pkgs.callPackage ./ipfs-cluster-upgrade.nix {
-        inherit (self) nixosModules;
-        previous = timeMachine.preUnstable;
-      };
-
       jellyfin-stateless = pkgs.callPackage ./jellyfin-stateless.nix {
         inherit (config) cluster;
       };
