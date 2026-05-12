@@ -1,4 +1,4 @@
-{ cluster, config, depot, depot', lib, pkgs, ... }:
+{ cluster, config, depot, lib, pkgs, ... }:
 
 let
   inherit (depot.lib.meta) domain;
@@ -51,7 +51,7 @@ in
 
   services.forgejo = {
     enable = true;
-    package = depot'.packages.forgejo;
+    package = pkgs.forgejo;
     stateDir = config.storage.planetarium.fileSystems.forge.mountPoint;
     database = {
       createDatabase = false;

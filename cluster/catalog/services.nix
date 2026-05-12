@@ -13,7 +13,7 @@ in
           mkDeployAction = { description, agents }: {
             inherit description;
             packages = [
-              config.packages.cachix
+              pkgs.cachix
               pkgs.tmux
             ];
             command = let

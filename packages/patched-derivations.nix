@@ -2,15 +2,7 @@ let
   tools = import ./lib/tools.nix;
 in with tools;
 super: rec {
-  acme-dns = patch super.acme-dns "patches/base/acme-dns";
-
-  cachix = patch super.cachix "patches/base/cachix";
-
-  forgejo = patch super.forgejo "patches/base/forgejo";
-
   garage = patch super.garage_2 "patches/base/garage";
-
-  gotosocial = patch super.gotosocial "patches/base/gotosocial";
 
   jre= let
     jre = super.jre_minimal.override {
@@ -38,8 +30,6 @@ super: rec {
   };
 
   postgresql = super.postgresql_14;
-
-  prometheus-jitsi-exporter = patch super.prometheus-jitsi-exporter "patches/base/prometheus-jitsi-exporter";
 
   s3ql = (patch super.s3ql "patches/base/s3ql").overrideAttrs (old: {
     propagatedBuildInputs = old.propagatedBuildInputs ++ [
