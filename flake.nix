@@ -14,6 +14,7 @@
       imports = [
         inputs.hercules-ci-effects.flakeModule
         inputs.clan.flakeModules.clan
+        ./nixpkgs/part.nix
         ./hosts/part.nix
         ./modules/part.nix
         ./packages/part.nix
@@ -28,7 +29,15 @@
   inputs = {
     systems.url = "github:privatevoid-net/nix-systems-default-linux";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-input.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    nixpkgs = {
+      url = "https://forge.privatevoid.net/privatevoid.net/customize-nixpkgs/archive/master.tar.gz";
+      inputs = {
+        nixpkgs.follows = "nixpkgs-input";
+        config.follows = "/";
+      };
+    };
 
     clan = {
       url = "https://git.clan.lol/clan/clan-core/archive/main.tar.gz";

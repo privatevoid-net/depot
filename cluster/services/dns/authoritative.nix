@@ -1,4 +1,4 @@
-{ cluster, config, depot, depot', lib, pkgs, ... }:
+{ cluster, config, depot, lib, pkgs, ... }:
 
 let
   inherit (config.reflection) interfaces;
@@ -78,7 +78,6 @@ in {
 
   services.acme-dns = {
     enable = true;
-    package = depot'.packages.acme-dns;
     settings = {
       general = {
         listen = config.links.localAuthoritativeDNS.tuple;
