@@ -74,6 +74,9 @@ in
         HTTP_PORT = backendLink.port;
         SSH_DOMAIN = "ssh.${host}";
       };
+      repository = {
+        DEFAULT_BRANCH = "master";
+      };
       oauth2_client = {
         REGISTER_EMAIL_CONFIRM = false;
         ENABLE_AUTO_REGISTRATION = true;
