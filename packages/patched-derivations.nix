@@ -1,14 +1,5 @@
 let
   tools = import ./lib/tools.nix;
-  pins = import ./sources;
-
-  acceptVulnerabilities = drv:
-    assert drv.meta ? knownVulnerabilities && builtins.length drv.meta.knownVulnerabilities > 0;
-    drv.overrideAttrs (old: {
-      meta = old.meta // {
-        knownVulnerabilities = [];
-      };
-    });
 in with tools;
 super: rec {
   acme-dns = patch super.acme-dns "patches/base/acme-dns";
@@ -20,10 +11,6 @@ super: rec {
   garage = patch super.garage_2 "patches/base/garage";
 
   gotosocial = patch super.gotosocial "patches/base/gotosocial";
-
-  jitsi-meet-insecure = let
-    olm-insecure = acceptVulnerabilities super.olm;
-  in super.jitsi-meet.override { olm = olm-insecure; };
 
   jre= let
     jre = super.jre_minimal.override {

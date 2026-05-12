@@ -10,7 +10,6 @@
     options.shadows = lib.mkOption {
       type = with lib.types; lazyAttrsOf package;
       default = {
-        jitsi-meet = self'.packages.jitsi-meet-insecure;
       };
     };
   };
