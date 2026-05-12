@@ -14,6 +14,7 @@
       imports = [
         inputs.hercules-ci-effects.flakeModule
         inputs.clan.flakeModules.clan
+        ./nixpkgs/part.nix
         ./hosts/part.nix
         ./modules/part.nix
         ./packages/part.nix
