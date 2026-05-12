@@ -518,6 +518,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-input": {
+      "locked": {
+        "lastModified": 1777954456,
+        "narHash": "sha256-hGdgeU2Nk87RAuZyYjyDjFL6LK7dAZN5RE9+hrDTkDU=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "549bd84d6279f9852cae6225e372cc67fb91a4c1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1776169885,
@@ -548,19 +564,22 @@
       }
     },
     "nixpkgs_4": {
+      "inputs": {
+        "config": [],
+        "nixpkgs": [
+          "nixpkgs-input"
+        ]
+      },
       "locked": {
-        "lastModified": 1777954456,
-        "narHash": "sha256-hGdgeU2Nk87RAuZyYjyDjFL6LK7dAZN5RE9+hrDTkDU=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "549bd84d6279f9852cae6225e372cc67fb91a4c1",
-        "type": "github"
+        "lastModified": 1778623496,
+        "narHash": "sha256-/dqnVyai4PTRmHBXgeZaW14GsBJoD7MOfMrvfdgTdlo=",
+        "rev": "4a880bf618ace086affe302b523117a499ba537f",
+        "type": "tarball",
+        "url": "https://forge.privatevoid.net/api/v1/repos/privatevoid.net/customize-nixpkgs/archive/4a880bf618ace086affe302b523117a499ba537f.tar.gz"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
+        "type": "tarball",
+        "url": "https://forge.privatevoid.net/privatevoid.net/customize-nixpkgs/archive/master.tar.gz"
       }
     },
     "repin-flake-utils": {
@@ -598,6 +617,7 @@
         "nix-filter": "nix-filter",
         "nix-super": "nix-super",
         "nixpkgs": "nixpkgs_4",
+        "nixpkgs-input": "nixpkgs-input",
         "repin-flake-utils": "repin-flake-utils",
         "systems": "systems_3"
       }
