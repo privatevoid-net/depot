@@ -16,6 +16,10 @@ let
   };
 in
 {
+  systemd.restrictedNetworking.trustedInternalNetworks = [
+    cluster.config.vars.meshNet.cidr
+  ];
+
   networking = {
     firewall = {
       trustedInterfaces = [ "wgmesh" ];
