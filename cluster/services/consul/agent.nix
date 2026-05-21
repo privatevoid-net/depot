@@ -36,4 +36,9 @@ in
     labels.instance = hostName;
     settings.server = config.links.consulAgent.url;
   };
+
+  systemd.services.consul.restrictedNetworking = {
+    enable = true;
+    mode = "trustedInternal";
+  };
 }
