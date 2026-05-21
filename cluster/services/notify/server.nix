@@ -14,9 +14,15 @@ in
     };
   };
 
-  systemd.services.ntfy-sh.distributed = {
-    enable = true;
-    registerService = "ntfy";
+  systemd.services.ntfy-sh = {
+    distributed = {
+      enable = true;
+      registerService = "ntfy";
+    };
+    restrictedNetworking = {
+      enable = true;
+      mode = "trustedInternal";
+    };
   };
 
   consul.services.ntfy = {
