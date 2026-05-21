@@ -12,7 +12,7 @@
           type = "github";
           owner = "NixOS";
           repo = "nixpkgs";
-          inherit (depot.inputs.nixpkgs.sourceInfo) rev narHash lastModified;
+          inherit (depot.inputs.nixpkgs-inputs.sourceInfo) rev narHash lastModified;
         };
         blank = {
           type = "github";
