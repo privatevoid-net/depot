@@ -28,6 +28,10 @@ in
   systemd.services.patroni = {
     requires = [ "consul-ready.service" ];
     after = [ "consul-ready.service" ];
+    restrictedNetworking = {
+      enable = true;
+      mode = "trustedInternal";
+    };
   };
   services.patroni = {
     enable = true;
