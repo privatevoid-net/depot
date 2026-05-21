@@ -3,5 +3,6 @@
     ./strict-mounts.nix
     ./distributed.nix
     ./chant.nix
+    ./restricted-networking.nix
   ];
 }
