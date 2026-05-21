@@ -1,9 +1,11 @@
-{ depot, lib, options, ... }:
+{ config, depot, lib, options, ... }:
 
 {
   imports = [
     depot.inputs.agenix.nixosModules.age
   ];
 
-  system.activationScripts.agenixInstall.deps = lib.mkIf (options ? sops) [ "setupSecrets" ];
+  system.activationScripts.agenixInstall = lib.mkIf (options ? sops && config.age.secrets != {}) {
+    deps = [ "setupSecrets" ];
+  };
 }
