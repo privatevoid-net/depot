@@ -24,6 +24,7 @@ in
     networking = ./networking;
     nix-builder = ./nix-builder;
     nix-config-server = ./nix-config/server.nix;
+    nixos-core = ./nixos-core;
     nixpkgs-config = ./nixpkgs-config;
     nix-register-flakes = ./nix-register-flakes;
     patroni = ./patroni;
@@ -40,6 +41,7 @@ in
       enterprise
       maintenance
       minimal
+      nixos-core
       nixpkgs-config
       port-magic
       reflection
