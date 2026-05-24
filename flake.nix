@@ -109,6 +109,13 @@
       };
     };
 
+    circus = {
+      url = "github:manic-systems/circus";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
