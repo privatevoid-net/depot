@@ -102,6 +102,13 @@
       };
     };
 
+    circus = {
+      url = "github:sisyphean-group/circus/pr-nixos-settings-defaults";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
