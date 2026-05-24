@@ -374,35 +374,6 @@
         "type": "github"
       }
     },
-    "mms": {
-      "inputs": {
-        "flake-compat": [
-          "blank"
-        ],
-        "flake-utils": [
-          "repin-flake-utils"
-        ],
-        "nix": [
-          "nix-super"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1669478601,
-        "narHash": "sha256-IQcS8IPeXvSoIrQRPgtnLxAs0Pkh8wmglDAtqE4ivNo=",
-        "owner": "mkaito",
-        "repo": "nixos-modded-minecraft-servers",
-        "rev": "68f2066499c035fd81c9dacfea2f512d6b0b62e5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "mkaito",
-        "repo": "nixos-modded-minecraft-servers",
-        "type": "github"
-      }
-    },
     "nar-serve": {
       "inputs": {
         "nixpkgs": [
@@ -445,21 +416,6 @@
         "type": "github"
       }
     },
-    "nix-filter": {
-      "locked": {
-        "lastModified": 1757882181,
-        "narHash": "sha256-+cCxYIh2UNalTz364p+QYmWHs0P+6wDhiWR4jDIKQIU=",
-        "owner": "numtide",
-        "repo": "nix-filter",
-        "rev": "59c44d1909c72441144b93cf0f054be7fe764de5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "nix-filter",
-        "type": "github"
-      }
-    },
     "nix-select": {
       "locked": {
         "lastModified": 1763303120,
@@ -496,6 +452,26 @@
       "original": {
         "type": "tarball",
         "url": "https://forge.privatevoid.net/max/nix-super/archive/master.tar.gz"
+      }
+    },
+    "nixos-core": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1778833218,
+        "narHash": "sha256-fTHhZmepyzXXwisSb/ULB/gGu8wqDF0FqKD/v6nMBYM=",
+        "owner": "sisyphean-group",
+        "repo": "nixos-core",
+        "rev": "5512197f02333c24a9260dd9254c8d0dd8990981",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sisyphean-group",
+        "repo": "nixos-core",
+        "type": "github"
       }
     },
     "nixpkgs": {
@@ -578,26 +554,6 @@
         "url": "https://forge.privatevoid.net/privatevoid.net/customize-nixpkgs/archive/master.tar.gz"
       }
     },
-    "repin-flake-utils": {
-      "inputs": {
-        "systems": [
-          "systems"
-        ]
-      },
-      "locked": {
-        "lastModified": 1731533236,
-        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -608,13 +564,11 @@
         "hercules-ci-agent": "hercules-ci-agent",
         "hercules-ci-effects": "hercules-ci-effects",
         "hyprspace": "hyprspace",
-        "mms": "mms",
         "nar-serve": "nar-serve",
-        "nix-filter": "nix-filter",
         "nix-super": "nix-super",
+        "nixos-core": "nixos-core",
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-input": "nixpkgs-input",
-        "repin-flake-utils": "repin-flake-utils",
         "systems": "systems_3"
       }
     },
