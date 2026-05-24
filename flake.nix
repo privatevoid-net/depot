@@ -83,16 +83,6 @@
       };
     };
 
-    mms = {
-      url = "github:mkaito/nixos-modded-minecraft-servers";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        nix.follows = "nix-super";
-        flake-compat.follows = "blank";
-        flake-utils.follows = "repin-flake-utils";
-      };
-    };
-
     hercules-ci-agent = {
       url = "github:hercules-ci/hercules-ci-agent";
       inputs = {
@@ -110,11 +100,6 @@
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
-    };
-
-    repin-flake-utils = {
-      url = "github:numtide/flake-utils";
-      inputs.systems.follows = "systems";
     };
 
     blank.url = "github:divnix/blank";
