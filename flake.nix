@@ -44,7 +44,7 @@
       inputs = {
         flake-parts.follows = "flake-parts";
         nix-darwin.follows = "blank";
-        nixpkgs.follows = "nixpkgs";
+        nixpkgs.follows = "nixpkgs-input";
         systems.follows = "systems";
       };
     };
