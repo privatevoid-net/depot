@@ -38,6 +38,28 @@
         "type": "github"
       }
     },
+    "circus": {
+      "inputs": {
+        "crane": "crane",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779663432,
+        "narHash": "sha256-8BN33os0+ePnB6a8wFgFwqOS4Mp5UW5+B9T96Sy86dE=",
+        "owner": "sisyphean-group",
+        "repo": "circus",
+        "rev": "8d420fa7ccffe1c6e18a526346add3bfd18db1c4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sisyphean-group",
+        "ref": "pr-nixos-settings-defaults",
+        "repo": "circus",
+        "type": "github"
+      }
+    },
     "clan": {
       "inputs": {
         "data-mesher": "data-mesher",
@@ -68,6 +90,21 @@
       "original": {
         "type": "tarball",
         "url": "https://git.clan.lol/clan/clan-core/archive/main.tar.gz"
+      }
+    },
+    "crane": {
+      "locked": {
+        "lastModified": 1777335812,
+        "narHash": "sha256-bEg5xoAxAwsyfnGhkEX7RJViTIBIYPd8ISg4O1c0HFc=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "5e0fb2f64edff2822249f21293b8304dedaaf676",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
       }
     },
     "darwin": {
@@ -558,6 +595,7 @@
       "inputs": {
         "agenix": "agenix",
         "blank": "blank",
+        "circus": "circus",
         "clan": "clan",
         "devshell": "devshell",
         "flake-parts": "flake-parts",
