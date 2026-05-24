@@ -50,7 +50,7 @@
         ],
         "nix-select": "nix-select",
         "nixpkgs": [
-          "nixpkgs"
+          "nixpkgs-input"
         ],
         "sops-nix": "sops-nix",
         "systems": [
