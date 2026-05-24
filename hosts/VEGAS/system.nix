@@ -8,11 +8,9 @@
 
       # Plumbing
       ./modules/redis
-      depot.inputs.mms.module
 
       # Services
       ./services/backbone-routing
-      ./services/minecraft
       depot.nixosModules.hyprspace
       depot.nixosModules.nix-builder
 
