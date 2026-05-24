@@ -112,8 +112,6 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
-    nix-filter.url = "github:numtide/nix-filter";
-
     repin-flake-utils = {
       url = "github:numtide/flake-utils";
       inputs.systems.follows = "systems";
