@@ -49,6 +49,11 @@
       };
     };
 
+    nixos-core = {
+      url = "github:sisyphean-group/nixos-core";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-super = {
       url = "https://forge.privatevoid.net/max/nix-super/archive/master.tar.gz";
       inputs = {
