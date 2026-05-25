@@ -81,6 +81,13 @@
       };
     };
 
+    ncro = {
+      url = "github:feel-co/ncro";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+
     devshell = {
       url = "github:numtide/devshell";
       inputs = {
