@@ -12,12 +12,22 @@ in
   services.fc-ci = {
     enable = true;
     package = depot'.inputs.circus.packages.circus-server;
+    evaluatorPackage = depot'.inputs.circus.packages.circus-evaluator;
+    queueRunnerPackage = depot'.inputs.circus.packages.circus-queue-runner;
     migratePackage = depot'.inputs.circus.packages.circus-migrate-cli;
     server.enable = true;
+    evaluator.enable = true;
+    queueRunner.enable = true;
     settings = {
       server = {
         host = link.ipv4;
         inherit (link) port;
+      };
+      evaluator = {
+        poll_interval = 600;
+      };
+      queue_runner = {
+        poll_interval = 30;
       };
     };
   };
