@@ -21,7 +21,7 @@
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
+  boot.loader.grub.device = "/dev/disk/by-id/ata-ST4000NM0245-1Z2107_ZC16FJHZ";
 
 
   networking.hostName = "VEGAS";
