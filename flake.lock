@@ -38,6 +38,28 @@
         "type": "github"
       }
     },
+    "circus": {
+      "inputs": {
+        "crane": "crane",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779905149,
+        "narHash": "sha256-r2dp0DQvGuBv2wuhU03t4m3lT0HL1L/NZE2WoGp1cM8=",
+        "owner": "manic-systems",
+        "repo": "circus",
+        "rev": "0866902c3213a3b62cd9a6b49fcd7659a2f0979a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "manic-systems",
+        "ref": "pr-remove-rust-overlay",
+        "repo": "circus",
+        "type": "github"
+      }
+    },
     "clan": {
       "inputs": {
         "data-mesher": "data-mesher",
@@ -68,6 +90,21 @@
       "original": {
         "type": "tarball",
         "url": "https://git.clan.lol/clan/clan-core/archive/main.tar.gz"
+      }
+    },
+    "crane": {
+      "locked": {
+        "lastModified": 1779130139,
+        "narHash": "sha256-BLrtr42azquO7MdGFU5a7KiMl3YpFlTeIXqy1fT5GlQ=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "edb38893982a3338972bb4a2ec7ce7c29ba10fd9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
       }
     },
     "darwin": {
@@ -558,6 +595,7 @@
       "inputs": {
         "agenix": "agenix",
         "blank": "blank",
+        "circus": "circus",
         "clan": "clan",
         "devshell": "devshell",
         "flake-parts": "flake-parts",
