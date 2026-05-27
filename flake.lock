@@ -432,6 +432,26 @@
         "type": "github"
       }
     },
+    "ncro": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779872521,
+        "narHash": "sha256-cPIK7F8fs0/QBmryuB8H/GG9vSvfsMxx1D6TeDM61+c=",
+        "owner": "feel-co",
+        "repo": "ncro",
+        "rev": "90a2672222bbb091c31fee7c701e595e04744067",
+        "type": "github"
+      },
+      "original": {
+        "owner": "feel-co",
+        "repo": "ncro",
+        "type": "github"
+      }
+    },
     "ndg": {
       "inputs": {
         "nixpkgs": [
@@ -603,6 +623,7 @@
         "hercules-ci-effects": "hercules-ci-effects",
         "hyprspace": "hyprspace",
         "nar-serve": "nar-serve",
+        "ncro": "ncro",
         "nix-super": "nix-super",
         "nixos-core": "nixos-core",
         "nixpkgs": "nixpkgs_4",
