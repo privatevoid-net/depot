@@ -9,6 +9,8 @@
     settings = {
       trusted-users = [ "root" "@wheel" "@admins" ];
       trusted-public-keys = [ "cache.privatevoid.net:SErQ8bvNWANeAvtsOESUwVYr2VJynfuc9JRwlzTTkVg=" ];
+      system-features = [ "uid-range" ];
+      auto-allocate-uids = true;
     };
 
     registry = {
@@ -26,7 +28,7 @@
     };
 
     extraOptions = ''
-      experimental-features = nix-command flakes cgroups
+      experimental-features = nix-command flakes cgroups auto-allocate-uids
       use-cgroups = true
       builders-use-substitutes = true
       flake-registry = https://registry.${depot.lib.meta.domain}/flake-registry.json
