@@ -17,7 +17,6 @@ in
     fail2ban = ./fail2ban;
     hercules-ci-multi-agent-refactored = ./hercules-ci-multi-agent-refactored;
     hyprspace = ./hyprspace;
-    ipfs = ./ipfs;
     maintenance = ./maintenance;
     minimal = ./minimal;
     motd = ./motd;
