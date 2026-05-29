@@ -1,7 +1,7 @@
 { cluster, config, depot, lib, pkgs, ... }:
 let
   inherit (depot.lib.meta) domain;
-  cfg = config.services.ipfs;
+  cfg = config.services.kubo;
   apiAddress = "/unix/run/ipfs/ipfs-api.sock";
   ipfsApi = pkgs.writeTextDir "api" apiAddress;
   hasGateway = cluster.config.hostLinks.${config.networking.hostName} ? ipfsGateway;
@@ -10,34 +10,31 @@ let
   nameservers = lib.unique config.networking.nameservers;
 in
 {
-  imports = [
-    depot.nixosModules.ipfs
-  ];
-
   networking.firewall = {
     allowedTCPPorts = [ ipfsPort 4001 ];
     allowedUDPPorts = [ ipfsPort 4001 ];
   };
 
-  services.ipfs = {
+  services.kubo = {
     enable = true;
-    startWhenNeeded = false;
-    autoMount = true;
-    autoMigrate = false;
 
-    swarmAddress = [
-      "/ip4/0.0.0.0/tcp/${toString ipfsPort}"
-      "/ip4/0.0.0.0/tcp/4001"
-      "/ip4/0.0.0.0/udp/${toString ipfsPort}/quic-v1"
-      "/ip4/0.0.0.0/udp/4001/quic-v1"
-    ];
     inherit apiAddress;
     gatewayAddress = lib.mkIf hasGateway "/ip4/${gw.ipv4}/tcp/${gw.portStr}";
     dataDir = "/srv/storage/ipfs/repo";
     localDiscovery = false;
 
     extraFlags = [ "--migrate" ];
-    extraConfig = {
+    settings = {
+      Plugins.Plugins.telemetry.Config.Mode = "off";
+      Addresses = {
+        Swarm = [
+          "/ip4/0.0.0.0/tcp/${toString ipfsPort}"
+          "/ip4/0.0.0.0/tcp/4001"
+          "/ip4/0.0.0.0/udp/${toString ipfsPort}/quic-v1"
+          "/ip4/0.0.0.0/udp/4001/quic-v1"
+        ];
+        API = apiAddress;
+      };
       Bootstrap = [
         "/ip4/${depot.hours.VEGAS.interfaces.primary.addr}/tcp/${toString ipfsPort}/p2p/Qmd7QHZU8UjfYdwmjmq1SBh9pvER9AwHpfwQvnvNo3HBBo"
         "/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa"
@@ -161,7 +158,6 @@ in
     };
     preStart = lib.mkBefore ''
       rm --verbose --force /run/ipfs/ipfs-api.sock
-      umount --quiet --verbose /ipfs /ipns || true
     '';
     postStart = "chmod 660 /run/ipfs/ipfs-api.sock";
   };
