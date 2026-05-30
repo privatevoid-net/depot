@@ -1,40 +1,14 @@
-{ config, ... }:
+{ config, lib, ... }:
 
 let
   group = imports: { inherit imports; };
+
+  allModules = lib.mapAttrs (name: _: ./${name})
+    (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./.));
 in
 
 {
-  flake.nixosModules = with config.flake.nixosModules; {
-    agenix = ./agenix;
-    alloy-structured-metrics = ./alloy-structured-metrics;
-    ascensions = ./ascensions;
-    consul-distributed-services = ./consul-distributed-services;
-    consul-service-registry = ./consul-service-registry;
-    effect-receiver = ./effect-receiver;
-    enterprise = ./enterprise;
-    external-storage = ./external-storage;
-    fail2ban = ./fail2ban;
-    hercules-ci-multi-agent-refactored = ./hercules-ci-multi-agent-refactored;
-    hyprspace = ./hyprspace;
-    maintenance = ./maintenance;
-    minimal = ./minimal;
-    motd = ./motd;
-    networking = ./networking;
-    nix-builder = ./nix-builder;
-    nix-config-server = ./nix-config/server.nix;
-    nixos-core = ./nixos-core;
-    nixpkgs-config = ./nixpkgs-config;
-    nix-register-flakes = ./nix-register-flakes;
-    patroni = ./patroni;
-    port-magic = ./port-magic;
-    reflection = ./reflection;
-    shell-config = ./shell-config;
-    ssh = ./ssh;
-    system-recovery = ./system-recovery;
-    systemd-extras = ./systemd-extras;
-    tested = ./tested;
-
+  flake.nixosModules = with config.flake.nixosModules; allModules // {
     machineBase = group [
       agenix
       enterprise
@@ -59,7 +33,7 @@ in
       fail2ban
       motd
       networking
-      nix-config-server
+      nix-config
       system-recovery
       tested
     ];
@@ -67,7 +41,7 @@ in
     containerBase = group [
       machineBase
       networking
-      nix-config-server
+      nix-config
     ];
 
     backboneBase = group [
