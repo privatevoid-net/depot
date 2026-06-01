@@ -50,7 +50,7 @@
     };
 
     nixos-core = {
-      url = "github:sisyphean-group/nixos-core";
+      url = "github:manic-systems/nixos-core";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
