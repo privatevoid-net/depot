@@ -10,6 +10,7 @@ in
     ./nodes.nix
     ./ns-records.nix
     ./zones/bomed.lol.nix
+    ./zones/manic.systems.nix
     ./zones/schizo.cooking.nix
     ./zones/trvke.social.nix
     ./zones/zedless.org.nix
