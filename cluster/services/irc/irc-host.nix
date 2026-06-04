@@ -35,7 +35,6 @@ let
 
   serverName = linkSecure.hostname;
   cert = config.security.acme.certs."${serverName}";
-  dh = config.security.dhparams.params.ngircd;
 in {
   services.ngircd = {
     enable = true;
@@ -53,7 +52,6 @@ in {
       [SSL]
       CertFile = ${cert.directory}/fullchain.pem
       KeyFile = ${cert.directory}/key.pem
-      DHFile = ${dh.path}
       Ports = ${linkSecure.portStr}
       
       [Options]
@@ -77,10 +75,6 @@ in {
     link.port
     linkSecure.port
   ];
-  security.dhparams = {
-    enable = true;
-    params.ngircd.bits = 2048;
-  };
   security.acme.certs."${serverName}" = {
     dnsProvider = "exec";
     group = "ngircd";
