@@ -8,6 +8,7 @@ in
 {
   imports = [
     depot.inputs.circus.nixosModules.default
+    ./projects.nix
   ];
 
   security.acme.certs."circus-agent-rpc.manic.systems" = {
