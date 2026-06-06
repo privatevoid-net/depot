@@ -48,6 +48,7 @@ in
           auth_tokens = [
             "ed611f88c7fb27103afba7ddad8733adf06f56e8837eba505c96349ef5fbfd8c"
             "d74548cafebeec602bd92a0bae0822ffecefd95fcf04b51c387af19ff043d356"
+            "ce588d1fb6eae218f664b2275f3bd573bafca69847e77ff2a090ef1850aa6608"
           ];
           max_connections = 32;
           heartbeat_ttl_secs = 60;
