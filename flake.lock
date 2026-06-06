@@ -38,6 +38,27 @@
         "type": "github"
       }
     },
+    "circus": {
+      "inputs": {
+        "crane": "crane",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780734117,
+        "narHash": "sha256-XQFeiGn2xZMllPYepjWhdxLTHijGc9CKH9odm7J++zQ=",
+        "owner": "manic-systems",
+        "repo": "circus",
+        "rev": "cfb7af534c28e3971dce60068e713ec8ff4f20e6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "manic-systems",
+        "repo": "circus",
+        "type": "github"
+      }
+    },
     "clan": {
       "inputs": {
         "data-mesher": "data-mesher",
@@ -68,6 +89,21 @@
       "original": {
         "type": "tarball",
         "url": "https://git.clan.lol/clan/clan-core/archive/main.tar.gz"
+      }
+    },
+    "crane": {
+      "locked": {
+        "lastModified": 1779130139,
+        "narHash": "sha256-BLrtr42azquO7MdGFU5a7KiMl3YpFlTeIXqy1fT5GlQ=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "edb38893982a3338972bb4a2ec7ce7c29ba10fd9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
       }
     },
     "darwin": {
@@ -577,6 +613,7 @@
       "inputs": {
         "agenix": "agenix",
         "blank": "blank",
+        "circus": "circus",
         "clan": "clan",
         "devshell": "devshell",
         "flake-parts": "flake-parts",
