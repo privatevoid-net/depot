@@ -65,6 +65,7 @@ in {
     metricsPort = config.links.hyprspaceMetrics.port;
     inherit privateKeyFile;
     settings = {
+      filterPrivateAddresses = true;
       listenAddresses = let
         inherit (myNode.interfaces.primary) addr;
         port = toString listenPort;
