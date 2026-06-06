@@ -14,6 +14,10 @@
         nodes = server;
         owner = "circus";
       };
+      s3CacheKey = {
+        nodes = server;
+        owner = "circus";
+      };
     };
   };
 

@@ -41,6 +41,11 @@ in
         secret_key_file = secrets.cacheKey.path;
         public_url = "https://ci.manic.systems/nix-cache";
       };
+      signing = {
+        enabled = true;
+        # pubkey: cache.manic.systems-1:s6OZanN8Us8vRi0jVivP3qlMn0cYHBjBALKrNe5nH8s=
+        key_file = secrets.s3CacheKey.path;
+      };
       queue_runner = {
         poll_interval = 30;
         rpc = {
