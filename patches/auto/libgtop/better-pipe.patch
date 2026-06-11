@@ -1,0 +1,158 @@
+diff --git a/sysdeps/linux/disk.c b/sysdeps/linux/disk.c
+index bafd346f..6a476ce9 100644
+--- a/sysdeps/linux/disk.c
++++ b/sysdeps/linux/disk.c
+@@ -41,8 +41,7 @@ _glibtop_init_disk_s (glibtop *server)
+ 
+ // Linux kernel reports sectors by 512 bytes even for AF 4kn //
+ 
+-#define FILENAME	"/proc/diskstats" 
+-#define CMD_PIPE    "lsblk --output NAME,TYPE -i -n | sed 's/`-//'|sed 's/|-//'|sed 's/|//'| sed -e 's/^[ \t]*//'|tr -s ' '"
++#define FILENAME	"/proc/diskstats"
+ #define STAT_BUFSIZ     81920
+ 
+ // Handle LVM and RAID //
+@@ -123,7 +122,7 @@ find_primary_part (partition_info *primary_part, const char *m)
+ 
+ 			}
+ 			else if ((strcmp (primary_part[n-1].type, "raid") == 0) && (strcmp (type, "lvm") == 0)){
+-				
++
+ 				tlvl = 3;
+ 				primary_part->max++;
+ 
+@@ -162,7 +161,7 @@ find_primary_part (partition_info *primary_part, const char *m)
+ 
+ 		strcpy (primary_part[n].name, name);
+ 		strncpy (primary_part[n].type, type, 4);
+-		
++
+ 		if (strcmp (primary_part[n].type, "raid") == 0) {
+ 
+ 			strcpy (primary_part[n].raid_num, type + 4);
+@@ -224,6 +223,76 @@ max_lines (const char *p)
+ 	return count;
+ }
+ 
++void
++get_from_pipe (char *buffer, const size_t bufsiz)
++{
++    int pipe_lsblk[2];
++    int pipe_sed[2];
++    int pipe_tr[2];
++    pipe(pipe_lsblk);
++
++    pid_t pid = fork();
++
++    if (pid == 0) {
++      dup2(pipe_lsblk[1], STDOUT_FILENO);
++      close(pipe_lsblk[0]);
++      close(pipe_lsblk[1]);
++      char *argv[] = {"lsblk", "--output", "NAME,TYPE", "-i", "-n", NULL};
++      if (execvp(argv[0], argv) < 0) exit(1);
++    }
++
++    close(pipe_lsblk[1]);
++
++    pipe(pipe_sed);
++    pid = fork();
++
++    if (pid == 0) {
++      dup2(pipe_lsblk[0], STDIN_FILENO);
++      dup2(pipe_sed[1], STDOUT_FILENO);
++      close(pipe_lsblk[0]);
++      close(pipe_lsblk[1]);
++      close(pipe_sed[0]);
++      close(pipe_sed[1]);
++      char *argv[] = {
++          "sed",
++          "-e", "s/`-//",
++          "-e", "s/|-//",
++          "-e", "s/|//",
++          "-e", "s/^[ \t]*//",
++          NULL
++      };
++      if (execvp(argv[0], argv) < 0) exit(1);
++    }
++
++    close(pipe_lsblk[0]);
++    close(pipe_sed[1]);
++
++    pipe(pipe_tr);
++    pid = fork();
++
++    if (pid == 0) {
++      dup2(pipe_sed[0], STDIN_FILENO);
++      dup2(pipe_tr[1], STDOUT_FILENO);
++      close(pipe_sed[0]);
++      close(pipe_sed[1]);
++      char *argv[] = { "tr", "-s", " ", NULL };
++      if (execvp(argv[0], argv) < 0) exit(1);
++    }
++
++    close(pipe_sed[0]);
++    close(pipe_tr[1]);
++
++    FILE* fp = fdopen(pipe_tr[0], "r");
++	size_t psize = fread(buffer,1,bufsiz, fp);
++	if (psize == bufsiz)
++		g_warning("Read bufsiz bytes, there may be more");
++
++	fclose(fp);
++	close(pipe_tr[0]);
++}
++
++#define CMD_PIPE    "lsblk --output NAME,TYPE -i -n | sed 's/`-//'|sed 's/|-//'|sed 's/|//'| sed -e 's/^[ \t]*//'|tr -s ' '"
++
+ void
+ glibtop_get_disk_s (glibtop *server, glibtop_disk *buf)
+ {
+@@ -235,7 +304,7 @@ glibtop_get_disk_s (glibtop *server, glibtop_disk *buf)
+ 
+ 	file_to_buffer (server, buffer, sizeof buffer, FILENAME);
+ 
+-	get_from_pipe (map_buffer, STAT_BUFSIZ, CMD_PIPE);
++	get_from_pipe (map_buffer, STAT_BUFSIZ);
+ 
+ 	/*
+ 	 * GLOBAL
+diff --git a/sysdeps/linux/glibtop_private.c b/sysdeps/linux/glibtop_private.c
+index 18cb7a6e..d3a49aa6 100644
+--- a/sysdeps/linux/glibtop_private.c
++++ b/sysdeps/linux/glibtop_private.c
+@@ -57,21 +57,6 @@ skip_token (const char *p)
+ }
+ 
+ 
+-void
+-get_from_pipe (char *buffer, const size_t bufsiz, const char *cmd)
+-{
+-	FILE* fp;
+-
+-	fp = popen (cmd, "r");
+-
+-	size_t psize = fread(buffer,1,bufsiz,fp);
+-	if (psize == bufsiz)
+-		g_warning("Read bufsiz bytes, there may be more");
+-
+-	pclose (fp);
+-}
+-
+-
+ /*
+  * Read functions
+  */
+diff --git a/sysdeps/linux/glibtop_private.h b/sysdeps/linux/glibtop_private.h
+index b9b7b9fc..03761f4f 100644
+--- a/sysdeps/linux/glibtop_private.h
++++ b/sysdeps/linux/glibtop_private.h
+@@ -61,9 +61,6 @@ skip_line (const char *p)
+ 	return (char *) (*p ? p+1 : p);
+ }
+ 
+-void
+-get_from_pipe (char *buffer, const size_t bufsiz, const char *cmd);
+-
+ /*
+  * Smart strtoul which handles binary suffixes
+  * e.g: get_scaled("Size: 32 kB", "Size:") == 32768
