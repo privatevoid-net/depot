@@ -81,4 +81,8 @@ in
       secrets.s3Credentials.path
     ];
   };
+
+  networking.firewall.allowedTCPPorts = [
+    8443
+  ];
 }
