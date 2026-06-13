@@ -62,6 +62,15 @@
       };
     };
 
+    nixpak = {
+      url = "github:nixpak/nixpak";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        hercules-ci-effects.follows = "hercules-ci-effects";
+      };
+    };
+
     hyprspace = {
       url = "github:hyprspace/hyprspace";
       inputs = {
