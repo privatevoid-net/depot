@@ -71,6 +71,11 @@
       };
     };
 
+    nix-crx = {
+      url = "https://forge.privatevoid.net/max/nix-crx/archive/master.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     hyprspace = {
       url = "github:hyprspace/hyprspace";
       inputs = {
