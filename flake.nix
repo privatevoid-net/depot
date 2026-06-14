@@ -135,6 +135,11 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
+    zedless = {
+      url = "github:zedless-editor/zedless";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     blank.url = "github:divnix/blank";
   };
 }
