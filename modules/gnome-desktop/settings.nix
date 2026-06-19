@@ -9,6 +9,9 @@
         settings = with lib.gvariant; {
           "org/gnome/desktop/interface" = {
             color-scheme = "prefer-dark";
+            font-name = "Adwaita Sans 11";
+            document-font-name = "Adwaita Sans 12";
+            monospace-font-name = "Monaspace Krypton Semi-Bold 12";
           };
           "org/gnome/desktop/wm/keybindings" = {
             close = ["<Super>q"];
