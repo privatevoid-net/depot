@@ -69,6 +69,11 @@ in {
     ];
   };
 
+  services.locksmith.waitForSecrets.matrix-synapse = [
+    "garage-synapse-id"
+    "garage-synapse-secret"
+  ];
+
   services.matrix-synapse = {
     enable = true;
     plugins = with config.services.matrix-synapse.package.plugins; [
