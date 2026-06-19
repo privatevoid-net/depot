@@ -24,7 +24,7 @@ in
     package = depot'.inputs.circus.packages.circus-server;
     evaluatorPackage = depot'.inputs.circus.packages.circus-evaluator;
     queueRunnerPackage = depot'.inputs.circus.packages.circus-queue-runner;
-    migratePackage = depot'.inputs.circus.packages.circus-migrate-cli;
+    migratePackage = depot'.inputs.circus.packages.circus-cli;
     server.enable = true;
     evaluator.enable = true;
     queueRunner.enable = true;
