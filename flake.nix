@@ -110,7 +110,7 @@
     };
 
     circus = {
-      url = "github:manic-systems/circus";
+      url = "github:manic-systems/circus/next";
       inputs = {
         nixpkgs.follows = "nixpkgs";
       };
