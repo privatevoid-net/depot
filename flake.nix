@@ -135,6 +135,14 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        pre-commit.follows = "blank";
+      };
+    };
+
     zedless = {
       url = "github:zedless-editor/zedless";
       inputs.nixpkgs.follows = "nixpkgs";
