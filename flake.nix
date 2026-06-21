@@ -123,6 +123,14 @@
       };
     };
 
+    cade = {
+      url = "github:manic-systems/cade";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        fenix.inputs.rust-analyzer-src.follows = "blank";
+      };
+    };
+
     circus = {
       url = "github:manic-systems/circus";
       inputs = {
