@@ -46,11 +46,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781892784,
-        "narHash": "sha256-DlQNe779eu7la9VvTPJZIfy+eYs/UlFUShpa6ppRx9A=",
+        "lastModified": 1782140299,
+        "narHash": "sha256-yreZJYMMgSLbR55w9ogjiLNXPXtHnRJsi7vCo/Mli2M=",
         "owner": "manic-systems",
         "repo": "circus",
-        "rev": "c1a8a52c7095643a0373be9c07499171ddad80cc",
+        "rev": "1a9523770db80c5640c3a6769a8a08b6ba2bf55c",
         "type": "github"
       },
       "original": {
@@ -397,11 +397,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1781820790,
-        "narHash": "sha256-y/dDPH2gzi4crDnBidIjyQKQPIG9OhxxWz7Y74zpXv4=",
+        "lastModified": 1782136894,
+        "narHash": "sha256-ex855XMEEkvN7ndqDOVFzWrCsLsFsekgBBM/t81kyX8=",
         "owner": "hyprspace",
         "repo": "hyprspace",
-        "rev": "7e03fcc1d5464f0d0bf59211da6449a8620f4e4d",
+        "rev": "6f3c85a1ef600097cb84578dbc9b1efdb35a997b",
         "type": "github"
       },
       "original": {
