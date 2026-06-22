@@ -3,6 +3,7 @@
 {
   imports = [
     ./settings.nix
+    ./sound-theme.nix
   ];
 
   services.displayManager.gdm.enable = true;
