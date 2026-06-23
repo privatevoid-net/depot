@@ -18,6 +18,10 @@
         nodes = server;
         owner = "circus";
       };
+      webhookSecretsEncryptionKey = {
+        nodes = server;
+	owner = "circus";
+      };
     };
   };
 

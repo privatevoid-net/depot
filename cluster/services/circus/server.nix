@@ -32,6 +32,7 @@ in
       server = {
         host = link.ipv4;
         inherit (link) port;
+	webhook_secret_encryption_key_file = secrets.webhookSecretsEncryptionKey.path;
       };
       database.url = "postgresql:///circus?host=/run/postgresql";
       evaluator = {
