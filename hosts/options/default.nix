@@ -25,11 +25,12 @@ in
     gods = {
       fromLight = mkHours "Gods-from-Light: The emanations of The Glory";
       fromFlesh = mkHours "Gods-from-Flesh: Mortals who penetrated the Mansus";
+      fromBlood = mkHours "Gods-from-Blood: Manifestations of sacrifices";
       fromNowhere = mkHours "Gods-from-Nowhere: Lesser Hours";
     };
     hours = mkHours "Hours are the incarnate principles of the world." // {
       readOnly = true;
-      default = with config.gods; fromLight // fromFlesh // fromNowhere;
+      default = with config.gods; fromLight // fromFlesh // fromBlood // fromNowhere;
     };
   };
 }
