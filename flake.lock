@@ -46,11 +46,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782194795,
-        "narHash": "sha256-tk5ZDRG5jx2wHXgg0kuhUAXt4GsmxXtrHeX3qr0VQV4=",
+        "lastModified": 1782280112,
+        "narHash": "sha256-+U4A6IrKHxHD5A6A/nb8J4rxl7/n3Zq+tNoIh3eOtnE=",
         "owner": "manic-systems",
         "repo": "circus",
-        "rev": "d69198b39fed60f26b979185a86d5cc9be670d0e",
+        "rev": "a0992d1e55db78818717a2cf690812fb77106d06",
         "type": "github"
       },
       "original": {
@@ -437,15 +437,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1781242419,
-        "narHash": "sha256-6DQAktdvTUNNRb8cNGndntsYER02rDbL8GQGJVnZ7Ps=",
-        "owner": "feel-co",
+        "lastModified": 1782302203,
+        "narHash": "sha256-ftzqz/MsXiCsbX2Mwh73e4x4jzI0/h2uwDHPT3kmVl0=",
+        "owner": "manic-systems",
         "repo": "ncro",
-        "rev": "eb67df31a0d64e3361a5589c786e4af9a9cb8c1d",
+        "rev": "13153c506ae2e5ea0d072f1d0af0d923aefdf2e8",
         "type": "github"
       },
       "original": {
-        "owner": "feel-co",
+        "owner": "manic-systems",
         "repo": "ncro",
         "type": "github"
       }
