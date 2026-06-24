@@ -21,5 +21,5 @@ let
 in {
   flake.nixosConfigurations = mapAttrs mkNixOS gods.fromBlood;
 
-  clan.machines = mapAttrs (name: hour: { imports = collectModules name hour; }) gods.fromLight;
+  clan.machines = mapAttrs (name: hour: { imports = collectModules name hour; }) (gods.fromLight // gods.fromFlesh);
 }
