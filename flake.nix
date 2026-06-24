@@ -82,7 +82,7 @@
     };
 
     ncro = {
-      url = "github:feel-co/ncro";
+      url = "github:manic-systems/ncro";
       inputs = {
         nixpkgs.follows = "nixpkgs";
       };
