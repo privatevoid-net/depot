@@ -19,7 +19,7 @@ let
     modules = collectModules name host;
   };
 in {
-  flake.nixosConfigurations = mapAttrs mkNixOS gods.fromFlesh;
+  flake.nixosConfigurations = mapAttrs mkNixOS gods.fromBlood;
 
   clan.machines = mapAttrs (name: hour: { imports = collectModules name hour; }) gods.fromLight;
 }

@@ -17,7 +17,7 @@
       thousandman = ./thousandman;
     };
 
-    fromFlesh = {
+    fromBlood = {
       soda = ./soda;
     };
 
