@@ -59,5 +59,13 @@ in
     };
   };
 
-  dns.records.irc.consulService = "irc";
+  dns.records = lib.mkMerge [
+    {
+      irc.consulService = "irc";
+    }
+    (lib.mapAttrs' (server: instance: {
+      name = "${instance}.irc";
+      value.target = [ config.hostLinks.${server}.ircSecure.ipv4 ];
+    }) subDomains)
+  ];
 }
