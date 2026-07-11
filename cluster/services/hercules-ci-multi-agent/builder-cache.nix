@@ -11,11 +11,11 @@ in
 
   services.harmonia.cache = {
     enable = true;
+    signKeyPaths = [ cluster.config.services.hercules-ci-multi-agent.secrets.cacheSigningKey.path ];
     settings = {
       bind = linkLocal.tuple;
       enable_compression = true;
       priority = 50;
-      sign_key_paths = [ cluster.config.services.hercules-ci-multi-agent.secrets.cacheSigningKey.path ];
     };
   };
 }
