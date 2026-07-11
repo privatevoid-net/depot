@@ -17,7 +17,7 @@ let
   in ''
     [Server]
     Name = ${peerLink.hostname}
-    Host = ${peerLink.ipv4}
+    Host = ${peerLink.hostname}
     Port = ${peerLink.portStr}
     MyPassword = @PEER_PASSWORD@
     PeerPassword = @PEER_PASSWORD@
@@ -53,6 +53,7 @@ in {
       CertFile = ${cert.directory}/fullchain.pem
       KeyFile = ${cert.directory}/key.pem
       Ports = ${linkSecure.portStr}
+      CAFile = /etc/ssl/certs/ca-certificates.crt
       
       [Options]
       IncludeDir = /run/ngircd/secrets

@@ -9,12 +9,13 @@ in
 
   services.nginx.virtualHosts.${link.hostname} = depot.lib.nginx.vhosts.proxy linkLocal.url;
 
-  services.nix-serve = {
+  services.harmonia.cache = {
     enable = true;
-    package = pkgs.nix-serve-ng;
-    bindAddress = linkLocal.ipv4;
-    inherit (linkLocal) port;
-    secretKeyFile = cluster.config.services.hercules-ci-multi-agent.secrets.cacheSigningKey.path;
-    extraParams = "--priority 50";
+    settings = {
+      bind = linkLocal.tuple;
+      enable_compression = true;
+      priority = 50;
+      sign_key_paths = [ cluster.config.services.hercules-ci-multi-agent.secrets.cacheSigningKey.path ];
+    };
   };
 }
