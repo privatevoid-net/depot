@@ -11,6 +11,7 @@ in
   flake.nixosModules = with config.flake.nixosModules; allModules // {
     machineBase = group [
       agenix
+      alloy-structured-metrics
       enterprise
       maintenance
       minimal
@@ -24,7 +25,6 @@ in
 
     serverBase = group [
       machineBase
-      alloy-structured-metrics
       ascensions
       consul-distributed-services
       consul-service-registry
