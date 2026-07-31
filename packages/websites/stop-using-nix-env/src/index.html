@@ -80,8 +80,7 @@
   </style>
 </head>
 <body>
-  <h1>Stop using nix-env.</h1>
-  <h3>For the sake of you and others.</h3>
+  <h1>How to use nix-env</h1>
   <p>
     <x-term>nix-env</x-term> was built as a tool for Nix
     as a way to manage packages in a traditional (imperative) fashion.
@@ -192,9 +191,52 @@
   <p>Matthew Croughan demonstrates some of the issues with <x-term>nix-env</x-term>.
   <iframe class="yt" src="https://www.youtube-nocookie.com/embed/hyf4M3eFh2M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
   </p>
+  <h2>How to use nix-env correctly</h2>
+  <p>
+    While <x-term>nix-env</x-term>'s defaults are bad, fortunately there's
+    an easy way to get declarative package management by attribute-name:
+  </p>
+  <ul>
+    <li>With <x-term>nix-env --install</x-term>, always also use <x-term>-A</x-term> and <x-term>-r</x-term></li>
+    <li>Never use <x-term>nix-env --upgrade</x-term>. Instead use <x-term>nix-env --install</x-term> (with <x-term>-A</x-term> and <x-term>-r</x-term>)</li>
+  </ul>
+  <p>
+    At first, it might seem like you can only ever install one package if you always use
+    <x-term>-r</x-term> (<x-term>--remove-all</x-term>) every time you invoke
+    <x-term>nix-env --install</x-term>. But this is exactly what we want! The trick is to
+    <em>define a new package that is the list of packages that you'd like installed!</em>
+    Put this boilerplate in <x-term>~/.config/nixpkgs/overlays/userPackages.nix</x-term>:
+  </p>
+  <pre>
+    <x-termblock>
+final: prev: {
+  userPackages = final.buildEnv {
+    name = "userPackages";
+    paths = with final; [
+
+      firefox
+      libreoffice
+
+    ];
+  };
+}
+    </x-termblock>
+  </pre>
+  <p>
+    Here we show firefox and libreoffice installed as an example. Then, to 'apply'
+    your declarative config, run this command:
+  </p>
+  <pre>
+    <x-termblock>
+$ nix-env -riA nixpkgs.userPackages
+    </x-termblock>
+  </pre>
+  <p>
+    Use the same command to get upgrades after updating channels.
+  </p>
   <h2>Alternatives</h2>
   <p>
-    So, <x-term>nix-env</x-term> is bad. What do we use instead? First,
+    What other options are available? First,
     it's important to consider that Nix is a far more powerful package
     manager than your garden variety ones like APT or DNF. As such, there
     is more than one way to <i>provide</i> a package. Merely installing
