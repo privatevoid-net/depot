@@ -13,6 +13,11 @@ in
     depot.nixosModules.hyprspace
   ];
 
+  systemd.slices.builder.sliceConfig = {
+    MemoryMax = "${toString (config.reflection.hardware.memory.gb * 768)}M";
+    MemorySwapMax = 0;
+  };
+
   zramSwap.enable = true;
 
   networking.hostName = "thousandman";
