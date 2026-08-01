@@ -81,6 +81,7 @@ in
   };
 
   systemd.services = {
+    circus-evaluator.serviceConfig.Slice = "builder.slice";
     circus-queue-runner.serviceConfig.EnvironmentFile = [
       secrets.s3Credentials.path
     ];
