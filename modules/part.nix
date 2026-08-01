@@ -47,5 +47,27 @@ in
     backboneBase = group [
       serverBase
     ];
+
+    desktopBase = group [
+      machineBase
+      app-folders
+      blackbox
+      bluetooth
+      cade
+      chromium
+      desktop-packages
+      fonts
+      games
+      gnome-desktop
+      hidden-apps
+      monitors
+      networking-client
+      nix-config
+      nixpak-tricks
+      open-in-blackbox
+      quiet-boot
+      smfh
+      zedless
+    ];
   };
 }
