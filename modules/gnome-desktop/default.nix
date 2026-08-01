@@ -24,4 +24,6 @@
     totem
     yelp
   ];
+
+  services.avahi.enable = false;
 }
