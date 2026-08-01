@@ -52,6 +52,7 @@ in
       };
       queue_runner = {
         poll_interval = 30;
+        workers = 1;
         rpc = {
           bind = "0.0.0.0:8443";
           auth_tokens = [
