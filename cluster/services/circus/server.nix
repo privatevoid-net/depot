@@ -37,6 +37,9 @@ in
       database.url = "postgresql:///circus?host=/run/postgresql";
       evaluator = {
         poll_interval = 600;
+        max_concurrent_evals = 2;
+        eval_workers = 2;
+        memory_limit_mb = 2048;
       };
       cache = {
         secret_key_file = secrets.cacheKey.path;
