@@ -19,8 +19,8 @@ rec {
   };
 
   hardware = {
-    cpu.cores = 4;
-    memory.gb = 24;
+    cpu.cores = 2;
+    memory.gb = 12;
   };
 
   hyprspace = {
