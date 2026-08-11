@@ -18,8 +18,6 @@ in
   services.kubo = {
     enable = true;
 
-    inherit apiAddress;
-    gatewayAddress = lib.mkIf hasGateway "/ip4/${gw.ipv4}/tcp/${gw.portStr}";
     dataDir = "/srv/storage/ipfs/repo";
     localDiscovery = false;
 
@@ -34,6 +32,7 @@ in
           "/ip4/0.0.0.0/udp/4001/quic-v1"
         ];
         API = apiAddress;
+        Gateway = lib.mkIf hasGateway [ "/ip4/${gw.ipv4}/tcp/${gw.portStr}" ];
       };
       Bootstrap = [
         "/ip4/${depot.hours.VEGAS.interfaces.primary.addr}/tcp/${toString ipfsPort}/p2p/Qmd7QHZU8UjfYdwmjmq1SBh9pvER9AwHpfwQvnvNo3HBBo"

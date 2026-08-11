@@ -2,7 +2,7 @@
 with depot.lib.nginx;
 let
   inherit (depot.lib.meta) domain;
-  cfg = config.services.ipfs;
+  cfg = config.services.kubo;
   gw = cluster.config.hostLinks.${config.networking.hostName}.ipfsGateway;
 in
 {

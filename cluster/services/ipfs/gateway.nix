@@ -2,7 +2,7 @@
 let
   inherit (depot.lib.meta) domain;
   gw = cluster.config.hostLinks.${config.networking.hostName}.ipfsGateway;
-  cfg = config.services.ipfs;
+  cfg = config.services.kubo;
   metrics = config.links.ipfsMetrics;
 in
 {
@@ -35,7 +35,7 @@ in
     };
   };
 
-  services.ipfs.extraConfig.Gateway.PublicGateways = {
+  services.kubo.settings.Gateway.PublicGateways = {
     "${domain}" = {
       Paths = [ "/ipfs" "/ipns" ];
       NoDNSLink = false;
