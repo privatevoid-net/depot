@@ -64,6 +64,16 @@
     cache.target = serverAddrs;
   };
 
+  dns.zones = config.lib.forService "attic" {
+    "manic.systems".records = let
+      serverAddrs = map
+        (node: depot.hours.${node}.interfaces.primary.addrPublic)
+        config.services.attic.nodes.server;
+    in config.lib.forService "attic" {
+      cache.target = serverAddrs;
+    };
+  };
+
   ways = config.lib.forService "attic" {
     cache-api = {
       consulService = "atticd";
