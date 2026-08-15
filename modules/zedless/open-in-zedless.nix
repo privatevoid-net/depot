@@ -11,7 +11,11 @@ let
     name = "cooking.schizo.OpenInZedless";
     desktopName = "Open project in Zedless";
     noDisplay = true;
-    mimeTypes = [ "x-scheme-handler/vscode" "x-scheme-handler/vscodium" ];
+    mimeTypes = [
+      "x-scheme-handler/vscode"
+      "x-scheme-handler/vscodium"
+      "x-scheme-handler/ghapp"
+    ];
     icon = "zedless";
     startupNotify = false;
     tryExec = "zedless";
