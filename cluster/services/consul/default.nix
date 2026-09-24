@@ -16,10 +16,7 @@ in
       ready = config.services.consul.nodes.agent;
     };
     nixos = {
-      agent = [
-        ./agent.nix
-        ./remote-api.nix
-      ];
+      agent = ./agent.nix;
       ready = ./ready.nix;
     };
     simulacrum = {
@@ -28,6 +25,4 @@ in
       settings = ./test.nix;
     };
   };
-
-  dns.records."consul-remote.internal".consulService = "consul-remote";
 }
