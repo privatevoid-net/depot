@@ -121,6 +121,11 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
+    vineyard = {
+      url = "git+https://pls.lobotomise.me/atagen/vineyard";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     blank.url = "github:divnix/blank";
   };
 }
