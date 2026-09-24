@@ -17,7 +17,7 @@ in
 {
   services.websites = {
     nodes = {
-      host = [ "checkmate" "VEGAS" "prophet" ];
+      host = [ "VEGAS" "prophet" ];
       oldStatic = [ "VEGAS" ];
     };
     nixos.oldStatic = [
