@@ -2,7 +2,7 @@ let
   tools = import ./lib/tools.nix;
 in with tools;
 super: rec {
-  garage = patch super.garage_2 "patches/base/garage";
+  garage = super.garage_2;
 
   jre= let
     jre = super.jre_minimal.override {
