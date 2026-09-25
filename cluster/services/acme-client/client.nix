@@ -38,7 +38,7 @@ in
     email = depot.lib.meta.adminEmail;
     extraLegoFlags = lib.flatten [
       (map (x: [ "--dns.resolvers" x ]) authoritativeServers)
-      "--dns-timeout" "30"
+      "--dns.timeout" "30"
     ];
     environmentFile = pkgs.writeText "acme-exec-config" ''
       EXEC_PATH=${execScript}
