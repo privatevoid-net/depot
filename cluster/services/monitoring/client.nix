@@ -13,7 +13,7 @@ let
 in {
   links.alloy.protocol = "http";
 
-  services.journald.extraConfig = "Storage=volatile";
+  services.journald.settings.Journal.Storage = "volatile";
 
   services.alloy = {
     enable = true;
