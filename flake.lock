@@ -38,6 +38,27 @@
         "type": "github"
       }
     },
+    "cade": {
+      "inputs": {
+        "fenix": "fenix",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790765716,
+        "narHash": "sha256-IAIcjLg4qM8UlfLR4eI4/faVmLSgF/U/R0jrxnmkZy0=",
+        "owner": "manic-systems",
+        "repo": "cade",
+        "rev": "8ca823d3878853d3d6c14559eb22a875cc8cb12d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "manic-systems",
+        "repo": "cade",
+        "type": "github"
+      }
+    },
     "circus": {
       "inputs": {
         "crane": "crane",
@@ -98,6 +119,21 @@
         "owner": "ipetkov",
         "repo": "crane",
         "rev": "eb35abda9f232cc6610b1d1e3200d15c49b7ac54",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
+    "crane_2": {
+      "locked": {
+        "lastModified": 1789760033,
+        "narHash": "sha256-jtT4yxZpR8seYnlCMMWSSPlFN92zO6ICuZ8pJrmi86k=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "73b980519cefc727a5f6cc8e5c0947a2f9be6edd",
         "type": "github"
       },
       "original": {
@@ -193,6 +229,30 @@
       "original": {
         "owner": "nix-community",
         "repo": "disko",
+        "type": "github"
+      }
+    },
+    "fenix": {
+      "inputs": {
+        "nixpkgs": [
+          "cade",
+          "nixpkgs"
+        ],
+        "rust-analyzer-src": [
+          "blank"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780485330,
+        "narHash": "sha256-7JhNLs5O+FgXmU8FFP9DMug5xv3y4no+n4Kn94pkFGU=",
+        "owner": "nix-community",
+        "repo": "fenix",
+        "rev": "26ddad7ab014ac49bf02fc52e76f801963d684ae",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "fenix",
         "type": "github"
       }
     },
@@ -408,6 +468,31 @@
         "type": "github"
       }
     },
+    "lanzaboote": {
+      "inputs": {
+        "crane": "crane_2",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "pre-commit": [
+          "blank"
+        ],
+        "rust-overlay": "rust-overlay"
+      },
+      "locked": {
+        "lastModified": 1790724136,
+        "narHash": "sha256-i8OHczpz6AWsVbbEYiqRQZbAvuG0aw10Ws7fVdj45Vk=",
+        "owner": "nix-community",
+        "repo": "lanzaboote",
+        "rev": "663642398525f1d46163553d32853325b6b6de08",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "lanzaboote",
+        "type": "github"
+      }
+    },
     "nar-serve": {
       "inputs": {
         "nixpkgs": [
@@ -447,6 +532,24 @@
         "owner": "manic-systems",
         "repo": "ncro",
         "type": "github"
+      }
+    },
+    "nix-crx": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1781395719,
+        "narHash": "sha256-3fG6B63RvESMdgzRgB0E6sRFZ4SNuW4dlRg7hhnvhfE=",
+        "rev": "b9cfd1e606a90168d3597212ced8066c801f58d5",
+        "type": "tarball",
+        "url": "https://forge.privatevoid.net/api/v1/repos/max/nix-crx/archive/b9cfd1e606a90168d3597212ced8066c801f58d5.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://forge.privatevoid.net/max/nix-crx/archive/master.tar.gz"
       }
     },
     "nix-select": {
@@ -504,6 +607,32 @@
       "original": {
         "owner": "manic-systems",
         "repo": "nixos-core",
+        "type": "github"
+      }
+    },
+    "nixpak": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "hercules-ci-effects": [
+          "hercules-ci-effects"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790216550,
+        "narHash": "sha256-qZLQ6EG2+wqZzHH5KdkpmrJqidwqvP35478UH8iTEpM=",
+        "owner": "nixpak",
+        "repo": "nixpak",
+        "rev": "464f67e283d444bea8d3a516802a1342e79e7de8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixpak",
+        "repo": "nixpak",
         "type": "github"
       }
     },
@@ -591,6 +720,7 @@
       "inputs": {
         "agenix": "agenix",
         "blank": "blank",
+        "cade": "cade",
         "circus": "circus",
         "clan": "clan",
         "devshell": "devshell",
@@ -598,13 +728,38 @@
         "hercules-ci-agent": "hercules-ci-agent",
         "hercules-ci-effects": "hercules-ci-effects",
         "hyprspace": "hyprspace",
+        "lanzaboote": "lanzaboote",
         "nar-serve": "nar-serve",
         "ncro": "ncro",
+        "nix-crx": "nix-crx",
         "nix-super": "nix-super",
         "nixos-core": "nixos-core",
+        "nixpak": "nixpak",
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-input": "nixpkgs-input",
-        "systems": "systems_3"
+        "systems": "systems_3",
+        "zedless": "zedless"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "lanzaboote",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790495762,
+        "narHash": "sha256-26FbceKgybcbwkIvs2yHsF5jHcWLEkITYg5g9WPSy64=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "edea2d6f98b1e5f64ce5ac21e19a96c603c20b8c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
       }
     },
     "sops-nix": {
@@ -691,6 +846,26 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "zedless": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780764072,
+        "narHash": "sha256-8J+dYlTiSyIIK0117BtqqZUbLwmlgy00NT1jWI9X44g=",
+        "owner": "zedless-editor",
+        "repo": "zedless",
+        "rev": "69e8ee631d68beaa58b974a76fea4429087c59e7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zedless-editor",
+        "repo": "zedless",
         "type": "github"
       }
     }
