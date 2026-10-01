@@ -52,6 +52,7 @@ in
       };
       queue_runner = {
         poll_interval = 30;
+        build_timeout = 10800;
         workers = 0;
         rpc = {
           bind = "0.0.0.0:8443";
