@@ -45,13 +45,6 @@ in
       };
     };
 
-    headroom = flakeProject {
-      url = "https://github.com/manic-systems/headroom";
-      expressions = {
-        packages = "packages.x86_64-linux";
-      };
-    };
-
     hyprspace = flakeProject {
       url = "https://github.com/hyprspace/hyprspace";
       expressions = {
