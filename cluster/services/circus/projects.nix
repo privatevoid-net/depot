@@ -7,12 +7,13 @@ let
     url,
     description,
     expressions,
+    systems ? null,
   }: {
     inherit description;
     repository_url = url;
     jobsets = lib.mapAttrsToList (name: nix_expression: {
       inherit name nix_expression;
-    }) expressions;
+    } // lib.optionalAttrs (systems != null) { inherit systems; }) expressions;
   };
 in
 
@@ -106,9 +107,14 @@ in
       url = "https://github.com/manic-systems/tack";
       description = "Flake-like TOML Nix pins, lazily fetched and transformed";
       expressions = {
-        checks = "checks.x86_64-linux";
-        packages = "packages.x86_64-linux";
+        checks = "checks";
+        packages = "packages";
       };
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ];
     };
 
     typst-flake = flakeProject {
