@@ -604,7 +604,8 @@
         "nixos-core": "nixos-core",
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-input": "nixpkgs-input",
-        "systems": "systems_3"
+        "systems": "systems_3",
+        "vineyard": "vineyard"
       }
     },
     "sops-nix": {
@@ -692,6 +693,26 @@
         "owner": "numtide",
         "repo": "treefmt-nix",
         "type": "github"
+      }
+    },
+    "vineyard": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790256857,
+        "narHash": "sha256-P3rpeni4/EvMO9eGNw62KAzI2Syfv4sLGeaN3xzyuQA=",
+        "ref": "refs/heads/redeem",
+        "rev": "ab6cd8e63410ba088ca5b4d4edb18049022ed8eb",
+        "revCount": 2,
+        "type": "git",
+        "url": "https://pls.lobotomise.me/atagen/vineyard"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://pls.lobotomise.me/atagen/vineyard"
       }
     }
   },
