@@ -29,9 +29,11 @@ in
       systems = [
         "x86_64-linux"
         "aarch64-linux"
+        "aarch64-darwin"
         "powerpc64le-linux"
         "loongarch64-linux"
-        "aarch64-darwin"
+        "powerpc64-linux"
+        "riscv64-linux"
       ];
     };
 
@@ -47,8 +49,16 @@ in
       url = "https://github.com/manic-systems/cade";
       description = "An intelligent, cascading environment manager";
       expressions = {
-        packages = "packages.x86_64-linux";
+        packages = "packages";
       };
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "powerpc64le-linux"
+        "loongarch64-linux"
+        "powerpc64-linux"
+        "riscv64-linux"
+      ];
     };
 
     circus = flakeProject {
@@ -147,9 +157,17 @@ in
       url = "https://github.com/manic-systems/inshellah";
       description = "The last word in Nushell completions";
       expressions = {
-        checks = "checks.x86_64-linux";
-        packages = "packages.x86_64-linux";
+        checks = "checks";
+        packages = "packages";
       };
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "powerpc64le-linux"
+        "loongarch64-linux"
+        "powerpc64-linux"
+        "riscv64-linux"
+      ];
     };
 
     jmapper = flakeProject {
@@ -162,9 +180,11 @@ in
       systems = [
         "x86_64-linux"
         "aarch64-linux"
+        "aarch64-darwin"
         "powerpc64le-linux"
         "loongarch64-linux"
-        "aarch64-darwin"
+        "powerpc64-linux"
+        "riscv64-linux"
       ];
     };
 
@@ -178,9 +198,11 @@ in
       systems = [
         "x86_64-linux"
         "aarch64-linux"
+        "aarch64-darwin"
         "powerpc64le-linux"
         "loongarch64-linux"
-        "aarch64-darwin"
+        "powerpc64-linux"
+        "riscv64-linux"
       ];
     };
 
@@ -211,9 +233,17 @@ in
       url = "https://github.com/manic-systems/nixos-core";
       description = "Core NixOS utilities in safe, portable Rust";
       expressions = {
-        checks = "checks.x86_64-linux";
-        packages = "packages.x86_64-linux";
+        checks = "checks";
+        packages = "packages";
       };
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "powerpc64le-linux"
+        "loongarch64-linux"
+        "powerpc64-linux"
+        "riscv64-linux"
+      ];
     };
 
     nixploit = flakeProject {
@@ -225,8 +255,9 @@ in
       systems = [
         "x86_64-linux"
         "aarch64-linux"
-        "powerpc64le-linux"
         "aarch64-darwin"
+        "powerpc64le-linux"
+        "riscv64-linux"
       ];
     };
 
@@ -234,8 +265,16 @@ in
       url = "https://github.com/manic-systems/nixtopsy";
       description = "Interactively dissect your Nix closures";
       expressions = {
-        packages = "packages.x86_64-linux";
+        packages = "packages";
       };
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "powerpc64le-linux"
+        "loongarch64-linux"
+        "powerpc64-linux"
+        "riscv64-linux"
+      ];
     };
 
     npr = flakeProject {
@@ -256,9 +295,11 @@ in
       systems = [
         "x86_64-linux"
         "aarch64-linux"
+        "aarch64-darwin"
         "powerpc64le-linux"
         "loongarch64-linux"
-        "aarch64-darwin"
+        "powerpc64-linux"
+        "riscv64-linux"
       ];
     };
 
@@ -281,6 +322,10 @@ in
         "x86_64-linux"
         "aarch64-linux"
         "aarch64-darwin"
+        "powerpc64le-linux"
+        "loongarch64-linux"
+        "powerpc64-linux"
+        "riscv64-linux"
       ];
     };
 
