@@ -92,5 +92,9 @@ in
       extras.locations."/".return = "302 https://github.com/zedless-editor/zedless";
       domainSuffix = "org";
     };
+    manic = {
+      static = { depot', ... }: "${depot'.inputs.manic-systems-web.packages.default}/share/web/dist";
+      domainSuffix = "systems";
+    };
   };
 }
