@@ -121,6 +121,11 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
+    manic-systems-web = {
+      url = "github:manic-systems/web";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     vineyard = {
       url = "git+https://pls.lobotomise.me/atagen/vineyard";
       inputs.nixpkgs.follows = "nixpkgs";
