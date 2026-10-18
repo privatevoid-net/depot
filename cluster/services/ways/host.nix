@@ -128,7 +128,7 @@ in
         port = 443;
         checks = lib.singleton {
           interval = "60s";
-          tcp = "127.0.0.1:80";
+          tcp = "${config.reflection.interfaces.primary.addr}:80";
         };
         tags = lib.attrNames externalWays;
       };
@@ -142,7 +142,7 @@ in
         port = 443;
         checks = lib.singleton {
           interval = "60s";
-          tcp = "127.0.0.1:80";
+          tcp = "${config.reflection.interfaces.vstub.addr}:80";
         };
         tags = lib.attrNames internalWays;
       };
