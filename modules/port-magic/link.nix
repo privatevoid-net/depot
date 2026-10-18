@@ -6,6 +6,14 @@ with lib;
 let
   cfg = config;
 
+  hashChunks = n: flip pipe [
+    (hashString "md5")
+    (split "(........)")
+    (filter isList)
+    (take n)
+    flatten
+  ];
+
   portHash = flip pipe [
     (hashString "md5")
     (substring 0 7)
@@ -13,13 +21,24 @@ let
     (flip mod cfg.reservedPorts.amount)
     (add cfg.reservedPorts.start)
   ];
+
+  addrHash = flip pipe [
+    (hashChunks 3)
+    (map (flip pipe [
+      (hash: (fromTOML "v=0x${hash}").v)
+      (flip mod 256)
+      toString
+    ]))
+    (concatStringsSep ".")
+    (x: "127."+x)
+  ];
 in
 
 {
   options = {
+    useRandomAddr = mkEnableOption "random local address generation";
     ipv4 = mkOption {
       type = types.str;
-      default = "127.0.0.1";
       description = "The IPv4 address.";
     };
     hostname = mkOption {
@@ -71,6 +90,7 @@ in
     };
   };
   config = mkIf true {
+    ipv4 = mkDefault (if cfg.useRandomAddr then (addrHash name) else "127.0.0.1");
     hostname = mkDefault cfg.ipv4;
     port = mkDefault (portHash "${cfg.hostname}:${name}");
     portStr = toString cfg.port;
