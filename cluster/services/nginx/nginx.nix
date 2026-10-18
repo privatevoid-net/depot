@@ -3,6 +3,7 @@
 {
   services.nginx = {
     enable = true;
+    defaultListenAddresses = [ config.reflection.interfaces.primary.addr ];
     recommendedProxySettings = true;
     recommendedTlsSettings = true;
     recommendedOptimisation = true;
