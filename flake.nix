@@ -135,6 +135,14 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        pre-commit.follows = "blank";
+      };
+    };
+
     manic-systems-web = {
       url = "github:manic-systems/web";
       inputs.nixpkgs.follows = "nixpkgs";
