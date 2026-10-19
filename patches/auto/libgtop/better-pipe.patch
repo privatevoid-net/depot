@@ -1,8 +1,19 @@
 diff --git a/sysdeps/linux/disk.c b/sysdeps/linux/disk.c
-index bafd346f..6a476ce9 100644
+index bafd346f..7cebb03e 100644
 --- a/sysdeps/linux/disk.c
 +++ b/sysdeps/linux/disk.c
-@@ -41,8 +41,7 @@ _glibtop_init_disk_s (glibtop *server)
+@@ -25,6 +25,10 @@
+ 
+ #include "glibtop_private.h"
+ 
++#include <errno.h>
++#include <unistd.h>
++#include <sys/wait.h>
++
+ static const unsigned long _glibtop_sysdeps_disk =
+ (1L << GLIBTOP_XDISK_SECTORS_READ) + (1L << GLIBTOP_XDISK_TIME_READ) +
+ (1L << GLIBTOP_XDISK_SECTORS_WRITE) + (1L << GLIBTOP_XDISK_TIME_WRITE);
+@@ -41,8 +45,7 @@ _glibtop_init_disk_s (glibtop *server)
  
  // Linux kernel reports sectors by 512 bytes even for AF 4kn //
  
@@ -12,7 +23,7 @@ index bafd346f..6a476ce9 100644
  #define STAT_BUFSIZ     81920
  
  // Handle LVM and RAID //
-@@ -123,7 +122,7 @@ find_primary_part (partition_info *primary_part, const char *m)
+@@ -123,7 +126,7 @@ find_primary_part (partition_info *primary_part, const char *m)
  
  			}
  			else if ((strcmp (primary_part[n-1].type, "raid") == 0) && (strcmp (type, "lvm") == 0)){
@@ -21,7 +32,7 @@ index bafd346f..6a476ce9 100644
  				tlvl = 3;
  				primary_part->max++;
  
-@@ -162,7 +161,7 @@ find_primary_part (partition_info *primary_part, const char *m)
+@@ -162,7 +165,7 @@ find_primary_part (partition_info *primary_part, const char *m)
  
  		strcpy (primary_part[n].name, name);
  		strncpy (primary_part[n].type, type, 4);
@@ -30,40 +41,77 @@ index bafd346f..6a476ce9 100644
  		if (strcmp (primary_part[n].type, "raid") == 0) {
  
  			strcpy (primary_part[n].raid_num, type + 4);
-@@ -224,6 +223,76 @@ max_lines (const char *p)
+@@ -224,6 +227,127 @@ max_lines (const char *p)
  	return count;
  }
  
++/* Fork `argv` and connect its standard input/output to the given pipes.
++ * The child is added to `children` so that it can be reaped later on. */
++static pid_t
++run_filter (char *const argv[], const int in[2], const int out[2])
++{
++    pid_t pid = fork ();
++
++    if (pid < 0) {
++      g_warning ("fork failed: %s", g_strerror (errno));
++      return -1;
++    }
++
++    if (pid == 0) {
++      if (in)
++        dup2 (in[0], STDIN_FILENO);
++      if (out)
++        dup2 (out[1], STDOUT_FILENO);
++      _exit (execvp (argv[0], (char **) argv) == 0 ? 0 : 1);
++    }
++
++    return pid;
++}
++
++/* Reap a child that has (hopefully) already terminated, so that we do not
++ * leave a zombie process behind. */
++static void
++reap_child (pid_t pid)
++{
++    int status;
++
++    if (pid <= 0)
++      return;
++
++    while (waitpid (pid, &status, 0) < 0) {
++      if (errno != EINTR)
++        break;
++    }
++}
++
 +void
 +get_from_pipe (char *buffer, const size_t bufsiz)
 +{
 +    int pipe_lsblk[2];
 +    int pipe_sed[2];
 +    int pipe_tr[2];
-+    pipe(pipe_lsblk);
++    pid_t children[3] = { -1, -1, -1 };
 +
-+    pid_t pid = fork();
-+
-+    if (pid == 0) {
-+      dup2(pipe_lsblk[1], STDOUT_FILENO);
-+      close(pipe_lsblk[0]);
-+      close(pipe_lsblk[1]);
-+      char *argv[] = {"lsblk", "--output", "NAME,TYPE", "-i", "-n", NULL};
-+      if (execvp(argv[0], argv) < 0) exit(1);
++    if (pipe (pipe_lsblk) < 0) {
++      g_warning ("pipe failed: %s", g_strerror (errno));
++      return;
 +    }
 +
-+    close(pipe_lsblk[1]);
++    {
++      char *argv[] = { "lsblk", "--output", "NAME,TYPE", "-i", "-n", NULL };
 +
-+    pipe(pipe_sed);
-+    pid = fork();
++      children[0] = run_filter (argv, NULL, pipe_lsblk);
++    }
++    close (pipe_lsblk[1]);
 +
-+    if (pid == 0) {
-+      dup2(pipe_lsblk[0], STDIN_FILENO);
-+      dup2(pipe_sed[1], STDOUT_FILENO);
-+      close(pipe_lsblk[0]);
-+      close(pipe_lsblk[1]);
-+      close(pipe_sed[0]);
-+      close(pipe_sed[1]);
++    if (pipe (pipe_sed) < 0) {
++      g_warning ("pipe failed: %s", g_strerror (errno));
++      close (pipe_lsblk[0]);
++      reap_child (children[0]);
++      return;
++    }
++
++    {
 +      char *argv[] = {
 +          "sed",
 +          "-e", "s/`-//",
@@ -72,42 +120,56 @@ index bafd346f..6a476ce9 100644
 +          "-e", "s/^[ \t]*//",
 +          NULL
 +      };
-+      if (execvp(argv[0], argv) < 0) exit(1);
++
++      children[1] = run_filter (argv, pipe_lsblk, pipe_sed);
++    }
++    close (pipe_lsblk[0]);
++    close (pipe_sed[1]);
++
++    if (pipe (pipe_tr) < 0) {
++      g_warning ("pipe failed: %s", g_strerror (errno));
++      close (pipe_sed[0]);
++      reap_child (children[0]);
++      reap_child (children[1]);
++      return;
 +    }
 +
-+    close(pipe_lsblk[0]);
-+    close(pipe_sed[1]);
-+
-+    pipe(pipe_tr);
-+    pid = fork();
-+
-+    if (pid == 0) {
-+      dup2(pipe_sed[0], STDIN_FILENO);
-+      dup2(pipe_tr[1], STDOUT_FILENO);
-+      close(pipe_sed[0]);
-+      close(pipe_sed[1]);
++    {
 +      char *argv[] = { "tr", "-s", " ", NULL };
-+      if (execvp(argv[0], argv) < 0) exit(1);
-+    }
 +
-+    close(pipe_sed[0]);
-+    close(pipe_tr[1]);
++      children[2] = run_filter (argv, pipe_sed, pipe_tr);
++    }
++    close (pipe_sed[0]);
++    close (pipe_tr[1]);
++
++    if (children[0] < 0 || children[1] < 0 || children[2] < 0) {
++      close (pipe_tr[0]);
++      reap_child (children[0]);
++      reap_child (children[1]);
++      reap_child (children[2]);
++      return;
++    }
 +
 +    FILE* fp = fdopen(pipe_tr[0], "r");
-+	size_t psize = fread(buffer,1,bufsiz, fp);
-+	if (psize == bufsiz)
-+		g_warning("Read bufsiz bytes, there may be more");
++    size_t psize = fread(buffer,1,bufsiz, fp);
++    if (psize == bufsiz)
++      g_warning("Read bufsiz bytes, there may be more");
 +
-+	fclose(fp);
-+	close(pipe_tr[0]);
++    fclose(fp);
++    close(pipe_tr[0]);
++
++    /* Reading stops when the last filter exits, but the other processes are
++     * still around as zombies: wait for all of them. */
++    reap_child (children[0]);
++    reap_child (children[1]);
++    reap_child (children[2]);
 +}
 +
-+#define CMD_PIPE    "lsblk --output NAME,TYPE -i -n | sed 's/`-//'|sed 's/|-//'|sed 's/|//'| sed -e 's/^[ \t]*//'|tr -s ' '"
 +
  void
  glibtop_get_disk_s (glibtop *server, glibtop_disk *buf)
  {
-@@ -235,7 +304,7 @@ glibtop_get_disk_s (glibtop *server, glibtop_disk *buf)
+@@ -235,7 +359,7 @@ glibtop_get_disk_s (glibtop *server, glibtop_disk *buf)
  
  	file_to_buffer (server, buffer, sizeof buffer, FILENAME);
  
