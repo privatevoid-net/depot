@@ -135,6 +135,14 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        pre-commit.follows = "blank";
+      };
+    };
+
     vineyard = {
       url = "git+https://pls.lobotomise.me/atagen/vineyard";
       inputs.nixpkgs.follows = "nixpkgs";
