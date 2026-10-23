@@ -2,6 +2,7 @@
 
 let
   inherit (depot.hours.soda) interfaces;
+  dataDir = "/run/schizo.cooking";
 in
 
 {
@@ -34,8 +35,8 @@ in
     services = {
       quickie = {
         serviceConfig = {
-          ExecStart = "${depot'.packages.quickie}/bin/quickie -b ${config.links.quickieInternal.ipv4} -p ${config.links.quickieInternal.portStr} -m /tmp/resources -o /tmp -c /resources/asylum-v1.css";
-          WorkingDirectory = "/tmp";
+          ExecStart = "${depot'.packages.quickie}/bin/quickie -b ${config.links.quickieInternal.ipv4} -p ${config.links.quickieInternal.portStr} -m ${dataDir}/resources -o ${dataDir} -c /resources/asylum-v1.css";
+          WorkingDirectory = dataDir;
 
           CPUQuota = "10%";
           CapabilityBoundingSet = "";
@@ -76,7 +77,8 @@ in
             "/srv"
             "/var"
           ];
-          BindReadOnlyPaths = [ "/srv/storage/www/schizo.cooking:/tmp/resources" ];
+          BindReadOnlyPaths = [ "/srv/storage/www/schizo.cooking:${dataDir}/resources" ];
+          TemporaryFileSystem = [ "${dataDir}:mode=1777" ];
         };
       };
 
