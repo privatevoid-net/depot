@@ -14,8 +14,8 @@ in
 
 {
   services.nginx = {
-    virtualHosts = lib.mapAttrs' (name: cfg: {
-      name = cfg.name;
+    virtualHosts = lib.mapAttrs' (_: cfg: {
+      name = cfg.nginxServerName;
       value = { ... }: {
         imports = [
           cfg.extras
@@ -25,7 +25,7 @@ in
             enableACME = !cfg.internal && !cfg.wildcard;
             useACMEHost = lib.mkMerge [
               (lib.mkIf cfg.internal cfg.domainSuffixInternal)
-              (lib.mkIf cfg.wildcard "${name}.${cfg.domainSuffix}")
+              (lib.mkIf cfg.wildcard cfg.fqdn)
             ];
             locations = lib.mkMerge [
               {
@@ -71,18 +71,18 @@ in
     '';
   };
 
-  security.acme.certs = lib.mapAttrs' (name: cfg: {
-    name = "${name}.${cfg.domainSuffix}";
+  security.acme.certs = lib.mapAttrs' (_: cfg: {
+    name = cfg.fqdn;
     value = {
-      domain = lib.mkIf cfg.wildcard "*.${name}.${cfg.domainSuffix}";
+      domain = cfg.subjectDomainName;
       dnsProvider = "exec";
       webroot = lib.mkForce null;
       group = "nginx";
     };
   }) externalWays;
 
-  systemd.services = lib.mapAttrs' (name: cfg: {
-    name = "acme-${name}.${cfg.domainSuffix}";
+  systemd.services = lib.mapAttrs' (_: cfg: {
+    name = "acme-${cfg.fqdn}";
     value.distributed.enable = true;
   }) externalWays;
 

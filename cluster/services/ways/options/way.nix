@@ -13,16 +13,26 @@ with lib;
     name = mkOption {
       description = "Domain name to use.";
       type = types.str;
-      default = let
-        basename = "${name}.${config.domainSuffix}";
-      in if config.wildcard then "~^(.+)\.${lib.escapeRegex basename}$" else basename;
+      default = name;
+    };
+
+    nginxServerName = mkOption {
+      description = "nginx server_name value for this Way.";
+      type = types.str;
+      default = if config.wildcard then "~^(.+)\\.${lib.escapeRegex config.fqdn}$" else config.fqdn;
+    };
+
+    subjectDomainName = mkOption {
+      description = "Domain name for this Way, including wildcard characters.";
+      type = types.str;
+      default = if config.wildcard then "*.${config.fqdn}" else config.fqdn;
     };
 
     dnsRecord = {
       name = mkOption {
         description = "DNS record name for this Way.";
         type = types.str;
-        default = if config.wildcard then "^[^_].+\\.${lib.escapeRegex name}" else name;
+        default = if config.wildcard then "^[^_].*\\.${lib.escapeRegex config.name}" else config.name;
       };
 
       value = mkOption {
@@ -31,6 +41,7 @@ with lib;
         default = {
           consulService = "${name}.${if config.internal then "ways-proxy-internal" else "ways-proxy"}";
           rewrite.type = lib.mkIf config.wildcard "regex";
+          root = config.domainSuffix;
         };
       };
     };
@@ -72,10 +83,16 @@ with lib;
       default = "/.well-known/ways/internal-health-check";
     };
 
+    fqdn = mkOption {
+      type = types.str;
+      readOnly = true;
+      default = if config.name == "@" then config.domainSuffix else "${config.name}.${config.domainSuffix}";
+    };
+
     url = mkOption {
       type = types.str;
       readOnly = true;
-      default = "https://${name}.${config.domainSuffix}";
+      default = "https://${config.fqdn}";
     };
 
     mode = mkOption {
@@ -101,7 +118,6 @@ with lib;
 
     domainSuffix = mkOption {
       type = types.str;
-      internal = true;
       default = if config.internal then config.domainSuffixInternal else config.domainSuffixExternal;
     };
 
