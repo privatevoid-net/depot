@@ -17,9 +17,9 @@
   };
 
   dns.records = lib.mapAttrs'
-    (_: cfg: lib.nameValuePair cfg.dnsRecord.name ({ ... }: {
+    (_: cfg: lib.nameValuePair cfg.fqdn ({ ... }: {
+      inherit (cfg.dnsRecord) name;
       imports = [ cfg.dnsRecord.value ];
-      root = cfg.domainSuffix;
     }))
     config.ways;
 }
