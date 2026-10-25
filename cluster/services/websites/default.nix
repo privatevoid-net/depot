@@ -2,53 +2,17 @@
 
 let
   inherit (depot.lib.meta) domain;
-
-  acmeUseDNS = name: conf: {
-    name = conf.useACMEHost or conf.serverName or name;
-    value = {
-      dnsProvider = "exec";
-      webroot = null;
-    };
-  };
-
-  isACME = _: conf: conf ? enableACME && conf.enableACME;
 in
 
 {
   services.websites = {
     nodes = {
-      host = [ "VEGAS" "prophet" ];
       oldStatic = [ "VEGAS" ];
     };
     nixos.oldStatic = [
       ./old-static
       ./old-static/jokes.nix
     ];
-    nixos.host = { config, depot, depot', ... }: let
-
-      importWebsites = expr: import expr {
-        tools = depot.lib.nginx;
-        inherit (depot') inputs packages;
-      };
-
-      websites = depot.lib.nginx.mappers.mapSubdomains (importWebsites ./websites.nix);
-
-    in {
-      services.nginx.virtualHosts = websites;
-      security.acme.certs = lib.mapAttrs' acmeUseDNS (lib.filterAttrs isACME websites);
-      consul.services.nginx = {
-        mode = "external";
-        definition = {
-          name = "static-lb";
-          address = config.reflection.interfaces.primary.addrPublic;
-          port = 443;
-          checks = lib.singleton {
-            interval = "60s";
-            tcp = "${config.reflection.interfaces.primary.addr}:80";
-          };
-        };
-      };
-    };
   };
 
   monitoring.blackbox.targets = {
@@ -60,27 +24,17 @@ in
 
   dns.records = let
     oldStaticAddr = [ depot.hours.VEGAS.interfaces.primary.addrPublic ];
-  in lib.mkMerge [
-    (lib.genAttrs [ "www" "draw" "stop-using-nix-env" "docs.hyprspace" ] (lib.const {
-      consulService = "static-lb";
-    }))
-    {
-      top-level = {
-        name = "@";
-        consulService = "static-lb";
-      };
+  in {
+    autoconfig.target = oldStaticAddr;
 
-      autoconfig.target = oldStaticAddr;
+    ktp.target = oldStaticAddr;
+    legacy.target = oldStaticAddr;
 
-      ktp.target = oldStaticAddr;
-      legacy.target = oldStaticAddr;
-
-      # jokes
-      "bone-ds-dc.com-ldap".target = oldStaticAddr;
-      rzentrale.target = oldStaticAddr;
-      wunschnachricht.target = oldStaticAddr;
-    }
-  ];
+    # jokes
+    "bone-ds-dc.com-ldap".target = oldStaticAddr;
+    rzentrale.target = oldStaticAddr;
+    wunschnachricht.target = oldStaticAddr;
+  };
 
   ways = config.lib.forService "websites" {
     bomed = {
@@ -95,6 +49,24 @@ in
     manic = {
       static = { depot', ... }: "${depot'.inputs.manic-systems-web.packages.default}/share/web/dist";
       domainSuffix = "systems";
+    };
+    www = {
+      static = { depot', ... }: depot'.packages.landing;
+      extras.default = true;
+    };
+    draw = {
+      static = { depot', ...}: depot'.packages.excalidraw;
+    };
+    "docs.hyprspace" = {
+      static = { depot', ... }: "${depot'.inputs.hyprspace.packages.docs}/share/www/hyprspace-docs";
+    };
+    stop-using-nix-env = {
+      static = { depot', ... }: depot'.packages.stop-using-nix-env;
+    };
+    top-level = {
+      name = "@";
+      static = { pkgs, ... }: pkgs.emptyDirectory;
+      extras.locations."/".return = "301 https://www.${domain}$request_uri";
     };
   };
 }
