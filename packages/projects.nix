@@ -65,7 +65,9 @@
           pkgs.deadnix
           pkgs.statix
           pkgs.npins
-          inputs'.clan.packages.clan-cli
+          (inputs'.clan.packages.clan-cli.override {
+            nix = nix-super;
+          })
         ];
 
         env.NPINS_DIRECTORY.eval = "$REPO_ROOT/packages/sources";
