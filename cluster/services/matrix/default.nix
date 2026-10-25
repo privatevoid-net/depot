@@ -1,19 +1,18 @@
 { config, depot, ... }:
 
+let
+  inherit (depot.lib.meta) domain;
+in
+
 {
   services.matrix = {
     nodes = {
       homeserver = [ "thousandman" ];
-      static = config.services.websites.nodes.host;
     };
     nixos = {
       homeserver = [
         ./homeserver.nix
         ./bridges/discord.nix
-      ];
-      static = [
-        ./federation.nix
-        ./web-client.nix
       ];
     };
     secrets = let
@@ -33,7 +32,7 @@
   };
 
   monitoring.blackbox.targets.matrix = {
-    address = "https://matrix.${depot.lib.meta.domain}/_matrix/federation/v1/version";
+    address = "https://matrix.${domain}/_matrix/federation/v1/version";
     module = "https2xx";
   };
 
@@ -54,6 +53,47 @@
     stun.target = homeserverAddrs;
     turn.target = homeserverAddrs;
     "discord.bridges.matrix".target = homeserverAddrs;
-    chat.consulService = "static-lb";
+  };
+
+  ways = config.lib.forService "matrix" {
+    chat = {
+      static = { depot', ... }: depot'.packages.cinny.webroot;
+      staticLocations."= /config.json" = { pkgs, ... }: pkgs.writeText "cinny-config.json" (builtins.toJSON {
+        defaultHomeserver = 0;
+        homeserverList = [ domain ];
+        allowCustomHomeservers = false;
+      });
+      extras.locations."/".extraConfig = ''
+        rewrite ^/config.json$ /config.json break;
+        rewrite ^/manifest.json$ /manifest.json break;
+
+        rewrite ^.*/olm.wasm$ /olm.wasm break;
+        rewrite ^/pdf.worker.min.js$ /pdf.worker.min.js break;
+
+        rewrite ^/public/(.*)$ /public/$1 break;
+        rewrite ^/assets/(.*)$ /assets/$1 break;
+
+        rewrite ^(.+)$ /index.html break;
+      '';
+    };
+    top-level = {
+      staticLocations."= /.well-known/matrix/server" = { pkgs, ... }: pkgs.writeText "matrix-federation.json" (builtins.toJSON {
+        "m.server" = "matrix.${domain}:443";
+      });
+      extras.locations = let
+        extraConfig = ''
+          add_header X-Content-Type-Options "";
+          add_header Access-Control-Allow-Origin *;
+        '';
+      in {
+        "= /.well-known/matrix/client" = {
+          return = "302 https://matrix.${domain}/.well-known/matrix/client";
+          inherit extraConfig;
+        };
+        "= /.well-known/matrix/server" = {
+          inherit extraConfig;
+        };
+      };
+    };
   };
 }
