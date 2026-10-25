@@ -14,15 +14,6 @@ in
   };
 
   services.nginx.virtualHosts = {
-    "top-level.${domain}".locations = {
-      "~ ^/ip[fn]s" = {
-        proxyPass = gw.url;
-        extraConfig = ''
-          add_header X-Content-Type-Options "";
-          add_header Access-Control-Allow-Origin *;
-        '';
-      };
-    };
     ipfs-metrics = {
       serverName = null;
       listen = lib.singleton {
