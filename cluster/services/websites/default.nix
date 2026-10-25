@@ -61,7 +61,7 @@ in
   dns.records = let
     oldStaticAddr = [ depot.hours.VEGAS.interfaces.primary.addrPublic ];
   in lib.mkMerge [
-    (lib.genAttrs [ "www" "draw" "stop-using-nix-env" "whoami" "docs.hyprspace" ] (lib.const {
+    (lib.genAttrs [ "www" "draw" "stop-using-nix-env" "docs.hyprspace" ] (lib.const {
       consulService = "static-lb";
     }))
     {
