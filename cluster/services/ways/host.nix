@@ -58,7 +58,7 @@ in
                   inherit depot';
                   inherit pkgs;
                   inherit (pkgs) system;
-                }}/";
+                }}";
               }) cfg.staticLocations)
             ];
           }
