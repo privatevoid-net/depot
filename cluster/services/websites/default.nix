@@ -37,18 +37,21 @@ in
   };
 
   ways = config.lib.forService "websites" {
-    bomed = {
+    bomed-lol = {
       static = { depot', ... }: depot'.packages.ldap-entry-point.webroot;
-      domainSuffix = "lol";
+      name = "@";
+      domainSuffix = "bomed.lol";
     };
-    zedless = {
+    zedless-org = {
       static = { pkgs, ... }: pkgs.emptyDirectory;
       extras.locations."/".return = "302 https://github.com/zedless-editor/zedless";
-      domainSuffix = "org";
+      name = "@";
+      domainSuffix = "zedless.org";
     };
-    manic = {
+    manic-systems = {
       static = { depot', ... }: "${depot'.inputs.manic-systems-web.packages.default}/share/web/dist";
-      domainSuffix = "systems";
+      name = "@";
+      domainSuffix = "manic.systems";
     };
     www = {
       static = { depot', ... }: depot'.packages.landing;
