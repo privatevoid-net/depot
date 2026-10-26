@@ -7,7 +7,7 @@
   ];
 
   services.ways = {
-    nodes.host = config.services.websites.nodes.host;
+    nodes.host = [ "VEGAS" "prophet" ];
     nixos.host = ./host.nix;
     simulacrum = {
       enable = true;
