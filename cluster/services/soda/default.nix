@@ -20,9 +20,10 @@
   ways = let
     host = builtins.head config.services.soda.nodes.host;
   in config.lib.forService "soda" {
-    schizo = {
+    schizo-cooking = {
       target = config.hostLinks.${host}.quickie.url;
-      domainSuffix = "cooking";
+      name = "@";
+      domainSuffix = "schizo.cooking";
     };
   };
 }
