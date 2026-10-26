@@ -16,9 +16,10 @@
   ways = let
     host = builtins.head config.services.gotosocial.nodes.server;
   in config.lib.forService "gotosocial" {
-    trvke = {
+    trvke-social = {
       target = config.hostLinks.${host}.gotosocial.url;
-      domainSuffix = "social";
+      name = "@";
+      domainSuffix = "trvke.social";
       extras.locations = {
         "/".proxyWebsockets = true;
         "= /app".return = "301 /app/";
