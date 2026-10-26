@@ -74,7 +74,7 @@ with lib;
     };
 
     staticLocations = mkOption {
-      type = with types; attrsOf (functionTo (coercedTo package (package: "${package.webroot or package}") str));
+      type = with types; attrsOf (functionTo (coercedTo package (package: "${if package ? webroot then "${package.webroot}/" else package}") str));
       default = { };
     };
 
