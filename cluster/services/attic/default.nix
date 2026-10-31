@@ -22,6 +22,7 @@
         ./nar-serve.nix
       ];
       cache-client = [
+        ./cache-client.nix
         ./builder-cache-client.nix
         ./attic-cache-client.nix
         ./extra-cache-client.nix
