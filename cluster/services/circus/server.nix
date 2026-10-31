@@ -34,7 +34,7 @@ in
         inherit (link) port;
         webhook_secret_encryption_key_file = secrets.webhookSecretsEncryptionKey.path;
       };
-      database.url = "postgresql:///circus?host=/run/postgresql";
+      database.url = "postgresql:///circus?host=/run/postgresql&user=circus";
       evaluator = {
         poll_interval = 600;
         max_concurrent_evals = 2;
@@ -47,7 +47,7 @@ in
       };
       signing = {
         enabled = true;
-        # pubkey: cache.manic.systems-1:s6OZanN8Us8vRi0jVivP3qlMn0cYHBjBALKrNe5nH8s=
+        public_key = "cache.manic.systems-1:s6OZanN8Us8vRi0jVivP3qlMn0cYHBjBALKrNe5nH8s=";
         key_file = secrets.s3CacheKey.path;
       };
       queue_runner = {
@@ -56,10 +56,10 @@ in
         workers = 0;
         rpc = {
           bind = "0.0.0.0:8443";
-          auth_tokens = [
-            "ed611f88c7fb27103afba7ddad8733adf06f56e8837eba505c96349ef5fbfd8c"
-            "d74548cafebeec602bd92a0bae0822ffecefd95fcf04b51c387af19ff043d356"
-            "ce588d1fb6eae218f664b2275f3bd573bafca69847e77ff2a090ef1850aa6608"
+          join_tokens = [
+            { name = "auth1"; token_hash = "ed611f88c7fb27103afba7ddad8733adf06f56e8837eba505c96349ef5fbfd8c"; }
+            { name = "auth2"; token_hash = "d74548cafebeec602bd92a0bae0822ffecefd95fcf04b51c387af19ff043d356"; }
+            { name = "auth3"; token_hash = "ce588d1fb6eae218f664b2275f3bd573bafca69847e77ff2a090ef1850aa6608"; }
           ];
           max_connections = 128;
           heartbeat_ttl_secs = 60;
