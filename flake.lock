@@ -468,11 +468,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793420539,
-        "narHash": "sha256-ge22NAvGv5CzsamFUGMHUtpf46H4A4U9iOQDQicNCxY=",
+        "lastModified": 1793492993,
+        "narHash": "sha256-ye5tyihsx79dHi/7q3vfjAqxCUYEILIZhb9aQUawink=",
         "owner": "manic-systems",
         "repo": "nixos-core",
-        "rev": "f6d88810c1b082568d195c0c025b34b7bb7a3a61",
+        "rev": "13e4d6d811e1e6fa3c9366613931e59ba10b3bd4",
         "type": "github"
       },
       "original": {
