@@ -8,18 +8,8 @@ let
   # TODO: switch to proper certdir
   certDir = config.security.acme.certs."mail.${domain}".directory;
 
-  # TODO: check how this thing does lookups, apply bind dn
-
-  ldapConfigBase = with ldap.accounts; pkgs.writeText "dovecot-ldap.conf.ext" ''
-    uris = ${ldap.server.url}
-
-    auth_bind = yes
-    auth_bind_userdn = ${uidAttribute}=%n,${userSearchBase}
-    base = ${userSearchBase}
-    pass_filter = (&(objectClass=person)(${uidAttribute}=%n))
-    pass_attrs = uid=user
-    dn = dn=token
-    dnpass = @DOVECOT2_LDAP_DNPASS@
+  ldapConfigBase = pkgs.writeText "dovecot-ldap.conf.ext" ''
+    ldap_auth_dn_password = @DOVECOT2_LDAP_DNPASS@
   '';
 
   ldapConfig = "/run/dovecot2/dovecot-ldap.conf.ext";
@@ -38,53 +28,77 @@ in {
 
   # who came up with this shit?
   environment.systemPackages = [
-    pkgs.dovecot_pigeonhole_0_5
+    pkgs.dovecot_pigeonhole
   ];
 
   services.dovecot2 = {
     enable = true;
+    package = pkgs.dovecot_2_4;
     enablePAM = false;
     mailUser = "vmail";
     mailGroup = "vmail";
-    mailPlugins.perProtocol.lmtp.enable = [ "sieve" ];
+
+    includeFiles = [
+      ldapConfig
+    ];
 
     settings = {
+      dovecot_config_version = "2.4.2";
+      dovecot_storage_version = "2.4.0";
+
       protocols = [ "imap" "lmtp" ];
-      mail_location = "maildir:/var/spool/mail/%u";
-      ssl_cert = "<${certDir}/fullchain.pem";
-      ssl_key = "<${certDir}/key.pem";
-      auth_username_format = "%n";
-      namespace = {
+      mail_driver = "maildir";
+      mail_path = "/var/spool/mail/%{user}";
+      ssl_server = {
+        cert_file = "${certDir}/fullchain.pem";
+        key_file = "${certDir}/key.pem";
+      };
+
+      auth_username_format = "%{ user | username }";
+
+      "namespace inbox" = {
         inbox = true;
         separator = "/";
       };
-      userdb = {
+
+      "userdb static" = {
         driver = "static";
-        args = [
-          "allow_all_users=yes"
-          "uid=${config.services.dovecot2.mailUser}"
-          "gid=${config.services.dovecot2.mailGroup}"
-          "home=/var/mail/virtual/%d/%n"
-        ];
+        fields = {
+          allow_all_users = true;
+          uid = config.services.dovecot2.mailUser;
+          gid = config.services.dovecot2.mailGroup;
+          home = "/var/mail/virtual/%d/%n";
+        };
       };
 
-      passdb = {
+      ldap_uris = ldap.server.url;
+      ldap_base = ldap.accounts.userSearchBase;
+      ldap_auth_dn = "dn=token";
+      "passdb ldap" = with ldap.accounts; {
         driver = "ldap";
-        args = ldapConfig;
+        bind = true;
+        bind_userdn = "${uidAttribute}=%{user | username},${userSearchBase}";
+        filter = "(&(objectClass=person)(${uidAttribute}=%{user | username}))";
+        fields = {
+          user = "%{user | username}";
+        };
       };
+
       "service auth" = {
         "unix_listener auth" = {
           mode = "0660";
           inherit (postfixCfg) user group;
         };
       };
-    };
 
-    sieve = {
-      extensions = [
-        "fileinto"
-      ];
-      scripts.before = ./sieve/spam.sieve;
+      "protocol lmtp".mail_plugins.sieve = true;
+
+      sieve_extensions.fileinto = true;
+      "sieve_script 00spam" = {
+        driver = "file";
+        path = ./sieve/spam.sieve;
+        type = "before";
+      };
     };
   };
 
