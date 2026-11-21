@@ -29,7 +29,7 @@ super: rec {
     jre_headless = jre;
   };
 
-  postgresql = super.postgresql_14;
+  postgresql = super.postgresql_18;
 
   s3ql = (patch super.s3ql "patches/base/s3ql").overrideAttrs (old: {
     propagatedBuildInputs = old.propagatedBuildInputs ++ [
