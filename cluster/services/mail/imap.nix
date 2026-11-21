@@ -35,14 +35,14 @@ in {
     enable = true;
     package = pkgs.dovecot_2_4;
     enablePAM = false;
-    mailUser = "vmail";
-    mailGroup = "vmail";
 
     includeFiles = [
       ldapConfig
     ];
 
     settings = {
+      mail_uid = "vmail";
+      mail_gid = "vmail";
       dovecot_config_version = "2.4.2";
       dovecot_storage_version = "2.4.0";
 
@@ -65,8 +65,8 @@ in {
         driver = "static";
         fields = {
           allow_all_users = true;
-          uid = config.services.dovecot2.mailUser;
-          gid = config.services.dovecot2.mailGroup;
+          uid = config.services.dovecot2.settings.mail_uid;
+          gid = config.services.dovecot2.settings.mail_gid;
           home = "/var/mail/virtual/%d/%n";
         };
       };
