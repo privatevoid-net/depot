@@ -1,4 +1,4 @@
-{ rustPlatform, fetchFromGitHub, cmake, pkg-config, openssl }:
+{ rustPlatform, fetchFromGitHub, cmake, pkg-config, zstd }:
 
 rustPlatform.buildRustPackage rec {
   pname = "zerofs";
@@ -13,14 +13,20 @@ rustPlatform.buildRustPackage rec {
 
   nativeBuildInputs = [
     cmake
-    # pkg-config
+    pkg-config
   ];
 
   buildInputs = [
-    # openssl
+    zstd
   ];
 
-  env.RUSTFLAGS = "--cfg tokio_unstable";
+  env = {
+    RUSTFLAGS = "--cfg tokio_unstable";
+  };
+
+  postConfigure = ''
+    unset JEMALLOC_OVERRIDE
+  '';
 
   postUnpack = "sourceRoot=$sourceRoot/zerofs";
 
