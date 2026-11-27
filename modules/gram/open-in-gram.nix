@@ -11,7 +11,11 @@ let
     name = "cooking.schizo.OpenInGram";
     desktopName = "Open project in Gram";
     noDisplay = true;
-    mimeTypes = [ "x-scheme-handler/vscode" "x-scheme-handler/vscodium" ];
+    mimeTypes = [
+      "x-scheme-handler/vscode"
+      "x-scheme-handler/vscodium"
+      "x-scheme-handler/ghapp"
+    ];
     icon = "app.liten.Gram";
     startupNotify = false;
     tryExec = "gram";
