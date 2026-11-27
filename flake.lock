@@ -35,6 +35,27 @@
         "type": "github"
       }
     },
+    "cade": {
+      "inputs": {
+        "fenix": "fenix",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795598307,
+        "narHash": "sha256-Ghl0l4uGXEUbyEehakR6BzThu8JXc+tVpTCqMrnzH4w=",
+        "owner": "manic-systems",
+        "repo": "cade",
+        "rev": "5781758070f2c6b7efa196bcab175f82800ac984",
+        "type": "github"
+      },
+      "original": {
+        "owner": "manic-systems",
+        "repo": "cade",
+        "type": "github"
+      }
+    },
     "circus": {
       "inputs": {
         "crane": "crane",
@@ -95,6 +116,21 @@
         "owner": "ipetkov",
         "repo": "crane",
         "rev": "47b6b27ed9a3a9181415e4367d0c30ab2a0e0250",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
+    "crane_2": {
+      "locked": {
+        "lastModified": 1793836618,
+        "narHash": "sha256-TREenflwEjxOSq292FYwbc3kEm7TDRtXCZRNWEdjBmg=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "79fd63528501446749c09f08cad486a58c7d173e",
         "type": "github"
       },
       "original": {
@@ -168,6 +204,30 @@
       "original": {
         "owner": "nix-community",
         "repo": "disko",
+        "type": "github"
+      }
+    },
+    "fenix": {
+      "inputs": {
+        "nixpkgs": [
+          "cade",
+          "nixpkgs"
+        ],
+        "rust-analyzer-src": [
+          "blank"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794930299,
+        "narHash": "sha256-mZNudswBDyC3jiJtarQo+DPcbZVSCmU8fURez9RtJTI=",
+        "owner": "nix-community",
+        "repo": "fenix",
+        "rev": "5a908d7732ad97bd120dd3df34580fab5bbeb6ff",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "fenix",
         "type": "github"
       }
     },
@@ -362,6 +422,31 @@
         "type": "github"
       }
     },
+    "lanzaboote": {
+      "inputs": {
+        "crane": "crane_2",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "pre-commit": [
+          "blank"
+        ],
+        "rust-overlay": "rust-overlay"
+      },
+      "locked": {
+        "lastModified": 1794657966,
+        "narHash": "sha256-Yb47Gb1KlSGsedQuAqdDz/NNr9goz9PI+uCBDybN9Cs=",
+        "owner": "nix-community",
+        "repo": "lanzaboote",
+        "rev": "69c7f74b872aae4f360bdd0050106e0fddfed7aa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "lanzaboote",
+        "type": "github"
+      }
+    },
     "manic-systems-web": {
       "inputs": {
         "nixpkgs": [
@@ -423,6 +508,24 @@
         "type": "github"
       }
     },
+    "nix-crx": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1781395719,
+        "narHash": "sha256-3fG6B63RvESMdgzRgB0E6sRFZ4SNuW4dlRg7hhnvhfE=",
+        "rev": "b9cfd1e606a90168d3597212ced8066c801f58d5",
+        "type": "tarball",
+        "url": "https://forge.privatevoid.net/api/v1/repos/max/nix-crx/archive/b9cfd1e606a90168d3597212ced8066c801f58d5.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://forge.privatevoid.net/max/nix-crx/archive/master.tar.gz"
+      }
+    },
     "nix-select": {
       "locked": {
         "lastModified": 1763303120,
@@ -478,6 +581,32 @@
       "original": {
         "owner": "manic-systems",
         "repo": "nixos-core",
+        "type": "github"
+      }
+    },
+    "nixpak": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "hercules-ci-effects": [
+          "hercules-ci-effects"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795660148,
+        "narHash": "sha256-ZGqX61iIiUO7CDLTvbhvy6Npwq3+Va1axtUoelu7eyY=",
+        "owner": "nixpak",
+        "repo": "nixpak",
+        "rev": "de35dcd3478c078d6a679031f002b18c7d2d532f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixpak",
+        "repo": "nixpak",
         "type": "github"
       }
     },
@@ -565,6 +694,7 @@
       "inputs": {
         "agenix": "agenix",
         "blank": "blank",
+        "cade": "cade",
         "circus": "circus",
         "clan": "clan",
         "devshell": "devshell",
@@ -572,14 +702,38 @@
         "hercules-ci-agent": "hercules-ci-agent",
         "hercules-ci-effects": "hercules-ci-effects",
         "hyprspace": "hyprspace",
+        "lanzaboote": "lanzaboote",
         "manic-systems-web": "manic-systems-web",
         "nar-serve": "nar-serve",
         "ncro": "ncro",
+        "nix-crx": "nix-crx",
         "nix-super": "nix-super",
         "nixos-core": "nixos-core",
+        "nixpak": "nixpak",
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-input": "nixpkgs-input",
         "systems": "systems_2"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "lanzaboote",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793870170,
+        "narHash": "sha256-0psEeQjs1g9oWQ6eVVGlCom+X3/uHyr6jSMyHVU57u8=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "19e0e6c951a7a8a7d3232c64e58d26b89df44c60",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
       }
     },
     "sops-nix": {
