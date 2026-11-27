@@ -47,7 +47,7 @@
           };
           "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/open-terminal" = {
             binding = "<Super>Return";
-            command = "systemd-run --user --scope blackbox";
+            command = "systemd-run --user --scope blackbox-terminal";
             name = "Launch Terminal";
           };
           "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/sysmon-de" = {
