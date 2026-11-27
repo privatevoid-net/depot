@@ -408,6 +408,26 @@
         "type": "github"
       }
     },
+    "manic-systems-web": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795517369,
+        "narHash": "sha256-H3zqk/HsmrCq6XtkKz+K7sWKoWXtRAwep0I1Rz5pKac=",
+        "owner": "manic-systems",
+        "repo": "web",
+        "rev": "58b62883c48268fee1a93b8dbdd44aab62fc08d7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "manic-systems",
+        "repo": "web",
+        "type": "github"
+      }
+    },
     "nar-serve": {
       "inputs": {
         "nixpkgs": [
@@ -598,14 +618,14 @@
         "hercules-ci-agent": "hercules-ci-agent",
         "hercules-ci-effects": "hercules-ci-effects",
         "hyprspace": "hyprspace",
+        "manic-systems-web": "manic-systems-web",
         "nar-serve": "nar-serve",
         "ncro": "ncro",
         "nix-super": "nix-super",
         "nixos-core": "nixos-core",
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-input": "nixpkgs-input",
-        "systems": "systems_3",
-        "vineyard": "vineyard"
+        "systems": "systems_3"
       }
     },
     "sops-nix": {
@@ -693,26 +713,6 @@
         "owner": "numtide",
         "repo": "treefmt-nix",
         "type": "github"
-      }
-    },
-    "vineyard": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1790256857,
-        "narHash": "sha256-P3rpeni4/EvMO9eGNw62KAzI2Syfv4sLGeaN3xzyuQA=",
-        "ref": "refs/heads/redeem",
-        "rev": "ab6cd8e63410ba088ca5b4d4edb18049022ed8eb",
-        "revCount": 2,
-        "type": "git",
-        "url": "https://pls.lobotomise.me/atagen/vineyard"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://pls.lobotomise.me/atagen/vineyard"
       }
     }
   },
